@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import 'presence_service.dart'; // LINHA ADICIONADA
 
 class AuthService extends ChangeNotifier {
   
@@ -37,6 +38,9 @@ class AuthService extends ChangeNotifier {
             .get();
 
         if (doc.exists) {
+          // ADICIONADO: Inicializar presença após login bem-sucedido
+          await PresenceService().initializePresence();
+          
           _isLoading = false;
           notifyListeners();
           return true;
@@ -144,6 +148,12 @@ class AuthService extends ChangeNotifier {
         'aprovado': true, // Aprovação automática
         'criadoEm': FieldValue.serverTimestamp(),
         'atualizadoEm': FieldValue.serverTimestamp(),
+        // ADICIONADO: Campos de presença
+        'isOnline': false,
+        'online': false,
+        'statusOnline': false,
+        'lastSeen': FieldValue.serverTimestamp(),
+        'lastActivity': FieldValue.serverTimestamp(),
       });
 
       _isLoading = false;
@@ -210,6 +220,12 @@ class AuthService extends ChangeNotifier {
       'status': 'ativo',
       'aprovado': true,
       'criadoEm': FieldValue.serverTimestamp(),
+      // ADICIONADO: Campos de presença
+      'isOnline': false,
+      'online': false,
+      'statusOnline': false,
+      'lastSeen': FieldValue.serverTimestamp(),
+      'lastActivity': FieldValue.serverTimestamp(),
     });
 
     // Também salva na coleção de aprovação (para histórico)
@@ -231,8 +247,17 @@ class AuthService extends ChangeNotifier {
   // ========== FUNÇÃO DE LOGOUT ==========
   
   Future<void> signOut() async {
-    await _auth.signOut();
-    notifyListeners();
+    try {
+      // ADICIONADO: Limpar presença antes de fazer logout
+      await PresenceService().cleanup();
+      
+      await _auth.signOut();
+      notifyListeners();
+    } catch (e) {
+      print('Erro no logout: $e');
+      await _auth.signOut();
+      notifyListeners();
+    }
   }
 
   // ========== FUNÇÃO PARA BUSCAR DADOS DO MOTORISTA ==========

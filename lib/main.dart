@@ -7,6 +7,7 @@ import 'screens/auth/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'services/auth_service.dart';
 import 'constants/app_colors.dart';
+import 'services/presence_service.dart'; // LINHA ADICIONADA
 
 void main() async {
   // Garante que o Flutter está inicializado antes de executar código assíncrono
@@ -24,7 +25,45 @@ void main() async {
   runApp(VelloMotoristaApp());
 }
 
-class VelloMotoristaApp extends StatelessWidget {
+// MODIFICADO: Adicionado WidgetsBindingObserver
+class VelloMotoristaApp extends StatefulWidget {
+  @override
+  _VelloMotoristaAppState createState() => _VelloMotoristaAppState();
+}
+
+class _VelloMotoristaAppState extends State<VelloMotoristaApp> with WidgetsBindingObserver {
+  final PresenceService _presenceService = PresenceService(); // LINHA ADICIONADA
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); // LINHA ADICIONADA
+    
+    // ADICIONADO: Inicializar presença quando o app iniciar
+    _initializePresence();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // LINHA ADICIONADA
+    super.dispose();
+  }
+
+  // ADICIONADO: Detectar mudanças no ciclo de vida do app
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print('📱 App state changed to: $state');
+    // O PresenceService já trata isso automaticamente
+  }
+
+  // ADICIONADO: Função para inicializar presença
+  void _initializePresence() async {
+    // Aguardar um pouco para garantir que o Firebase Auth está pronto
+    await Future.delayed(Duration(seconds: 2));
+    await _presenceService.initializePresence();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
