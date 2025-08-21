@@ -24,6 +24,13 @@ dependencies:
   # QR Scanner (substituto do qr_code_scanner)
   mobile_scanner: ^5.2.3
   
+  # Mapa (NECESSÁRIO para HomeScreen)
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.1
+  
+  # Audio (NECESSÁRIO para SoundService)
+  audioplayers: ^6.1.0
+  
   # Outras dependências atualizadas
   http: ^1.2.2
   shared_preferences: ^2.3.2

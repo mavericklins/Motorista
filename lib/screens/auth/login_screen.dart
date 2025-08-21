@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart'; // Framework Flutter para widgets
 import 'package:provider/provider.dart'; // Gerenciamento de estado
 import 'register_screen.dart'; // Tela de cadastro
+import '../home/home_screen.dart'; // Tela principal após login
 import 'package:vello_motorista/constants/app_colors.dart'; // Cores do app
 import 'package:vello_motorista/services/auth_service.dart'; // Serviço de autenticação
 
@@ -54,7 +55,10 @@ class _LoginScreenState extends State<LoginScreen> {
     // Verifica se o widget ainda está montado e se o login foi bem-sucedido
     if (mounted && success) {
       // Login bem-sucedido: navega para a tela principal
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
     } else if (mounted) {
       // Login falhou: mostra mensagem de erro
       ScaffoldMessenger.of(context).showSnackBar(
