@@ -18,18 +18,16 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _celularController = TextEditingController(); // NOVO: Celular
-  final _cpfController = TextEditingController();
-  final _emailController = TextEditingController(); // MANTIDO: Email
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController(); // NOVO: Confirmação de senha
+  final _cpfController = TextEditingController();
   final _modeloController = TextEditingController();
   final _anoController = TextEditingController();
   final _placaController = TextEditingController();
 
   File? _cnh;
   File? _selfie;
-  List<File> _veiculoImages = []; // MODIFICADO: Lista para 6 fotos
+  File? _carro;
 
   final picker = ImagePicker();
 
@@ -37,26 +35,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setImage(File(picked.path));
-    }
-  }
-
-  // NOVA: Função para adicionar foto do veículo
-  Future<void> _pickVehicleImage() async {
-    if (_veiculoImages.length >= 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Máximo de 6 fotos do veículo'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() {
-        _veiculoImages.add(File(picked.path));
-      });
     }
   }
 
@@ -95,21 +73,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   // ========== VALIDAÇÕES RIGOROSAS ==========
-
-  // NOVA: Validação de celular
-  String? _validateCelular(String? value) {
-    if (value == null || value.isEmpty) return 'Celular é obrigatório';
-    
-    String celular = value.replaceAll(RegExp(r'[^0-9]'), '');
-    
-    if (celular.length != 11) return 'Celular deve ter 11 dígitos';
-    
-    if (!celular.startsWith('1') && !celular.startsWith('9')) {
-      return 'Celular deve começar com 1 ou 9 após o DDD';
-    }
-    
-    return null;
-  }
 
   String? _validateCPF(String? value) {
     if (value == null || value.isEmpty) return 'CPF é obrigatório';
@@ -181,18 +144,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return null;
   }
 
-  // NOVA: Validação de confirmação de senha
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Confirmação de senha é obrigatória';
-    
-    if (value != _passwordController.text) {
-      return 'As senhas não coincidem';
-    }
-    
-    return null;
-  }
-
-  // MODIFICADA: Validação de ano a partir de 2015
   String? _validateAno(String? value) {
     if (value == null || value.isEmpty) return 'Ano é obrigatório';
     
@@ -201,7 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     
     final int currentYear = DateTime.now().year;
     
-    if (ano < 2015) return 'Ano deve ser a partir de 2015'; // MODIFICADO
+    if (ano < 1960) return 'Ano deve ser a partir de 1960';
     if (ano > currentYear) return 'Ano não pode ser maior que $currentYear';
     
     return null;
@@ -240,11 +191,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    // MODIFICADA: Validar imagens (CNH, selfie e 6 fotos do veículo)
-    if (_cnh == null || _selfie == null || _veiculoImages.length < 6) {
+    // Validar imagens
+    if (_cnh == null || _selfie == null || _carro == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Envie todas as fotos obrigatórias (CNH, selfie e 6 fotos do veículo)'),
+          content: Text('Envie todas as fotos obrigatórias'),
           backgroundColor: Colors.red,
         ),
       );
@@ -309,16 +260,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Upload das imagens para Imgur
         String cnhUrl = '';
         String selfieUrl = '';
-        String carroUrl = ''; // MANTIDO: Uma foto principal do carro
+        String carroUrl = '';
 
         try {
           cnhUrl = await _uploadToImgur(_cnh!);
           selfieUrl = await _uploadToImgur(_selfie!);
-          
-          // Usar a primeira foto do veículo como foto principal
-          if (_veiculoImages.isNotEmpty) {
-            carroUrl = await _uploadToImgur(_veiculoImages[0]);
-          }
+          carroUrl = await _uploadToImgur(_carro!);
         } catch (e) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
@@ -346,7 +293,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         );
 
-        // MANTIDO: Usar a função original sem quebrar
+        // Salvar dados no Firestore
         await authService.salvarMotoristaParaAprovacao(
           uid: uid,
           nome: _nameController.text.trim(),
@@ -357,7 +304,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           placa: _placaController.text.trim().toUpperCase(),
           cnhUrl: cnhUrl,
           selfieUrl: selfieUrl,
-          carroUrl: carroUrl, // MANTIDO: Usar a função original
+          carroUrl: carroUrl,
         );
 
         Navigator.pop(context);
@@ -406,9 +353,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           key: _formKey,
           child: Column(
             children: [
-              // ORDEM MODIFICADA CONFORME SOLICITADO:
-              
-              // 1. Nome completo
+              // Nome
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -419,20 +364,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 16),
 
-              // 2. Celular (NOVO)
-              TextFormField(
-                controller: _celularController,
-                decoration: InputDecoration(
-                  labelText: 'Celular',
-                  prefixIcon: Icon(Icons.phone),
-                  helperText: 'Digite com DDD (11 dígitos)',
-                ),
-                keyboardType: TextInputType.phone,
-                validator: _validateCelular,
-              ),
-              SizedBox(height: 16),
-
-              // 3. CPF
+              // CPF
               TextFormField(
                 controller: _cpfController,
                 decoration: InputDecoration(
@@ -445,7 +377,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 16),
 
-              // 4. Email (MANTIDO)
+              // Email
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -458,7 +390,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 16),
 
-              // 5. Senha
+              // Senha
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
@@ -471,20 +403,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 16),
 
-              // 6. Confirmação de senha (NOVO)
-              TextFormField(
-                controller: _confirmPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Confirmação de senha',
-                  prefixIcon: Icon(Icons.lock_outline),
-                  helperText: 'Digite a senha novamente',
-                ),
-                obscureText: true,
-                validator: _validateConfirmPassword,
-              ),
-              SizedBox(height: 16),
-
-              // 7. Modelo do carro
+              // Modelo do carro
               TextFormField(
                 controller: _modeloController,
                 decoration: InputDecoration(
@@ -495,11 +414,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 16),
 
-              // 8. Ano do carro (MODIFICADO: a partir de 2015)
+              // Ano
               TextFormField(
                 controller: _anoController,
                 decoration: InputDecoration(
-                  labelText: 'Ano (a partir de 2015)',
+                  labelText: 'Ano (a partir de 1960)',
                   prefixIcon: Icon(Icons.calendar_today),
                 ),
                 keyboardType: TextInputType.number,
@@ -507,7 +426,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 16),
 
-              // 9. Placa
+              // Placa
               TextFormField(
                 controller: _placaController,
                 decoration: InputDecoration(
@@ -519,26 +438,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 24),
 
-              // BOTÕES DE IMAGEM MODIFICADOS:
-
-              // Enviar foto CNH (TEXTO MODIFICADO)
+              // Botões de imagem
               _buildImageButton(
-                'Enviar foto CNH',
+                'CNH enviada',
                 _cnh != null,
                 () => _pickImage((file) => setState(() => _cnh = file)),
               ),
               SizedBox(height: 12),
 
-              // Enviar selfie com CNH (TEXTO MODIFICADO)
               _buildImageButton(
-                'Enviar selfie com CNH',
+                'Selfie enviada',
                 _selfie != null,
                 () => _pickImage((file) => setState(() => _selfie = file)),
               ),
               SizedBox(height: 12),
 
-              // NOVO: Enviar fotos do veículo (6 fotos)
-              _buildVehicleImagesSection(),
+              _buildImageButton(
+                'Foto do carro enviada',
+                _carro != null,
+                () => _pickImage((file) => setState(() => _carro = file)),
+              ),
               SizedBox(height: 32),
 
               // Botão de cadastro
@@ -605,84 +524,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           style: TextStyle(fontSize: 16),
         ),
       ),
-    );
-  }
-
-  // NOVA: Seção para fotos do veículo
-  Widget _buildVehicleImagesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Botão principal
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: _pickVehicleImage,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _veiculoImages.length >= 6 ? Colors.green : VelloColors.laranja,
-              foregroundColor: VelloColors.branco,
-            ),
-            child: Text(
-              'Enviar fotos do veículo (${_veiculoImages.length}/6)',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-        
-        // Mostrar miniaturas das fotos
-        if (_veiculoImages.isNotEmpty) ...[
-          SizedBox(height: 12),
-          Container(
-            height: 80,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _veiculoImages.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.only(right: 8),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          _veiculoImages[index],
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        top: 2,
-                        right: 2,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _veiculoImages.removeAt(index);
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ],
     );
   }
 }
