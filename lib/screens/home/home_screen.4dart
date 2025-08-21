@@ -1,0 +1,827 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import '../../services/sound_service.dart';
+import '../../services/corrida_notification_service.dart';
+import '../../services/motorista_online_service.dart';
+import '../configuracoes/configuracoes_screen.dart';
+import '../historico/historico_screen.dart';
+import '../perfil/perfil_screen.dart';
+// ADICIONAR IMPORTS FIREBASE
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  final MapController _mapController = MapController();
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+  late MotoristaOnlineService _onlineService;
+
+  // ADICIONAR VARIÁVEIS FIREBASE
+  StreamSubscription<QuerySnapshot>? _corridasSubscription;
+  String? _currentMotoristaId;
+
+  // Cores Vello
+  static const Color velloOrange = Color(0xFFFF6B35);
+  static const Color velloBlue = Color(0xFF2E3A59);
+  static const Color velloGreen = Color(0xFF10B981);
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Inicializar serviço de status online
+    _onlineService = MotoristaOnlineService();
+    _onlineService.initialize();
+    
+    // Animação de pulso para status online
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+    
+    // Som de boas-vindas ao entrar na home
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SoundService.playLoginSound();
+      // Inicializar serviço de notificações
+      CorridaNotificationService.instance.initialize(context);
+    });
+
+    // INICIALIZAR FIREBASE
+    _currentMotoristaId = FirebaseAuth.instance.currentUser?.uid;
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    // Parar serviço de notificações
+    CorridaNotificationService.instance.dispose();
+    // PARAR FIREBASE
+    _corridasSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _toggleOnlineStatus() async {
+    try {
+      // Usar o serviço de status online
+      await _onlineService.toggleOnlineStatus();
+      
+      // CONTROLAR FIREBASE BASEADO NO STATUS
+      if (_onlineService.isOnline) {
+        _startListeningCorridas();
+        await SoundService.playOnlineSound();
+        _pulseController.repeat(reverse: true);
+      } else {
+        _stopListeningCorridas();
+        await SoundService.playOfflineSound();
+        _pulseController.stop();
+        _pulseController.reset();
+      }
+      
+      // Feedback visual
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                _onlineService.isOnline ? Icons.radio_button_checked : Icons.radio_button_off,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _onlineService.isOnline 
+                    ? 'Você está online e pronto para corridas!' 
+                    : 'Você está offline',
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+          backgroundColor: _onlineService.isOnline ? velloGreen : Colors.grey[600],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      
+    } catch (e) {
+      // Mostrar erro se houver problema
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao alterar status: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
+  }
+
+  // ESCUTAR CORRIDAS FIREBASE
+  void _startListeningCorridas() {
+    if (_currentMotoristaId == null) return;
+    
+    print('🚗 Iniciando escuta de corridas...');
+    
+    _corridasSubscription = FirebaseFirestore.instance
+        .collection('corridas')
+        .where('status', isEqualTo: 'pendente')
+        .snapshots()
+        .listen((snapshot) {
+          for (var change in snapshot.docChanges) {
+            if (change.type == DocumentChangeType.added) {
+              final corridaData = change.doc.data() as Map<String, dynamic>?;
+              if (corridaData != null) {
+                final corridaId = change.doc.id;
+                print('🚗 Nova corrida: $corridaId');
+                _mostrarPopupCorrida(corridaId, corridaData);
+              }
+            }
+          }
+        });
+  }
+
+  void _stopListeningCorridas() {
+    print('🚗 Parando escuta de corridas...');
+    _corridasSubscription?.cancel();
+    _corridasSubscription = null;
+  }
+
+  // POPUP CORRIDA
+  void _mostrarPopupCorrida(String corridaId, Map<String, dynamic> corridaData) {
+    SoundService.playNotificationSound();
+    
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: velloOrange,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.directions_car, color: Colors.white, size: 20),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Nova Corrida!',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: velloBlue,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Container(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Passageiro
+              Row(
+                children: [
+                  Icon(Icons.person, color: velloBlue, size: 20),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      corridaData['nomePassageiro'] ?? 'Passageiro',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              
+              // Origem
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.my_location, color: velloGreen, size: 20),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Origem:', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                        Text(
+                          corridaData['origem'] ?? 'Endereço de origem',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              
+              // Destino
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.location_on, color: Colors.red, size: 20),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Destino:', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                        Text(
+                          corridaData['destino'] ?? 'Endereço de destino',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              
+              // Valor
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: velloGreen.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.attach_money, color: velloGreen, size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'Valor: R\$ ${corridaData['valor']?.toString() ?? '0,00'}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: velloGreen,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          // Botão Recusar
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Corrida recusada'),
+                  backgroundColor: Colors.orange,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              );
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[600],
+            ),
+            child: Text('Recusar'),
+          ),
+          
+          // Botão Aceitar
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _aceitarCorrida(corridaId, corridaData);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: velloGreen,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+            child: Text(
+              'Aceitar',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ACEITAR CORRIDA
+  Future<void> _aceitarCorrida(String corridaId, Map<String, dynamic> corridaData) async {
+    if (_currentMotoristaId == null) return;
+
+    try {
+      print('🚗 Aceitando corrida: $corridaId');
+
+      // Buscar dados do motorista
+      final motoristaDoc = await FirebaseFirestore.instance
+          .collection('motoristas')
+          .doc(_currentMotoristaId)
+          .get();
+
+      if (!motoristaDoc.exists) {
+        throw Exception('Dados do motorista não encontrados');
+      }
+
+      final motoristaData = motoristaDoc.data()!;
+
+      // Atualizar corrida
+      await FirebaseFirestore.instance
+          .collection('corridas')
+          .doc(corridaId)
+          .update({
+        'status': 'em_andamento',
+        'motoristaId': _currentMotoristaId,
+        'nomeMotorista': motoristaData['nome'] ?? 'Motorista',
+        'telefoneMotorista': motoristaData['telefone'] ?? '',
+        'modeloVeiculo': motoristaData['veiculo']?['modelo'] ?? '',
+        'placaVeiculo': motoristaData['veiculo']?['placa'] ?? '',
+        'corVeiculo': motoristaData['veiculo']?['cor'] ?? '',
+        'aceitaEm': FieldValue.serverTimestamp(),
+      });
+
+      // Atualizar status do motorista
+      await FirebaseFirestore.instance
+          .collection('motoristas')
+          .doc(_currentMotoristaId)
+          .update({
+        'status': 'ocupado',
+        'corridaAtual': corridaId,
+        'ultimaAtualizacao': FieldValue.serverTimestamp(),
+      });
+
+      // Mostrar confirmação
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Corrida aceita com sucesso!', 
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('Dirija-se ao local de origem'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          duration: Duration(seconds: 4),
+        ),
+      );
+
+      print('✅ Corrida aceita: $corridaId');
+
+    } catch (e) {
+      print('❌ Erro ao aceitar corrida: $e');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao aceitar corrida: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
+  }
+
+  void _onEarningsCardTap(String period) async {
+    await SoundService.playEarningsSound();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.attach_money, color: velloOrange),
+            const SizedBox(width: 8),
+            Text('Ganhos - $period'),
+          ],
+        ),
+        content: Text('Seus ganhos de $period serão exibidos aqui.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              SoundService.playNotificationSound();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _centerMap() async {
+    await SoundService.playLocationSound();
+    
+    // Se tiver localização atual, centralizar nela
+    if (_onlineService.currentPosition != null) {
+      _mapController.move(
+        LatLng(
+          _onlineService.currentPosition!.latitude,
+          _onlineService.currentPosition!.longitude,
+        ),
+        15.0,
+      );
+    } else {
+      // Senão, centralizar em São Paulo
+      _mapController.move(const LatLng(-23.5505, -46.6333), 15.0);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: _onlineService,
+      child: Consumer<MotoristaOnlineService>(
+        builder: (context, onlineService, child) {
+          return Scaffold(
+            backgroundColor: Colors.grey[100],
+            appBar: AppBar(
+              backgroundColor: velloOrange,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              actions: [
+                // Botão de status OFFLINE/ONLINE
+                Container(
+                  margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+                  child: ElevatedButton(
+                    onPressed: _toggleOnlineStatus,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: onlineService.isOnline ? velloGreen : Colors.grey[600],
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          onlineService.isOnline 
+                              ? Icons.radio_button_checked 
+                              : Icons.radio_button_off,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          onlineService.isOnline ? 'ONLINE' : 'OFFLINE',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Ícone Configurações
+                IconButton(
+                  icon: const Icon(Icons.settings, color: Colors.white, size: 24),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ConfiguracoesScreen(),
+                      ),
+                    );
+                  },
+                ),
+                // Ícone Histórico
+                IconButton(
+                  icon: const Icon(Icons.history, color: Colors.white, size: 24),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HistoricoScreen(),
+                      ),
+                    );
+                  },
+                ),
+                // Ícone Perfil
+                IconButton(
+                  icon: const Icon(Icons.person, color: Colors.white, size: 24),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PerfilScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            body: Stack(
+              children: [
+                Column(
+                  children: [
+                    // Banner "Olá, Motorista!" com status em tempo real
+                    Container(
+                      margin: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: velloBlue,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Olá, Motorista!',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  onlineService.isOnline 
+                                      ? 'Você está online para receber corridas' 
+                                      : 'Fique online para receber corridas',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                if (onlineService.currentPosition != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Text(
+                                      'Localização: ${onlineService.currentPosition!.latitude.toStringAsFixed(4)}, ${onlineService.currentPosition!.longitude.toStringAsFixed(4)}',
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.white60,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          AnimatedBuilder(
+                            animation: _pulseAnimation,
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: onlineService.isOnline ? _pulseAnimation.value : 1.0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: onlineService.isOnline ? velloGreen : Colors.grey,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(
+                                    onlineService.isOnline 
+                                        ? Icons.radio_button_checked 
+                                        : Icons.radio_button_off,
+                                    color: Colors.white,
+                                    size: 28,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // Cards de ganhos
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _buildEarningsCard('Hoje', 'R\$ 0,00', Icons.today, () => _onEarningsCardTap('Hoje')),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildEarningsCard('Semana', 'R\$ 0,00', Icons.date_range, () => _onEarningsCardTap('Semana')),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildEarningsCard('Mês', 'R\$ 0,00', Icons.calendar_month, () => _onEarningsCardTap('Mês')),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Mapa com localização em tempo real
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Stack(
+                            children: [
+                              FlutterMap(
+                                mapController: _mapController,
+                                options: MapOptions(
+                                  initialCenter: onlineService.currentPosition != null
+                                      ? LatLng(
+                                          onlineService.currentPosition!.latitude,
+                                          onlineService.currentPosition!.longitude,
+                                        )
+                                      : const LatLng(-23.5505, -46.6333),
+                                  initialZoom: 13.0,
+                                ),
+                                children: [
+                                  TileLayer(
+                                    urlTemplate: 'https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=203ba4a0a4304d349299a8aa22e1dcae',
+                                    userAgentPackageName: 'com.vello.motorista',
+                                  ),
+                                  MarkerLayer(
+                                    markers: [
+                                      if (onlineService.currentPosition != null)
+                                        Marker(
+                                          point: LatLng(
+                                            onlineService.currentPosition!.latitude,
+                                            onlineService.currentPosition!.longitude,
+                                          ),
+                                          width: 60,
+                                          height: 60,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: onlineService.isOnline ? velloGreen : velloOrange,
+                                              shape: BoxShape.circle,
+                                              border: Border.all(color: Colors.white, width: 4),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: (onlineService.isOnline ? velloGreen : velloOrange).withOpacity(0.3),
+                                                  blurRadius: 10,
+                                                  spreadRadius: 5,
+                                                ),
+                                              ],
+                                            ),
+                                            child: const Icon(
+                                              Icons.local_taxi,
+                                              color: Colors.white,
+                                              size: 24,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              // Botão de centralizar mapa
+                              Positioned(
+                                bottom: 16,
+                                right: 16,
+                                child: FloatingActionButton(
+                                  mini: true,
+                                  backgroundColor: velloOrange,
+                                  onPressed: _centerMap,
+                                  child: const Icon(
+                                    Icons.my_location,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Botão principal "Ficar Online"
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _toggleOnlineStatus,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: onlineService.isOnline ? Colors.red[600] : velloGreen,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              onlineService.isOnline ? Icons.pause : Icons.play_arrow,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              onlineService.isOnline ? 'Ficar Offline' : 'Ficar Online',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildEarningsCard(String title, String amount, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: velloOrange,
+              size: 24,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              amount,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: velloBlue,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

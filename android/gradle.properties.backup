@@ -1,0 +1,32 @@
+# Configurações de memória otimizadas para o Gradle
+# Configuração: conservadora
+org.gradle.jvmargs=-Xmx4096m -Xms1024m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+
+# Configurações de performance
+org.gradle.parallel=true
+org.gradle.caching=true
+org.gradle.configureondemand=true
+
+# Configurações do daemon
+org.gradle.daemon=true
+
+# Configurações do Android
+android.useAndroidX=true
+android.enableJetifier=true
+
+# Configurações de build
+android.enableR8.fullMode=false
+android.enableBuildCache=true
+
+# Configurações de compilação
+kotlin.incremental=true
+kotlin.incremental.android=true
+kotlin.incremental.java=true
+
+# Configurações de memória específicas para Android
+android.enableD8.desugaring=true
+android.enableIncrementalDesugaring=true
+
+# Configurações para otimização de recursos
+org.gradle.workers.max=2
+org.gradle.vfs.watch=false

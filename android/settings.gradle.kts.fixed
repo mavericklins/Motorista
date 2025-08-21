@@ -1,0 +1,58 @@
+import java.util.Properties
+import java.io.File
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    // Resolve Flutter SDK path (prefer local.properties; fallback to FLUTTER_HOME)
+    val props = Properties().apply {
+        val f = File(rootDir, "local.properties")
+        if (f.exists()) f.reader(Charsets.UTF_8).use { load(it) }
+    }
+    var flutterSdkPath: String? = props.getProperty("flutter.sdk")
+    if (flutterSdkPath.isNullOrBlank()) {
+        flutterSdkPath = System.getenv("FLUTTER_HOME")
+    }
+    if (flutterSdkPath.isNullOrBlank()) {
+        error("Defina o caminho do Flutter em android/local.properties (flutter.sdk=...) ou na variável de ambiente FLUTTER_HOME.")
+    }
+
+    // Crucial: include Flutter's Gradle build so dev.flutter.flutter-plugin-loader is resolvable
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
+    plugins {
+        id("dev.flutter.flutter-plugin-loader") version "1.0.0"
+        id("com.android.application")          version "8.6.1"
+        id("com.android.library")              version "8.6.1"
+        id("org.jetbrains.kotlin.android")     version "2.1.0"
+        id("com.google.gms.google-services")   version "4.4.2"
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+
+        // Optional: engine repos (ok se não existirem)
+        val props = Properties().apply {
+            val f = File(rootDir, "local.properties")
+            if (f.exists()) f.reader(Charsets.UTF_8).use { load(it) }
+        }
+        val flutterSdk = props.getProperty("flutter.sdk") ?: System.getenv("FLUTTER_HOME")
+        if (!flutterSdk.isNullOrBlank()) {
+            maven { url = uri("$flutterSdk/bin/cache/artifacts/engine") }
+            maven { url = uri("$flutterSdk/bin/cache/artifacts/engine/android") }
+        }
+        maven { url = uri("https://storage.googleapis.com/download.flutter.io") }
+    }
+}
+
+rootProject.name = "vello_motorista"
+include(":app")
