@@ -7,17 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:694167397444:android:4465fc32a5ab1488b6c811",
+        "mobilesdk_app_id": "1:694167397444:android:50424e1f8e7e0037b6c811",
         "android_client_info": {
-          "package_name": "com.vello.motorista"
+          "package_name": "com.vello.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "694167397444-example.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyB-fVWOzdLDXbxuTO38GRMV4TYCo9-vVR4"
@@ -25,12 +20,45 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "694167397444-example.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694167397444:android:4465fc32a5ab1488b6c811",
+        "android_client_info": {
+          "package_name": "com.vello.motorista"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-fVWOzdLDXbxuTO38GRMV4TYCo9-vVR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694167397444:android:3dfe314db89f3ba8b6c811",
+        "android_client_info": {
+          "package_name": "com.vello.motorista.vello_motorista"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-fVWOzdLDXbxuTO38GRMV4TYCo9-vVR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
         }
       }
     }

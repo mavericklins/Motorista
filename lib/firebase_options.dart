@@ -15,4 +15,5 @@ class DefaultFirebaseOptions {
     projectId: 'vello-dac50',
     storageBucket: 'vello-dac50.firebasestorage.app',
   );
+
 }
