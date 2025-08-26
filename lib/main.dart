@@ -17,6 +17,7 @@ import 'services/presence_service.dart';
 import 'screens/configuracoes/configuracoes_screen.dart';
 import 'screens/perfil/perfil_screen.dart';
 import 'screens/historico/historico_screen.dart';
+import 'routes/app_routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -147,14 +148,9 @@ class _VelloMotoristaAppState extends State<VelloMotoristaApp>
           ),
         ),
         // mantém sua tela inicial atual
-        home: const LoginScreen(),
-        // ou se sua splash gerencia auth: home: const SplashScreen(),
-        routes: {
-          '/home': (context) => const MainNavigationScreen(),
-          '/configuracoes': (context) => ConfiguracoesScreen(),
-          '/perfil': (context) => PerfilScreen(),
-          '/historico': (context) => HistoricoScreen(),
-        },
+        initialRoute: AppRoutes.splash,
+        routes: AppRoutes.routes,
+        onGenerateRoute: AppRoutes.onGenerateRoute,
       ),
     );
   }
