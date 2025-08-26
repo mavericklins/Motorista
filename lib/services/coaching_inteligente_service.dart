@@ -140,6 +140,9 @@ class CoachingInteligenteService extends ChangeNotifier {
       }
     }
 
+    // Análise de bem-estar do motorista
+    await _analisarBemEstar();
+
     // Dicas baseadas no horário atual
     final agora = DateTime.now();
     if (agora.hour >= 6 && agora.hour <= 9) {
@@ -293,6 +296,85 @@ class CoachingInteligenteService extends ChangeNotifier {
       _dicasAtivas[index]['vista'] = true;
       notifyListeners();
     }
+  }
+
+  // Análise de bem-estar do motorista
+  Future<void> _analisarBemEstar() async {
+    try {
+      final agora = DateTime.now();
+      final horasOnlineConsecutivas = await _calcularHorasOnlineConsecutivas();
+      final diasSemParada = await _calcularDiasSemParada();
+      
+      // Alerta de fadiga
+      if (horasOnlineConsecutivas >= 8) {
+        _dicasAtivas.add({
+          'tipo': 'saude',
+          'prioridade': 'alta',
+          'titulo': 'Hora de Descansar',
+          'descricao': 'Você está online há ${horasOnlineConsecutivas.toStringAsFixed(1)}h. Faça uma pausa para sua segurança.',
+          'acao': 'Programar Pausa',
+          'icone': '😴',
+          'categoria': 'saude'
+        });
+      }
+      
+      // Alerta de sobrecarga
+      if (diasSemParada >= 7) {
+        _dicasAtivas.add({
+          'tipo': 'saude',
+          'prioridade': 'alta',
+          'titulo': 'Dia de Folga Necessário',
+          'descricao': 'Você trabalhou $diasSemParada dias seguidos. Considere tirar uma folga.',
+          'acao': 'Planejar Folga',
+          'icone': '🏖️',
+          'categoria': 'saude'
+        });
+      }
+      
+      // Dicas de postura (baseado em tempo dirigindo)
+      final tempoDirigindo = _performanceAtual['tempoMedioViagem'] ?? 0;
+      if (tempoDirigindo > 30) {
+        _dicasAtivas.add({
+          'tipo': 'saude',
+          'prioridade': 'baixa',
+          'titulo': 'Cuide da Postura',
+          'descricao': 'Ajuste o banco, apoie as costas e faça alongamentos entre corridas.',
+          'acao': 'Ver Exercícios',
+          'icone': '🧘‍♂️',
+          'categoria': 'saude'
+        });
+      }
+      
+    } catch (e) {
+      print('Erro na análise de bem-estar: $e');
+    }
+  }
+
+  Future<double> _calcularHorasOnlineConsecutivas() async {
+    // Placeholder - implementar lógica real de tracking
+    return DateTime.now().hour.toDouble(); // Simplificado
+  }
+
+  Future<int> _calcularDiasSemParada() async {
+    // Placeholder - implementar lógica real baseada em histórico
+    return 3; // Simplificado
+  }
+
+  // Obter métricas de saúde
+  Map<String, dynamic> obterMetricasSaude() {
+    return {
+      'horasOnlineHoje': 6.5,
+      'diasConsecutivos': 3,
+      'pausasRecomendadas': 2,
+      'pausasFeitas': 1,
+      'scorePostura': 75, // 0-100
+      'alertasFadiga': 1,
+      'recomendacoes': [
+        'Faça uma pausa de 15 min a cada 2h',
+        'Mantenha as costas retas',
+        'Hidrate-se regularmente'
+      ]
+    };
   }
 
   // Obter análise semanal

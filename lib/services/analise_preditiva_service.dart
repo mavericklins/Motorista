@@ -60,6 +60,55 @@ class AnalisePreditivaService {
     }
   }
 
+  // Obter dados para mapa de calor visual
+  Future<Map<String, dynamic>> obterDadosMapaCalor(Position posicaoAtual) async {
+    try {
+      final regioesDemanda = await preverDemandaPorRegiao(posicaoAtual);
+      
+      return {
+        'centroMapa': {
+          'lat': posicaoAtual.latitude,
+          'lon': posicaoAtual.longitude,
+        },
+        'pontosCalor': regioesDemanda.map((regiao) => {
+          'lat': regiao['lat'],
+          'lon': regiao['lon'],
+          'intensidade': regiao['scoreDemanda'],
+          'raio': _calcularRaioVisualizacao(regiao['scoreDemanda']),
+          'cor': _obterCorIntensidade(regiao['scoreDemanda']),
+          'info': {
+            'ganhoEstimado': regiao['ganhoMedioEstimado'],
+            'corridasPrevisitas': regiao['corridasPrevisitas'],
+            'distancia': regiao['distancia'],
+          }
+        }).toList(),
+        'estatisticas': {
+          'melhorRegiao': regioesDemanda.isNotEmpty ? regioesDemanda.first : null,
+          'mediaScore': regioesDemanda.isNotEmpty 
+              ? regioesDemanda.map((r) => r['scoreDemanda']).reduce((a, b) => a + b) / regioesDemanda.length
+              : 0.0,
+          'totalRegioes': regioesDemanda.length,
+        }
+      };
+    } catch (e) {
+      print('Erro ao gerar mapa de calor: $e');
+      return {'pontosCalor': [], 'estatisticas': {}};
+    }
+  }
+
+  double _calcularRaioVisualizacao(double score) {
+    // Raio baseado no score (50m a 300m)
+    return (50 + (score * 250)).clamp(50.0, 300.0);
+  }
+
+  String _obterCorIntensidade(double score) {
+    if (score >= 0.8) return '#FF0000'; // Vermelho - Alta demanda
+    if (score >= 0.6) return '#FF8000'; // Laranja - Média-alta
+    if (score >= 0.4) return '#FFFF00'; // Amarelo - Média
+    if (score >= 0.2) return '#80FF00'; // Verde claro - Baixa-média
+    return '#00FF00'; // Verde - Baixa demanda
+  }
+
   // Previsão de demanda por região
   Future<List<Map<String, dynamic>>> preverDemandaPorRegiao(Position posicaoAtual) async {
     try {

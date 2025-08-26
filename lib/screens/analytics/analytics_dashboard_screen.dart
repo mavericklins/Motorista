@@ -56,8 +56,133 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen>
             
             // Análise de performance
             _buildPerformanceAnalysis(),
+            
+            const SizedBox(height: 24),
+            
+            // Simulador de cenários
+            _buildScenarioSimulator(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildScenarioSimulator() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Simulador de Cenários',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildScenarioOption(
+            'E se eu trabalhasse +2h por dia?',
+            '+R\$ 45,60/dia',
+            '+R\$ 1.368/mês',
+            Icons.schedule,
+            Colors.blue,
+          ),
+          const SizedBox(height: 12),
+          _buildScenarioOption(
+            'E se eu focasse apenas em horários de pico?',
+            '+35% ganho/hora',
+            '+R\$ 892/mês',
+            Icons.trending_up,
+            Colors.green,
+          ),
+          const SizedBox(height: 12),
+          _buildScenarioOption(
+            'E se eu trabalhasse fins de semana?',
+            '+R\$ 280/fim de semana',
+            '+R\$ 1.120/mês',
+            Icons.weekend,
+            const Color(0xFFFF6B35),
+          ),
+          const SizedBox(height: 12),
+          _buildScenarioOption(
+            'E se eu fizesse 30% menos cancelamentos?',
+            '+4.2 corridas/dia',
+            '+R\$ 672/mês',
+            Icons.check_circle,
+            Colors.purple,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScenarioOption(String title, String dailyImpact, String monthlyImpact, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Text(
+                      dailyImpact,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      monthlyImpact,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

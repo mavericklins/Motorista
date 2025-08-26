@@ -36,8 +36,134 @@ class GamificationService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final SoundService _soundService = SoundService();
 
+  // Sistema de Eco-Score
+  Future<Map<String, dynamic>> calcularEcoScore(String motoristaId) async {
+    try {
+      final now = DateTime.now();
+      final inicioMes = DateTime(now.year, now.month, 1);
+
+      final querySnapshot = await _firestore
+          .collection('corridas')
+          .where('motoristaId', isEqualTo: motoristaId)
+          .where('status', isEqualTo: 'concluida')
+          .where('concluidaEm', isGreaterThan: Timestamp.fromDate(inicioMes))
+          .get();
+
+      double totalDistancia = 0;
+      double totalTempo = 0;
+      double totalCombustivel = 0;
+      int conducoesEficientes = 0;
+      int totalCorridas = querySnapshot.docs.length;
+
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data();
+        final distancia = (data['distancia'] as num?)?.toDouble() ?? 0;
+        final tempo = (data['tempoViagem'] as num?)?.toDouble() ?? 0;
+        
+        totalDistancia += distancia;
+        totalTempo += tempo;
+        
+        // Estimar consumo de combustível (média 10km/L urbano)
+        final combustivelEstimado = distancia / 10;
+        totalCombustivel += combustivelEstimado;
+        
+        // Condução eficiente: velocidade média entre 40-60 km/h
+        if (tempo > 0) {
+          final velocidadeMedia = (distancia / tempo) * 60; // km/h
+          if (velocidadeMedia >= 40 && velocidadeMedia <= 60) {
+            conducoesEficientes++;
+          }
+        }
+      }
+
+      // Calcular métricas eco
+      final eficienciaCombustivel = totalDistancia > 0 ? totalDistancia / totalCombustivel : 0;
+      final porcentagemEficiente = totalCorridas > 0 ? (conducoesEficientes / totalCorridas) * 100 : 0;
+      final emissaoCO2 = totalCombustivel * 2.31; // kg CO2 por litro
+      
+      // Score eco (0-100)
+      double ecoScore = 0;
+      ecoScore += (eficienciaCombustivel / 12) * 40; // 40 pontos para eficiência
+      ecoScore += porcentagemEficiente * 0.6; // 60 pontos para condução eficiente
+      ecoScore = ecoScore.clamp(0, 100);
+
+      return {
+        'ecoScore': ecoScore.round(),
+        'nivel': _obterNivelEco(ecoScore),
+        'eficienciaCombustivel': eficienciaCombustivel,
+        'porcentagemEficiente': porcentagemEficiente,
+        'emissaoCO2': emissaoCO2,
+        'arvoresCompensadas': (emissaoCO2 / 22).round(), // 1 árvore = ~22kg CO2/ano
+        'ranking': 'Top 25%', // Placeholder - implementar ranking real
+        'proximaMeta': _obterProximaMetaEco(ecoScore),
+        'dicas': _obterDicasEco(ecoScore),
+      };
+    } catch (e) {
+      print('Erro ao calcular eco-score: $e');
+      return {'ecoScore': 0, 'nivel': 'Iniciante'};
+    }
+  }
+
+  String _obterNivelEco(double score) {
+    if (score >= 90) return 'Eco Master';
+    if (score >= 80) return 'Eco Expert';
+    if (score >= 70) return 'Eco Driver';
+    if (score >= 60) return 'Eco Conscious';
+    if (score >= 50) return 'Eco Learner';
+    return 'Eco Iniciante';
+  }
+
+  String _obterProximaMetaEco(double score) {
+    if (score < 50) return 'Chegue a 50 pontos para ser Eco Learner';
+    if (score < 60) return 'Chegue a 60 pontos para ser Eco Conscious';
+    if (score < 70) return 'Chegue a 70 pontos para ser Eco Driver';
+    if (score < 80) return 'Chegue a 80 pontos para ser Eco Expert';
+    if (score < 90) return 'Chegue a 90 pontos para ser Eco Master';
+    return 'Mantenha seu nível Eco Master!';
+  }
+
+  List<String> _obterDicasEco(double score) {
+    if (score < 50) {
+      return [
+        'Mantenha velocidade entre 40-60 km/h',
+        'Evite acelerações e freadas bruscas',
+        'Desligue o ar condicionado quando possível'
+      ];
+    } else if (score < 70) {
+      return [
+        'Use o GPS para evitar trânsito parado',
+        'Planeje rotas mais eficientes',
+        'Mantenha os pneus calibrados'
+      ];
+    } else {
+      return [
+        'Continue mantendo condução eficiente',
+        'Compartilhe dicas eco com outros motoristas',
+        'Considere horários com menos trânsito'
+      ];
+    }
+  }
+
   // Achievements disponíveis
   static const Map<String, Map<String, dynamic>> availableAchievements = {
+    'eco_iniciante': {
+      'titulo': 'Eco Iniciante',
+      'descricao': 'Atingiu 50 pontos de eco-score',
+      'icone': '🌱',
+      'pontos': 25,
+    },
+    'eco_driver': {
+      'titulo': 'Eco Driver',
+      'descricao': 'Atingiu 70 pontos de eco-score',
+      'icone': '🌿',
+      'pontos': 75,
+    },
+    'eco_master': {
+      'titulo': 'Eco Master',
+      'descricao': 'Atingiu 90 pontos de eco-score',
+      'icone': '🌳',
+      'pontos': 150,
+    },
     'primeira_corrida': {
       'titulo': 'Primeira Corrida',
       'descricao': 'Complete sua primeira corrida',
