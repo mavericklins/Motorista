@@ -1,10 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../core/feature_flags.dart';
 
 class AssistenteVozService extends ChangeNotifier {
   static final AssistenteVozService _instance = AssistenteVozService._internal();
@@ -28,8 +29,16 @@ class AssistenteVozService extends ChangeNotifier {
   String get lastWords => _lastWords;
   List<Map<String, dynamic>> get comandosPersonalizados => _comandosPersonalizados;
 
+  // Feature flag getter
+  bool get isEnabled => FeatureFlags.enableVoiceAssistant;
+
   // Inicializar assistente
   Future<void> inicializar() async {
+    if (!isEnabled) {
+      print('Assistente de voz não está habilitado');
+      return;
+    }
+
     await _inicializarSpeechToText();
     await _inicializarTTS();
     await _carregarComandosPersonalizados();
@@ -57,6 +66,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Inicializar Text-to-Speech
   Future<void> _inicializarTTS() async {
+    if (!isEnabled) return;
     try {
       await _flutterTts.setLanguage('pt-BR');
       await _flutterTts.setSpeechRate(0.8);
@@ -72,7 +82,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Começar escuta
   Future<void> iniciarEscuta() async {
-    if (!_speechEnabled || _speechListening) return;
+    if (!isEnabled || !_speechEnabled || _speechListening) return;
 
     try {
       await _speechToText.listen(
@@ -96,6 +106,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Parar escuta
   Future<void> pararEscuta() async {
+    if (!isEnabled) return;
     await _speechToText.stop();
     _speechListening = false;
     notifyListeners();
@@ -115,6 +126,8 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Processar comando de voz
   Future<void> _processarComando(String comando) async {
+    if (!isEnabled) return;
+
     final comandoLower = comando.toLowerCase().trim();
 
     print('Comando recebido: $comandoLower');
@@ -241,7 +254,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Falar texto
   Future<void> falar(String texto) async {
-    if (!_ttsEnabled) return;
+    if (!isEnabled || !_ttsEnabled) return;
 
     try {
       await _flutterTts.speak(texto);
@@ -252,6 +265,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Parar fala
   Future<void> pararFala() async {
+    if (!isEnabled) return;
     try {
       await _flutterTts.stop();
     } catch (e) {
@@ -261,12 +275,14 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Toggle TTS
   void toggleTTS() {
+    if (!isEnabled) return;
     _ttsEnabled = !_ttsEnabled;
     notifyListeners();
   }
 
   // Configurar velocidade da fala
   Future<void> configurarVelocidadeFala(double velocidade) async {
+    if (!isEnabled) return;
     try {
       await _flutterTts.setSpeechRate(velocidade.clamp(0.1, 2.0));
     } catch (e) {
@@ -276,6 +292,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Configurar volume
   Future<void> configurarVolume(double volume) async {
+    if (!isEnabled) return;
     try {
       await _flutterTts.setVolume(volume.clamp(0.0, 1.0));
     } catch (e) {
@@ -290,6 +307,7 @@ class AssistenteVozService extends ChangeNotifier {
       String resposta,
       String acao,
       ) async {
+    if (!isEnabled) return;
     try {
       final comando = {
         'nome': nome,
@@ -314,6 +332,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Remover comando personalizado
   Future<void> removerComandoPersonalizado(int index) async {
+    if (!isEnabled) return;
     if (index >= 0 && index < _comandosPersonalizados.length) {
       final comando = _comandosPersonalizados.removeAt(index);
       await _salvarComandosPersonalizados();
@@ -326,6 +345,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Carregar comandos personalizados
   Future<void> _carregarComandosPersonalizados() async {
+    if (!isEnabled) return;
     try {
       final motoristaId = FirebaseAuth.instance.currentUser?.uid;
       if (motoristaId == null) return;
@@ -352,6 +372,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Salvar comandos personalizados
   Future<void> _salvarComandosPersonalizados() async {
+    if (!isEnabled) return;
     try {
       final motoristaId = FirebaseAuth.instance.currentUser?.uid;
       if (motoristaId == null) return;
@@ -369,6 +390,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Salvar log de uso de comando
   Future<void> _salvarLogComando(String nomeComando, String textoReconhecido) async {
+    if (!isEnabled) return;
     try {
       final motoristaId = FirebaseAuth.instance.currentUser?.uid;
       if (motoristaId == null) return;
@@ -386,6 +408,7 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Obter estatísticas de uso
   Future<Map<String, dynamic>> obterEstatisticasUso() async {
+    if (!isEnabled) return {};
     try {
       final motoristaId = FirebaseAuth.instance.currentUser?.uid;
       if (motoristaId == null) return {};
@@ -419,11 +442,13 @@ class AssistenteVozService extends ChangeNotifier {
 
   // Modo mãos livres
   void ativarModoMaosLivres() {
+    if (!isEnabled) return;
     // Implementar modo que responde automaticamente a determinados eventos
     print('Modo mãos livres ativado');
   }
 
   void desativarModoMaosLivres() {
+    if (!isEnabled) return;
     print('Modo mãos livres desativado');
   }
 

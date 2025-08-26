@@ -1,1 +1,19 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"vello-dac50","appId":"1:694167397444:android:4465fc32a5ab1488b6c811","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"vello-dac50","configurations":{"android":"1:694167397444:android:4465fc32a5ab1488b6c811"}}}}}}
+
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "functions/firestore.indexes.json"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18"
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

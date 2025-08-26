@@ -1,16 +1,3 @@
-# Flutter/Dart
-.dart_tool/
-.packages
-.pub-cache/
-build/
-flutter_*.png
-coverage/
-.melos_tool/
-.melos_tool*
-**/GeneratedPluginRegistrant.*
-**/.flutter-plugins
-**/.flutter-plugins-dependencies
-
 # IDE
 .vscode/
 .idea/
@@ -52,3 +39,26 @@ linux/build/
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# Flutter SDK (não incluir no repositório)
+flutter/
+
+# Caches
+.ccls-cache/
+.kotlin/
+**/errors/
+
+# Archives
+_archive/
