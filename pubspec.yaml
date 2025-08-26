@@ -57,7 +57,7 @@ dependencies:
   
   # Conectividade e Bluetooth
   connectivity_plus: ^6.1.0
-  flutter_blue_plus: ^1.35.5
+  flutter_blue_plus: ^1.32.7
   
   # Notificações locais
   flutter_local_notifications: ^18.0.1
@@ -71,8 +71,8 @@ dependencies:
   # Animações
   lottie: ^3.3.0
   
-  # Machine Learning
-  tflite_flutter: ^0.10.4
+  # Machine Learning - versão comentada por conflitos potenciais
+  # tflite_flutter: ^0.10.4
   
   # Widgets avançados
   flutter_slidable: ^3.1.1
