@@ -63,3 +63,8 @@ flutter/
 # Archives
 _archive/.replit
 .replit
+
+# secrets & env
+.replit
+.env
+.env.*
