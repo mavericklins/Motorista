@@ -305,3 +305,205 @@ class AuthService extends ChangeNotifier {
   }
 }
 
+import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AuthService extends ChangeNotifier {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  User? _currentUser;
+  Map<String, dynamic>? _driverData;
+  bool _isLoading = false;
+
+  // Getters
+  User? get currentUser => _currentUser;
+  Map<String, dynamic>? get driverData => _driverData;
+  bool get isLoading => _isLoading;
+  bool get isLoggedIn => _currentUser != null;
+  String? get userId => _currentUser?.uid;
+
+  AuthService() {
+    _init();
+  }
+
+  void _init() {
+    _currentUser = _auth.currentUser;
+    _auth.authStateChanges().listen((User? user) {
+      _currentUser = user;
+      if (user != null) {
+        _loadDriverData();
+      } else {
+        _driverData = null;
+      }
+      notifyListeners();
+    });
+  }
+
+  Future<void> _loadDriverData() async {
+    if (_currentUser == null) return;
+    
+    try {
+      final doc = await _firestore
+          .collection('motoristas')
+          .doc(_currentUser!.uid)
+          .get();
+      
+      if (doc.exists) {
+        _driverData = doc.data();
+        notifyListeners();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao carregar dados do motorista: $e');
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>?> signInWithEmailAndPassword(
+      String email, String password) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (credential.user != null) {
+        await _loadDriverData();
+        await _saveLoginState();
+        return {'success': true, 'user': credential.user};
+      }
+
+      return {'success': false, 'error': 'Falha no login'};
+    } on FirebaseAuthException catch (e) {
+      return {'success': false, 'error': _getErrorMessage(e.code)};
+    } catch (e) {
+      return {'success': false, 'error': 'Erro inesperado: $e'};
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Map<String, dynamic>?> createUserWithEmailAndPassword(
+      String email, String password, Map<String, dynamic> driverData) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (credential.user != null) {
+        // Salvar dados do motorista no Firestore
+        await _firestore
+            .collection('motoristas')
+            .doc(credential.user!.uid)
+            .set({
+          ...driverData,
+          'email': email,
+          'createdAt': FieldValue.serverTimestamp(),
+          'isActive': true,
+          'isOnline': false,
+        });
+
+        await _loadDriverData();
+        await _saveLoginState();
+        return {'success': true, 'user': credential.user};
+      }
+
+      return {'success': false, 'error': 'Falha ao criar conta'};
+    } on FirebaseAuthException catch (e) {
+      return {'success': false, 'error': _getErrorMessage(e.code)};
+    } catch (e) {
+      return {'success': false, 'error': 'Erro inesperado: $e'};
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+      await _clearLoginState();
+      _driverData = null;
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao fazer logout: $e');
+      }
+    }
+  }
+
+  Future<void> _saveLoginState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao salvar estado de login: $e');
+      }
+    }
+  }
+
+  Future<void> _clearLoginState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('isLoggedIn');
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao limpar estado de login: $e');
+      }
+    }
+  }
+
+  Future<void> updateDriverData(Map<String, dynamic> data) async {
+    if (_currentUser == null) return;
+
+    try {
+      await _firestore
+          .collection('motoristas')
+          .doc(_currentUser!.uid)
+          .update(data);
+      
+      await _loadDriverData();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao atualizar dados do motorista: $e');
+      }
+    }
+  }
+
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw Exception('Erro ao enviar email de recuperação: $e');
+    }
+  }
+
+  String _getErrorMessage(String errorCode) {
+    switch (errorCode) {
+      case 'user-not-found':
+        return 'Usuário não encontrado';
+      case 'wrong-password':
+        return 'Senha incorreta';
+      case 'email-already-in-use':
+        return 'Este email já está em uso';
+      case 'weak-password':
+        return 'Senha muito fraca';
+      case 'invalid-email':
+        return 'Email inválido';
+      default:
+        return 'Erro de autenticação';
+    }
+  }
+}

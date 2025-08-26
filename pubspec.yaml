@@ -57,7 +57,7 @@ dependencies:
   
   # Conectividade e Bluetooth
   connectivity_plus: ^6.1.0
-  flutter_blue_plus: ^1.31.15
+  flutter_blue_plus: ^1.32.7
   
   # Notificações locais
   flutter_local_notifications: ^18.0.1

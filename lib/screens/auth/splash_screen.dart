@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 
 import 'package:vello_motorista/services/auth_service.dart';
+import '../../constants/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -22,13 +23,11 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   // Cores da identidade visual Vello
   static const Color velloBlue = Color(0xFF1B3A57);
   static const Color velloOrange = Color(0xFFFF8C42);
-  static const Color velloLightGray = Color(0xFFF8F9FA);
-  static const Color velloCardBackground = Color(0xFFFFFFFF);
 
   @override
   void initState() {
     super.initState();
-    
+
     // Animação da logo
     _logoController = AnimationController(
       duration: const Duration(milliseconds: 1500),
@@ -37,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     _logoAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _logoController, curve: Curves.elasticOut),
     );
-    
+
     // Animação de pulso
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1000),
@@ -46,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
-    
+
     _logoController.forward();
     _pulseController.repeat(reverse: true);
     _startProgress();
@@ -67,14 +66,17 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   void _checkLoginStatus() async {
     if (!mounted) return;
-    
-    final authService = Provider.of<AuthService>(context, listen: false);
-    
-    if (authService.isLoggedIn) {
-      // Usuário já logado
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      // Usuário não logado
+
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+
+      if (authService.isLoggedIn) {
+        Navigator.pushReplacementNamed(context, '/main');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    } catch (e) {
+      // Fallback em caso de erro
       Navigator.pushReplacementNamed(context, '/login');
     }
   }
@@ -91,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.white, // Fundo branco puro
+        color: Colors.white,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -124,6 +126,13 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                               'assets/vello_motorista.png',
                               width: 120,
                               height: 120,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.local_taxi,
+                                  size: 120,
+                                  color: VelloColors.laranja,
+                                );
+                              },
                             ),
                           ),
                         );
@@ -133,7 +142,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 },
               ),
               const SizedBox(height: 40),
-              
+
               // Indicador de progresso elegante
               Container(
                 width: 200,
@@ -165,20 +174,20 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // Porcentagem
               Text(
                 '${(_progress * 100).toInt()}%',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: velloBlue,
                 ),
               ),
               const SizedBox(height: 30),
-              
+
               // Texto de carregamento
-              Text(
+              const Text(
                 'Carregando Vello Motorista...',
                 style: TextStyle(
                   fontSize: 18,
@@ -196,62 +205,6 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
-
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _navigateToLogin();
-  }
-
-  _navigateToLogin() async {
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: VelloColors.laranja,
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.local_taxi,
-              size: 100,
-              color: VelloColors.branco,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Vello Motorista',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: VelloColors.branco,
-              ),
-            ),
-            SizedBox(height: 20),
-            CircularProgressIndicator(
-              color: VelloColors.branco,
-            ),
-          ],
         ),
       ),
     );

@@ -595,3 +595,77 @@ class NotificationService {
     await _localNotifications.cancel(id);
   }
 }
+import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class NotificationService extends ChangeNotifier {
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  
+  bool _isInitialized = false;
+
+  bool get isInitialized => _isInitialized;
+
+  Future<void> initialize() async {
+    try {
+      const androidInitialize = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const iOSInitialize = DarwinInitializationSettings();
+      
+      const initializationSettings = InitializationSettings(
+        android: androidInitialize,
+        iOS: iOSInitialize,
+      );
+
+      await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await _requestPermissions();
+      
+      _isInitialized = true;
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao inicializar notificações: $e');
+      }
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    await Permission.notification.request();
+  }
+
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    if (!_isInitialized) return;
+
+    try {
+      const androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'vello_channel',
+        'Vello Notifications',
+        channelDescription: 'Notificações do Vello Motorista',
+        importance: Importance.max,
+        priority: Priority.high,
+      );
+
+      const iOSPlatformChannelSpecifics = DarwinNotificationDetails();
+
+      const platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics,
+      );
+
+      await _flutterLocalNotificationsPlugin.show(
+        id,
+        title,
+        body,
+        platformChannelSpecifics,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao mostrar notificação: $e');
+      }
+    }
+  }
+}
