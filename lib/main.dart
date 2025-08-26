@@ -9,6 +9,7 @@ import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/sound_service.dart';
 import 'constants/app_colors.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,30 +40,7 @@ class VelloMotoristaApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Vello Motorista',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.orange,
-          primaryColor: VelloColors.laranja,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: VelloColors.laranja,
-            brightness: Brightness.light,
-          ),
-          scaffoldBackgroundColor: VelloColors.creme,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: VelloColors.laranja,
-            foregroundColor: VelloColors.branco,
-            elevation: 0,
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: VelloColors.laranja,
-              foregroundColor: VelloColors.branco,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          useMaterial3: true,
-        ),
+        theme: VelloTheme.lightTheme,
         initialRoute: AppRoutes.splash,
         routes: AppRoutes.routes,
         onGenerateRoute: AppRoutes.onGenerateRoute,
