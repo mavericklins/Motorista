@@ -240,12 +240,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TESTE - CONFIRMAR SE CÓDIGO NOVO ESTÁ SENDO EXECUTADO
-    print("🗺️ NOVO CÓDIGO CARREGADO - MAPA ATIVO");
-    
     return Scaffold(
       backgroundColor: velloLightGray,
-      
       appBar: AppBar(
         backgroundColor: velloOrange,
         foregroundColor: Colors.white,
@@ -287,105 +283,103 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 8),
         ],
       ),
-
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              // Banner de boas-vindas
-              WelcomeBanner(
-                userName: 'Motorista',
-                isOnline: _isOnline,
-              ),
-              
-              // Cards de ganhos
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Expanded(child: _buildEarningsCard('Hoje', 'R\$ 0,00', Icons.today)),
-                    const SizedBox(width: 8),
-                    Expanded(child: _buildEarningsCard('Semana', 'R\$ 0,00', Icons.date_range)),
-                    const SizedBox(width: 8),
-                    Expanded(child: _buildEarningsCard('Mês', 'R\$ 0,00', Icons.calendar_month)),
-                  ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Banner de boas-vindas
+            WelcomeBanner(
+              userName: 'Motorista',
+              isOnline: _isOnline,
+            ),
+            const SizedBox(height: 12),
+            // Botões rápidos restaurados
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildQuickButton(
+                  icon: Icons.emoji_events,
+                  label: 'Conquistas',
+                  route: '/conquistas',
+                  color: Colors.amber,
                 ),
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Mapa
-              Expanded(
-                child: _buildMapSection(),
-              ),
-              
-              // Botão Online/Offline
-              Container(
-                margin: const EdgeInsets.all(16),
-                width: double.infinity,
-                height: 60,
-                child: ElevatedButton(
-                  onPressed: _toggleOnlineStatus,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _isOnline ? const Color(0xFFEF4444) : velloOrange,
-                    foregroundColor: Colors.white,
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    shadowColor: _isOnline 
-                        ? const Color(0xFFEF4444).withOpacity(0.3)
-                        : velloOrange.withOpacity(0.3),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        _isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildQuickButton(
+                  icon: Icons.warning,
+                  label: 'SOS',
+                  route: '/sos',
+                  color: Colors.red,
                 ),
-              ),
-            ],
-          ),
-          
-          // Botão de centralizar mapa
-          if (currentLocation != null && _mapController != null)
-            Positioned(
-              bottom: 100,
-              right: 20,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                _buildQuickButton(
+                  icon: Icons.account_balance_wallet,
+                  label: 'Carteira',
+                  route: '/carteira',
+                  color: Colors.green,
                 ),
-                child: FloatingActionButton(
-                  heroTag: "btnCentralizar",
-                  onPressed: _centralizarMapa,
-                  backgroundColor: velloOrange,
+                _buildQuickButton(
+                  icon: Icons.schedule,
+                  label: 'Corridas',
+                  route: '/corridas-programadas',
+                  color: Colors.blue,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Cards de ganhos
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(child: _buildEarningsCard('Hoje', 'R\$ 0,00', Icons.today)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _buildEarningsCard('Semana', 'R\$ 0,00', Icons.date_range)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _buildEarningsCard('Mês', 'R\$ 0,00', Icons.calendar_month)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Mapa
+            Expanded(
+              child: _buildMapSection(),
+            ),
+            // Botão Online/Offline
+            Container(
+              margin: const EdgeInsets.all(16),
+              width: double.infinity,
+              height: 60,
+              child: ElevatedButton(
+                onPressed: _toggleOnlineStatus,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _isOnline ? const Color(0xFFEF4444) : velloOrange,
                   foregroundColor: Colors.white,
-                  elevation: 0,
-                  child: const Icon(Icons.my_location, size: 24),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  shadowColor: _isOnline
+                      ? const Color(0xFFEF4444).withOpacity(0.3)
+                      : velloOrange.withOpacity(0.3),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      _isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -643,5 +637,30 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
+  Widget _buildQuickButton({
+    required IconData icon,
+    required String label,
+    required String route,
+    required Color color,
+  }) {
+    return Column(
+      children: [
+        Material(
+          color: color.withOpacity(0.15),
+          shape: const CircleBorder(),
+          child: IconButton(
+            icon: Icon(icon, color: color, size: 28),
+            onPressed: () => Navigator.pushNamed(context, route),
+            tooltip: label,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+      ],
+    );
+  }
+}

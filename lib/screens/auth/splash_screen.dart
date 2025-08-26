@@ -91,18 +91,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              velloCardBackground, // Branco no topo
-              velloLightGray, // Cinza claro no meio
-              velloCardBackground, // Branco na base
-            ],
-            stops: const [0.0, 0.5, 1.0],
-          ),
-        ),
+        color: Colors.white, // Fundo branco puro
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +110,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           child: Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: velloCardBackground,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
@@ -135,8 +124,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                               'assets/vello_motorista.png',
                               width: 120,
                               height: 120,
-
-                          ),
+                            ),
                           ),
                         );
                       },
@@ -213,4 +201,3 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     );
   }
 }
-
