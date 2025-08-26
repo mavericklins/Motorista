@@ -1,0 +1,57 @@
+```
+Analise e corrija todo o projeto Flutter/Dart conforme o checklist abaixo. Não mude tecnologias, linguagens, libs ou plugins. Apenas corrigir, consolidar, remover ou arquivar de forma segura.
+
+Modo de operação:
+1) Crie a branch: refactor/cleanup-<DATA>.
+2) Faça backup antes de qualquer remoção ou movimento, movendo itens para /_archive/<YYYYMMDD>/... .
+3) Commits atômicos e descritivos.
+4) Rode em cada etapa: flutter analyze, flutter pub get, flutter build apk --debug.
+5) Ao final, gere relatório e diff.
+
+Tarefas:
+
+1) Duplicatas — consolidar
+- Pares:
+  - lib/screens/auth/register_screen.dart ↔ register_screen1.dart
+  - lib/screens/configuracoes/configuracoes_screen.dart ↔ configuracoes_screen1.dart
+  - lib/services/notification_service.dart ↔ notification_service_advanced.dart
+  - lib/services/financial_service.dart ↔ financial_service_professional.dart
+Ação: Preservar o arquivo mais usado, migrar funções úteis do duplicado, atualizar imports e rotas, arquivar duplicado.
+
+2) Páginas/serviços não utilizados
+Itens: change_password_screen.dart, notifications_screen.dart, support_screen.dart, widgets/security/simple_trip_sharing.dart, services/overlay_service.dart.
+Ação: Se não houver uso, arquivar e remover imports/rotas órfãs. Se houver intenção de uso, criar rota mínima com TODO.
+
+3) Funções quebradas/incompletas
+Itens: assistente_voz_service.dart, eco_drive_service.dart, fila_virtual_service.dart, rotas_inteligentes_service.dart, insights/demand_prediction_screen.dart.
+Ação: Implementar versão mínima funcional ou isolar por feature flag em lib/core/feature_flags.dart. Conectar demand_prediction_screen ao serviço mesmo que mock.
+
+4) Serviços não ativos
+Itens: analise_sentimentos_service.dart, cashback_service.dart, coaching_inteligente_service.dart, emergencia_service.dart, voice_assistant_service.dart.
+Ação: Registrar em container/locator, garantir ciclo de vida, adicionar fallback. Para SOS, acionar handler mínimo que não quebre o app.
+
+5) Links quebrados
+Itens: frontend/src/App.js, bkp/index2.html, central_ajuda_screen.dart, Firebase Storage hardcoded.
+Ação: Corrigir caminhos válidos, comentar e adicionar TODO quando não existir, centralizar URLs em lib/core/urls.dart, remover ou arquivar legado.
+
+6) Arquivos obsoletos
+Itens: temporario/, bkp/, attached_assets/image_*.png, flutter/, scripts/seed.ts, types.ts, .ccls-cache/, android/.kotlin/errors/.
+Ação: Mover para /_archive/<DATA>/legacy, exceto flutter/ que deve ser removido e adicionado ao .gitignore. Ajustar .gitignore para caches e logs.
+
+7) Configurações redundantes
+- firebase.json vs functions/firestore.indexes.json → manter padrão Firebase.
+- analysis_options.yaml raiz vs flutter/analysis_options.yaml → manter da raiz e arquivar duplicata.
+- múltiplos pubspec.yaml → manter o da raiz, arquivar os outros.
+
+Critérios de aceite:
+- flutter analyze sem erros
+- flutter build apk --debug compila sem falhas
+- Sem referências quebradas
+- Nada deletado diretamente, apenas movido para /_archive/...
+
+Saídas finais:
+1) Relatório CLEANUP_REPORT.md com resumo por seção, flags criadas, itens arquivados e TODOs.
+2) Lista de commits (hash + título).
+3) Comandos para reproduzir build local.
+4) Sugestão de PR (título, descrição, escopo, riscos).
+```

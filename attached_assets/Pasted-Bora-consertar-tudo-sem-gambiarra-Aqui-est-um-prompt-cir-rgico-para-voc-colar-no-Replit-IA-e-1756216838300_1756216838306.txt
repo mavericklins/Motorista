@@ -1,0 +1,143 @@
+Bora consertar tudo, sem gambiarra. Aqui está um **prompt cirúrgico** para você colar no Replit/IA e ele **executar as correções** mantendo stack e padrões.
+
+---
+
+# PROMPT — CORRIGIR E HIGIENIZAR O PROJETO (SEM TROCAR TECNOLOGIA)
+
+**Contexto**: Projeto Flutter/Dart. Não mude tecnologias, linguagens, libs nem plugins. Apenas corrigir, consolidar, remover lixo de forma segura.
+
+**Modo de operação (obrigatório):**
+
+1. Crie a branch: `refactor/cleanup-<DATA>`.
+2. Faça **backup seguro** antes de qualquer remoção/movimento:
+
+   * Mover itens para `/_archive/<YYYYMMDD>/...` (não deletar direto).
+3. Commits atômicos e descritivos.
+4. Rodar em cada etapa: `flutter analyze`, `flutter pub get`, `flutter build apk --debug` (validação rápida de integridade).
+5. Ao final, gerar **relatório** e **diff** dos arquivos alterados.
+
+---
+
+## Tarefas
+
+### 1) Duplicatas — consolidar e referenciar
+
+* Pares encontrados:
+
+  * `lib/screens/auth/register_screen.dart` ↔ `register_screen1.dart`
+  * `lib/screens/configuracoes/configuracoes_screen.dart` ↔ `configuracoes_screen1.dart`
+  * `lib/services/notification_service.dart` ↔ `notification_service_advanced.dart`
+  * `lib/services/financial_service.dart` ↔ `financial_service_professional.dart`
+* Ação:
+
+  * Compare cada par (diff). **Preserve o arquivo “canônico”** com mais uso/importações e cobertura.
+  * **Migre** funções/métodos úteis do duplicado para o canônico (sem mudar APIs públicas).
+  * Atualize **todas as importações** e rotas para o arquivo canônico.
+  * Mova o duplicado para `/_archive/<DATA>/...`.
+* Entregável: lista de pontos migrados + locais onde as imports foram atualizadas.
+
+### 2) Páginas/serviços não utilizados — decidir ligar ou arquivar
+
+Itens:
+`change_password_screen.dart`, `notifications_screen.dart`, `support_screen.dart` (duplicidade com `suporte_screen.dart`), `widgets/security/simple_trip_sharing.dart`, `services/overlay_service.dart`.
+
+* Ação:
+
+  * Verifique se há **rota planejada**/menu apontando.
+  * Se não houver uso: mover para `/_archive/<DATA>/unused/` **e** remover imports/rotas órfãs.
+  * Se houver intenção de uso: **criar rota e navegação mínima** (menu → tela) e marcar com `// TODO(maverick): ativar fluxo completo`.
+* Entregável: tabela “mantido/ativado” vs “arquivado”, com justificativa.
+
+### 3) Funções quebradas/incompletas — corrigir ou “feature flag”
+
+Itens:
+`assistente_voz_service.dart`, `eco_drive_service.dart`, `fila_virtual_service.dart`, `rotas_inteligentes_service.dart`, `insights/demand_prediction_screen.dart`.
+
+* Ação:
+
+  * Onde existir stub, **implemente versão mínima funcional** (retornos mockáveis, tratamento de erro, logs).
+  * Se exigir backend/IA não disponível, **isole por flag**:
+
+    * `lib/core/feature_flags.dart` (criar se não existir).
+    * Ex.: `const kEnableVoiceAssistant = false;`
+    * O app **não deve quebrar** quando a flag estiver `false`.
+  * Conecte `demand_prediction_screen` ao serviço (mesmo que mock) via provider/injeção já usado no projeto.
+* Entregável: flags criadas, trechos ajustados e como ativar/desativar.
+
+### 4) Serviços “não ativos” — inicializar corretamente
+
+Itens:
+`analise_sentimentos_service.dart`, `cashback_service.dart`, `coaching_inteligente_service.dart`, `emergencia_service.dart` (SOS), `voice_assistant_service.dart`.
+
+* Ação:
+
+  * Registrar no **container/locator** já usado (Provider/GetIt/etc).
+  * Garantir **ciclo de vida** (init/dispose) e **fallback** se a dependência faltar.
+  * Para SOS: botão deve acionar um **handler** que ao menos loga/mostra diálogo e **não crasha**.
+* Entregável: onde foram inicializados e como testar.
+
+### 5) Links quebrados — corrigir ou remover
+
+* `frontend/src/App.js` (componentes inexistentes)
+* `bkp/index2.html` (CSS/JS inexistente)
+* `central_ajuda_screen.dart` (URLs inválidas)
+* Firebase Storage “hardcoded”
+* Ação:
+
+  * Corrigir caminhos relativos válidos no repo; se não existir, comentar e registrar TODO com referência.
+  * Para URLs externas: validar formato e mover para **arquivo de config** centralizado (`lib/core/urls.dart`), com constantes.
+  * Remover/arquivar `bkp/index2.html` se for legado.
+* Entregável: lista de links corrigidos e os que ficaram como TODO.
+
+### 6) Arquivos obsoletos — arquivar
+
+* `temporario/`, `bkp/`, `attached_assets/image_*.png` sem uso, `flutter/` (SDK), `scripts/seed.ts`, `types.ts`, `.ccls-cache/`, `android/.kotlin/errors/`.
+* Ação:
+
+  * Mover tudo para `/_archive/<DATA>/legacy/` (exceto `flutter/` — **remover do repo e adicionar ao `.gitignore`**).
+  * Adicionar ao `.gitignore` itens de cache/logs/SDK.
+* Entregável: diff do `.gitignore` e lista do que foi movido.
+
+### 7) Configurações redundantes/conflitantes — unificar
+
+* `firebase.json` vs `functions/firestore.indexes.json` → manter estrutura padrão Firebase (um único `firebase.json` e índices em `firestore.indexes.json`).
+* `analysis_options.yaml` (raiz) vs `flutter/analysis_options.yaml` → **manter o da raiz** e remover duplicata (arquivar).
+* “Múltiplos `pubspec.yaml`”: **o válido é o da raiz do app Flutter**. Outros devem ser arquivados.
+* Entregável: qual ficou como fonte da verdade + motivo.
+
+---
+
+## Critérios de Aceite (não negociar)
+
+* `flutter analyze` → **0 erros** (warnings aceitáveis se justificados).
+* `flutter build apk --debug` → compila sem falhas.
+* Sem referências quebradas (imports/rotas).
+* Nenhuma tecnologia/lib trocada.
+* Tudo potencialmente deletado foi **apenas movido** para `/_archive/...`.
+
+---
+
+## Saídas finais que eu quero
+
+1. **Relatório** `CLEANUP_REPORT.md` com:
+
+   * Resumo por seção (1–7) + decisões.
+   * Flags criadas e como habilitar.
+   * Itens arquivados (lista).
+   * TODOs mapeados.
+2. **Lista de commits** (hash + título).
+3. **Comandos para reproduzir** build local.
+4. **Sugestão de PR**: título, descrição, escopo e riscos.
+
+---
+
+## Comandos auxiliares (pode usar)
+
+* Criar branch: `git checkout -b refactor/cleanup-<DATA>`
+* Archive helper (ex.): `git mv <path> "/_archive/<YYYYMMDD>/<path>"`
+
+> Não tome decisões fora do escopo. Se algo exigir decisão de produto, marque como TODO no relatório e **não implemente**.
+
+---
+
+Cole esse prompt e deixa a IA trabalhar. Se quiser, depois eu te mando uma **checklist de review** pra você aprovar o PR em 5 minutos, sem dor.
