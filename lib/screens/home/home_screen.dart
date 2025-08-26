@@ -1,18 +1,85 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:permission_handler/permission_handler.dart';
-import '../../services/sound_service.dart';
-import '../../services/corrida_notification_service.dart';
-import '../../services/motorista_online_service.dart';
-import '../configuracoes/configuracoes_screen.dart';
-import '../historico/historico_screen.dart';
-import '../perfil/perfil_screen.dart';
+import 'dart:async';
+import 'package:vello_motorista/constants/app_colors.dart';
+import 'package:vello_motorista/services/auth_service.dart';
+
+// Banner de boas-vindas (adaptado para motorista)
+class WelcomeBanner extends StatelessWidget {
+  final String userName;
+  final bool isOnline;
+
+  const WelcomeBanner({
+    super.key, 
+    required this.userName,
+    required this.isOnline,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1B3A57), Color(0xFF2A4A6B)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Olá, $userName!',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  isOnline ? 'Você está online e pronto!' : 'Fique online para receber corridas',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isOnline ? const Color(0xFF10B981) : const Color(0xFFFF8C42),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              isOnline ? Icons.radio_button_checked : Icons.radio_button_off,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,404 +88,510 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  final MapController _mapController = MapController();
-  late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
-  late MotoristaOnlineService _onlineService;
-  
-  // Variáveis para localização e nome do motorista
-  Position? _currentPosition;
-  String _motoristaName = 'Motorista'; // Valor padrão
+class _HomeScreenState extends State<HomeScreen> {
+  bool _isOnline = false;
+  LatLng? currentLocation;
+  MapController? _mapController; // Mudança: nullable inicialmente
+  StreamSubscription<Position>? _positionStreamSubscription;
   bool _isLoadingLocation = true;
-  String _locationStatus = 'Detectando localização...';
+  String _locationError = '';
 
-  // Cores Vello
-  static const Color velloOrange = Color(0xFFFF6B35);
-  static const Color velloBlue = Color(0xFF2E3A59);
-  static const Color velloGreen = Color(0xFF10B981);
+  // Cores da identidade visual Vello
+  static const Color velloBlue = Color(0xFF1B3A57);
+  static const Color velloOrange = Color(0xFFFF8C42);
+  static const Color velloLightGray = Color(0xFFF8F9FA);
+  static const Color velloCardBackground = Color(0xFFFFFFFF);
 
   @override
   void initState() {
     super.initState();
-    
-    // Forçar orientação portrait
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-    
-    // Inicializar serviço de status online
-    _onlineService = MotoristaOnlineService.instance;
-    _onlineService.initialize();
-    
-    // Animação de pulso para status online
-    _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-    
-    // Inicializar localização e dados do motorista
-    _initializeData();
-    
-    // Som de boas-vindas ao entrar na home
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      SoundService.playLoginSound();
-      // Inicializar serviço de notificações
-      CorridaNotificationService.instance.initialize(context);
-    });
-  }
-
-  // Função para inicializar localização e dados do motorista
-  Future<void> _initializeData() async {
-    await Future.wait([
-      _getCurrentLocation(),
-      _getMotoristaName(),
-    ]);
-  }
-
-  // Função melhorada para obter localização atual
-  Future<void> _getCurrentLocation() async {
-    try {
-      setState(() {
-        _isLoadingLocation = true;
-        _locationStatus = 'Verificando permissões...';
-      });
-
-      // Verificar se o serviço de localização está habilitado
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        setState(() {
-          _isLoadingLocation = false;
-          _locationStatus = 'Serviço de localização desabilitado';
-        });
-        
-        // Mostrar dialog para habilitar localização
-        _showLocationServiceDialog();
-        return;
-      }
-
-      setState(() {
-        _locationStatus = 'Solicitando permissões...';
-      });
-
-      // Verificar permissões usando permission_handler
-      PermissionStatus permission = await Permission.location.status;
-      
-      if (permission.isDenied) {
-        permission = await Permission.location.request();
-      }
-
-      if (permission.isDenied || permission.isPermanentlyDenied) {
-        setState(() {
-          _isLoadingLocation = false;
-          _locationStatus = 'Permissão de localização negada';
-        });
-        
-        // Mostrar dialog para configurar permissões
-        _showPermissionDialog();
-        return;
-      }
-
-      setState(() {
-        _locationStatus = 'Obtendo localização...';
-      });
-
-      // Obter localização atual com configurações otimizadas
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: Duration(seconds: 10),
-      );
-
-      setState(() {
-        _currentPosition = position;
-        _isLoadingLocation = false;
-        _locationStatus = 'Localização detectada';
-      });
-
-      // Centralizar mapa na localização atual
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mapController.move(
-          LatLng(position.latitude, position.longitude),
-          15.0,
-        );
-      });
-
-      print('Localização obtida: ${position.latitude}, ${position.longitude}');
-
-    } catch (e) {
-      print('Erro ao obter localização: $e');
-      setState(() {
-        _isLoadingLocation = false;
-        _locationStatus = 'Erro ao obter localização';
-      });
-      
-      // Tentar localização com menor precisão
-      _tryLowAccuracyLocation();
-    }
-  }
-
-  // Tentar obter localização com menor precisão
-  Future<void> _tryLowAccuracyLocation() async {
-    try {
-      setState(() {
-        _locationStatus = 'Tentando localização aproximada...';
-      });
-
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low,
-        timeLimit: Duration(seconds: 15),
-      );
-
-      setState(() {
-        _currentPosition = position;
-        _isLoadingLocation = false;
-        _locationStatus = 'Localização aproximada detectada';
-      });
-
-      // Centralizar mapa na localização atual
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mapController.move(
-          LatLng(position.latitude, position.longitude),
-          13.0,
-        );
-      });
-
-    } catch (e) {
-      print('Erro na localização aproximada: $e');
-      setState(() {
-        _isLoadingLocation = false;
-        _locationStatus = 'Não foi possível obter localização';
-      });
-    }
-  }
-
-  // Dialog para habilitar serviço de localização
-  void _showLocationServiceDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.location_off, color: velloOrange),
-            SizedBox(width: 8),
-            Text('Localização Desabilitada'),
-          ],
-        ),
-        content: Text('Para mostrar sua localização no mapa, é necessário habilitar o serviço de localização do dispositivo.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Geolocator.openLocationSettings();
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: velloOrange),
-            child: Text('Configurações', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Dialog para configurar permissões
-  void _showPermissionDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.location_disabled, color: velloOrange),
-            SizedBox(width: 8),
-            Text('Permissão Necessária'),
-          ],
-        ),
-        content: Text('Para mostrar sua localização no mapa, é necessário conceder permissão de localização ao aplicativo.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              openAppSettings();
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: velloOrange),
-            child: Text('Configurações', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Função para obter nome do motorista do Firebase
-  Future<void> _getMotoristaName() async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        DocumentSnapshot doc = await FirebaseFirestore.instance
-            .collection('motoristas')
-            .doc(user.uid)
-            .get();
-        
-        if (doc.exists) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          setState(() {
-            _motoristaName = data['nome'] ?? 'Motorista';
-          });
-        }
-      }
-    } catch (e) {
-      print('Erro ao obter nome do motorista: $e');
-      // Mantém o valor padrão "Motorista"
-    }
+    // Inicializar MapController apenas quando necessário
+    _initializeLocation();
   }
 
   @override
   void dispose() {
-    _pulseController.dispose();
-    // Parar serviço de notificações
-    CorridaNotificationService.instance.dispose();
+    _positionStreamSubscription?.cancel();
     super.dispose();
   }
 
-  void _toggleOnlineStatus() async {
+  Future<void> _initializeLocation() async {
     try {
-      // Usar o serviço de status online
-      await _onlineService.toggleOnlineStatus();
-      
-      // Som personalizado baseado no status
-      if (_onlineService.isOnline) {
-        await SoundService.playOnlineSound();
-        _pulseController.repeat(reverse: true);
-      } else {
-        await SoundService.playOfflineSound();
-        _pulseController.stop();
-        _pulseController.reset();
+      // Verificar se o serviço de localização está habilitado
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          _locationError = 'Serviço de localização desabilitado. Ative o GPS nas configurações.';
+          _isLoadingLocation = false;
+        });
+        return;
       }
-      
-      // Feedback visual
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(
-                _onlineService.isOnline ? Icons.radio_button_checked : Icons.radio_button_off,
-                color: Colors.white,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                _onlineService.isOnline 
-                    ? 'Você está online e pronto para corridas!' 
-                    : 'Você está offline',
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-          backgroundColor: _onlineService.isOnline ? velloGreen : Colors.grey[600],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          duration: const Duration(seconds: 2),
-        ),
+
+      // Verificar permissões
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() {
+            _locationError = 'Permissão de localização negada. Permita o acesso nas configurações.';
+            _isLoadingLocation = false;
+          });
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          _locationError = 'Permissão de localização negada permanentemente. Vá em Configurações > Apps > Vello Motorista > Permissões e ative a localização.';
+          _isLoadingLocation = false;
+        });
+        return;
+      }
+
+      // Obter localização atual
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 15),
       );
-      
+
+      setState(() {
+        currentLocation = LatLng(position.latitude, position.longitude);
+        _isLoadingLocation = false;
+        _locationError = '';
+        // Inicializar MapController apenas quando temos localização
+        _mapController = MapController();
+      });
+
+      // Aguardar um frame antes de mover o mapa
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_mapController != null && currentLocation != null) {
+          _mapController!.move(currentLocation!, 16);
+        }
+      });
+
+      // Iniciar rastreamento de localização em tempo real
+      _startLocationTracking();
+
     } catch (e) {
-      // Mostrar erro se houver problema
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao alterar status: $e'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      );
+      setState(() {
+        _locationError = 'Erro ao obter localização: ${e.toString()}';
+        _isLoadingLocation = false;
+      });
     }
   }
 
-  void _onEarningsCardTap(String period) async {
-    await SoundService.playEarningsSound();
+  void _startLocationTracking() {
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 10, // Atualizar a cada 10 metros
+    );
+
+    _positionStreamSubscription = Geolocator.getPositionStream(
+      locationSettings: locationSettings,
+    ).listen(
+      (Position position) {
+        if (mounted) {
+          setState(() {
+            currentLocation = LatLng(position.latitude, position.longitude);
+          });
+        }
+      },
+      onError: (error) {
+        print('Erro no rastreamento de localização: $error');
+      },
+    );
+  }
+
+  void _centralizarMapa() {
+    if (_mapController != null && currentLocation != null) {
+      _mapController!.move(currentLocation!, 16);
+    }
+  }
+
+  void _toggleOnlineStatus() {
+    setState(() {
+      _isOnline = !_isOnline;
+    });
     
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.attach_money, color: velloOrange),
-            const SizedBox(width: 8),
-            Text('Ganhos - $period'),
-          ],
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _isOnline ? 'Você está online e pronto para receber corridas!' : 'Você está offline',
         ),
-        content: Text('Seus ganhos de $period serão exibidos aqui.'),
+        backgroundColor: _isOnline ? const Color(0xFF10B981) : const Color(0xFF6B7280),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _retryLocation() {
+    setState(() {
+      _isLoadingLocation = true;
+      _locationError = '';
+      currentLocation = null;
+      _mapController = null; // Reset do MapController
+    });
+    _initializeLocation();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TESTE - CONFIRMAR SE CÓDIGO NOVO ESTÁ SENDO EXECUTADO
+    print("🗺️ NOVO CÓDIGO CARREGADO - MAPA ATIVO");
+    
+    return Scaffold(
+      backgroundColor: velloLightGray,
+      
+      appBar: AppBar(
+        backgroundColor: velloOrange,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              SoundService.playNotificationSound();
-            },
-            child: const Text('OK'),
+          // Status badge
+          Container(
+            margin: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: _isOnline ? const Color(0xFF10B981) : const Color(0xFF6B7280),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              _isOnline ? 'ONLINE' : 'OFFLINE',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () => Navigator.pushNamed(context, '/perfil'),
+            tooltip: 'Perfil',
+          ),
+          IconButton(
+            icon: const Icon(Icons.assignment),
+            onPressed: () => Navigator.pushNamed(context, '/historico'),
+            tooltip: 'Histórico',
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.pushNamed(context, '/configuracoes'),
+            tooltip: 'Configurações',
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              // Banner de boas-vindas
+              WelcomeBanner(
+                userName: 'Motorista',
+                isOnline: _isOnline,
+              ),
+              
+              // Cards de ganhos
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Expanded(child: _buildEarningsCard('Hoje', 'R\$ 0,00', Icons.today)),
+                    const SizedBox(width: 8),
+                    Expanded(child: _buildEarningsCard('Semana', 'R\$ 0,00', Icons.date_range)),
+                    const SizedBox(width: 8),
+                    Expanded(child: _buildEarningsCard('Mês', 'R\$ 0,00', Icons.calendar_month)),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Mapa
+              Expanded(
+                child: _buildMapSection(),
+              ),
+              
+              // Botão Online/Offline
+              Container(
+                margin: const EdgeInsets.all(16),
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: _toggleOnlineStatus,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _isOnline ? const Color(0xFFEF4444) : velloOrange,
+                    foregroundColor: Colors.white,
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    shadowColor: _isOnline 
+                        ? const Color(0xFFEF4444).withOpacity(0.3)
+                        : velloOrange.withOpacity(0.3),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          // Botão de centralizar mapa
+          if (currentLocation != null && _mapController != null)
+            Positioned(
+              bottom: 100,
+              right: 20,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: FloatingActionButton(
+                  heroTag: "btnCentralizar",
+                  onPressed: _centralizarMapa,
+                  backgroundColor: velloOrange,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  child: const Icon(Icons.my_location, size: 24),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 
-  void _centerMap() async {
-    await SoundService.playLocationSound();
-    
-    // Se tiver localização atual, centralizar nela
-    if (_currentPosition != null) {
-      _mapController.move(
-        LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-        15.0,
-      );
-    } else {
-      // Senão, tentar obter localização novamente
-      await _getCurrentLocation();
-    }
-  }
-
-  Widget _buildEarningsCard(String title, String value, IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
+  Widget _buildMapSection() {
+    if (_isLoadingLocation) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: velloCardBackground,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(20),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
             ),
           ],
         ),
-        child: Column(
-          children: [
-            Icon(icon, color: velloOrange, size: 20),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
+        child: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: velloOrange,
+                strokeWidth: 3,
               ),
+              SizedBox(height: 16),
+              Text(
+                'Obtendo sua localização...',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: velloBlue,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Certifique-se de que o GPS está ativado',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF6B7280),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_locationError.isNotEmpty) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: velloCardBackground,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(20),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
             ),
-            const SizedBox(height: 2),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: velloBlue,
+          ],
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.location_off,
+                size: 48,
+                color: Colors.red.shade400,
               ),
+              const SizedBox(height: 16),
+              Text(
+                'Erro de Localização',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.red.shade600,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  _locationError,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: velloBlue,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _retryLocation,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Tentar Novamente'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: velloOrange,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Só renderizar o mapa se temos localização E MapController inicializado
+    if (currentLocation == null || _mapController == null) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: velloCardBackground,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(20),
+          ),
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(color: velloOrange),
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+        child: FlutterMap(
+          mapController: _mapController!,
+          options: MapOptions(
+            center: currentLocation!,
+            zoom: 16,
+            minZoom: 10.0,
+            maxZoom: 18.0,
+            interactiveFlags: InteractiveFlag.all,
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.vello.motorista',
+              maxZoom: 18,
+            ),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: currentLocation!,
+                  width: 60,
+                  height: 60,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _isOnline ? const Color(0xFF10B981) : velloOrange,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 4,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.local_taxi,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Círculo indicando área de cobertura
+            CircleLayer(
+              circles: [
+                CircleMarker(
+                  point: currentLocation!,
+                  radius: 100,
+                  useRadiusInMeter: true,
+                  color: (_isOnline ? const Color(0xFF10B981) : velloOrange).withOpacity(0.1),
+                  borderColor: (_isOnline ? const Color(0xFF10B981) : velloOrange).withOpacity(0.3),
+                  borderStrokeWidth: 2,
+                ),
+              ],
             ),
           ],
         ),
@@ -426,352 +599,47 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _onlineService,
-      child: Consumer<MotoristaOnlineService>(
-        builder: (context, onlineService, child) {
-          return Scaffold(
-            backgroundColor: Colors.grey[100],
-            // SafeArea para não sobrepor os botões do Android
-            body: SafeArea(
-              child: Column(
-                children: [
-                  // AppBar customizada
-                  Container(
-                    color: velloOrange,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // Botão de status OFFLINE/ONLINE
-                        Container(
-                          margin: const EdgeInsets.only(right: 8),
-                          child: ElevatedButton(
-                            onPressed: _toggleOnlineStatus,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: onlineService.isOnline ? velloGreen : Colors.grey[600],
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  onlineService.isOnline 
-                                      ? Icons.radio_button_checked 
-                                      : Icons.radio_button_off,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  onlineService.isOnline ? 'ONLINE' : 'OFFLINE',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Ícone Configurações
-                        IconButton(
-                          icon: const Icon(Icons.settings, color: Colors.white, size: 24),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ConfiguracoesScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        // Ícone Histórico
-                        IconButton(
-                          icon: const Icon(Icons.history, color: Colors.white, size: 24),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const HistoricoScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        // Ícone Perfil
-                        IconButton(
-                          icon: const Icon(Icons.person, color: Colors.white, size: 24),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const PerfilScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  // Conteúdo principal
-                  Expanded(
-                    child: Column(
-                      children: [
-                        // Banner "Olá, [Nome do Motorista]!" com status em tempo real
-                        Container(
-                          margin: const EdgeInsets.all(16),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: velloBlue,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Olá, $_motoristaName!',
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      onlineService.isOnline 
-                                          ? 'Você está online para receber corridas' 
-                                          : 'Fique online para receber corridas',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 4),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            _currentPosition != null ? Icons.location_on : Icons.location_searching,
-                                            size: 12,
-                                            color: _currentPosition != null ? velloGreen : Colors.white60,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Text(
-                                              _locationStatus,
-                                              style: TextStyle(
-                                                fontSize: 10,
-                                                color: _currentPosition != null ? velloGreen : Colors.white60,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              AnimatedBuilder(
-                                animation: _pulseAnimation,
-                                builder: (context, child) {
-                                  return Transform.scale(
-                                    scale: onlineService.isOnline ? _pulseAnimation.value : 1.0,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: onlineService.isOnline ? velloGreen : Colors.grey,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Icon(
-                                        onlineService.isOnline 
-                                            ? Icons.radio_button_checked 
-                                            : Icons.radio_button_off,
-                                        color: Colors.white,
-                                        size: 28,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        
-                        // Cards de ganhos
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: _buildEarningsCard('Hoje', 'R\$ 0,00', Icons.today, () => _onEarningsCardTap('Hoje')),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildEarningsCard('Semana', 'R\$ 0,00', Icons.date_range, () => _onEarningsCardTap('Semana')),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildEarningsCard('Mês', 'R\$ 0,00', Icons.calendar_month, () => _onEarningsCardTap('Mês')),
-                              ),
-                            ],
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 16),
-                        
-                        // Mapa com localização em tempo real
-                        Expanded(
-                          child: Container(
-                            margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Stack(
-                                children: [
-                                  FlutterMap(
-                                    mapController: _mapController,
-                                    options: MapOptions(
-                                      initialCenter: _currentPosition != null
-                                          ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                                          : const LatLng(-23.5505, -46.6333),
-                                      initialZoom: _currentPosition != null ? 15.0 : 10.0,
-                                    ),
-                                    children: [
-                                      TileLayer(
-                                        urlTemplate: 'https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=82e209c579e24e2cbb629e5fa679d352',
-                                        userAgentPackageName: 'com.vello.motorista',
-                                      ),
-                                      MarkerLayer(
-                                        markers: [
-                                          if (_currentPosition != null)
-                                            Marker(
-                                              point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                                              width: 60,
-                                              height: 60,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: onlineService.isOnline ? velloGreen : velloOrange,
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(color: Colors.white, width: 4),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: (onlineService.isOnline ? velloGreen : velloOrange).withOpacity(0.3),
-                                                      blurRadius: 10,
-                                                      spreadRadius: 5,
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: const Icon(
-                                                  Icons.directions_car,
-                                                  color: Colors.white,
-                                                  size: 24,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  
-                                  // Botão para centralizar no mapa
-                                  Positioned(
-                                    bottom: 20,
-                                    right: 20,
-                                    child: FloatingActionButton(
-                                      mini: true,
-                                      backgroundColor: velloOrange,
-                                      onPressed: _centerMap,
-                                      child: Icon(
-                                        _currentPosition != null ? Icons.my_location : Icons.location_searching,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ),
-                                  
-                                  // Indicador de carregamento de localização
-                                  if (_isLoadingLocation)
-                                    Positioned(
-                                      top: 20,
-                                      left: 20,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.7),
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            SizedBox(
-                                              width: 16,
-                                              height: 16,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              _locationStatus,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  
-                                  // Botão para tentar localização novamente
-                                  if (!_isLoadingLocation && _currentPosition == null)
-                                    Positioned(
-                                      top: 20,
-                                      left: 20,
-                                      child: ElevatedButton.icon(
-                                        onPressed: _getCurrentLocation,
-                                        icon: Icon(Icons.refresh, size: 16),
-                                        label: Text('Tentar novamente', style: TextStyle(fontSize: 12)),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: velloOrange,
-                                          foregroundColor: Colors.white,
-                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+  Widget _buildEarningsCard(String title, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: velloCardBackground,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: velloOrange,
+            size: 24,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF6B7280),
+              fontWeight: FontWeight.w500,
             ),
-          );
-        },
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: velloBlue,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,12 +1,27 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 /// Serviço de notificações push para Vello Motorista
 class NotificationService {
+      Future<void> showNotification({required int id, required String title, required String body}) async {
+        const androidDetails = AndroidNotificationDetails(
+          'vello_default',
+          'Vello Notificações',
+          channelDescription: 'Alertas do app Vello',
+          importance: Importance.high,
+          priority: Priority.high,
+        );
+        const iosDetails = DarwinNotificationDetails();
+        await _localNotifications.show(id, title, body, const NotificationDetails(android: androidDetails, iOS: iosDetails));
+      }
+
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
@@ -248,12 +263,14 @@ class NotificationService {
   /// Obtém cor da notificação baseado no tipo
   Color _getNotificationColor(String type) {
     switch (type) {
-      case 'new_ride_request':
-        return const Color(0xFFFF8C42); // Laranja Vello
-      case 'payment_update':
-        return const Color(0xFF10B981); // Verde
+      case 'laranja':
+        return const Color(0xFFFF8C42);
+      case 'verde':
+        return const Color(0xFF10B981);
+      case 'azul':
+        return const Color(0xFF1B3A57);
       default:
-        return const Color(0xFF1B3A57); // Azul Vello
+        return Colors.grey;
     }
   }
 
@@ -495,6 +512,7 @@ class NotificationService {
       tz.TZDateTime.from(scheduledDate, tz.local),
       details,
       payload: payload,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
@@ -538,9 +556,42 @@ class NotificationService {
   void dispose() {
     // Limpar recursos se necessário
   }
+
+  /// Agenda notificação
+  Future<void> scheduleNotification(
+    int id,
+    String title,
+    String body,
+    DateTime scheduledDate, {
+    String type = 'laranja',
+  }) async {
+    final color = _getNotificationColor(type);
+
+    const String channelId = 'vello_motorista_channel';
+    const String channelName = 'Vello Motorista';
+    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      channelId,
+      channelName,
+      importance: Importance.max,
+      priority: Priority.high,
+      color: color,
+      icon: '@mipmap/ic_launcher',
+    );
+
+    await _localNotifications.zonedSchedule(
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(scheduledDate, tz.local),
+      NotificationDetails(android: androidDetails),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
+  /// Cancela notificação
+  Future<void> cancelNotification(int id) async {
+    await _localNotifications.cancel(id);
+  }
 }
-
-// Imports necessários para timezone (adicionar ao pubspec.yaml)
-import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter/foundation.dart';
-

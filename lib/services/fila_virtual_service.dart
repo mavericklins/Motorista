@@ -1,4 +1,3 @@
-import 'package:vello_motorista/models/financial_model.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
@@ -6,15 +5,21 @@ import 'package:intl/intl.dart';
 /// Serviço de relatórios financeiros para Vello Motorista
 class FinancialService {
 
-  static Future<FinancialModel?> obterDadosFinanceiros() async {
-    // TODO: mapear para FinancialModel real
-    return null;
+  /// Retorna dados financeiros básicos
+  static Future<Map<String, dynamic>> obterDadosFinanceiros() async {
+    // TODO: ajustar integração real
+    return {
+      'saldo': 0.0,
+      'pendente': 0.0,
+      'disponivel': 0.0,
+    };
   }
 
 
-  static Future<List<TransactionModel>> obterHistoricoTransacoes() async {
-    // TODO: mapear para TransactionModel real
-    return <TransactionModel>[];
+  /// Retorna histórico de transações
+  static Future<List<Map<String, dynamic>>> obterHistoricoTransacoes() async {
+    // TODO: ajustar integração real
+    return [];
   }
 
   static final FinancialService _instance = FinancialService._internal();

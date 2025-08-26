@@ -131,11 +131,12 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                                 ),
                               ],
                             ),
-                            child: Icon(
-                              Icons.local_taxi,
-                              size: 60,
-                              color: velloOrange,
-                            ),
+                            child: Image.asset(
+                              'assets/vello_motorista.png',
+                              width: 120,
+                              height: 120,
+
+                          ),
                           ),
                         );
                       },

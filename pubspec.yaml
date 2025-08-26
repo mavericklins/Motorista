@@ -1,6 +1,8 @@
+
 name: vello_motorista
-description: A new Flutter project.
+description: "Aplicativo Vello para Motoristas"
 publish_to: 'none'
+
 version: 1.0.0+1
 
 environment:
@@ -9,48 +11,95 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
 
-  # Firebase (versões mais recentes)
-  firebase_core: ^4.0.0
-  firebase_auth: ^6.0.1
-  firebase_messaging: ^16.0.0
-  cloud_firestore: ^6.0.0
-  firebase_storage: ^13.0.0
-  firebase_database: ^12.0.0  # ADICIONAR ESTA LINHA
-  url_launcher: ^6.3.0
+  # Firebase
+  firebase_core: ^3.15.1
+  firebase_auth: ^5.6.2
+  cloud_firestore: ^5.6.11
+  firebase_storage: ^12.3.8
+  firebase_messaging: ^15.1.6
+  firebase_database: ^11.1.4
 
-  # Notificações (substituto do awesome_notifications)
-  flutter_local_notifications: ^19.4.0
+  # Localização
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
+  permission_handler: ^11.3.1
 
-  # QR Scanner (substituto do qr_code_scanner)
-  mobile_scanner: ^7.0.1
-
-  # Mapa (NECESSÁRIO para HomeScreen)
-  flutter_map: ^8.2.1
+  # Mapas - Versões compatíveis
+  flutter_map: ^6.1.0
   latlong2: ^0.9.1
-  font_awesome_flutter: ^10.7.0
-  # Audio (NECESSÁRIO para SoundService)
+
+  # HTTP e Networking
+  http: ^1.4.0
+
+  # UI e Navegação
+  provider: ^6.1.5
+  shared_preferences: ^2.3.3
+
+  # Áudio e Sons
   audioplayers: ^6.1.0
 
-  # Outras dependências atualizadas
-  http: ^1.2.2
-  shared_preferences: ^2.3.2
-  geolocator: ^14.0.2
-  permission_handler: ^12.0.1
-  image_picker: ^1.1.2
-  provider: ^6.1.2
+  # Utilitários
+  intl: ^0.20.1
+  image_picker: ^1.0.4
+
+  # Icons e Fonts
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+
+  # Novas dependências para funcionalidades avançadas
+  # Voz e fala
+  speech_to_text: ^7.0.0
+  flutter_tts: ^4.2.0
+  
+  # Câmera e sensores
+  camera: ^0.11.0+2
+  sensors_plus: ^6.0.1
+  
+  # Conectividade e Bluetooth
+  connectivity_plus: ^6.1.0
+  flutter_blue_plus: ^1.35.5
+  
+  # Notificações locais
+  flutter_local_notifications: ^18.0.1
+  
+  # Persistência avançada
+  sqflite: ^2.4.1
+  
+  # Gráficos e charts
+  fl_chart: ^0.70.0
+  
+  # Animações
+  lottie: ^3.3.0
+  
+  # Machine Learning
+  tflite_flutter: ^0.10.4
+  
+  # Widgets avançados
+  flutter_slidable: ^3.1.1
+  
+  # Social e compartilhamento
+  share_plus: ^10.1.2
+  url_launcher: ^6.3.1
+  
+  # Calendário
+  table_calendar: ^3.1.2
+  
+  # QR Code
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^3.5.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
-
+  
+  # Assets de áudio e imagens
   assets:
     - assets/images/
-    # Remova as linhas abaixo se as pastas não existirem:
-    # - assets/documents/
-    # - assets/config/
+    - assets/sounds/
+    - assets/icons/

@@ -1,12 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:vello_motorista/constants/app_colors.dart';
 import 'package:vello_motorista/services/auth_service.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'dart:typed_data';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,18 +16,16 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _celularController = TextEditingController(); // NOVO: Celular
-  final _cpfController = TextEditingController();
-  final _emailController = TextEditingController(); // MANTIDO: Email
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController(); // NOVO: Confirmação de senha
+  final _cpfController = TextEditingController();
   final _modeloController = TextEditingController();
   final _anoController = TextEditingController();
   final _placaController = TextEditingController();
 
   File? _cnh;
   File? _selfie;
-  List<File> _veiculoImages = []; // MODIFICADO: Lista para 6 fotos
+  File? _carro;
 
   final picker = ImagePicker();
 
@@ -40,548 +36,152 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  // NOVA: Função para adicionar foto do veículo
-  Future<void> _pickVehicleImage() async {
-    if (_veiculoImages.length >= 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Máximo de 6 fotos do veículo'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() {
-        _veiculoImages.add(File(picked.path));
-      });
-    }
-  }
-
-  // ========== UPLOAD PARA IMGUR ==========
-  
-  Future<String> _uploadToImgur(File imageFile) async {
-    try {
-      // Ler arquivo como bytes
-      Uint8List imageBytes = await imageFile.readAsBytes();
-      String base64Image = base64Encode(imageBytes);
-
-      // API do Imgur (cliente público - sem necessidade de chave)
-      final response = await http.post(
-        Uri.parse('https://api.imgur.com/3/image'),
-        headers: {
-          'Authorization': 'Client-ID 546c25a59c58ad7', // Cliente público do Imgur
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'image': base64Image,
-          'type': 'base64',
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['data']['link']; // URL da imagem
-      } else {
-        print('Erro no upload: ${response.body}');
-        return '';
-      }
-    } catch (e) {
-      print('Erro no upload para Imgur: $e');
-      return '';
-    }
-  }
-
-  // ========== VALIDAÇÕES RIGOROSAS ==========
-
-  // NOVA: Validação de celular
-  String? _validateCelular(String? value) {
-    if (value == null || value.isEmpty) return 'Celular é obrigatório';
-    
-    String celular = value.replaceAll(RegExp(r'[^0-9]'), '');
-    
-    if (celular.length != 11) return 'Celular deve ter 11 dígitos';
-    
-    if (!celular.startsWith('1') && !celular.startsWith('9')) {
-      return 'Celular deve começar com 1 ou 9 após o DDD';
-    }
-    
-    return null;
+  Future<String> _uploadImage(String uid, File file, String path) async {
+    final ref = FirebaseStorage.instance.ref('motoristas_aguardando/$uid/$path');
+    await ref.putFile(file);
+    return await ref.getDownloadURL();
   }
 
   String? _validateCPF(String? value) {
-    if (value == null || value.isEmpty) return 'CPF é obrigatório';
-    
-    String cpf = value.replaceAll(RegExp(r'[^0-9]'), '');
-    
-    if (cpf.length != 11) return 'CPF deve ter 11 dígitos';
-    
-    if (RegExp(r'^(\d)\1*$').hasMatch(cpf)) return 'CPF inválido';
-    
-    List<int> numbers = cpf.split('').map(int.parse).toList();
-    
-    int sum = 0;
-    for (int i = 0; i < 9; i++) {
-      sum += numbers[i] * (10 - i);
-    }
-    int firstDigit = (sum * 10) % 11;
-    if (firstDigit == 10) firstDigit = 0;
-    
-    if (numbers[9] != firstDigit) return 'CPF inválido';
-    
-    sum = 0;
-    for (int i = 0; i < 10; i++) {
-      sum += numbers[i] * (11 - i);
-    }
-    int secondDigit = (sum * 10) % 11;
-    if (secondDigit == 10) secondDigit = 0;
-    
-    if (numbers[10] != secondDigit) return 'CPF inválido';
-    
-    return null;
+    if (value == null || value.length != 11) return 'CPF inválido';
+    final numbers = value.split('').map(int.parse).toList();
+    int calc(int base) => List.generate(base, (i) => numbers[i] * (base + 1 - i)).reduce((a, b) => a + b) % 11 < 2 ? 0 : 11 - (List.generate(base, (i) => numbers[i] * (base + 1 - i)).reduce((a, b) => a + b) % 11);
+    return numbers[9] == calc(9) && numbers[10] == calc(10) ? null : 'CPF inválido';
   }
 
   String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) return 'Email é obrigatório';
-    
-    final emailRegex = RegExp(
-      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    );
-    
-    if (!emailRegex.hasMatch(value)) {
-      return 'Email inválido';
-    }
-    
-    return null;
+    return value != null && RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,4}\$').hasMatch(value) ? null : 'Email inválido';
   }
 
   String? _validateSenha(String? value) {
-    if (value == null || value.isEmpty) return 'Senha é obrigatória';
-    
-    if (value.length < 8) return 'Mínimo 8 caracteres';
-    
-    if (!RegExp(r'[A-Z]').hasMatch(value)) {
-      return 'Deve conter pelo menos 1 letra maiúscula';
-    }
-    
-    if (!RegExp(r'[a-z]').hasMatch(value)) {
-      return 'Deve conter pelo menos 1 letra minúscula';
-    }
-    
-    if (!RegExp(r'[0-9]').hasMatch(value)) {
-      return 'Deve conter pelo menos 1 número';
-    }
-    
-    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-      return 'Deve conter pelo menos 1 caractere especial (@#\$%&*)';
-    }
-    
+    if (value == null || value.length < 8) return 'Mínimo 8 caracteres';
+    if (!RegExp(r'[A-Z]').hasMatch(value)) return '1 letra maiúscula';
+    if (!RegExp(r'[0-9]').hasMatch(value)) return '1 número';
     return null;
   }
 
-  // NOVA: Validação de confirmação de senha
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Confirmação de senha é obrigatória';
-    
-    if (value != _passwordController.text) {
-      return 'As senhas não coincidem';
-    }
-    
-    return null;
-  }
-
-  // MODIFICADA: Validação de ano a partir de 2015
   String? _validateAno(String? value) {
-    if (value == null || value.isEmpty) return 'Ano é obrigatório';
-    
+    if (value == null) return 'Ano inválido';
     final int? ano = int.tryParse(value);
-    if (ano == null) return 'Ano deve ser um número';
-    
     final int currentYear = DateTime.now().year;
-    
-    if (ano < 2015) return 'Ano deve ser a partir de 2015'; // MODIFICADO
-    if (ano > currentYear) return 'Ano não pode ser maior que $currentYear';
-    
-    return null;
+    return (ano != null && ano >= 1980 && ano <= currentYear) ? null : 'Ano inválido';
   }
 
   String? _validatePlaca(String? value) {
-    if (value == null || value.isEmpty) return 'Placa é obrigatória';
-    
-    String placa = value.toUpperCase().replaceAll('-', '');
-    
-    final placaRegex = RegExp(r'^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$');
-    
-    if (!placaRegex.hasMatch(placa)) {
-      return 'Placa inválida (formato: ABC1234 ou ABC1D23)';
-    }
-    
-    return null;
-  }
-
-  String? _validateRequired(String? value, String field) {
-    if (value == null || value.trim().isEmpty) {
-      return '$field é obrigatório';
-    }
-    return null;
+    return value != null && RegExp(r'^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}\$').hasMatch(value.toUpperCase()) ? null : 'Placa inválida';
   }
 
   Future<void> _register() async {
-    // Validar formulário
-    if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Corrija os erros no formulário'),
-          backgroundColor: Colors.red,
-        ),
+    if (!_formKey.currentState!.validate() || _cnh == null || _selfie == null || _carro == null) return;
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    final success = await authService.createAccount(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+
+    if (!mounted || !success) return;
+
+    final user = authService.currentUser;
+    if (user != null) {
+      final uid = user.uid;
+      final cnhUrl = await _uploadImage(uid, _cnh!, 'cnh.jpg');
+      final selfieUrl = await _uploadImage(uid, _selfie!, 'selfie.jpg');
+      final carroUrl = await _uploadImage(uid, _carro!, 'carro.jpg');
+
+      await authService.salvarMotoristaParaAprovacao(
+        uid: uid,
+        nome: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        cpf: _cpfController.text.trim(),
+        modelo: _modeloController.text.trim(),
+        ano: _anoController.text.trim(),
+        placa: _placaController.text.trim(),
+        cnhUrl: cnhUrl,
+        selfieUrl: selfieUrl,
+        carroUrl: carroUrl,
       );
-      return;
-    }
 
-    // MODIFICADA: Validar imagens (CNH, selfie e 6 fotos do veículo)
-    if (_cnh == null || _selfie == null || _veiculoImages.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Envie todas as fotos obrigatórias (CNH, selfie e 6 fotos do veículo)'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    try {
-      final authService = Provider.of<AuthService>(context, listen: false);
-
-      // Mostrar loading
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 20),
-              Text('Criando conta...'),
-            ],
-          ),
-        ),
-      );
-
-      // Criar conta no Firebase Auth
-      final success = await authService.createAccount(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
-
-      if (!success) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao criar conta: ${authService.errorMessage ?? "Erro desconhecido"}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      // Atualizar loading
-      Navigator.pop(context);
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 20),
-              Text('Enviando fotos...'),
-            ],
-          ),
-        ),
-      );
-
-      final user = authService.currentUser;
-      if (user != null) {
-        final uid = user.uid;
-
-        // Upload das imagens para Imgur
-        String cnhUrl = '';
-        String selfieUrl = '';
-        String carroUrl = ''; // MANTIDO: Uma foto principal do carro
-
-        try {
-          cnhUrl = await _uploadToImgur(_cnh!);
-          selfieUrl = await _uploadToImgur(_selfie!);
-          
-          // Usar a primeira foto do veículo como foto principal
-          if (_veiculoImages.isNotEmpty) {
-            carroUrl = await _uploadToImgur(_veiculoImages[0]);
-          }
-        } catch (e) {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Erro no upload das fotos: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-          return;
-        }
-
-        // Atualizar loading
-        Navigator.pop(context);
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            content: Row(
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(width: 20),
-                Text('Salvando dados...'),
-              ],
-            ),
-          ),
-        );
-
-        // MANTIDO: Usar a função original sem quebrar
-        await authService.salvarMotoristaParaAprovacao(
-          uid: uid,
-          nome: _nameController.text.trim(),
-          email: _emailController.text.trim(),
-          cpf: _cpfController.text.trim(),
-          modelo: _modeloController.text.trim(),
-          ano: _anoController.text.trim(),
-          placa: _placaController.text.trim().toUpperCase(),
-          cnhUrl: cnhUrl,
-          selfieUrl: selfieUrl,
-          carroUrl: carroUrl, // MANTIDO: Usar a função original
-        );
-
-        Navigator.pop(context);
-
-        // Sucesso
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Sucesso!'),
-            content: Text('Cadastro realizado com sucesso!\n\nSeus dados e fotos foram enviados para análise.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro no cadastro: ${e.toString()}'),
-          backgroundColor: Colors.red,
+          title: const Text('Cadastro enviado'),
+          content: const Text('Recebemos seus dados e documentos. A equipe da Vello irá analisá-los e você será notificado por e-mail.'),
+          actions: [TextButton(onPressed: () => Navigator.pushReplacementNamed(context, '/login'), child: const Text('OK'))],
         ),
       );
     }
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      filled: true,
+      fillColor: VelloColors.creme,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Scaffold(
-      backgroundColor: VelloColors.creme,
+      backgroundColor: VelloColors.branco,
       appBar: AppBar(
-        title: Text('Cadastro de Motorista'),
+        title: const Text('Cadastro de Motorista'),
         backgroundColor: VelloColors.laranja,
-        foregroundColor: VelloColors.branco,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ORDEM MODIFICADA CONFORME SOLICITADO:
-              
-              // 1. Nome completo
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Nome completo',
-                  prefixIcon: Icon(Icons.person),
-                ),
-                validator: (value) => _validateRequired(value, 'Nome'),
+              TextFormField(controller: _nameController, decoration: _inputDecoration('Nome completo')),
+              const SizedBox(height: 12),
+              TextFormField(controller: _cpfController, decoration: _inputDecoration('CPF'), keyboardType: TextInputType.number, validator: _validateCPF),
+              const SizedBox(height: 12),
+              TextFormField(controller: _emailController, decoration: _inputDecoration('Email'), validator: _validateEmail),
+              const SizedBox(height: 12),
+              TextFormField(controller: _passwordController, obscureText: true, decoration: _inputDecoration('Senha'), validator: _validateSenha),
+              const SizedBox(height: 12),
+              TextFormField(controller: _modeloController, decoration: _inputDecoration('Modelo do carro')),
+              const SizedBox(height: 12),
+              Row(children: [
+                Expanded(child: TextFormField(controller: _anoController, decoration: _inputDecoration('Ano'), keyboardType: TextInputType.number, validator: _validateAno)),
+                const SizedBox(width: 16),
+                Expanded(child: TextFormField(controller: _placaController, decoration: _inputDecoration('Placa'), validator: _validatePlaca)),
+              ]),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => _pickImage((file) => setState(() => _cnh = file)),
+                style: ElevatedButton.styleFrom(backgroundColor: VelloColors.laranja),
+                child: Text(_cnh == null ? 'Enviar CNH' : 'CNH enviada'),
               ),
-              SizedBox(height: 16),
-
-              // 2. Celular (NOVO)
-              TextFormField(
-                controller: _celularController,
-                decoration: InputDecoration(
-                  labelText: 'Celular',
-                  prefixIcon: Icon(Icons.phone),
-                  helperText: 'Digite com DDD (11 dígitos)',
-                ),
-                keyboardType: TextInputType.phone,
-                validator: _validateCelular,
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => _pickImage((file) => setState(() => _selfie = file)),
+                style: ElevatedButton.styleFrom(backgroundColor: VelloColors.laranja),
+                child: Text(_selfie == null ? 'Enviar selfie com CNH' : 'Selfie enviada'),
               ),
-              SizedBox(height: 16),
-
-              // 3. CPF
-              TextFormField(
-                controller: _cpfController,
-                decoration: InputDecoration(
-                  labelText: 'CPF (somente números)',
-                  prefixIcon: Icon(Icons.credit_card),
-                  helperText: 'Digite apenas os números do CPF',
-                ),
-                keyboardType: TextInputType.number,
-                validator: _validateCPF,
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => _pickImage((file) => setState(() => _carro = file)),
+                style: ElevatedButton.styleFrom(backgroundColor: VelloColors.laranja),
+                child: Text(_carro == null ? 'Enviar foto do carro' : 'Foto do carro enviada'),
               ),
-              SizedBox(height: 16),
-
-              // 4. Email (MANTIDO)
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
-                  helperText: 'exemplo@email.com',
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: authService.isLoading ? null : _register,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: VelloColors.azul,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                keyboardType: TextInputType.emailAddress,
-                validator: _validateEmail,
-              ),
-              SizedBox(height: 16),
-
-              // 5. Senha
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Senha',
-                  prefixIcon: Icon(Icons.lock),
-                  helperText: '8+ chars, maiúscula, minúscula, número, especial',
-                ),
-                obscureText: true,
-                validator: _validateSenha,
-              ),
-              SizedBox(height: 16),
-
-              // 6. Confirmação de senha (NOVO)
-              TextFormField(
-                controller: _confirmPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Confirmação de senha',
-                  prefixIcon: Icon(Icons.lock_outline),
-                  helperText: 'Digite a senha novamente',
-                ),
-                obscureText: true,
-                validator: _validateConfirmPassword,
-              ),
-              SizedBox(height: 16),
-
-              // 7. Modelo do carro
-              TextFormField(
-                controller: _modeloController,
-                decoration: InputDecoration(
-                  labelText: 'Modelo do carro',
-                  prefixIcon: Icon(Icons.directions_car),
-                ),
-                validator: (value) => _validateRequired(value, 'Modelo'),
-              ),
-              SizedBox(height: 16),
-
-              // 8. Ano do carro (MODIFICADO: a partir de 2015)
-              TextFormField(
-                controller: _anoController,
-                decoration: InputDecoration(
-                  labelText: 'Ano (a partir de 2015)',
-                  prefixIcon: Icon(Icons.calendar_today),
-                ),
-                keyboardType: TextInputType.number,
-                validator: _validateAno,
-              ),
-              SizedBox(height: 16),
-
-              // 9. Placa
-              TextFormField(
-                controller: _placaController,
-                decoration: InputDecoration(
-                  labelText: 'Placa',
-                  prefixIcon: Icon(Icons.confirmation_number),
-                  helperText: 'Formato: ABC1234 ou ABC1D23',
-                ),
-                validator: _validatePlaca,
-              ),
-              SizedBox(height: 24),
-
-              // BOTÕES DE IMAGEM MODIFICADOS:
-
-              // Enviar foto CNH (TEXTO MODIFICADO)
-              _buildImageButton(
-                'Enviar foto CNH',
-                _cnh != null,
-                () => _pickImage((file) => setState(() => _cnh = file)),
-              ),
-              SizedBox(height: 12),
-
-              // Enviar selfie com CNH (TEXTO MODIFICADO)
-              _buildImageButton(
-                'Enviar selfie com CNH',
-                _selfie != null,
-                () => _pickImage((file) => setState(() => _selfie = file)),
-              ),
-              SizedBox(height: 12),
-
-              // NOVO: Enviar fotos do veículo (6 fotos)
-              _buildVehicleImagesSection(),
-              SizedBox(height: 32),
-
-              // Botão de cadastro
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _register,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: VelloColors.azul,
-                    foregroundColor: VelloColors.branco,
-                  ),
-                  child: Text(
-                    'Finalizar cadastro',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-
-              // Info sobre Imgur
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info, color: Colors.blue),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Fotos são enviadas para Imgur (gratuito e seguro)',
-                        style: TextStyle(
-                          color: Colors.blue.shade700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                child: authService.isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Finalizar cadastro', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),
@@ -589,101 +189,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
-
-  Widget _buildImageButton(String text, bool uploaded, VoidCallback onTap) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: uploaded ? Colors.green : VelloColors.laranja,
-          foregroundColor: VelloColors.branco,
-        ),
-        child: Text(
-          text,
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
-    );
-  }
-
-  // NOVA: Seção para fotos do veículo
-  Widget _buildVehicleImagesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Botão principal
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: _pickVehicleImage,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _veiculoImages.length >= 6 ? Colors.green : VelloColors.laranja,
-              foregroundColor: VelloColors.branco,
-            ),
-            child: Text(
-              'Enviar fotos do veículo (${_veiculoImages.length}/6)',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-        
-        // Mostrar miniaturas das fotos
-        if (_veiculoImages.isNotEmpty) ...[
-          SizedBox(height: 12),
-          Container(
-            height: 80,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _veiculoImages.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.only(right: 8),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          _veiculoImages[index],
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        top: 2,
-                        right: 2,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _veiculoImages.removeAt(index);
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ],
-    );
-  }
 }
-

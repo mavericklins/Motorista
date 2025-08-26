@@ -8,9 +8,15 @@ import 'firebase_options.dart';
 // Importa as telas e serviços originais do seu app
 import 'screens/auth/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/main_navigation_screen.dart';
 import 'services/auth_service.dart';
 import 'constants/app_colors.dart';
 import 'services/presence_service.dart';
+
+// Adicionando os imports das telas para rotas
+import 'screens/configuracoes/configuracoes_screen.dart';
+import 'screens/perfil/perfil_screen.dart';
+import 'screens/historico/historico_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -143,6 +149,12 @@ class _VelloMotoristaAppState extends State<VelloMotoristaApp>
         // mantém sua tela inicial atual
         home: const LoginScreen(),
         // ou se sua splash gerencia auth: home: const SplashScreen(),
+        routes: {
+          '/home': (context) => const MainNavigationScreen(),
+          '/configuracoes': (context) => ConfiguracoesScreen(),
+          '/perfil': (context) => PerfilScreen(),
+          '/historico': (context) => HistoricoScreen(),
+        },
       ),
     );
   }
