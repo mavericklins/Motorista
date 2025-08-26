@@ -69,3 +69,8 @@ _archive/.replit
 .env
 .env.*
 .replit
+
+# secrets
+.replit
+.env
+.env.*
