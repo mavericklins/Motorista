@@ -201,3 +201,59 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     );
   }
 }
+import 'package:flutter/material.dart';
+import '../../constants/app_colors.dart';
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToLogin();
+  }
+
+  _navigateToLogin() async {
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: VelloColors.laranja,
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.local_taxi,
+              size: 100,
+              color: VelloColors.branco,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Vello Motorista',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: VelloColors.branco,
+              ),
+            ),
+            SizedBox(height: 20),
+            CircularProgressIndicator(
+              color: VelloColors.branco,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

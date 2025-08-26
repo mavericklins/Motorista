@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 
 // Classe que define todas as cores utilizadas no aplicativo Vello Motorista
+import 'package:flutter/material.dart';
+
 class VelloColors {
 
   // ========== CORES PRINCIPAIS DA IDENTIDADE VISUAL VELLO ==========
