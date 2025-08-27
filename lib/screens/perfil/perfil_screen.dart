@@ -11,13 +11,11 @@ class PerfilScreen extends StatefulWidget {
 }
 
 class _PerfilScreenState extends State<PerfilScreen> {
-  // Cores da identidade visual Vello
   static const Color velloBlue = Color(0xFF1B3A57);
   static const Color velloOrange = Color(0xFFFF8C42);
   static const Color velloLightGray = Color(0xFFF8F9FA);
   static const Color velloCardBackground = Color(0xFFFFFFFF);
 
-  // Dados do motorista (simulados)
   String nomeMotorista = 'João Silva';
   String emailMotorista = 'joao.silva@email.com';
   String telefoneMotorista = '(11) 99999-9999';
@@ -26,7 +24,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
   double avaliacaoMedia = 4.8;
   int totalCorridas = 1247;
   String statusMotorista = 'Ativo';
-  String dataRegistro = '15/03/2023';
 
   @override
   Widget build(BuildContext context) {
@@ -52,27 +49,14 @@ class _PerfilScreenState extends State<PerfilScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Card do perfil principal
             _buildPerfilCard(),
-            
             const SizedBox(height: 16),
-            
-            // Card de estatísticas
             _buildEstatisticasCard(),
-            
             const SizedBox(height: 16),
-            
-            // Card de informações do veículo
             _buildVeiculoCard(),
-            
             const SizedBox(height: 16),
-            
-            // Card de configurações rápidas
             _buildConfiguracoesRapidasCard(),
-            
             const SizedBox(height: 16),
-            
-            // Botão de logout
             _buildLogoutButton(),
           ],
         ),
@@ -96,7 +80,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
       ),
       child: Column(
         children: [
-          // Avatar e informações básicas
           Row(
             children: [
               Container(
@@ -147,10 +130,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
               ),
             ],
           ),
-          
           const SizedBox(height: 20),
-          
-          // Status e avaliação
           Row(
             children: [
               Expanded(
@@ -258,56 +238,37 @@ class _PerfilScreenState extends State<PerfilScreen> {
           Row(
             children: [
               Expanded(
-                child: _buildStatItem(
-                  Icons.directions_car,
-                  'Total de Corridas',
-                  totalCorridas.toString(),
-                  velloOrange,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildStatItem(
-                  Icons.calendar_today,
-                  'Membro desde',
-                  dataRegistro,
-                  const Color(0xFF3B82F6),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: velloOrange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.directions_car, color: velloOrange, size: 28),
+                      const SizedBox(height: 8),
+                      Text(
+                        totalCorridas.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: velloOrange,
+                        ),
+                      ),
+                      const Text(
+                        'Total de Corridas',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF6B7280),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(IconData icon, String label, String value, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF6B7280),
-            ),
           ),
         ],
       ),
@@ -521,22 +482,15 @@ class _PerfilScreenState extends State<PerfilScreen> {
     );
   }
 
-  // Funções de ação
   void _editarPerfil() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Abrindo edição de perfil...'),
-        duration: Duration(seconds: 2),
-      ),
+      const SnackBar(content: Text('Abrindo edição de perfil...')),
     );
   }
 
   void _editarVeiculo() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Abrindo edição de veículo...'),
-        duration: Duration(seconds: 2),
-      ),
+      const SnackBar(content: Text('Abrindo edição de veículo...')),
     );
   }
 
@@ -576,12 +530,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Saindo da conta...'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red.shade600,
@@ -592,62 +541,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
           ],
         );
       },
-    );
-  }
-}
-
-import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
-
-class PerfilScreen extends StatelessWidget {
-  const PerfilScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text(
-          'Meu Perfil',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        backgroundColor: VelloColors.laranja,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: VelloColors.laranja,
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Motorista Vello',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: VelloColors.azul,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Configure seus dados pessoais',
-              style: TextStyle(
-                fontSize: 16,
-                color: VelloColors.cinza,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class HistoricoScreen extends StatefulWidget {
@@ -73,34 +74,6 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
       'avaliacao': 5.0,
       'formaPagamento': 'PIX',
     },
-    {
-      'id': '004',
-      'data': '21/01/2025',
-      'hora': '16:20',
-      'origem': 'Hospital São Lucas',
-      'destino': 'Farmácia Central',
-      'distancia': '3.5 km',
-      'tempo': '12 min',
-      'valor': 12.00,
-      'status': 'Cancelada',
-      'passageiro': 'Carlos Oliveira',
-      'avaliacao': 0.0,
-      'formaPagamento': 'Cartão',
-    },
-    {
-      'id': '005',
-      'data': '20/01/2025',
-      'hora': '08:30',
-      'origem': 'Estação de Metrô',
-      'destino': 'Universidade Federal',
-      'distancia': '15.8 km',
-      'tempo': '28 min',
-      'valor': 32.40,
-      'status': 'Concluída',
-      'passageiro': 'Beatriz Lima',
-      'avaliacao': 4.9,
-      'formaPagamento': 'Cartão',
-    },
   ];
 
   @override
@@ -136,10 +109,7 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
       ),
       body: Column(
         children: [
-          // Card de resumo
           _buildResumoCard(),
-          
-          // Lista de corridas
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -251,14 +221,6 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Suas corridas aparecerão aqui',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
-              ),
-            ),
           ],
         ),
       );
@@ -275,23 +237,6 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
   }
 
   Widget _buildCorridaCard(Map<String, dynamic> corrida) {
-    Color statusColor;
-    IconData statusIcon;
-    
-    switch (corrida['status']) {
-      case 'Concluída':
-        statusColor = const Color(0xFF10B981);
-        statusIcon = Icons.check_circle;
-        break;
-      case 'Cancelada':
-        statusColor = Colors.red.shade600;
-        statusIcon = Icons.cancel;
-        break;
-      default:
-        statusColor = Colors.orange.shade600;
-        statusIcon = Icons.schedule;
-    }
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -312,47 +257,16 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // Cabeçalho da corrida
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: statusColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          statusIcon,
-                          color: statusColor,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${corrida['data']} - ${corrida['hora']}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: velloBlue,
-                            ),
-                          ),
-                          Text(
-                            corrida['status'],
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: statusColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  Text(
+                    '${corrida['data']} - ${corrida['hora']}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: velloBlue,
+                    ),
                   ),
                   Text(
                     'R\$ ${corrida['valor'].toStringAsFixed(2)}',
@@ -364,80 +278,20 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
                   ),
                 ],
               ),
-              
-              const SizedBox(height: 16),
-              
-              // Rota da corrida
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  Column(
-                    children: [
-                      Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF10B981),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                      Container(
-                        width: 2,
-                        height: 30,
-                        color: Colors.grey.shade300,
-                      ),
-                      Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade600,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          corrida['origem'],
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: velloBlue,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          corrida['destino'],
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: velloBlue,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                    child: Text(
+                      '${corrida['origem']} → ${corrida['destino']}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Informações adicionais
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildInfoChip(Icons.straighten, corrida['distancia']),
-                  _buildInfoChip(Icons.schedule, corrida['tempo']),
-                  if (corrida['avaliacao'] > 0)
-                    _buildInfoChip(Icons.star, corrida['avaliacao'].toString()),
-                  _buildInfoChip(Icons.payment, corrida['formaPagamento']),
                 ],
               ),
             ],
@@ -447,93 +301,20 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: velloLightGray,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: const Color(0xFF6B7280)),
-          const SizedBox(width: 4),
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF6B7280),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   List<Map<String, dynamic>> _filtrarCorridasHoje() {
-    final hoje = DateTime.now();
-    return corridas.where((corrida) {
-      // Simulação: considerando que todas as corridas de hoje têm data '22/01/2025'
-      return corrida['data'] == '22/01/2025';
-    }).toList();
+    return corridas.where((corrida) => corrida['data'] == '22/01/2025').toList();
   }
 
   List<Map<String, dynamic>> _filtrarCorridasSemana() {
-    // Simulação: considerando corridas dos últimos 7 dias
     return corridas.where((corrida) {
       final dataCorrida = corrida['data'];
-      return ['22/01/2025', '21/01/2025', '20/01/2025'].contains(dataCorrida);
+      return ['22/01/2025', '21/01/2025'].contains(dataCorrida);
     }).toList();
   }
 
   void _abrirFiltros() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Filtrar Corridas',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: velloBlue,
-                ),
-              ),
-              const SizedBox(height: 20),
-              _buildFiltroOption('Todos', Icons.list),
-              _buildFiltroOption('Concluídas', Icons.check_circle),
-              _buildFiltroOption('Canceladas', Icons.cancel),
-              _buildFiltroOption('Maior Valor', Icons.trending_up),
-              const SizedBox(height: 20),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildFiltroOption(String titulo, IconData icon) {
-    return ListTile(
-      leading: Icon(icon, color: velloOrange),
-      title: Text(titulo),
-      onTap: () {
-        setState(() {
-          filtroSelecionado = titulo;
-        });
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Filtro aplicado: $titulo')),
-        );
-      },
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Filtros em desenvolvimento')),
     );
   }
 
@@ -543,24 +324,15 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
       builder: (context) {
         return AlertDialog(
           title: Text('Corrida #${corrida['id']}'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDetalheItem('Passageiro', corrida['passageiro']),
-                _buildDetalheItem('Data/Hora', '${corrida['data']} às ${corrida['hora']}'),
-                _buildDetalheItem('Origem', corrida['origem']),
-                _buildDetalheItem('Destino', corrida['destino']),
-                _buildDetalheItem('Distância', corrida['distancia']),
-                _buildDetalheItem('Tempo', corrida['tempo']),
-                _buildDetalheItem('Valor', 'R\$ ${corrida['valor'].toStringAsFixed(2)}'),
-                _buildDetalheItem('Pagamento', corrida['formaPagamento']),
-                _buildDetalheItem('Status', corrida['status']),
-                if (corrida['avaliacao'] > 0)
-                  _buildDetalheItem('Avaliação', '${corrida['avaliacao']} ⭐'),
-              ],
-            ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Passageiro: ${corrida['passageiro']}'),
+              Text('Origem: ${corrida['origem']}'),
+              Text('Destino: ${corrida['destino']}'),
+              Text('Valor: R\$ ${corrida['valor'].toStringAsFixed(2)}'),
+            ],
           ),
           actions: [
             TextButton(
@@ -570,87 +342,6 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
           ],
         );
       },
-    );
-  }
-
-  Widget _buildDetalheItem(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              '$label:',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: velloBlue,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: Color(0xFF6B7280),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
-
-class HistoricoScreen extends StatelessWidget {
-  const HistoricoScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text(
-          'Histórico de Corridas',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        backgroundColor: VelloColors.laranja,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.history,
-              size: 64,
-              color: VelloColors.laranja,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Histórico de Corridas',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: VelloColors.azul,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Suas corridas aparecerão aqui',
-              style: TextStyle(
-                fontSize: 16,
-                color: VelloColors.cinza,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
