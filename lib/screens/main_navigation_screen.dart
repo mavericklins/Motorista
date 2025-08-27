@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'home/home_screen.dart';
 import 'ganhos/meus_creditos_screen.dart';
 import 'carteira/carteira_digital_screen.dart';
@@ -21,7 +20,7 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
-  
+
   // Cores Vello
   static const Color velloOrange = Color(0xFFFF6B35);
   static const Color velloBlue = Color(0xFF2E3A59);
@@ -212,10 +211,7 @@ class MaisTabScreen extends StatelessWidget {
                 title: 'SOS Emergência',
                 subtitle: 'Sistema de emergência e segurança',
                 color: Colors.red,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SOSScreen()),
-                ),
+                onTap: () => Navigator.pushNamed(context, '/sos'),
               ),
             ],
           ),
@@ -234,10 +230,7 @@ class MaisTabScreen extends StatelessWidget {
                 title: 'Conquistas',
                 subtitle: 'Badges, ranking e desafios',
                 color: Colors.amber,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ConquistasScreen()),
-                ),
+                onTap: () => Navigator.pushNamed(context, '/conquistas'),
               ),
             ],
           ),
@@ -256,10 +249,7 @@ class MaisTabScreen extends StatelessWidget {
                 title: 'Configurações',
                 subtitle: 'Conta, veículo e preferências',
                 color: velloBlue,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ConfiguracoesScreen()),
-                ),
+                onTap: () => Navigator.pushNamed(context, '/configuracoes'),
                 isLast: true,
               ),
             ],
@@ -321,7 +311,7 @@ class MaisTabScreen extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Itens da seção
           ...children,
         ],
@@ -384,55 +374,6 @@ class MaisTabScreen extends StatelessWidget {
           ),
         if (isLast) const SizedBox(height: 12),
       ],
-    );
-  }
-}
-import 'package:flutter/material.dart';
-import 'home/home_screen.dart';
-import 'historico/historico_screen.dart';
-import 'perfil/perfil_screen.dart';
-import '../constants/app_colors.dart';
-
-class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({super.key});
-
-  @override
-  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
-}
-
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  int _currentIndex = 0;
-
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const HistoricoScreen(),
-    const PerfilScreen(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        selectedItemColor: VelloColors.laranja,
-        unselectedItemColor: VelloColors.cinza,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'Histórico',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-      ),
     );
   }
 }

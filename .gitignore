@@ -52,6 +52,21 @@ fastlane/screenshots
 .svn/
 migrate_working_dir/
 
+# Flutter SDK local
+/flutter/
+
+# Build outputs
+/build/
+/web-build/
+
+# Cache e temp
+.ccls-cache/
+_archive/
+frontend/
+backend/
+functions/
+tests/
+
 # Flutter SDK (não incluir no repositório)
 flutter/
 

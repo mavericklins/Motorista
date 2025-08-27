@@ -596,3 +596,58 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 }
 
+import 'package:flutter/material.dart';
+import '../../constants/app_colors.dart';
+
+class PerfilScreen extends StatelessWidget {
+  const PerfilScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text(
+          'Meu Perfil',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: VelloColors.laranja,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 50,
+              backgroundColor: VelloColors.laranja,
+              child: Icon(
+                Icons.person,
+                size: 50,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Motorista Vello',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: VelloColors.azul,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Configure seus dados pessoais',
+              style: TextStyle(
+                fontSize: 16,
+                color: VelloColors.cinza,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -603,3 +603,54 @@ class _HistoricoScreenState extends State<HistoricoScreen> with TickerProviderSt
   }
 }
 
+import 'package:flutter/material.dart';
+import '../../constants/app_colors.dart';
+
+class HistoricoScreen extends StatelessWidget {
+  const HistoricoScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text(
+          'Histórico de Corridas',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: VelloColors.laranja,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.history,
+              size: 64,
+              color: VelloColors.laranja,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Histórico de Corridas',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: VelloColors.azul,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Suas corridas aparecerão aqui',
+              style: TextStyle(
+                fontSize: 16,
+                color: VelloColors.cinza,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
