@@ -37,7 +37,12 @@ void main() {
       );
     }
 
-    await tester.pumpWidget(nestedTickerModes(outerEnabled: false, innerEnabled: true));
+    await tester.pumpWidget(
+      nestedTickerModes(
+        outerEnabled: false,
+        innerEnabled: true,
+      ),
+    );
 
     expect(outerTickCount, 0);
     expect(innerTickCount, 0);
@@ -48,7 +53,12 @@ void main() {
     expect(outerTickCount, 0);
     expect(innerTickCount, 0);
 
-    await tester.pumpWidget(nestedTickerModes(outerEnabled: true, innerEnabled: false));
+    await tester.pumpWidget(
+      nestedTickerModes(
+        outerEnabled: true,
+        innerEnabled: false,
+      ),
+    );
     outerTickCount = 0;
     innerTickCount = 0;
     await tester.pump(const Duration(seconds: 1));
@@ -58,7 +68,12 @@ void main() {
     expect(outerTickCount, 4);
     expect(innerTickCount, 0);
 
-    await tester.pumpWidget(nestedTickerModes(outerEnabled: true, innerEnabled: true));
+    await tester.pumpWidget(
+      nestedTickerModes(
+        outerEnabled: true,
+        innerEnabled: true,
+      ),
+    );
     outerTickCount = 0;
     innerTickCount = 0;
     await tester.pump(const Duration(seconds: 1));
@@ -68,7 +83,12 @@ void main() {
     expect(outerTickCount, 4);
     expect(innerTickCount, 4);
 
-    await tester.pumpWidget(nestedTickerModes(outerEnabled: false, innerEnabled: false));
+    await tester.pumpWidget(
+      nestedTickerModes(
+        outerEnabled: false,
+        innerEnabled: false,
+      ),
+    );
     outerTickCount = 0;
     innerTickCount = 0;
     await tester.pump(const Duration(seconds: 1));
@@ -79,13 +99,13 @@ void main() {
     expect(innerTickCount, 0);
   });
 
-  testWidgets('Changing TickerMode does not rebuild widgets with SingleTickerProviderStateMixin', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Changing TickerMode does not rebuild widgets with SingleTickerProviderStateMixin', (WidgetTester tester) async {
     Widget widgetUnderTest({required bool tickerEnabled}) {
-      return TickerMode(enabled: tickerEnabled, child: const _TickingWidget());
+      return TickerMode(
+        enabled: tickerEnabled,
+        child: const _TickingWidget(),
+      );
     }
-
     _TickingWidgetState state() => tester.state<_TickingWidgetState>(find.byType(_TickingWidget));
 
     await tester.pumpWidget(widgetUnderTest(tickerEnabled: true));
@@ -101,15 +121,14 @@ void main() {
     expect(state().buildCount, 1);
   });
 
-  testWidgets('Changing TickerMode does not rebuild widgets with TickerProviderStateMixin', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Changing TickerMode does not rebuild widgets with TickerProviderStateMixin', (WidgetTester tester) async {
     Widget widgetUnderTest({required bool tickerEnabled}) {
-      return TickerMode(enabled: tickerEnabled, child: const _MultiTickingWidget());
+      return TickerMode(
+        enabled: tickerEnabled,
+        child: const _MultiTickingWidget(),
+      );
     }
-
-    _MultiTickingWidgetState state() =>
-        tester.state<_MultiTickingWidgetState>(find.byType(_MultiTickingWidget));
+    _MultiTickingWidgetState state() => tester.state<_MultiTickingWidgetState>(find.byType(_MultiTickingWidget));
 
     await tester.pumpWidget(widgetUnderTest(tickerEnabled: true));
     expect(state().ticker.isTicking, isTrue);
@@ -124,36 +143,28 @@ void main() {
     expect(state().buildCount, 1);
   });
 
-  testWidgets(
-    'Moving widgets with SingleTickerProviderStateMixin to a new TickerMode ancestor works',
-    (WidgetTester tester) async {
-      final GlobalKey tickingWidgetKey = GlobalKey();
-      Widget widgetUnderTest({required LocalKey tickerModeKey, required bool tickerEnabled}) {
-        return TickerMode(
-          key: tickerModeKey,
-          enabled: tickerEnabled,
-          child: _TickingWidget(key: tickingWidgetKey),
-        );
-      }
-
-      // Using different local keys to simulate changing TickerMode ancestors.
-      await tester.pumpWidget(widgetUnderTest(tickerEnabled: true, tickerModeKey: UniqueKey()));
-      final State tickerModeState = tester.state(find.byType(TickerMode));
-      final _TickingWidgetState tickingState = tester.state<_TickingWidgetState>(
-        find.byType(_TickingWidget),
+  testWidgets('Moving widgets with SingleTickerProviderStateMixin to a new TickerMode ancestor works', (WidgetTester tester) async {
+    final GlobalKey tickingWidgetKey = GlobalKey();
+    Widget widgetUnderTest({required LocalKey tickerModeKey, required bool tickerEnabled}) {
+      return TickerMode(
+        key: tickerModeKey,
+        enabled: tickerEnabled,
+        child: _TickingWidget(key: tickingWidgetKey),
       );
-      expect(tickingState.ticker.isTicking, isTrue);
+    }
+    // Using different local keys to simulate changing TickerMode ancestors.
+    await tester.pumpWidget(widgetUnderTest(tickerEnabled: true, tickerModeKey: UniqueKey()));
+    final State tickerModeState = tester.state(find.byType(TickerMode));
+    final _TickingWidgetState tickingState = tester.state<_TickingWidgetState>(find.byType(_TickingWidget));
+    expect(tickingState.ticker.isTicking, isTrue);
 
-      await tester.pumpWidget(widgetUnderTest(tickerEnabled: false, tickerModeKey: UniqueKey()));
-      expect(tester.state(find.byType(TickerMode)), isNot(same(tickerModeState)));
-      expect(tickingState, same(tester.state<_TickingWidgetState>(find.byType(_TickingWidget))));
-      expect(tickingState.ticker.isTicking, isFalse);
-    },
-  );
+    await tester.pumpWidget(widgetUnderTest(tickerEnabled: false, tickerModeKey: UniqueKey()));
+    expect(tester.state(find.byType(TickerMode)), isNot(same(tickerModeState)));
+    expect(tickingState, same(tester.state<_TickingWidgetState>(find.byType(_TickingWidget))));
+    expect(tickingState.ticker.isTicking, isFalse);
+  });
 
-  testWidgets('Moving widgets with TickerProviderStateMixin to a new TickerMode ancestor works', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Moving widgets with TickerProviderStateMixin to a new TickerMode ancestor works', (WidgetTester tester) async {
     final GlobalKey tickingWidgetKey = GlobalKey();
     Widget widgetUnderTest({required LocalKey tickerModeKey, required bool tickerEnabled}) {
       return TickerMode(
@@ -162,41 +173,34 @@ void main() {
         child: _MultiTickingWidget(key: tickingWidgetKey),
       );
     }
-
     // Using different local keys to simulate changing TickerMode ancestors.
     await tester.pumpWidget(widgetUnderTest(tickerEnabled: true, tickerModeKey: UniqueKey()));
     final State tickerModeState = tester.state(find.byType(TickerMode));
-    final _MultiTickingWidgetState tickingState = tester.state<_MultiTickingWidgetState>(
-      find.byType(_MultiTickingWidget),
-    );
+    final _MultiTickingWidgetState tickingState = tester.state<_MultiTickingWidgetState>(find.byType(_MultiTickingWidget));
     expect(tickingState.ticker.isTicking, isTrue);
 
     await tester.pumpWidget(widgetUnderTest(tickerEnabled: false, tickerModeKey: UniqueKey()));
     expect(tester.state(find.byType(TickerMode)), isNot(same(tickerModeState)));
-    expect(
-      tickingState,
-      same(tester.state<_MultiTickingWidgetState>(find.byType(_MultiTickingWidget))),
-    );
+    expect(tickingState, same(tester.state<_MultiTickingWidgetState>(find.byType(_MultiTickingWidget))));
     expect(tickingState.ticker.isTicking, isFalse);
   });
 
-  testWidgets('Ticking widgets in old route do not rebuild when new route is pushed', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        routes: <String, WidgetBuilder>{'/foo': (BuildContext context) => const Text('New route')},
-        home: const Row(
-          children: <Widget>[_TickingWidget(), _MultiTickingWidget(), Text('Old route')],
-        ),
+  testWidgets('Ticking widgets in old route do not rebuild when new route is pushed', (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      routes: <String, WidgetBuilder>{
+        '/foo' : (BuildContext context) => const Text('New route'),
+      },
+      home: const Row(
+        children: <Widget>[
+          _TickingWidget(),
+          _MultiTickingWidget(),
+          Text('Old route'),
+        ],
       ),
-    );
+    ));
 
-    _MultiTickingWidgetState multiTickingState() => tester.state<_MultiTickingWidgetState>(
-      find.byType(_MultiTickingWidget, skipOffstage: false),
-    );
-    _TickingWidgetState tickingState() =>
-        tester.state<_TickingWidgetState>(find.byType(_TickingWidget, skipOffstage: false));
+    _MultiTickingWidgetState multiTickingState() => tester.state<_MultiTickingWidgetState>(find.byType(_MultiTickingWidget, skipOffstage: false));
+    _TickingWidgetState tickingState() => tester.state<_TickingWidgetState>(find.byType(_TickingWidget, skipOffstage: false));
 
     expect(find.text('Old route'), findsOneWidget);
     expect(find.text('New route'), findsNothing);
@@ -266,7 +270,8 @@ class _MultiTickingWidgetState extends State<_MultiTickingWidget> with TickerPro
   @override
   void initState() {
     super.initState();
-    ticker = createTicker((Duration _) {})..start();
+    ticker = createTicker((Duration _) {
+    })..start();
   }
 
   @override

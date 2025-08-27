@@ -18,7 +18,9 @@ class AppLifecycleListenerExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Scaffold(body: ApplicationExitControl()));
+    return const MaterialApp(
+      home: Scaffold(body: ApplicationExitControl()),
+    );
   }
 }
 
@@ -37,7 +39,9 @@ class _ApplicationExitControlState extends State<ApplicationExitControl> {
   @override
   void initState() {
     super.initState();
-    _listener = AppLifecycleListener(onExitRequested: _handleExitRequest);
+    _listener = AppLifecycleListener(
+      onExitRequested: _handleExitRequest,
+    );
   }
 
   @override
@@ -90,7 +94,10 @@ class _ApplicationExitControlState extends State<ApplicationExitControl> {
               onChanged: _radioChanged,
             ),
             const SizedBox(height: 30),
-            ElevatedButton(onPressed: _quit, child: const Text('Quit')),
+            ElevatedButton(
+              onPressed: _quit,
+              child: const Text('Quit'),
+            ),
             const SizedBox(height: 30),
             Text('Exit Request: $_lastExitResponse'),
           ],

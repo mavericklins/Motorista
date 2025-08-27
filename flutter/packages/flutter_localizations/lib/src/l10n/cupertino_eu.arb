@@ -27,7 +27,5 @@
   "lookUpButtonLabel": "Bilatu",
   "searchWebButtonLabel": "Bilatu sarean",
   "shareButtonLabel": "Partekatu...",
-  "clearButtonLabel": "Garbitu",
-  "cancelButtonLabel": "Utzi",
-  "backButtonLabel": "Atzera"
+  "clearButtonLabel": "Clear"
 }

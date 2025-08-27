@@ -10,9 +10,12 @@ import 'package:flutter_devicelab/framework/task_result.dart';
 import 'package:flutter_devicelab/framework/utils.dart';
 import 'package:path/path.dart' as path;
 
+final String platformLineSep = Platform.isWindows ? '\r\n': '\n';
+
 /// Tests that AARs can be built on module projects.
 Future<void> main() async {
   await task(() async {
+
     section('Find Java');
 
     final String? javaHome = await findJavaHome();
@@ -38,14 +41,7 @@ Future<void> main() async {
       await inDirectory(tempDir, () async {
         await flutter(
           'create',
-          options: <String>[
-            '--org',
-            'io.flutter.devicelab',
-            '--template',
-            'plugin',
-            '--platforms=android',
-            'plugin_with_android',
-          ],
+          options: <String>['--org', 'io.flutter.devicelab', '--template', 'plugin', '--platforms=android', 'plugin_with_android'],
         );
       });
 
@@ -54,14 +50,7 @@ Future<void> main() async {
       await inDirectory(tempDir, () async {
         await flutter(
           'create',
-          options: <String>[
-            '--org',
-            'io.flutter.devicelab',
-            '--template',
-            'plugin',
-            '--platforms=ios',
-            'plugin_without_android',
-          ],
+          options: <String>['--org', 'io.flutter.devicelab', '--template', 'plugin', '--platforms=ios', 'plugin_without_android'],
         );
       });
 
@@ -70,43 +59,54 @@ Future<void> main() async {
       final File modulePubspec = File(path.join(projectDir.path, 'pubspec.yaml'));
       String content = modulePubspec.readAsStringSync();
       content = content.replaceFirst(
-        '${Platform.lineTerminator}dependencies:${Platform.lineTerminator}',
-        '${Platform.lineTerminator}dependencies:${Platform.lineTerminator}'
-            '  plugin_with_android:${Platform.lineTerminator}'
-            '    path: ../plugin_with_android${Platform.lineTerminator}'
-            '  plugin_without_android:${Platform.lineTerminator}'
-            '    path: ../plugin_without_android${Platform.lineTerminator}',
+        '${platformLineSep}dependencies:$platformLineSep',
+        '${platformLineSep}dependencies:$platformLineSep'
+          '  plugin_with_android:$platformLineSep'
+          '    path: ../plugin_with_android$platformLineSep'
+          '  plugin_without_android:$platformLineSep'
+          '    path: ../plugin_without_android$platformLineSep'
+          '  webcrypto: 0.5.2$platformLineSep', // Plugin that uses NDK.
       );
       modulePubspec.writeAsStringSync(content, flush: true);
 
       section('Run packages get in module project');
 
       await inDirectory(projectDir, () async {
-        await flutter('packages', options: <String>['get']);
+        await flutter(
+          'packages',
+          options: <String>['get'],
+        );
       });
 
       section('Build release AAR');
 
       await inDirectory(projectDir, () async {
-        await flutter('build', options: <String>['aar']);
+        await flutter(
+          'build',
+          options: <String>['aar', '--verbose'],
+        );
       });
 
-      final String repoPath = path.join(projectDir.path, 'build', 'host', 'outputs', 'repo');
+      final String repoPath = path.join(
+        projectDir.path,
+        'build',
+        'host',
+        'outputs',
+        'repo',
+      );
 
       section('Check release Maven artifacts');
 
-      checkFileExists(
-        path.join(
-          repoPath,
-          'io',
-          'flutter',
-          'devicelab',
-          'hello',
-          'flutter_release',
-          '1.0',
-          'flutter_release-1.0.aar',
-        ),
-      );
+      checkFileExists(path.join(
+        repoPath,
+        'io',
+        'flutter',
+        'devicelab',
+        'hello',
+        'flutter_release',
+        '1.0',
+        'flutter_release-1.0.aar',
+      ));
 
       final String releasePom = path.join(
         repoPath,
@@ -121,31 +121,27 @@ Future<void> main() async {
 
       checkFileExists(releasePom);
 
-      checkFileExists(
-        path.join(
-          repoPath,
-          'io',
-          'flutter',
-          'devicelab',
-          'plugin_with_android',
-          'plugin_with_android_release',
-          '1.0',
-          'plugin_with_android_release-1.0.aar',
-        ),
-      );
+      checkFileExists(path.join(
+        repoPath,
+        'io',
+        'flutter',
+        'devicelab',
+        'plugin_with_android',
+        'plugin_with_android_release',
+        '1.0',
+        'plugin_with_android_release-1.0.aar',
+      ));
 
-      checkFileExists(
-        path.join(
-          repoPath,
-          'io',
-          'flutter',
-          'devicelab',
-          'plugin_with_android',
-          'plugin_with_android_release',
-          '1.0',
-          'plugin_with_android_release-1.0.pom',
-        ),
-      );
+      checkFileExists(path.join(
+        repoPath,
+        'io',
+        'flutter',
+        'devicelab',
+        'plugin_with_android',
+        'plugin_with_android_release',
+        '1.0',
+        'plugin_with_android_release-1.0.pom',
+      ));
 
       section('Check AOT blobs in release POM');
 
@@ -177,24 +173,22 @@ Future<void> main() async {
             'flutter_release',
             '1.0',
             'flutter_release-1.0.aar',
-          ),
-        ),
+          )
+        )
       );
 
       section('Check debug Maven artifacts');
 
-      checkFileExists(
-        path.join(
-          repoPath,
-          'io',
-          'flutter',
-          'devicelab',
-          'hello',
-          'flutter_debug',
-          '1.0',
-          'flutter_debug-1.0.aar',
-        ),
-      );
+      checkFileExists(path.join(
+        repoPath,
+        'io',
+        'flutter',
+        'devicelab',
+        'hello',
+        'flutter_debug',
+        '1.0',
+        'flutter_debug-1.0.aar',
+      ));
 
       final String debugPom = path.join(
         repoPath,
@@ -209,36 +203,33 @@ Future<void> main() async {
 
       checkFileExists(debugPom);
 
-      checkFileExists(
-        path.join(
-          repoPath,
-          'io',
-          'flutter',
-          'devicelab',
-          'plugin_with_android',
-          'plugin_with_android_debug',
-          '1.0',
-          'plugin_with_android_debug-1.0.aar',
-        ),
-      );
+      checkFileExists(path.join(
+        repoPath,
+        'io',
+        'flutter',
+        'devicelab',
+        'plugin_with_android',
+        'plugin_with_android_debug',
+        '1.0',
+        'plugin_with_android_debug-1.0.aar',
+      ));
 
-      checkFileExists(
-        path.join(
-          repoPath,
-          'io',
-          'flutter',
-          'devicelab',
-          'plugin_with_android',
-          'plugin_with_android_debug',
-          '1.0',
-          'plugin_with_android_debug-1.0.pom',
-        ),
-      );
+      checkFileExists(path.join(
+        repoPath,
+        'io',
+        'flutter',
+        'devicelab',
+        'plugin_with_android',
+        'plugin_with_android_debug',
+        '1.0',
+        'plugin_with_android_debug-1.0.pom',
+      ));
 
       section('Check AOT blobs in debug POM');
 
       checkFileContains(<String>[
         'flutter_embedding_debug',
+        'x86_debug',
         'x86_64_debug',
         'armeabi_v7a_debug',
         'arm64_v8a_debug',
@@ -247,26 +238,26 @@ Future<void> main() async {
 
       section('Check assets in debug AAR');
 
-      final Iterable<String> debugAar = await getFilesInAar(
-        path.join(
-          repoPath,
-          'io',
-          'flutter',
-          'devicelab',
-          'hello',
-          'flutter_debug',
-          '1.0',
-          'flutter_debug-1.0.aar',
-        ),
-      );
+      final Iterable<String> debugAar = await getFilesInAar(path.join(
+        repoPath,
+        'io',
+        'flutter',
+        'devicelab',
+        'hello',
+        'flutter_debug',
+        '1.0',
+        'flutter_debug-1.0.aar',
+      ));
 
-      checkCollectionContains<String>(<String>[...flutterAssets, ...debugAssets], debugAar);
+      checkCollectionContains<String>(<String>[
+        ...flutterAssets,
+        ...debugAssets,
+      ], debugAar);
 
       return TaskResult.success(null);
     } on TaskResult catch (taskResult) {
       return taskResult;
-    } catch (e, stackTrace) {
-      print('Task exception stack trace:\n$stackTrace');
+    } catch (e) {
       return TaskResult.failure(e.toString());
     } finally {
       rmTree(tempDir);

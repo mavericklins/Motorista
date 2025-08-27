@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'badge.dart';
-library;
-
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/foundation.dart';
@@ -12,13 +9,14 @@ import 'package:flutter/widgets.dart';
 
 import 'theme.dart';
 
+
 // Examples can assume:
 // late BuildContext context;
 
 /// Overrides the default properties values for descendant [Badge] widgets.
 ///
 /// Descendant widgets obtain the current [BadgeThemeData] object
-/// using [BadgeTheme.of]. Instances of [BadgeThemeData] can
+/// using `BadgeTheme.of(context)`. Instances of [BadgeThemeData] can
 /// be customized with [BadgeThemeData.copyWith].
 ///
 /// Typically a [BadgeThemeData] is specified as part of the
@@ -131,15 +129,15 @@ class BadgeThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is BadgeThemeData &&
-        other.backgroundColor == backgroundColor &&
-        other.textColor == textColor &&
-        other.smallSize == smallSize &&
-        other.largeSize == largeSize &&
-        other.textStyle == textStyle &&
-        other.padding == padding &&
-        other.alignment == alignment &&
-        other.offset == offset;
+    return other is BadgeThemeData
+      && other.backgroundColor == backgroundColor
+      && other.textColor == textColor
+      && other.smallSize == smallSize
+      && other.largeSize == largeSize
+      && other.textStyle == textStyle
+      && other.padding == padding
+      && other.alignment == alignment
+      && other.offset == offset;
   }
 
   @override
@@ -151,9 +149,7 @@ class BadgeThemeData with Diagnosticable {
     properties.add(DoubleProperty('largeSize', largeSize, defaultValue: null));
     properties.add(DiagnosticsProperty<TextStyle>('textStyle', textStyle, defaultValue: null));
     properties.add(DiagnosticsProperty<EdgeInsetsGeometry>('padding', padding, defaultValue: null));
-    properties.add(
-      DiagnosticsProperty<AlignmentGeometry>('alignment', alignment, defaultValue: null),
-    );
+    properties.add(DiagnosticsProperty<AlignmentGeometry>('alignment', alignment, defaultValue: null));
     properties.add(DiagnosticsProperty<Offset>('offset', offset, defaultValue: null));
   }
 }
@@ -166,12 +162,16 @@ class BadgeThemeData with Diagnosticable {
 class BadgeTheme extends InheritedTheme {
   /// Creates a theme that overrides the default color parameters for [Badge]s
   /// in this widget's subtree.
-  const BadgeTheme({super.key, required this.data, required super.child});
+  const BadgeTheme({
+    super.key,
+    required this.data,
+    required super.child,
+  });
 
   /// Specifies the default color and size overrides for descendant [Badge] widgets.
   final BadgeThemeData data;
 
-  /// Retrieves the [BadgeThemeData] from the closest ancestor [BadgeTheme].
+  /// The closest instance of this class that encloses the given context.
   ///
   /// If there is no enclosing [BadgeTheme] widget, then
   /// [ThemeData.badgeTheme] is used.

@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'binding.dart';
-library;
-
 /// Service extension constants for the scheduler library.
 ///
 /// These constants will be used when registering service extensions in the

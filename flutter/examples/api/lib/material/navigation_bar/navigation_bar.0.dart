@@ -13,7 +13,10 @@ class NavigationBarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: NavigationExample());
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const NavigationExample(),
+    );
   }
 }
 
@@ -50,7 +53,10 @@ class _NavigationExampleState extends State<NavigationExample> {
             label: 'Notifications',
           ),
           NavigationDestination(
-            icon: Badge(label: Text('2'), child: Icon(Icons.messenger_sharp)),
+            icon: Badge(
+              label: Text('2'),
+              child: Icon(Icons.messenger_sharp),
+            ),
             label: 'Messages',
           ),
         ],
@@ -61,10 +67,14 @@ class _NavigationExampleState extends State<NavigationExample> {
           shadowColor: Colors.transparent,
           margin: const EdgeInsets.all(8.0),
           child: SizedBox.expand(
-            child: Center(child: Text('Home page', style: theme.textTheme.titleLarge)),
+            child: Center(
+              child: Text(
+                'Home page',
+                style: theme.textTheme.titleLarge,
+              ),
+            ),
           ),
         ),
-
         /// Notifications page
         const Padding(
           padding: EdgeInsets.all(8.0),
@@ -87,7 +97,6 @@ class _NavigationExampleState extends State<NavigationExample> {
             ],
           ),
         ),
-
         /// Messages page
         ListView.builder(
           reverse: true,
@@ -105,7 +114,8 @@ class _NavigationExampleState extends State<NavigationExample> {
                   ),
                   child: Text(
                     'Hello',
-                    style: theme.textTheme.bodyLarge!.copyWith(color: theme.colorScheme.onPrimary),
+                    style: theme.textTheme.bodyLarge!
+                      .copyWith(color: theme.colorScheme.onPrimary),
                   ),
                 ),
               );
@@ -116,12 +126,13 @@ class _NavigationExampleState extends State<NavigationExample> {
                 margin: const EdgeInsets.all(8.0),
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
-                  borderRadius: BorderRadius.circular(8.0),
+               color: theme.colorScheme.primary,
+                    borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Text(
                   'Hi!',
-                  style: theme.textTheme.bodyLarge!.copyWith(color: theme.colorScheme.onPrimary),
+                  style: theme.textTheme.bodyLarge!
+                    .copyWith(color: theme.colorScheme.onPrimary),
                 ),
               ),
             );

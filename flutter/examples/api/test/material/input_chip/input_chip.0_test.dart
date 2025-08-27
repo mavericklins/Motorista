@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.ChipApp());
+    await tester.pumpWidget(
+      const example.ChipApp(),
+    );
 
     expect(find.byType(InputChip), findsNWidgets(3));
 

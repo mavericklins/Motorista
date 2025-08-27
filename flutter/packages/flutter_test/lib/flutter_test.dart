@@ -51,12 +51,6 @@
 ///  * [debugCheckIntrinsicSizes], which can be set in a
 ///    `flutter_test_config.dart` file to enable deeper [RenderBox]
 ///    tests of the intrinsic APIs automatically while laying out widgets.
-///
-/// @docImport 'package:flutter/rendering.dart';
-///
-/// @docImport 'src/controller.dart';
-/// @docImport 'src/test_compat.dart';
-/// @docImport 'src/widget_tester.dart';
 library flutter_test;
 
 export 'dart:async' show Future;
@@ -77,7 +71,6 @@ export 'src/image.dart';
 export 'src/matchers.dart';
 export 'src/mock_canvas.dart';
 export 'src/mock_event_channel.dart';
-export 'src/navigator.dart';
 export 'src/nonconst.dart';
 export 'src/platform.dart';
 export 'src/recording_canvas.dart';

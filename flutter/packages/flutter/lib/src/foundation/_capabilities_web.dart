@@ -4,16 +4,10 @@
 
 import 'dart:js_interop';
 
-// These values are set by the engine. They are used to determine if the
-// application is using canvaskit or skwasm.
+// This value is set by the engine. It is used to determine if the application is
+// using canvaskit.
 @JS('window.flutterCanvasKit')
 external JSAny? get _windowFlutterCanvasKit;
 
-@JS('window._flutter_skwasmInstance')
-external JSAny? get _skwasmInstance;
-
 /// The web implementation of [isCanvasKit]
 bool get isCanvasKit => _windowFlutterCanvasKit != null;
-
-/// The web implementation of [isSkwasm]
-bool get isSkwasm => _skwasmInstance != null;

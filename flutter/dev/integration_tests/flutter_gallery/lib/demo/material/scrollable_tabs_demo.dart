@@ -6,10 +6,14 @@ import 'package:flutter/material.dart';
 
 import '../../gallery/demo.dart';
 
-enum TabsDemoStyle { iconsAndText, iconsOnly, textOnly }
+enum TabsDemoStyle {
+  iconsAndText,
+  iconsOnly,
+  textOnly
+}
 
 class _Page {
-  const _Page({this.icon, this.text});
+  const _Page({ this.icon, this.text });
   final IconData? icon;
   final String? text;
 }
@@ -40,8 +44,7 @@ class ScrollableTabsDemo extends StatefulWidget {
   ScrollableTabsDemoState createState() => ScrollableTabsDemoState();
 }
 
-class ScrollableTabsDemoState extends State<ScrollableTabsDemo>
-    with SingleTickerProviderStateMixin {
+class ScrollableTabsDemoState extends State<ScrollableTabsDemo> with SingleTickerProviderStateMixin {
   TabController? _controller;
   TabsDemoStyle _demoStyle = TabsDemoStyle.iconsAndText;
   bool _customIndicator = false;
@@ -72,29 +75,49 @@ class ScrollableTabsDemoState extends State<ScrollableTabsDemo>
     switch (_demoStyle) {
       case TabsDemoStyle.iconsAndText:
         return ShapeDecoration(
-          shape:
-              const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                side: BorderSide(color: Colors.white24, width: 2.0),
-              ) +
-              const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                side: BorderSide(color: Colors.transparent, width: 4.0),
-              ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+            side: BorderSide(
+              color: Colors.white24,
+              width: 2.0,
+            ),
+          ) + const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+            side: BorderSide(
+              color: Colors.transparent,
+              width: 4.0,
+            ),
+          ),
         );
 
       case TabsDemoStyle.iconsOnly:
         return ShapeDecoration(
-          shape:
-              const CircleBorder(side: BorderSide(color: Colors.white24, width: 4.0)) +
-              const CircleBorder(side: BorderSide(color: Colors.transparent, width: 4.0)),
+          shape: const CircleBorder(
+            side: BorderSide(
+              color: Colors.white24,
+              width: 4.0,
+            ),
+          ) + const CircleBorder(
+            side: BorderSide(
+              color: Colors.transparent,
+              width: 4.0,
+            ),
+          ),
         );
 
       case TabsDemoStyle.textOnly:
         return ShapeDecoration(
-          shape:
-              const StadiumBorder(side: BorderSide(color: Colors.white24, width: 2.0)) +
-              const StadiumBorder(side: BorderSide(color: Colors.transparent, width: 4.0)),
+          shape: const StadiumBorder(
+            side: BorderSide(
+              color: Colors.white24,
+              width: 2.0,
+            ),
+          ) + const StadiumBorder(
+            side: BorderSide(
+              color: Colors.transparent,
+              width: 4.0,
+            ),
+          ),
         );
     }
   }
@@ -142,10 +165,10 @@ class ScrollableTabsDemoState extends State<ScrollableTabsDemo>
           tabs: _allPages.map<Tab>((_Page page) {
             return switch (_demoStyle) {
               TabsDemoStyle.iconsAndText => Tab(text: page.text, icon: Icon(page.icon)),
-              TabsDemoStyle.iconsOnly => Tab(icon: Icon(page.icon)),
-              TabsDemoStyle.textOnly => Tab(text: page.text),
+              TabsDemoStyle.iconsOnly    => Tab(icon: Icon(page.icon)),
+              TabsDemoStyle.textOnly     => Tab(text: page.text),
             };
-          }).toList(),
+          }).toList()
         ),
       ),
       body: TabBarView(

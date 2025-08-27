@@ -8,23 +8,30 @@ import '../../gallery_localizations.dart';
 import 'material_demo_types.dart';
 
 class BottomSheetDemo extends StatelessWidget {
-  const BottomSheetDemo({super.key, required this.type});
+  const BottomSheetDemo({
+    super.key,
+    required this.type,
+  });
 
   final BottomSheetDemoType type;
 
   String _title(BuildContext context) {
     final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
-    return switch (type) {
-      BottomSheetDemoType.persistent => localizations.demoBottomSheetPersistentTitle,
-      BottomSheetDemoType.modal => localizations.demoBottomSheetModalTitle,
-    };
+    switch (type) {
+      case BottomSheetDemoType.persistent:
+        return localizations.demoBottomSheetPersistentTitle;
+      case BottomSheetDemoType.modal:
+        return localizations.demoBottomSheetModalTitle;
+    }
   }
 
   Widget _bottomSheetDemo(BuildContext context) {
-    return switch (type) {
-      BottomSheetDemoType.persistent => _PersistentBottomSheetDemo(),
-      BottomSheetDemoType.modal => _ModalBottomSheetDemo(),
-    };
+    switch (type) {
+      case BottomSheetDemoType.persistent:
+        return _PersistentBottomSheetDemo();
+      case BottomSheetDemoType.modal:
+        return _ModalBottomSheetDemo();
+    }
   }
 
   @override
@@ -37,19 +44,22 @@ class BottomSheetDemo extends StatelessWidget {
       key: ValueKey<BottomSheetDemoType>(type),
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(
-          builder:
-              (BuildContext context) => Scaffold(
-                appBar: AppBar(automaticallyImplyLeading: false, title: Text(_title(context))),
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () {},
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  child: Icon(
-                    Icons.add,
-                    semanticLabel: GalleryLocalizations.of(context)!.demoBottomSheetAddLabel,
-                  ),
-                ),
-                body: _bottomSheetDemo(context),
+          builder: (BuildContext context) => Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(_title(context)),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              child: Icon(
+                Icons.add,
+                semanticLabel:
+                    GalleryLocalizations.of(context)!.demoBottomSheetAddLabel,
               ),
+            ),
+            body: _bottomSheetDemo(context),
+          ),
         );
       },
     );
@@ -69,7 +79,10 @@ class _BottomSheetContent extends StatelessWidget {
           SizedBox(
             height: 70,
             child: Center(
-              child: Text(localizations.demoBottomSheetHeader, textAlign: TextAlign.center),
+              child: Text(
+                localizations.demoBottomSheetHeader,
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
           const Divider(thickness: 1),
@@ -77,7 +90,9 @@ class _BottomSheetContent extends StatelessWidget {
             child: ListView.builder(
               itemCount: 21,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(title: Text(localizations.demoBottomSheetItem(index)));
+                return ListTile(
+                  title: Text(localizations.demoBottomSheetItem(index)),
+                );
               },
             ),
           ),
@@ -108,7 +123,8 @@ class _ModalBottomSheetDemo extends StatelessWidget {
         onPressed: () {
           _showModalBottomSheet(context);
         },
-        child: Text(GalleryLocalizations.of(context)!.demoBottomSheetButtonText),
+        child:
+            Text(GalleryLocalizations.of(context)!.demoBottomSheetButtonText),
       ),
     );
   }
@@ -120,10 +136,12 @@ class _ModalBottomSheetDemo extends StatelessWidget {
 
 class _PersistentBottomSheetDemo extends StatefulWidget {
   @override
-  _PersistentBottomSheetDemoState createState() => _PersistentBottomSheetDemoState();
+  _PersistentBottomSheetDemoState createState() =>
+      _PersistentBottomSheetDemoState();
 }
 
-class _PersistentBottomSheetDemoState extends State<_PersistentBottomSheetDemo> {
+class _PersistentBottomSheetDemoState
+    extends State<_PersistentBottomSheetDemo> {
   VoidCallback? _showBottomSheetCallback;
 
   @override
@@ -139,9 +157,12 @@ class _PersistentBottomSheetDemoState extends State<_PersistentBottomSheetDemo> 
     });
 
     Scaffold.of(context)
-        .showBottomSheet((BuildContext context) {
-          return _BottomSheetContent();
-        }, elevation: 25)
+        .showBottomSheet(
+          (BuildContext context) {
+            return _BottomSheetContent();
+          },
+          elevation: 25,
+        )
         .closed
         .whenComplete(() {
           if (mounted) {
@@ -158,7 +179,8 @@ class _PersistentBottomSheetDemoState extends State<_PersistentBottomSheetDemo> 
     return Center(
       child: ElevatedButton(
         onPressed: _showBottomSheetCallback,
-        child: Text(GalleryLocalizations.of(context)!.demoBottomSheetButtonText),
+        child:
+            Text(GalleryLocalizations.of(context)!.demoBottomSheetButtonText),
       ),
     );
   }

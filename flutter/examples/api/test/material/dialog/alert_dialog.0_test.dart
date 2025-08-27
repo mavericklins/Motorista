@@ -9,7 +9,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Show Alert dialog', (WidgetTester tester) async {
     const String dialogTitle = 'AlertDialog Title';
-    await tester.pumpWidget(const example.AlertDialogExampleApp());
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: example.AlertDialogExampleApp(),
+        ),
+      ),
+    );
 
     expect(find.text(dialogTitle), findsNothing);
 

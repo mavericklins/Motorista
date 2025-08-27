@@ -13,7 +13,9 @@ class TextFieldExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: TextFieldExample());
+    return const MaterialApp(
+      home: TextFieldExample(),
+    );
   }
 }
 

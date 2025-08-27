@@ -32,12 +32,18 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
   int selectedIndex = 0;
 
   AnimationController buildFaderController() {
-    return AnimationController(vsync: this, duration: const Duration(milliseconds: 300))
-      ..addStatusListener((AnimationStatus status) {
-        if (status.isDismissed) {
+    final AnimationController controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    controller.addStatusListener(
+      (AnimationStatus status) {
+        if (status == AnimationStatus.dismissed) {
           setState(() {}); // Rebuild unselected destinations offstage.
         }
-      });
+      },
+    );
+    return controller;
   }
 
   @override
@@ -56,15 +62,17 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
     destinationFaders[selectedIndex].value = 1.0;
 
     final CurveTween tween = CurveTween(curve: Curves.fastOutSlowIn);
-    destinationViews = allDestinations.map<Widget>((Destination destination) {
-      return FadeTransition(
-        opacity: destinationFaders[destination.index].drive(tween),
-        child: DestinationView(
-          destination: destination,
-          navigatorKey: navigatorKeys[destination.index],
-        ),
-      );
-    }).toList();
+    destinationViews = allDestinations.map<Widget>(
+      (Destination destination) {
+        return FadeTransition(
+          opacity: destinationFaders[destination.index].drive(tween),
+          child: DestinationView(
+            destination: destination,
+            navigatorKey: navigatorKeys[destination.index],
+          ),
+        );
+      },
+    ).toList();
   }
 
   @override
@@ -87,20 +95,22 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
           top: false,
           child: Stack(
             fit: StackFit.expand,
-            children: allDestinations.map((Destination destination) {
-              final int index = destination.index;
-              final Widget view = destinationViews[index];
-              if (index == selectedIndex) {
-                destinationFaders[index].forward();
-                return Offstage(offstage: false, child: view);
-              } else {
-                destinationFaders[index].reverse();
-                if (destinationFaders[index].isAnimating) {
-                  return IgnorePointer(child: view);
+            children: allDestinations.map(
+              (Destination destination) {
+                final int index = destination.index;
+                final Widget view = destinationViews[index];
+                if (index == selectedIndex) {
+                  destinationFaders[index].forward();
+                  return Offstage(offstage: false, child: view);
+                } else {
+                  destinationFaders[index].reverse();
+                  if (destinationFaders[index].isAnimating) {
+                    return IgnorePointer(child: view);
+                  }
+                  return Offstage(child: view);
                 }
-                return Offstage(child: view);
-              }
-            }).toList(),
+              },
+            ).toList(),
           ),
         ),
         bottomNavigationBar: NavigationBar(
@@ -110,12 +120,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin<Home> {
               selectedIndex = index;
             });
           },
-          destinations: allDestinations.map<NavigationDestination>((Destination destination) {
-            return NavigationDestination(
-              icon: Icon(destination.icon, color: destination.color),
-              label: destination.title,
-            );
-          }).toList(),
+          destinations: allDestinations.map<NavigationDestination>(
+            (Destination destination) {
+              return NavigationDestination(
+                icon: Icon(destination.icon, color: destination.color),
+                label: destination.title,
+              );
+            },
+          ).toList(),
         ),
       ),
     );
@@ -182,7 +194,11 @@ class RootPage extends StatelessWidget {
             ElevatedButton(
               style: buttonStyle,
               onPressed: () {
-                showDialog<void>(context: context, useRootNavigator: false, builder: _buildDialog);
+                showDialog<void>(
+                  context: context,
+                  useRootNavigator: false,
+                  builder: _buildDialog,
+                );
               },
               child: const Text('Local Dialog'),
             ),
@@ -244,7 +260,9 @@ class ListPage extends StatelessWidget {
     final ButtonStyle buttonStyle = OutlinedButton.styleFrom(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: colorScheme.onSurface.withOpacity(0.12)),
+        side: BorderSide(
+          color: colorScheme.onSurface.withOpacity(0.12),
+        ),
       ),
       foregroundColor: destination.color,
       fixedSize: const Size.fromHeight(64),
@@ -265,8 +283,12 @@ class ListPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
               child: OutlinedButton(
                 style: buttonStyle.copyWith(
-                  backgroundColor: WidgetStatePropertyAll<Color>(
-                    Color.lerp(destination.color[100], Colors.white, index / itemCount)!,
+                  backgroundColor: MaterialStatePropertyAll<Color>(
+                    Color.lerp(
+                      destination.color[100],
+                      Colors.white,
+                      index / itemCount
+                    )!,
                   ),
                 ),
                 onPressed: () {
@@ -321,10 +343,15 @@ class _TextPageState extends State<TextPage> {
         alignment: Alignment.center,
         child: TextField(
           controller: textController,
-          style: theme.primaryTextTheme.headlineMedium?.copyWith(color: widget.destination.color),
+          style: theme.primaryTextTheme.headlineMedium?.copyWith(
+            color: widget.destination.color,
+          ),
           decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: widget.destination.color, width: 3.0),
+              borderSide: BorderSide(
+                color: widget.destination.color,
+                width: 3.0,
+              ),
             ),
           ),
         ),
@@ -334,7 +361,11 @@ class _TextPageState extends State<TextPage> {
 }
 
 class DestinationView extends StatefulWidget {
-  const DestinationView({super.key, required this.destination, required this.navigatorKey});
+  const DestinationView({
+    super.key,
+    required this.destination,
+    required this.navigatorKey,
+  });
 
   final Destination destination;
   final Key navigatorKey;

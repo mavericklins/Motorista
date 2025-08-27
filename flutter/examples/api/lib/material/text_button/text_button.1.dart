@@ -29,21 +29,19 @@ class SelectableButton extends StatefulWidget {
 }
 
 class _SelectableButtonState extends State<SelectableButton> {
-  late final WidgetStatesController statesController;
+  late final MaterialStatesController statesController;
 
   @override
   void initState() {
     super.initState();
-    statesController = WidgetStatesController(<WidgetState>{
-      if (widget.selected) WidgetState.selected,
-    });
+    statesController = MaterialStatesController(<MaterialState>{if (widget.selected) MaterialState.selected});
   }
 
   @override
   void didUpdateWidget(SelectableButton oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.selected != oldWidget.selected) {
-      statesController.update(WidgetState.selected, widget.selected);
+      statesController.update(MaterialState.selected, widget.selected);
     }
   }
 
@@ -68,24 +66,30 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool selected = false;
 
-  /// Sets the button's foreground and background colors.
-  /// If not selected, resolves to null and defers to default values.
-  static const ButtonStyle style = ButtonStyle(
-    foregroundColor: WidgetStateProperty<Color?>.fromMap(<WidgetState, Color>{
-      WidgetState.selected: Colors.white,
-    }),
-    backgroundColor: WidgetStateProperty<Color?>.fromMap(<WidgetState, Color>{
-      WidgetState.selected: Colors.indigo,
-    }),
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: SelectableButton(
           selected: selected,
-          style: style,
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+                if (states.contains(MaterialState.selected)) {
+                  return Colors.white;
+                }
+                return null; // defer to the defaults
+              },
+            ),
+            backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+                if (states.contains(MaterialState.selected)) {
+                  return Colors.indigo;
+                }
+                return null; // defer to the defaults
+              },
+            ),
+          ),
           onPressed: () {
             setState(() {
               selected = !selected;

@@ -24,25 +24,22 @@ import '../src/context.dart';
 
 void main() {
   testUsingContext('Exits with code 2 when HttpException is thrown '
-      'during VM service connection', () async {
-    final residentCompiler = FakeResidentCompiler();
-    final device = FakeDevice()
+    'during VM service connection', () async {
+    final FakeResidentCompiler residentCompiler = FakeResidentCompiler();
+    final FakeDevice device = FakeDevice()
       ..supportsHotReload = true
       ..supportsHotRestart = false;
 
-    final devices = <FlutterDevice>[
+    final List<FlutterDevice> devices = <FlutterDevice>[
       TestFlutterDevice(
         device: device,
         generator: residentCompiler,
-        exception: const HttpException(
-          'Connection closed before full header was received, '
-          'uri = http://127.0.0.1:63394/5ZmLv8A59xY=/ws',
-        ),
+        exception: const HttpException('Connection closed before full header was received, '
+            'uri = http://127.0.0.1:63394/5ZmLv8A59xY=/ws'),
       ),
     ];
 
-    final int exitCode = await ColdRunner(
-      devices,
+    final int exitCode = await ColdRunner(devices,
       debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
       target: 'main.dart',
     ).attach();
@@ -51,15 +48,14 @@ void main() {
 
   group('cleanupAtFinish()', () {
     testUsingContext('disposes each device', () async {
-      final device1 = FakeDevice();
-      final device2 = FakeDevice();
-      final flutterDevice1 = FakeFlutterDevice(device1);
-      final flutterDevice2 = FakeFlutterDevice(device2);
+      final FakeDevice device1 = FakeDevice();
+      final FakeDevice device2 = FakeDevice();
+      final FakeFlutterDevice flutterDevice1 = FakeFlutterDevice(device1);
+      final FakeFlutterDevice flutterDevice2 = FakeFlutterDevice(device2);
 
-      final devices = <FlutterDevice>[flutterDevice1, flutterDevice2];
+      final List<FlutterDevice> devices = <FlutterDevice>[flutterDevice1, flutterDevice2];
 
-      await ColdRunner(
-        devices,
+      await ColdRunner(devices,
         debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
         target: 'main.dart',
       ).cleanupAtFinish();
@@ -81,9 +77,10 @@ void main() {
     });
 
     testUsingContext('calls runCold on attached device', () async {
-      final device = FakeDevice();
-      final flutterDevice = FakeFlutterDevice(device)..runColdCode = 1;
-      final devices = <FlutterDevice>[flutterDevice];
+      final FakeDevice device = FakeDevice();
+      final FakeFlutterDevice flutterDevice = FakeFlutterDevice(device)
+        ..runColdCode = 1;
+      final List<FlutterDevice> devices = <FlutterDevice>[flutterDevice];
       final File applicationBinary = MemoryFileSystem.test().file('binary');
       final int result = await ColdRunner(
         devices,
@@ -95,69 +92,49 @@ void main() {
       expect(result, 1);
     });
 
-    testUsingContext(
-      'with traceStartup, no env variable',
-      () async {
-        final device = FakeDevice();
-        final flutterDevice = FakeFlutterDevice(device);
-        final devices = <FlutterDevice>[flutterDevice];
-        final File applicationBinary = MemoryFileSystem.test().file('binary');
-        final int result = await ColdRunner(
-          devices,
-          applicationBinary: applicationBinary,
-          debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
-          target: 'main.dart',
-          traceStartup: true,
-        ).run();
+    testUsingContext('with traceStartup, no env variable', () async {
+      final FakeDevice device = FakeDevice();
+      final FakeFlutterDevice flutterDevice = FakeFlutterDevice(device);
+      final List<FlutterDevice> devices = <FlutterDevice>[flutterDevice];
+      final File applicationBinary = MemoryFileSystem.test().file('binary');
+      final int result = await ColdRunner(
+        devices,
+        applicationBinary: applicationBinary,
+        debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
+        target: 'main.dart',
+        traceStartup: true,
+      ).run();
 
-        expect(result, 0);
-        expect(
-          memoryFileSystem
-              .directory(getBuildDirectory())
-              .childFile('start_up_info.json')
-              .existsSync(),
-          true,
-        );
-      },
-      overrides: <Type, Generator>{
-        FileSystem: () => memoryFileSystem,
-        ProcessManager: () => FakeProcessManager.any(),
-        Platform: () => fakePlatform,
-      },
-    );
+      expect(result, 0);
+      expect(memoryFileSystem.directory(getBuildDirectory()).childFile('start_up_info.json').existsSync(), true);
+    }, overrides: <Type, Generator>{
+      FileSystem: () => memoryFileSystem,
+      ProcessManager: () => FakeProcessManager.any(),
+      Platform: () => fakePlatform,
+    });
 
-    testUsingContext(
-      'with traceStartup, env variable',
-      () async {
-        fakePlatform.environment[kFlutterTestOutputsDirEnvName] = 'test_output_dir';
+    testUsingContext('with traceStartup, env variable', () async {
+      fakePlatform.environment[kFlutterTestOutputsDirEnvName] = 'test_output_dir';
 
-        final device = FakeDevice();
-        final flutterDevice = FakeFlutterDevice(device);
-        final devices = <FlutterDevice>[flutterDevice];
-        final File applicationBinary = MemoryFileSystem.test().file('binary');
-        final int result = await ColdRunner(
-          devices,
-          applicationBinary: applicationBinary,
-          debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
-          target: 'main.dart',
-          traceStartup: true,
-        ).run();
+      final FakeDevice device = FakeDevice();
+      final FakeFlutterDevice flutterDevice = FakeFlutterDevice(device);
+      final List<FlutterDevice> devices = <FlutterDevice>[flutterDevice];
+      final File applicationBinary = MemoryFileSystem.test().file('binary');
+      final int result = await ColdRunner(
+        devices,
+        applicationBinary: applicationBinary,
+        debuggingOptions: DebuggingOptions.disabled(BuildInfo.debug),
+        target: 'main.dart',
+        traceStartup: true,
+      ).run();
 
-        expect(result, 0);
-        expect(
-          memoryFileSystem
-              .directory('test_output_dir')
-              .childFile('start_up_info.json')
-              .existsSync(),
-          true,
-        );
-      },
-      overrides: <Type, Generator>{
-        FileSystem: () => memoryFileSystem,
-        ProcessManager: () => FakeProcessManager.any(),
-        Platform: () => fakePlatform,
-      },
-    );
+      expect(result, 0);
+      expect(memoryFileSystem.directory('test_output_dir').childFile('start_up_info.json').existsSync(), true);
+    }, overrides: <Type, Generator>{
+      FileSystem: () => memoryFileSystem,
+      ProcessManager: () => FakeProcessManager.any(),
+      Platform: () => fakePlatform,
+    });
   });
 }
 
@@ -170,7 +147,7 @@ class FakeFlutterDevice extends Fake implements FlutterDevice {
   @override
   final Device device;
 
-  var stopEchoingDeviceLogCount = 0;
+  int stopEchoingDeviceLogCount = 0;
 
   @override
   Future<void> stopEchoingDeviceLog() async {
@@ -180,23 +157,26 @@ class FakeFlutterDevice extends Fake implements FlutterDevice {
   @override
   FlutterVmService get vmService => FakeFlutterVmService();
 
-  var runColdCode = 0;
+  int runColdCode = 0;
 
   @override
   Future<int> runCold({ColdRunner? coldRunner, String? route}) async {
     return runColdCode;
   }
+
+  @override
+  Future<void> initLogReader() async { }
 }
 
 class FakeDevice extends Fake implements Device {
   @override
-  Future<bool> isSupported() async => true;
+  bool isSupported() => true;
 
   @override
-  var supportsHotReload = false;
+  bool supportsHotReload = false;
 
   @override
-  var supportsHotRestart = false;
+  bool supportsHotRestart = false;
 
   @override
   Future<String> get sdkNameAndVersion async => 'Android 10';
@@ -205,12 +185,9 @@ class FakeDevice extends Fake implements Device {
   String get name => 'test';
 
   @override
-  String get displayName => name;
-
-  @override
   Future<TargetPlatform> get targetPlatform async => TargetPlatform.tester;
 
-  var wasDisposed = false;
+  bool wasDisposed = false;
 
   @override
   Future<void> dispose() async {
@@ -223,12 +200,7 @@ class TestFlutterDevice extends FlutterDevice {
     required Device device,
     required this.exception,
     required ResidentCompiler generator,
-  }) : super(
-         device,
-         buildInfo: BuildInfo.debug,
-         generator: generator,
-         developmentShaderCompiler: const FakeShaderCompiler(),
-       );
+  })  : super(device, buildInfo: BuildInfo.debug, generator: generator, developmentShaderCompiler: const FakeShaderCompiler());
 
   /// The exception to throw when the connect method is called.
   final Exception exception;
@@ -238,27 +210,29 @@ class TestFlutterDevice extends FlutterDevice {
     ReloadSources? reloadSources,
     Restart? restart,
     CompileExpression? compileExpression,
+    GetSkSLMethod? getSkSLMethod,
     FlutterProject? flutterProject,
     PrintStructuredErrorLogMethod? printStructuredErrorLogMethod,
-    required DebuggingOptions debuggingOptions,
+    bool enableDds = true,
+    bool cacheStartupProfile = false,
+    bool disableServiceAuthCodes = false,
     int? hostVmServicePort,
-    required bool allowExistingDdsInstance,
+    int? ddsPort,
+    bool? ipv6 = false,
+    bool allowExistingDdsInstance = false,
   }) async {
     throw exception;
   }
 }
 
-class FakeResidentCompiler extends Fake implements ResidentCompiler {}
+class FakeResidentCompiler extends Fake implements ResidentCompiler { }
 
 class FakeFlutterVmService extends Fake implements FlutterVmService {
   @override
   VmService get service => FakeVmService();
 
   @override
-  Future<List<FlutterView>> getFlutterViews({
-    bool returnEarly = false,
-    Duration delay = const Duration(milliseconds: 50),
-  }) async {
+  Future<List<FlutterView>> getFlutterViews({bool returnEarly = false, Duration delay = const Duration(milliseconds: 50)}) async {
     return <FlutterView>[];
   }
 
@@ -269,9 +243,18 @@ class FakeFlutterVmService extends Fake implements FlutterVmService {
   Future<Response?> getTimeline() async {
     return Response.parse(<String, dynamic>{
       'traceEvents': <dynamic>[
-        <String, dynamic>{'name': kFlutterEngineMainEnterEventName, 'ts': 123},
-        <String, dynamic>{'name': kFirstFrameBuiltEventName, 'ts': 124},
-        <String, dynamic>{'name': kFirstFrameRasterizedEventName, 'ts': 124},
+        <String, dynamic>{
+          'name': kFlutterEngineMainEnterEventName,
+          'ts': 123,
+        },
+        <String, dynamic>{
+          'name': kFirstFrameBuiltEventName,
+          'ts': 124,
+        },
+        <String, dynamic>{
+          'name': kFirstFrameRasterizedEventName,
+          'ts': 124,
+        },
       ],
     });
   }
@@ -296,7 +279,7 @@ class FakeShaderCompiler implements DevelopmentShaderCompiler {
   const FakeShaderCompiler();
 
   @override
-  void configureCompiler(TargetPlatform? platform) {}
+  void configureCompiler(TargetPlatform? platform) { }
 
   @override
   Future<DevFSContent> recompileShader(DevFSContent inputShader) {

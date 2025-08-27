@@ -15,8 +15,7 @@ class SelectableRegionExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SelectableRegion(
-        selectionControls: materialTextSelectionControls,
+      home: SelectionArea(
         child: Scaffold(
           appBar: AppBar(title: const Text('SelectableRegion Sample')),
           body: const Center(
@@ -48,19 +47,28 @@ class MySelectableAdapter extends StatelessWidget {
     }
     return MouseRegion(
       cursor: SystemMouseCursors.text,
-      child: _SelectableAdapter(registrar: registrar, child: child),
+      child: _SelectableAdapter(
+        registrar: registrar,
+        child: child,
+      ),
     );
   }
 }
 
 class _SelectableAdapter extends SingleChildRenderObjectWidget {
-  const _SelectableAdapter({required this.registrar, required Widget child}) : super(child: child);
+  const _SelectableAdapter({
+    required this.registrar,
+    required Widget child,
+  }) : super(child: child);
 
   final SelectionRegistrar registrar;
 
   @override
   _RenderSelectableAdapter createRenderObject(BuildContext context) {
-    return _RenderSelectableAdapter(DefaultSelectionStyle.of(context).selectionColor!, registrar);
+    return _RenderSelectableAdapter(
+      DefaultSelectionStyle.of(context).selectionColor!,
+      registrar,
+    );
   }
 
   @override
@@ -72,21 +80,20 @@ class _SelectableAdapter extends SingleChildRenderObjectWidget {
 }
 
 class _RenderSelectableAdapter extends RenderProxyBox with Selectable, SelectionRegistrant {
-  _RenderSelectableAdapter(Color selectionColor, SelectionRegistrar registrar)
-    : _selectionColor = selectionColor,
-      _geometry = ValueNotifier<SelectionGeometry>(_noSelection) {
+  _RenderSelectableAdapter(
+    Color selectionColor,
+    SelectionRegistrar registrar,
+  )   : _selectionColor = selectionColor,
+        _geometry = ValueNotifier<SelectionGeometry>(_noSelection) {
     this.registrar = registrar;
     _geometry.addListener(markNeedsPaint);
   }
 
-  static const SelectionGeometry _noSelection = SelectionGeometry(
-    status: SelectionStatus.none,
-    hasContent: true,
-  );
+  static const SelectionGeometry _noSelection = SelectionGeometry(status: SelectionStatus.none, hasContent: true);
   final ValueNotifier<SelectionGeometry> _geometry;
 
   Color get selectionColor => _selectionColor;
-  Color _selectionColor;
+  late Color _selectionColor;
   set selectionColor(Color value) {
     if (_selectionColor == value) {
       return;
@@ -114,12 +121,7 @@ class _RenderSelectableAdapter extends RenderProxyBox with Selectable, Selection
   // Adjust this value to enlarge or shrink the selection highlight.
   static const double _padding = 10.0;
   Rect _getSelectionHighlightRect() {
-    return Rect.fromLTWH(
-      0 - _padding,
-      0 - _padding,
-      size.width + _padding * 2,
-      size.height + _padding * 2,
-    );
+    return Rect.fromLTWH(0 - _padding, 0 - _padding, size.width + _padding * 2, size.height + _padding * 2);
   }
 
   Offset? _start;
@@ -183,13 +185,11 @@ class _RenderSelectableAdapter extends RenderProxyBox with Selectable, Selection
         _start = _end = null;
       case SelectionEventType.selectAll:
       case SelectionEventType.selectWord:
-      case SelectionEventType.selectParagraph:
         _start = Offset.zero;
         _end = Offset.infinite;
       case SelectionEventType.granularlyExtendSelection:
         result = SelectionResult.end;
-        final GranularlyExtendSelectionEvent extendSelectionEvent =
-            event as GranularlyExtendSelectionEvent;
+        final GranularlyExtendSelectionEvent extendSelectionEvent = event as GranularlyExtendSelectionEvent;
         // Initialize the offset it there is no ongoing selection.
         if (_start == null || _end == null) {
           if (extendSelectionEvent.forward) {
@@ -213,8 +213,7 @@ class _RenderSelectableAdapter extends RenderProxyBox with Selectable, Selection
         }
       case SelectionEventType.directionallyExtendSelection:
         result = SelectionResult.end;
-        final DirectionallyExtendSelectionEvent extendSelectionEvent =
-            event as DirectionallyExtendSelectionEvent;
+        final DirectionallyExtendSelectionEvent extendSelectionEvent = event as DirectionallyExtendSelectionEvent;
         // Convert to local coordinates.
         final double horizontalBaseLine = globalToLocal(Offset(event.dx, 0)).dx;
         final Offset newOffset;
@@ -228,8 +227,7 @@ class _RenderSelectableAdapter extends RenderProxyBox with Selectable, Selection
               _start = _end = Offset.infinite;
             }
             // Move the corresponding selection edge.
-            if (extendSelectionEvent.direction == SelectionExtendDirection.previousLine ||
-                horizontalBaseLine < 0) {
+            if (extendSelectionEvent.direction == SelectionExtendDirection.previousLine || horizontalBaseLine < 0) {
               newOffset = Offset.zero;
             } else {
               newOffset = Offset.infinite;
@@ -272,17 +270,6 @@ class _RenderSelectableAdapter extends RenderProxyBox with Selectable, Selection
     return value.hasSelection ? const SelectedContent(plainText: 'Custom Text') : null;
   }
 
-  @override
-  SelectedContentRange? getSelection() {
-    if (!value.hasSelection) {
-      return null;
-    }
-    return const SelectedContentRange(startOffset: 0, endOffset: 1);
-  }
-
-  @override
-  int get contentLength => 1;
-
   LayerLink? _startHandle;
   LayerLink? _endHandle;
 
@@ -311,14 +298,20 @@ class _RenderSelectableAdapter extends RenderProxyBox with Selectable, Selection
     // Push the layer links if any.
     if (_startHandle != null) {
       context.pushLayer(
-        LeaderLayer(link: _startHandle!, offset: offset + value.startSelectionPoint!.localPosition),
+        LeaderLayer(
+          link: _startHandle!,
+          offset: offset + value.startSelectionPoint!.localPosition,
+        ),
         (PaintingContext context, Offset offset) {},
         Offset.zero,
       );
     }
     if (_endHandle != null) {
       context.pushLayer(
-        LeaderLayer(link: _endHandle!, offset: offset + value.endSelectionPoint!.localPosition),
+        LeaderLayer(
+          link: _endHandle!,
+          offset: offset + value.endSelectionPoint!.localPosition,
+        ),
         (PaintingContext context, Offset offset) {},
         Offset.zero,
       );
@@ -328,8 +321,6 @@ class _RenderSelectableAdapter extends RenderProxyBox with Selectable, Selection
   @override
   void dispose() {
     _geometry.dispose();
-    _startHandle = null;
-    _endHandle = null;
     super.dispose();
   }
 }

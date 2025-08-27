@@ -4,7 +4,6 @@
 
 import 'package:flutter_tools/src/application_package.dart';
 import 'package:flutter_tools/src/asset.dart';
-import 'package:flutter_tools/src/base/dds.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/tools/shader_compiler.dart';
 import 'package:flutter_tools/src/compile.dart';
@@ -20,10 +19,10 @@ import 'package:vm_service/vm_service.dart' as vm_service;
 
 class FakeDevFs extends Fake implements DevFS {
   @override
-  Future<void> destroy() async {}
+  Future<void> destroy() async { }
 
   @override
-  var sources = <Uri>[];
+  List<Uri> sources = <Uri>[];
 
   @override
   DateTime? lastCompiled;
@@ -32,37 +31,38 @@ class FakeDevFs extends Fake implements DevFS {
   PackageConfig? lastPackageConfig;
 
   @override
-  var assetPathsToEvict = <String>{};
+  Set<String> assetPathsToEvict = <String>{};
 
   @override
-  var shaderPathsToEvict = <String>{};
+  Set<String> shaderPathsToEvict= <String>{};
+
+  @override
+  Set<String> scenePathsToEvict= <String>{};
 
   @override
   Uri? baseUri;
 }
 
 class FakeDevice extends Fake implements Device {
-  FakeDevice({TargetPlatform targetPlatform = TargetPlatform.tester})
-    : _targetPlatform = targetPlatform;
+  FakeDevice({
+    TargetPlatform targetPlatform = TargetPlatform.tester,
+  }) : _targetPlatform = targetPlatform;
 
   final TargetPlatform _targetPlatform;
 
-  var disposed = false;
+  bool disposed = false;
 
   @override
-  final DartDevelopmentService dds = FakeDartDevelopmentService();
+  bool isSupported() => true;
 
   @override
-  Future<bool> isSupported() async => true;
+  bool supportsHotReload = true;
 
   @override
-  var supportsHotReload = true;
+  bool supportsHotRestart = true;
 
   @override
-  var supportsHotRestart = true;
-
-  @override
-  var supportsFlutterExit = true;
+  bool supportsFlutterExit = true;
 
   @override
   Future<TargetPlatform> get targetPlatform async => _targetPlatform;
@@ -77,7 +77,10 @@ class FakeDevice extends Fake implements Device {
   String get name => 'Fake Device';
 
   @override
-  Future<bool> stopApp(ApplicationPackage? app, {String? userIdentifier}) async {
+  Future<bool> stopApp(
+    ApplicationPackage? app, {
+    String? userIdentifier,
+  }) async {
     return true;
   }
 
@@ -87,19 +90,10 @@ class FakeDevice extends Fake implements Device {
   }
 }
 
-class FakeDartDevelopmentService extends Fake implements DartDevelopmentService {
-  var wasShutdown = false;
-
-  @override
-  void shutdown() {
-    wasShutdown = true;
-  }
-}
-
 class FakeFlutterDevice extends Fake implements FlutterDevice {
   FakeFlutterDevice(this.device);
 
-  var stoppedEchoingDeviceLog = false;
+  bool stoppedEchoingDeviceLog = false;
   late Future<UpdateFSReport> Function() updateDevFSReportCallback;
 
   @override
@@ -143,12 +137,7 @@ class TestFlutterDevice extends FlutterDevice {
     required Device device,
     required this.exception,
     required ResidentCompiler generator,
-  }) : super(
-         device,
-         buildInfo: BuildInfo.debug,
-         generator: generator,
-         developmentShaderCompiler: const FakeShaderCompiler(),
-       );
+  })  : super(device, buildInfo: BuildInfo.debug, generator: generator, developmentShaderCompiler: const FakeShaderCompiler());
 
   /// The exception to throw when the connect method is called.
   final Exception exception;
@@ -158,12 +147,15 @@ class TestFlutterDevice extends FlutterDevice {
     ReloadSources? reloadSources,
     Restart? restart,
     CompileExpression? compileExpression,
+    GetSkSLMethod? getSkSLMethod,
     FlutterProject? flutterProject,
     PrintStructuredErrorLogMethod? printStructuredErrorLogMethod,
-    required DebuggingOptions debuggingOptions,
-    int? hostVmServicePort,
+    bool disableServiceAuthCodes = false,
+    bool enableDds = true,
+    bool cacheStartupProfile = false,
     bool? ipv6 = false,
-    bool enableDevTools = false,
+    int? hostVmServicePort,
+    int? ddsPort,
     bool allowExistingDdsInstance = false,
   }) async {
     throw exception;
@@ -174,24 +166,18 @@ class TestHotRunnerConfig extends HotRunnerConfig {
   TestHotRunnerConfig({this.successfulHotRestartSetup, this.successfulHotReloadSetup});
   bool? successfulHotRestartSetup;
   bool? successfulHotReloadSetup;
-  var shutdownHookCalled = false;
-  var updateDevFSCompleteCalled = false;
+  bool shutdownHookCalled = false;
+  bool updateDevFSCompleteCalled = false;
 
   @override
   Future<bool?> setupHotRestart() async {
-    assert(
-      successfulHotRestartSetup != null,
-      'setupHotRestart is not expected to be called in this test.',
-    );
+    assert(successfulHotRestartSetup != null, 'setupHotRestart is not expected to be called in this test.');
     return successfulHotRestartSetup;
   }
 
   @override
   Future<bool?> setupHotReload() async {
-    assert(
-      successfulHotReloadSetup != null,
-      'setupHotReload is not expected to be called in this test.',
-    );
+    assert(successfulHotReloadSetup != null, 'setupHotReload is not expected to be called in this test.');
     return successfulHotReloadSetup;
   }
 
@@ -216,10 +202,7 @@ class FakeFlutterVmService extends Fake implements FlutterVmService {
   vm_service.VmService get service => FakeVmService();
 
   @override
-  Future<List<FlutterView>> getFlutterViews({
-    bool returnEarly = false,
-    Duration delay = const Duration(milliseconds: 50),
-  }) async {
+  Future<List<FlutterView>> getFlutterViews({bool returnEarly = false, Duration delay = const Duration(milliseconds: 50)}) async {
     return <FlutterView>[];
   }
 }
@@ -238,7 +221,7 @@ class FakeShaderCompiler implements DevelopmentShaderCompiler {
   const FakeShaderCompiler();
 
   @override
-  void configureCompiler(TargetPlatform? platform) {}
+  void configureCompiler(TargetPlatform? platform) { }
 
   @override
   Future<DevFSContent> recompileShader(DevFSContent inputShader) {

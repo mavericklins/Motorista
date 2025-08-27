@@ -5,12 +5,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Flutter code sample for [Action.overridable].
+/// Flutter code sample for [Action.Action.overridable].
 
 void main() {
   runApp(
     const MaterialApp(
-      home: Scaffold(body: Center(child: VerificationCodeGenerator())),
+      home: Scaffold(
+        body: Center(child: VerificationCodeGenerator()),
+      ),
     ),
   );
 }
@@ -30,21 +32,16 @@ class CopyableText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Action<CopyTextIntent> defaultCopyAction = CallbackAction<CopyTextIntent>(
-      onInvoke: _copy,
-    );
+    final Action<CopyTextIntent> defaultCopyAction = CallbackAction<CopyTextIntent>(onInvoke: _copy);
     return Shortcuts(
       shortcuts: const <ShortcutActivator, Intent>{
-        SingleActivator(LogicalKeyboardKey.keyC, control: true): copyTextIntent,
+        SingleActivator(LogicalKeyboardKey.keyC, control: true): copyTextIntent
       },
       child: Actions(
         actions: <Type, Action<Intent>>{
           // The Action is made overridable so the VerificationCodeGenerator
           // widget can override how copying is handled.
-          CopyTextIntent: Action<CopyTextIntent>.overridable(
-            defaultAction: defaultCopyAction,
-            context: context,
-          ),
+          CopyTextIntent: Action<CopyTextIntent>.overridable(defaultAction: defaultCopyAction, context: context),
         },
         child: Focus(
           autofocus: true,
@@ -69,9 +66,7 @@ class VerificationCodeGenerator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Actions(
-      actions: <Type, Action<Intent>>{
-        CopyTextIntent: CallbackAction<CopyTextIntent>(onInvoke: _copy),
-      },
+      actions: <Type, Action<Intent>>{CopyTextIntent: CallbackAction<CopyTextIntent>(onInvoke: _copy)},
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[

@@ -4,12 +4,5 @@
   "reorderItemUp": "Di chuyển lên",
   "reorderItemDown": "Di chuyển xuống",
   "reorderItemLeft": "Di chuyển sang trái",
-  "reorderItemRight": "Di chuyển sang phải",
-  "copyButtonLabel": "Sao chép",
-  "cutButtonLabel": "Cắt",
-  "lookUpButtonLabel": "Tra cứu",
-  "searchWebButtonLabel": "Tìm kiếm trên web",
-  "shareButtonLabel": "Chia sẻ",
-  "pasteButtonLabel": "Dán",
-  "selectAllButtonLabel": "Chọn tất cả"
+  "reorderItemRight": "Di chuyển sang phải"
 }

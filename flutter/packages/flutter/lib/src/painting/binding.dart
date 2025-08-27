@@ -2,12 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'dart:ui';
-///
-/// @docImport 'package:flutter/widgets.dart';
-/// @docImport 'package:flutter_driver/driver_extension.dart';
-library;
-
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show ServicesBinding;
@@ -65,7 +59,7 @@ mixin PaintingBinding on BindingBase, ServicesBinding {
   /// See also:
   ///
   ///  * [ShaderWarmUp], the interface for implementing custom warm-up scenes.
-  ///  * <https://docs.flutter.dev/perf/shader>
+  ///  * <https://flutter.dev/docs/perf/rendering/shader>
   static ShaderWarmUp? shaderWarmUp;
 
   /// The singleton that implements the Flutter framework's image cache.
@@ -188,7 +182,7 @@ mixin PaintingBinding on BindingBase, ServicesBinding {
 class _SystemFontsNotifier extends Listenable {
   final Set<VoidCallback> _systemFontsCallbacks = <VoidCallback>{};
 
-  void notifyListeners() {
+  void notifyListeners () {
     for (final VoidCallback callback in _systemFontsCallbacks) {
       callback();
     }
@@ -198,7 +192,6 @@ class _SystemFontsNotifier extends Listenable {
   void addListener(VoidCallback listener) {
     _systemFontsCallbacks.add(listener);
   }
-
   @override
   void removeListener(VoidCallback listener) {
     _systemFontsCallbacks.remove(listener);

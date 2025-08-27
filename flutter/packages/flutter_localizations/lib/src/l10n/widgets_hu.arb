@@ -4,12 +4,5 @@
   "reorderItemUp": "Áthelyezés felfelé",
   "reorderItemDown": "Áthelyezés lefelé",
   "reorderItemLeft": "Áthelyezés balra",
-  "reorderItemRight": "Áthelyezés jobbra",
-  "copyButtonLabel": "Másolás",
-  "cutButtonLabel": "Kivágás",
-  "lookUpButtonLabel": "Felfelé nézés",
-  "searchWebButtonLabel": "Keresés az interneten",
-  "shareButtonLabel": "Megosztás",
-  "pasteButtonLabel": "Beillesztés",
-  "selectAllButtonLabel": "Összes kijelölése"
+  "reorderItemRight": "Áthelyezés jobbra"
 }

@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'transitions.dart';
-library;
-
 import 'package:flutter/rendering.dart';
 
 import 'basic.dart';
@@ -15,8 +12,8 @@ import 'ticker_provider.dart';
 /// duration whenever the given child's size changes.
 ///
 /// {@tool dartpad}
-/// This example defines a widget that uses [AnimatedSize] to change the size of
-/// the [SizedBox] on tap.
+/// This example makes a [Container] react to being touched, causing the child
+/// of the [AnimatedSize] widget, here a [FlutterLogo], to animate.
 ///
 /// ** See code in examples/api/lib/widgets/animated_size/animated_size.0.dart **
 /// {@end-tool}
@@ -92,7 +89,8 @@ class AnimatedSize extends StatefulWidget {
   State<AnimatedSize> createState() => _AnimatedSizeState();
 }
 
-class _AnimatedSizeState extends State<AnimatedSize> with SingleTickerProviderStateMixin {
+class _AnimatedSizeState
+    extends State<AnimatedSize> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return _AnimatedSize(
@@ -162,21 +160,8 @@ class _AnimatedSize extends SingleChildRenderObjectWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<AlignmentGeometry>(
-        'alignment',
-        alignment,
-        defaultValue: Alignment.topCenter,
-      ),
-    );
+    properties.add(DiagnosticsProperty<AlignmentGeometry>('alignment', alignment, defaultValue: Alignment.topCenter));
     properties.add(IntProperty('duration', duration.inMilliseconds, unit: 'ms'));
-    properties.add(
-      IntProperty(
-        'reverseDuration',
-        reverseDuration?.inMilliseconds,
-        unit: 'ms',
-        defaultValue: null,
-      ),
-    );
+    properties.add(IntProperty('reverseDuration', reverseDuration?.inMilliseconds, unit: 'ms', defaultValue: null));
   }
 }

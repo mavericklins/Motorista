@@ -138,7 +138,7 @@
   "menuBarMenuLabel": "Nabídka na liště s nabídkou",
   "currentDateLabel": "Dnes",
   "scrimLabel": "Scrim",
-  "bottomSheetLabel": "Spodní panel",
+  "bottomSheetLabel": "Spodní tabulka",
   "scrimOnTapHint": "Zavřít $modalRouteContentName",
   "keyboardKeyShift": "Shift",
   "expansionTileExpandedHint": "dvojitým klepnutím sbalíte",
@@ -150,7 +150,7 @@
   "menuDismissLabel": "Zavřít nabídku",
   "lookUpButtonLabel": "Vyhledat",
   "searchWebButtonLabel": "Vyhledávat na webu",
-  "shareButtonLabel": "Sdílet",
-  "clearButtonTooltip": "Vymazat text",
-  "selectedDateLabel": "Vybráno"
+  "shareButtonLabel": "Sdílet…",
+  "clearButtonTooltip": "Clear text",
+  "selectedDateLabel": "Selected"
 }

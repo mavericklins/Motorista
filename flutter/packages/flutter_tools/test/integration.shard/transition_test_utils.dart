@@ -11,10 +11,11 @@ import 'package:meta/meta.dart';
 import 'package:process/process.dart';
 
 import '../src/common.dart';
-import 'test_utils.dart' show flutterBin;
+import 'test_utils.dart' show fileSystem;
 
 const ProcessManager processManager = LocalProcessManager();
 final String flutterRoot = getFlutterRoot();
+final String flutterBin = fileSystem.path.join(flutterRoot, 'bin', 'flutter');
 
 void debugPrint(String message) {
   // This is called to intentionally print debugging output when a test is
@@ -43,56 +44,51 @@ abstract class Transition {
   bool matches(String line);
 
   @protected
-  bool lineMatchesPattern(String line, Pattern pattern, bool contains) {
-    if (pattern is RegExp) {
-      // Ideally this would also distinguish between "contains" and "equals"
-      // operation.
-      return line.contains(pattern);
+  bool lineMatchesPattern(String line, Pattern pattern) {
+    if (pattern is String) {
+      return line == pattern;
     }
-    return contains ? line.contains(pattern) : line == pattern;
+    return line.contains(pattern);
   }
 
   @protected
-  String describe(Pattern pattern, bool contains) {
+  String describe(Pattern pattern) {
+    if (pattern is String) {
+      return '"$pattern"';
+    }
     if (pattern is RegExp) {
       return '/${pattern.pattern}/';
     }
-    return contains ? '"...$pattern..."' : '"$pattern"';
+    return '$pattern';
   }
 }
 
 class Barrier extends Transition {
-  Barrier(this.pattern, {super.handler, super.logging}) : contains = false;
-  Barrier.contains(this.pattern, {super.handler, super.logging}) : contains = true;
-
+  const Barrier(this.pattern, {super.handler, super.logging});
   final Pattern pattern;
-  final bool contains;
 
   @override
-  bool matches(String line) => lineMatchesPattern(line, pattern, contains);
+  bool matches(String line) => lineMatchesPattern(line, pattern);
 
   @override
-  String toString() => describe(pattern, contains);
+  String toString() => describe(pattern);
 }
 
 class Multiple extends Transition {
-  Multiple(List<Pattern> patterns, {super.handler, super.logging})
-    : _originalPatterns = patterns,
-      patterns = patterns.toList(),
-      contains = false;
-  Multiple.contains(List<Pattern> patterns, {super.handler, super.logging})
-    : _originalPatterns = patterns,
-      patterns = patterns.toList(),
-      contains = true;
+  Multiple(
+    List<Pattern> patterns, {
+    super.handler,
+    super.logging,
+  })  : _originalPatterns = patterns,
+        patterns = patterns.toList();
 
   final List<Pattern> _originalPatterns;
   final List<Pattern> patterns;
-  final bool contains;
 
   @override
   bool matches(String line) {
-    for (var index = 0; index < patterns.length; index += 1) {
-      if (lineMatchesPattern(line, patterns[index], contains)) {
+    for (int index = 0; index < patterns.length; index += 1) {
+      if (lineMatchesPattern(line, patterns[index])) {
         patterns.removeAt(index);
         break;
       }
@@ -102,7 +98,6 @@ class Multiple extends Transition {
 
   @override
   String toString() {
-    String describe(Pattern pattern) => super.describe(pattern, contains);
     if (patterns.isEmpty) {
       return '${_originalPatterns.map(describe).join(', ')} (all matched)';
     }
@@ -116,7 +111,8 @@ class LogLine {
   final String stamp;
   final String message;
 
-  bool get couldBeCrash => message.contains('Oops; flutter has exited unexpectedly:');
+  bool get couldBeCrash =>
+      message.contains('Oops; flutter has exited unexpectedly:');
 
   @override
   String toString() => '$stamp $channel: $message';
@@ -126,25 +122,26 @@ class LogLine {
   }
 
   static String clarify(String line) {
-    return line.runes
-        .map<String>(
-          (int rune) => switch (rune) {
-            >= 0x20 && <= 0x7F => String.fromCharCode(rune),
-            0x00 => '<NUL>',
-            0x07 => '<BEL>',
-            0x08 => '<TAB>',
-            0x09 => '<BS>',
-            0x0A => '<LF>',
-            0x0D => '<CR>',
-            _ =>
-              '<${rune.toRadixString(16).padLeft(rune <= 0xFF
-                  ? 2
-                  : rune <= 0xFFFF
-                  ? 4
-                  : 5, '0')}>',
-          },
-        )
-        .join();
+    return line.runes.map<String>((int rune) {
+      if (rune >= 0x20 && rune <= 0x7F) {
+        return String.fromCharCode(rune);
+      }
+      switch (rune) {
+        case 0x00:
+          return '<NUL>';
+        case 0x07:
+          return '<BEL>';
+        case 0x08:
+          return '<TAB>';
+        case 0x09:
+          return '<BS>';
+        case 0x0A:
+          return '<LF>';
+        case 0x0D:
+          return '<CR>';
+      }
+      return '<${rune.toRadixString(16).padLeft(rune <= 0xFF ? 2 : rune <= 0xFFFF ? 4 : 5, '0')}>';
+    }).join();
   }
 }
 
@@ -181,51 +178,47 @@ Future<ProcessTestResult> runFlutter(
     minutes: 10,
   ), // must be less than test timeout of 15 minutes! See ../../dart_test.yaml.
 }) async {
-  const platform = LocalPlatform();
-  final clock = Stopwatch()..start();
-  final Process process = await processManager.start(<String>[
-    // In a container with no X display, use the virtual framebuffer.
-    if (platform.isLinux && (platform.environment['DISPLAY'] ?? '').isEmpty) '/usr/bin/xvfb-run',
-    flutterBin,
-    ...arguments,
-  ], workingDirectory: workingDirectory);
-  final logs = <LogLine>[];
-  var nextTransition = 0;
+  const LocalPlatform platform = LocalPlatform();
+  final Stopwatch clock = Stopwatch()..start();
+  final Process process = await processManager.start(
+    <String>[
+      // In a container with no X display, use the virtual framebuffer.
+      if (platform.isLinux && (platform.environment['DISPLAY'] ?? '').isEmpty) '/usr/bin/xvfb-run',
+      flutterBin,
+      ...arguments,
+    ],
+    workingDirectory: workingDirectory,
+  );
+  final List<LogLine> logs = <LogLine>[];
+  int nextTransition = 0;
   void describeStatus() {
     if (transitions.isNotEmpty) {
       debugPrint('Expected state transitions:');
-      for (var index = 0; index < transitions.length; index += 1) {
-        debugPrint(
-          '${index.toString().padLeft(5)} '
-          '${index < nextTransition
-              ? 'ALREADY MATCHED '
-              : index == nextTransition
-              ? 'NOW WAITING FOR>'
-              : '                '} ${transitions[index]}',
-        );
+      for (int index = 0; index < transitions.length; index += 1) {
+        debugPrint('${index.toString().padLeft(5)} '
+            '${index < nextTransition ? 'ALREADY MATCHED ' : index == nextTransition ? 'NOW WAITING FOR>' : '                '} ${transitions[index]}');
       }
     }
     if (logs.isEmpty) {
       debugPrint(
-        'So far nothing has been logged${debug ? "" : "; use debug:true to print all output"}.',
-      );
+          'So far nothing has been logged${debug ? "" : "; use debug:true to print all output"}.');
     } else {
       debugPrint(
-        'Log${debug ? "" : " (only contains logged lines; use debug:true to print all output)"}:',
-      );
-      for (final log in logs) {
+          'Log${debug ? "" : " (only contains logged lines; use debug:true to print all output)"}:');
+      for (final LogLine log in logs) {
         log.printClearly();
       }
     }
   }
 
-  var streamingLogs = false;
+  bool streamingLogs = false;
   Timer? timeout;
   void processTimeout() {
     if (!streamingLogs) {
       streamingLogs = true;
       if (!debug) {
-        debugPrint('Test is taking a long time (${clock.elapsed.inSeconds} seconds so far).');
+        debugPrint(
+            'Test is taking a long time (${clock.elapsed.inSeconds} seconds so far).');
       }
       describeStatus();
       debugPrint('(streaming all logs from this point on...)');
@@ -234,16 +227,18 @@ Future<ProcessTestResult> runFlutter(
     }
   }
 
-  String stamp() => '[${(clock.elapsed.inMilliseconds / 1000.0).toStringAsFixed(1).padLeft(5)}s]';
+  String stamp() =>
+      '[${(clock.elapsed.inMilliseconds / 1000.0).toStringAsFixed(1).padLeft(5)}s]';
   void processStdout(String line) {
-    final log = LogLine('stdout', stamp(), line);
+    final LogLine log = LogLine('stdout', stamp(), line);
     if (logging) {
       logs.add(log);
     }
     if (streamingLogs) {
       log.printClearly();
     }
-    if (nextTransition < transitions.length && transitions[nextTransition].matches(line)) {
+    if (nextTransition < transitions.length &&
+        transitions[nextTransition].matches(line)) {
       if (streamingLogs) {
         debugPrint('(matched ${transitions[nextTransition]})');
       }
@@ -263,7 +258,7 @@ Future<ProcessTestResult> runFlutter(
       if (transitions[nextTransition].handler != null) {
         final String? command = transitions[nextTransition].handler!(line);
         if (command != null) {
-          final inLog = LogLine('stdin', stamp(), command);
+          final LogLine inLog = LogLine('stdin', stamp(), command);
           logs.add(inLog);
           if (streamingLogs) {
             inLog.printClearly();
@@ -273,15 +268,13 @@ Future<ProcessTestResult> runFlutter(
       }
       nextTransition += 1;
       timeout?.cancel();
-      timeout = Timer(
-        expectedMaxDuration ~/ 5,
-        processTimeout,
-      ); // This is not a failure timeout, just when to start logging verbosely to help debugging.
+      timeout = Timer(expectedMaxDuration ~/ 5,
+          processTimeout); // This is not a failure timeout, just when to start logging verbosely to help debugging.
     }
   }
 
   void processStderr(String line) {
-    final log = LogLine('stdout', stamp(), line);
+    final LogLine log = LogLine('stdout', stamp(), line);
     logs.add(log);
     if (streamingLogs) {
       log.printClearly();
@@ -291,10 +284,8 @@ Future<ProcessTestResult> runFlutter(
   if (debug) {
     processTimeout();
   } else {
-    timeout = Timer(
-      expectedMaxDuration ~/ 2,
-      processTimeout,
-    ); // This is not a failure timeout, just when to start logging verbosely to help debugging.
+    timeout = Timer(expectedMaxDuration ~/ 2,
+        processTimeout); // This is not a failure timeout, just when to start logging verbosely to help debugging.
   }
   process.stdout
       .transform<String>(utf8.decoder)
@@ -304,47 +295,41 @@ Future<ProcessTestResult> runFlutter(
       .transform<String>(utf8.decoder)
       .transform<String>(const LineSplitter())
       .listen(processStderr);
-  unawaited(
-    process.exitCode
-        .timeout(
-          expectedMaxDuration,
-          onTimeout: () {
-            // This is a failure timeout, must not be short.
-            debugPrint(
-              '${stamp()} (process is not quitting, trying to send a "q" just in case that helps)',
-            );
-            debugPrint('(a functional test should never reach this point)');
-            final inLog = LogLine('stdin', stamp(), 'q');
-            logs.add(inLog);
-            if (streamingLogs) {
-              inLog.printClearly();
-            }
-            process.stdin.write('q');
-            return -1; // discarded
-          },
-        )
-        .then(
-          (int i) => i,
-          onError: (Object error) {
-            // ignore errors here, they will be reported on the next line
-            return -1; // discarded
-          },
-        ),
-  );
+  unawaited(process.exitCode.timeout(expectedMaxDuration, onTimeout: () {
+    // This is a failure timeout, must not be short.
+    debugPrint(
+        '${stamp()} (process is not quitting, trying to send a "q" just in case that helps)');
+    debugPrint('(a functional test should never reach this point)');
+    final LogLine inLog = LogLine('stdin', stamp(), 'q');
+    logs.add(inLog);
+    if (streamingLogs) {
+      inLog.printClearly();
+    }
+    process.stdin.write('q');
+    return -1; // discarded
+  }).then(
+    (int i) => i,
+    onError: (Object error) {
+      // ignore errors here, they will be reported on the next line
+      return -1; // discarded
+    },
+  ));
   final int exitCode = await process.exitCode;
   if (streamingLogs) {
     debugPrint('${stamp()} (process terminated with exit code $exitCode)');
   }
   timeout?.cancel();
   if (nextTransition < transitions.length) {
-    debugPrint('The subprocess terminated before all the expected transitions had been matched.');
-    if (logs.any((LogLine line) => line.couldBeCrash)) {
-      debugPrint('The subprocess may in fact have crashed. Check the stderr logs below.');
-    }
-    debugPrint('The transition that we were hoping to see next but that we never saw was:');
     debugPrint(
-      '${nextTransition.toString().padLeft(5)} NOW WAITING FOR> ${transitions[nextTransition]}',
-    );
+        'The subprocess terminated before all the expected transitions had been matched.');
+    if (logs.any((LogLine line) => line.couldBeCrash)) {
+      debugPrint(
+          'The subprocess may in fact have crashed. Check the stderr logs below.');
+    }
+    debugPrint(
+        'The transition that we were hoping to see next but that we never saw was:');
+    debugPrint(
+        '${nextTransition.toString().padLeft(5)} NOW WAITING FOR> ${transitions[nextTransition]}');
     if (!streamingLogs) {
       describeStatus();
       debugPrint('(process terminated with exit code $exitCode)');
@@ -357,4 +342,4 @@ Future<ProcessTestResult> runFlutter(
   return ProcessTestResult(exitCode, logs);
 }
 
-const progressMessageWidth = 64;
+const int progressMessageWidth = 64;

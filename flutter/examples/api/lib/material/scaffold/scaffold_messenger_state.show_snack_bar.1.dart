@@ -13,7 +13,9 @@ class SnackBarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: SnackBarExample());
+    return const MaterialApp(
+      home: SnackBarExample(),
+    );
   }
 }
 

@@ -13,7 +13,9 @@ class RelativePositionedTransitionExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: RelativePositionedTransitionExample());
+    return const MaterialApp(
+      home: RelativePositionedTransitionExample(),
+    );
   }
 }
 
@@ -21,8 +23,7 @@ class RelativePositionedTransitionExample extends StatefulWidget {
   const RelativePositionedTransitionExample({super.key});
 
   @override
-  State<RelativePositionedTransitionExample> createState() =>
-      _RelativePositionedTransitionExampleState();
+  State<RelativePositionedTransitionExample> createState() => _RelativePositionedTransitionExampleState();
 }
 
 /// [AnimationController]s can be created with `vsync: this` because of
@@ -60,8 +61,14 @@ class _RelativePositionedTransitionExampleState extends State<RelativePositioned
                   smallLogo,
                   smallLogo,
                 ),
-              ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticInOut)),
-              child: const Padding(padding: EdgeInsets.all(8), child: FlutterLogo()),
+              ).animate(CurvedAnimation(
+                parent: _controller,
+                curve: Curves.elasticInOut,
+              )),
+              child: const Padding(
+                padding: EdgeInsets.all(8),
+                child: FlutterLogo(),
+              ),
             ),
           ],
         );

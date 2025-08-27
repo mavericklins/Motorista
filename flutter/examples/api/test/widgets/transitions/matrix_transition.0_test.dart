@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Shows Flutter logo inside a MatrixTransition', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.MatrixTransitionExampleApp());
+    await tester.pumpWidget(
+      const example.MatrixTransitionExampleApp(),
+    );
 
     final Finder transformFinder = find.ancestor(
       of: find.byType(FlutterLogo),
@@ -18,7 +20,9 @@ void main() {
   });
 
   testWidgets('MatrixTransition animates', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.MatrixTransitionExampleApp());
+    await tester.pumpWidget(
+      const example.MatrixTransitionExampleApp(),
+    );
 
     final Finder transformFinder = find.ancestor(
       of: find.byType(FlutterLogo),
@@ -29,27 +33,12 @@ void main() {
     Matrix4 actualTransform = transformBox.transform;
 
     // Check initial transform.
-    expect(
-      actualTransform,
-      Matrix4.fromList(<double>[
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.004,
-        1.0,
-      ])..transpose(),
-    );
+    expect(actualTransform, Matrix4.fromList(<double>[
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      0.0, 0.0, 0.004, 1.0,
+    ])..transpose());
 
     // Animate half way.
     await tester.pump(const Duration(seconds: 1));
@@ -57,28 +46,11 @@ void main() {
     actualTransform = transformBox.transform;
 
     // The transform should be updated.
-    expect(
-      actualTransform,
-      isNot(
-        Matrix4.fromList(<double>[
-          1.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          1.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          1.0,
-          0.0,
-          0.0,
-          0.0,
-          0.004,
-          1.0,
-        ])..transpose(),
-      ),
-    );
+    expect(actualTransform, isNot(Matrix4.fromList(<double>[
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      0.0, 0.0, 0.004, 1.0,
+    ])..transpose()));
   });
 }

@@ -17,25 +17,22 @@ import '../src/context.dart';
 
 void main() {
   testWithoutContext('Template constructor throws ToolExit when source directory is missing', () {
-    final handler = FileExceptionHandler();
-    final fileSystem = MemoryFileSystem.test(opHandle: handler.opHandle);
+    final FileExceptionHandler handler = FileExceptionHandler();
+    final MemoryFileSystem fileSystem = MemoryFileSystem.test(opHandle: handler.opHandle);
 
-    expect(
-      () => Template(
-        fileSystem.directory('doesNotExist'),
-        fileSystem.currentDirectory,
-        fileSystem: fileSystem,
-        logger: BufferLogger.test(),
-        templateRenderer: FakeTemplateRenderer(),
-      ),
-      throwsToolExit(),
-    );
+    expect(() => Template(
+      fileSystem.directory('doesNotExist'),
+      fileSystem.currentDirectory,
+      fileSystem: fileSystem,
+      logger: BufferLogger.test(),
+      templateRenderer: FakeTemplateRenderer(),
+    ), throwsToolExit());
   });
 
   testWithoutContext('Template.render throws ToolExit when FileSystem exception is raised', () {
-    final handler = FileExceptionHandler();
-    final fileSystem = MemoryFileSystem.test(opHandle: handler.opHandle);
-    final template = Template(
+    final FileExceptionHandler handler = FileExceptionHandler();
+    final MemoryFileSystem fileSystem = MemoryFileSystem.test(opHandle: handler.opHandle);
+    final Template template = Template(
       fileSystem.directory('examples')..createSync(recursive: true),
       fileSystem.currentDirectory,
       fileSystem: fileSystem,
@@ -45,30 +42,29 @@ void main() {
     final Directory directory = fileSystem.directory('foo');
     handler.addError(directory, FileSystemOp.create, const FileSystemException());
 
-    expect(() => template.render(directory, <String, Object>{}), throwsToolExit());
+    expect(() => template.render(directory, <String, Object>{}),
+      throwsToolExit());
   });
 
   group('template image directory', () {
-    final overrides = <Type, Generator>{
+    final Map<Type, Generator> overrides = <Type, Generator>{
       FileSystem: () => MemoryFileSystem.test(),
       ProcessManager: () => FakeProcessManager.any(),
     };
-    const templatePathProvider = TemplatePathProvider();
+    const TemplatePathProvider templatePathProvider = TemplatePathProvider();
 
-    testUsingContext(
-      'templatePathProvider.imageDirectory returns parent template directory if passed null name',
-      () async {
-        final String packageConfigPath = globals.fs.path.join(
-          Cache.flutterRoot!,
-          'packages',
-          'flutter_tools',
-          '.dart_tool',
-          'package_config.json',
-        );
+    testUsingContext('templatePathProvider.imageDirectory returns parent template directory if passed null name', () async {
+      final String packageConfigPath = globals.fs.path.join(
+        Cache.flutterRoot!,
+        'packages',
+        'flutter_tools',
+        '.dart_tool',
+        'package_config.json',
+      );
 
-        globals.fs.file(packageConfigPath)
-          ..createSync(recursive: true)
-          ..writeAsStringSync('''
+      globals.fs.file(packageConfigPath)
+        ..createSync(recursive: true)
+        ..writeAsStringSync('''
 {
   "configVersion": 2,
   "packages": [
@@ -81,27 +77,26 @@ void main() {
   ]
 }
 ''');
-        expect(
+      expect(
           (await templatePathProvider.imageDirectory(null, globals.fs, globals.logger)).path,
-          globals.fs.path.absolute('flutter_template_images', 'templates'),
-        );
-      },
-      overrides: overrides,
-    );
+          globals.fs.path.absolute(
+            'flutter_template_images',
+            'templates',
+          ),
+      );
+    }, overrides: overrides);
 
-    testUsingContext(
-      'templatePathProvider.imageDirectory returns the directory containing the `name` template directory',
-      () async {
-        final String packageConfigPath = globals.fs.path.join(
-          Cache.flutterRoot!,
-          'packages',
-          'flutter_tools',
-          '.dart_tool',
-          'package_config.json',
-        );
-        globals.fs.file(packageConfigPath)
-          ..createSync(recursive: true)
-          ..writeAsStringSync('''
+    testUsingContext('templatePathProvider.imageDirectory returns the directory containing the `name` template directory', () async {
+      final String packageConfigPath = globals.fs.path.join(
+        Cache.flutterRoot!,
+        'packages',
+        'flutter_tools',
+        '.dart_tool',
+        'package_config.json',
+      );
+      globals.fs.file(packageConfigPath)
+        ..createSync(recursive: true)
+        ..writeAsStringSync('''
 {
   "configVersion": 2,
   "packages": [
@@ -114,24 +109,26 @@ void main() {
   ]
 }
 ''');
-        expect(
-          (await templatePathProvider.imageDirectory('app', globals.fs, globals.logger)).path,
-          globals.fs.path.absolute('flutter_template_images', 'templates', 'app'),
-        );
-      },
-      overrides: overrides,
-    );
+      expect(
+        (await templatePathProvider.imageDirectory('app_shared', globals.fs, globals.logger)).path,
+        globals.fs.path.absolute(
+          'flutter_template_images',
+          'templates',
+          'app_shared',
+        ),
+      );
+    }, overrides: overrides);
   });
 
   group('renders template', () {
     late Directory destination;
-    const imageName = 'some_image.png';
+    const String imageName = 'some_image.png';
     late File sourceImage;
     late BufferLogger logger;
     late Template template;
 
     setUp(() {
-      final fileSystem = MemoryFileSystem.test();
+      final MemoryFileSystem fileSystem = MemoryFileSystem.test();
       final Directory templateDir = fileSystem.directory('templates');
       final Directory imageSourceDir = fileSystem.directory('template_images');
       destination = fileSystem.directory('target');

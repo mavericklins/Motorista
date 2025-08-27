@@ -11,19 +11,17 @@ import '../widgets/editable_text_utils.dart';
 
 Finder findCupertinoOverflowNextButton() {
   return find.byWidgetPredicate((Widget widget) {
-    return widget is CustomPaint &&
-        '${widget.painter?.runtimeType}' == '_RightCupertinoChevronPainter';
+    return widget is CustomPaint && '${widget.painter?.runtimeType}' == '_RightCupertinoChevronPainter';
   });
 }
 
 Finder findCupertinoOverflowBackButton() {
   return find.byWidgetPredicate((Widget widget) {
-    return widget is CustomPaint &&
-        '${widget.painter?.runtimeType}' == '_LeftCupertinoChevronPainter';
+    return widget is CustomPaint && '${widget.painter?.runtimeType}' == '_LeftCupertinoChevronPainter';
   });
 }
 
-Future<void> tapCupertinoOverflowNextButton(WidgetTester tester) async {
+Future<void> tapCupertinoOverflowNextButton(WidgetTester tester) async{
   await tester.tapAt(tester.getCenter(findCupertinoOverflowNextButton()));
   await tester.pumpAndSettle();
 }
@@ -194,11 +192,11 @@ void expectMaterialToolbarForFullSelection() {
 }
 
 Finder findMaterialOverflowNextButton() {
-  return find.byKey(StandardComponentType.moreButton.key);
+  return find.byIcon(Icons.more_vert);
 }
 
 Finder findMaterialOverflowBackButton() {
-  return find.byKey(StandardComponentType.backButton.key);
+  return find.byIcon(Icons.arrow_back);
 }
 
 Future<void> tapMaterialOverflowNextButton(WidgetTester tester) async {

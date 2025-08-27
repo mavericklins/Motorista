@@ -32,7 +32,9 @@ class CraneApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         CraneApp.defaultRoute: (BuildContext context) => const _Home(),
       },
-      theme: craneTheme.copyWith(platform: GalleryOptions.of(context).platform),
+      theme: craneTheme.copyWith(
+        platform: GalleryOptions.of(context).platform,
+      ),
     );
   }
 }
@@ -45,7 +47,11 @@ class _Home extends StatelessWidget {
     return const ApplyTextOptions(
       child: Backdrop(
         frontLayer: SizedBox(),
-        backLayerItems: <BackLayerItem>[FlyForm(), SleepForm(), EatForm()],
+        backLayerItems: <BackLayerItem>[
+          FlyForm(),
+          SleepForm(),
+          EatForm(),
+        ],
         frontTitle: Text('CRANE'),
         backTitle: Text('MENU'),
       ),

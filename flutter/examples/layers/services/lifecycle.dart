@@ -5,13 +5,14 @@
 import 'package:flutter/widgets.dart';
 
 class LifecycleWatcher extends StatefulWidget {
-  const LifecycleWatcher({super.key});
+  const LifecycleWatcher({ super.key });
 
   @override
   State<LifecycleWatcher> createState() => _LifecycleWatcherState();
 }
 
-class _LifecycleWatcherState extends State<LifecycleWatcher> with WidgetsBindingObserver {
+class _LifecycleWatcherState extends State<LifecycleWatcher>
+                             with WidgetsBindingObserver {
   AppLifecycleState? _lastLifecycleState;
 
   @override
@@ -42,11 +43,14 @@ class _LifecycleWatcherState extends State<LifecycleWatcher> with WidgetsBinding
   }
 }
 
+
 void main() {
   runApp(
     const Directionality(
       textDirection: TextDirection.ltr,
-      child: Center(child: LifecycleWatcher()),
+      child: Center(
+        child: LifecycleWatcher(),
+      ),
     ),
   );
 }

@@ -12,32 +12,25 @@ import '../device.dart';
 import '../globals.dart' as globals;
 import '../ios/devices.dart';
 
-const _checkingForWirelessDevicesMessage = 'Checking for wireless devices...';
-const _chooseOneMessage = 'Please choose one (or "q" to quit)';
-const _connectedDevicesMessage = 'Connected devices:';
-const _foundButUnsupportedDevicesMessage =
-    'The following devices were found, but are not supported by this project:';
-const _noAttachedCheckForWirelessMessage = 'No devices found yet. Checking for wireless devices...';
-const _noDevicesFoundMessage = 'No devices found.';
-const _noWirelessDevicesFoundMessage = 'No wireless devices were found.';
-const _wirelesslyConnectedDevicesMessage = 'Wirelessly connected devices:';
+const String _checkingForWirelessDevicesMessage = 'Checking for wireless devices...';
+const String _chooseOneMessage = 'Please choose one (or "q" to quit)';
+const String _connectedDevicesMessage = 'Connected devices:';
+const String _foundButUnsupportedDevicesMessage = 'The following devices were found, but are not supported by this project:';
+const String _noAttachedCheckForWirelessMessage = 'No devices found yet. Checking for wireless devices...';
+const String _noDevicesFoundMessage = 'No devices found.';
+const String _noWirelessDevicesFoundMessage = 'No wireless devices were found.';
+const String _wirelesslyConnectedDevicesMessage = 'Wirelessly connected devices:';
 
-String _chooseDeviceOptionMessage(int option, String name, String deviceId) =>
-    '[$option]: $name ($deviceId)';
+String _chooseDeviceOptionMessage(int option, String name, String deviceId) => '[$option]: $name ($deviceId)';
 String _foundMultipleSpecifiedDevicesMessage(String deviceId) =>
     'Found multiple devices with name or id matching $deviceId:';
 String _foundSpecifiedDevicesMessage(int count, String deviceId) =>
     'Found $count devices with name or id matching $deviceId:';
-String _noMatchingDeviceMessage(String deviceId) =>
-    'No supported devices found with name or id '
+String _noMatchingDeviceMessage(String deviceId) => 'No supported devices found with name or id '
     "matching '$deviceId'.";
-String flutterSpecifiedDeviceDevModeDisabled(String deviceName) =>
-    'To use '
-    "'$deviceName' for development, enable Developer Mode in Settings → Privacy & Security on the device. "
-    'If this does not work, open Xcode, reconnect the device, and look for a '
-    'popup on the device asking you to trust this computer.';
-String flutterSpecifiedDeviceUnpaired(String deviceName) =>
-    "'$deviceName' is not paired. "
+String flutterSpecifiedDeviceDevModeDisabled(String deviceName) => 'To use '
+    "'$deviceName' for development, enable Developer Mode in Settings → Privacy & Security.";
+String flutterSpecifiedDeviceUnpaired(String deviceName) => "'$deviceName' is not paired. "
     'Open Xcode and trust this computer when prompted.';
 
 /// This class handles functionality of finding and selecting target devices.
@@ -69,8 +62,8 @@ class TargetDevices {
     required DeviceManager deviceManager,
     required Logger logger,
     required this.deviceConnectionInterface,
-  }) : _deviceManager = deviceManager,
-       _logger = logger;
+  })  : _deviceManager = deviceManager,
+        _logger = logger;
 
   final DeviceManager _deviceManager;
   final Logger _logger;
@@ -83,7 +76,9 @@ class TargetDevices {
       deviceConnectionInterface == null ||
       deviceConnectionInterface == DeviceConnectionInterface.wireless;
 
-  Future<List<Device>> _getAttachedDevices({DeviceDiscoverySupportFilter? supportFilter}) async {
+  Future<List<Device>> _getAttachedDevices({
+    DeviceDiscoverySupportFilter? supportFilter,
+  }) async {
     if (!_includeAttachedDevices) {
       return <Device>[];
     }
@@ -95,7 +90,9 @@ class TargetDevices {
     );
   }
 
-  Future<List<Device>> _getWirelessDevices({DeviceDiscoverySupportFilter? supportFilter}) async {
+  Future<List<Device>> _getWirelessDevices({
+    DeviceDiscoverySupportFilter? supportFilter,
+  }) async {
     if (!_includeWirelessDevices) {
       return <Device>[];
     }
@@ -122,13 +119,17 @@ class TargetDevices {
     );
   }
 
-  DeviceDiscoverySupportFilter _defaultSupportFilter(bool includeDevicesUnsupportedByProject) {
+  DeviceDiscoverySupportFilter _defaultSupportFilter(
+    bool includeDevicesUnsupportedByProject,
+  ) {
     return _deviceManager.deviceSupportFilter(
       includeDevicesUnsupportedByProject: includeDevicesUnsupportedByProject,
     );
   }
 
-  void startExtendedWirelessDeviceDiscovery({Duration? deviceDiscoveryTimeout}) {}
+  void startExtendedWirelessDeviceDiscovery({
+    Duration? deviceDiscoveryTimeout,
+  }) {}
 
   /// Find and return all target [Device]s based upon criteria entered by the
   /// user on the command line.
@@ -196,11 +197,15 @@ class TargetDevices {
   Future<List<Device>?> _handleNoDevices() async {
     // Get connected devices from cache, including unsupported ones.
     final List<Device> unsupportedDevices = await _deviceManager.getAllDevices(
-      filter: DeviceDiscoveryFilter(deviceConnectionInterface: deviceConnectionInterface),
+      filter: DeviceDiscoveryFilter(
+        deviceConnectionInterface: deviceConnectionInterface,
+      )
     );
 
     if (_deviceManager.hasSpecifiedDeviceId) {
-      _logger.printStatus(_noMatchingDeviceMessage(_deviceManager.specifiedDeviceId!));
+      _logger.printStatus(
+        _noMatchingDeviceMessage(_deviceManager.specifiedDeviceId!),
+      );
       if (unsupportedDevices.isNotEmpty) {
         _logger.printStatus('');
         _logger.printStatus('The following devices were found:');
@@ -209,11 +214,9 @@ class TargetDevices {
       return null;
     }
 
-    _logger.printStatus(
-      _deviceManager.hasSpecifiedAllDevices
-          ? _noDevicesFoundMessage
-          : globals.userMessages.flutterNoSupportedDevices,
-    );
+    _logger.printStatus(_deviceManager.hasSpecifiedAllDevices
+        ? _noDevicesFoundMessage
+        : globals.userMessages.flutterNoSupportedDevices);
     await _printUnsupportedDevice(unsupportedDevices);
     return null;
   }
@@ -252,13 +255,14 @@ class TargetDevices {
     List<Device> attachedDevices,
     List<Device> wirelessDevices,
   ) async {
-    var supportedAttachedDevices = attachedDevices;
-    var supportedWirelessDevices = wirelessDevices;
+    List<Device> supportedAttachedDevices = attachedDevices;
+    List<Device> supportedWirelessDevices = wirelessDevices;
     if (_deviceManager.hasSpecifiedDeviceId) {
       final int allDeviceLength = supportedAttachedDevices.length + supportedWirelessDevices.length;
-      _logger.printStatus(
-        _foundSpecifiedDevicesMessage(allDeviceLength, _deviceManager.specifiedDeviceId!),
-      );
+      _logger.printStatus(_foundSpecifiedDevicesMessage(
+        allDeviceLength,
+        _deviceManager.specifiedDeviceId!,
+      ));
     } else {
       // Get connected devices from cache, including ones unsupported for the
       // project but still supported by Flutter.
@@ -295,9 +299,10 @@ class TargetDevices {
     final List<Device> allDevices = attachedDevices + wirelessDevices;
 
     if (_deviceManager.hasSpecifiedDeviceId) {
-      _logger.printStatus(
-        _foundSpecifiedDevicesMessage(allDevices.length, _deviceManager.specifiedDeviceId!),
-      );
+      _logger.printStatus(_foundSpecifiedDevicesMessage(
+        allDevices.length,
+        _deviceManager.specifiedDeviceId!,
+      ));
     } else {
       _logger.printStatus(_connectedDevicesMessage);
     }
@@ -322,26 +327,26 @@ class TargetDevices {
 
   Future<void> _printUnsupportedDevice(List<Device> unsupportedDevices) async {
     if (unsupportedDevices.isNotEmpty) {
-      final result = StringBuffer();
+      final StringBuffer result = StringBuffer();
       result.writeln();
       result.writeln(_foundButUnsupportedDevicesMessage);
       result.writeAll(
-        (await Device.descriptions(unsupportedDevices)).map((String desc) => desc).toList(),
+        (await Device.descriptions(unsupportedDevices))
+            .map((String desc) => desc)
+            .toList(),
         '\n',
       );
       result.writeln();
-      result.writeln(
-        globals.userMessages.flutterMissPlatformProjects(
-          Device.devicesPlatformTypes(unsupportedDevices),
-        ),
-      );
+      result.writeln(globals.userMessages.flutterMissPlatformProjects(
+        Device.devicesPlatformTypes(unsupportedDevices),
+      ));
       _logger.printStatus(result.toString(), newline: false);
     }
   }
 
   Future<Device> _chooseOneOfAvailableDevices(List<Device> devices) async {
     _displayDeviceOptions(devices);
-    final String userInput = await _readUserInput(devices.length);
+    final String userInput =  await _readUserInput(devices.length);
     if (userInput.toLowerCase() == 'q') {
       throwToolExit('');
     }
@@ -349,9 +354,9 @@ class TargetDevices {
   }
 
   void _displayDeviceOptions(List<Device> devices) {
-    var count = 1;
-    for (final device in devices) {
-      _logger.printStatus(_chooseDeviceOptionMessage(count, device.displayName, device.id));
+    int count = 1;
+    for (final Device device in devices) {
+      _logger.printStatus(_chooseDeviceOptionMessage(count, device.name, device.id));
       count++;
     }
   }
@@ -359,7 +364,7 @@ class TargetDevices {
   Future<String> _readUserInput(int deviceCount) async {
     globals.terminal.usesTerminalUi = true;
     final String result = await globals.terminal.promptForCharInput(
-      <String>[for (int i = 0; i < deviceCount; i++) '${i + 1}', 'q', 'Q'],
+      <String>[ for (int i = 0; i < deviceCount; i++) '${i + 1}', 'q', 'Q'],
       displayAcceptedCharacters: false,
       logger: _logger,
       prompt: _chooseOneMessage,
@@ -374,18 +379,20 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
     required super.deviceManager,
     required super.logger,
     super.deviceConnectionInterface,
-  }) : super._private();
+  })  : super._private();
 
   Future<void>? _wirelessDevicesRefresh;
 
   @visibleForTesting
-  var waitForWirelessBeforeInput = false;
+  bool waitForWirelessBeforeInput = false;
 
   @visibleForTesting
-  late final deviceSelection = TargetDeviceSelection(_logger);
+  late final TargetDeviceSelection deviceSelection = TargetDeviceSelection(_logger);
 
   @override
-  void startExtendedWirelessDeviceDiscovery({Duration? deviceDiscoveryTimeout}) {
+  void startExtendedWirelessDeviceDiscovery({
+    Duration? deviceDiscoveryTimeout,
+  }) {
     if (deviceDiscoveryTimeout == null && _includeWirelessDevices) {
       _wirelessDevicesRefresh ??= _deviceManager.refreshExtendedWirelessDeviceDiscoverers(
         timeout: DeviceManager.minimumWirelessDeviceDiscoveryTimeout,
@@ -415,7 +422,7 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
   Future<Device?> _waitForIOSDeviceToConnect(IOSDevice device) async {
     for (final DeviceDiscovery discoverer in _deviceManager.deviceDiscoverers) {
       if (discoverer is IOSDevices) {
-        _logger.printStatus('Waiting for ${device.displayName} to connect...');
+        _logger.printStatus('Waiting for ${device.name} to connect...');
         final Status waitingStatus = _logger.startSpinner(
           timeout: const Duration(seconds: 30),
           warningColor: TerminalColor.red,
@@ -462,8 +469,7 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
     // When a user defines the timeout or filters to only attached devices,
     // use the super function that does not do longer wireless device
     // discovery and does not wait for devices to connect.
-    if (deviceDiscoveryTimeout != null ||
-        deviceConnectionInterface == DeviceConnectionInterface.attached) {
+    if (deviceDiscoveryTimeout != null || deviceConnectionInterface == DeviceConnectionInterface.attached) {
       return super.findAllTargetDevices(
         deviceDiscoveryTimeout: deviceDiscoveryTimeout,
         includeDevicesUnsupportedByProject: includeDevicesUnsupportedByProject,
@@ -493,13 +499,15 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
         if (matchedDevice is IOSDevice) {
           // If the only matching device is not paired, print a warning
           if (!matchedDevice.isPaired) {
-            _logger.printStatus(flutterSpecifiedDeviceUnpaired(matchedDevice.displayName));
+            _logger.printStatus(flutterSpecifiedDeviceUnpaired(matchedDevice.name));
             return null;
           }
           // If the only matching device does not have Developer Mode enabled,
           // print a warning
           if (!matchedDevice.devModeEnabled) {
-            _logger.printStatus(flutterSpecifiedDeviceDevModeDisabled(matchedDevice.displayName));
+            _logger.printStatus(
+                flutterSpecifiedDeviceDevModeDisabled(matchedDevice.name)
+            );
             return null;
           }
 
@@ -511,16 +519,19 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
         if (matchedDevice != null && matchedDevice.isConnected) {
           return <Device>[matchedDevice];
         }
+
       } else {
         for (final IOSDevice device in specifiedDevices.whereType<IOSDevice>()) {
           // Print warning for every matching unpaired device.
           if (!device.isPaired) {
-            _logger.printStatus(flutterSpecifiedDeviceUnpaired(device.displayName));
+            _logger.printStatus(flutterSpecifiedDeviceUnpaired(device.name));
           }
 
           // Print warning for every matching device that does not have Developer Mode enabled.
           if (!device.devModeEnabled) {
-            _logger.printStatus(flutterSpecifiedDeviceDevModeDisabled(device.displayName));
+            _logger.printStatus(
+                flutterSpecifiedDeviceDevModeDisabled(device.name)
+            );
           }
         }
       }
@@ -624,7 +635,10 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
       return _printMultipleDevices(attachedDevices, wirelessDevices);
     }
 
-    return _selectFromDevicesAndCheckForWireless(attachedDevices, futureWirelessDevices);
+    return _selectFromDevicesAndCheckForWireless(
+      attachedDevices,
+      futureWirelessDevices,
+    );
   }
 
   /// Display a list of selectable attached devices and prompt the user to
@@ -643,7 +657,9 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
       _logger.printStatus(_connectedDevicesMessage);
     } else if (_deviceManager.hasSpecifiedDeviceId) {
       // Multiple devices were found with part of the name/id provided.
-      _logger.printStatus(_foundMultipleSpecifiedDevicesMessage(_deviceManager.specifiedDeviceId!));
+      _logger.printStatus(_foundMultipleSpecifiedDevicesMessage(
+        _deviceManager.specifiedDeviceId!,
+      ));
     }
 
     // Display list of attached devices.
@@ -687,7 +703,11 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
       _displayDeviceOptions(allDevices);
       deviceSelection.devices = allDevices;
       // Reprint device option prompt.
-      _logger.printStatus('$_chooseOneMessage: ', emphasis: true, newline: false);
+      _logger.printStatus(
+        '$_chooseOneMessage: ',
+        emphasis: true,
+        newline: false,
+      );
       return wirelessDevices;
     });
 
@@ -728,8 +748,14 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
 
   /// Clear [numLinesToClear] lines from terminal. Print message and list of
   /// wireless devices.
-  Future<void> _printWirelessDevices(List<Device> wirelessDevices, int numLinesToClear) async {
-    _logger.printStatus(globals.terminal.clearLines(numLinesToClear), newline: false);
+  Future<void> _printWirelessDevices(
+    List<Device> wirelessDevices,
+    int numLinesToClear,
+  ) async {
+    _logger.printStatus(
+      globals.terminal.clearLines(numLinesToClear),
+      newline: false,
+    );
     _logger.printStatus('');
     if (wirelessDevices.isEmpty) {
       _logger.printStatus(_noWirelessDevicesFoundMessage);
@@ -744,9 +770,9 @@ class TargetDevicesWithExtendedWirelessDeviceDiscovery extends TargetDevices {
 class TargetDeviceSelection {
   TargetDeviceSelection(this._logger);
 
-  var devices = <Device>[];
+  List<Device> devices = <Device>[];
   final Logger _logger;
-  var invalidAttempts = 0;
+  int invalidAttempts = 0;
 
   /// Prompt user to select a device and wait until they select a valid device.
   ///
@@ -775,7 +801,7 @@ class TargetDeviceSelection {
   /// Only allow input of a number or `q`.
   @visibleForTesting
   Future<String> readUserInput() async {
-    final pattern = RegExp(r'\d+$|q', caseSensitive: false);
+    final RegExp pattern = RegExp(r'\d+$|q', caseSensitive: false);
     String? choice;
     globals.terminal.singleCharMode = true;
     while (choice == null || choice.length > 1 || !pattern.hasMatch(choice)) {

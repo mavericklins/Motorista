@@ -12,6 +12,7 @@ import 'base/logger.dart';
 import 'base/process.dart';
 import 'base/user_messages.dart';
 import 'build_info.dart';
+import 'fuchsia/application_package.dart';
 import 'globals.dart' as globals;
 import 'ios/application_package.dart';
 import 'linux/application_package.dart';
@@ -36,6 +37,7 @@ class FlutterApplicationPackageFactory extends ApplicationPackageFactory {
        _fileSystem = fileSystem,
        _processUtils = ProcessUtils(logger: logger, processManager: processManager);
 
+
   final AndroidSdk? _androidSdk;
   final ProcessManager _processManager;
   final Logger _logger;
@@ -54,6 +56,7 @@ class FlutterApplicationPackageFactory extends ApplicationPackageFactory {
       case TargetPlatform.android_arm:
       case TargetPlatform.android_arm64:
       case TargetPlatform.android_x64:
+      case TargetPlatform.android_x86:
         if (applicationBinary == null) {
           return AndroidApk.fromAndroidProject(
             FlutterProject.current().android,
@@ -101,8 +104,9 @@ class FlutterApplicationPackageFactory extends ApplicationPackageFactory {
             : WindowsApp.fromPrebuiltApp(applicationBinary);
       case TargetPlatform.fuchsia_arm64:
       case TargetPlatform.fuchsia_x64:
-      case TargetPlatform.unsupported:
-        TargetPlatform.throwUnsupportedTarget();
+        return applicationBinary == null
+            ? FuchsiaApp.fromFuchsiaProject(FlutterProject.current().fuchsia)
+            : FuchsiaApp.fromPrebuiltApp(applicationBinary);
     }
   }
 }

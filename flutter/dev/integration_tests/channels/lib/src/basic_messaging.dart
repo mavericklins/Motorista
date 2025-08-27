@@ -41,11 +41,13 @@ class ExtendedStandardMessageCodec extends StandardMessageCodec {
 }
 
 Future<TestStepResult> basicBinaryHandshake(ByteData? message) async {
-  const BasicMessageChannel<ByteData?> channel = BasicMessageChannel<ByteData?>(
+  const BasicMessageChannel<ByteData?> channel =
+      BasicMessageChannel<ByteData?>(
     'binary-msg',
     BinaryCodec(),
   );
-  return _basicMessageHandshake<ByteData?>('Binary >${toString(message)}<', channel, message);
+  return _basicMessageHandshake<ByteData?>(
+      'Binary >${toString(message)}<', channel, message);
 }
 
 Future<TestStepResult> basicStringHandshake(String? message) async {
@@ -57,7 +59,8 @@ Future<TestStepResult> basicStringHandshake(String? message) async {
 }
 
 Future<TestStepResult> basicJsonHandshake(dynamic message) async {
-  const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
+  const BasicMessageChannel<dynamic> channel =
+      BasicMessageChannel<dynamic>(
     'json-msg',
     JSONMessageCodec(),
   );
@@ -65,20 +68,24 @@ Future<TestStepResult> basicJsonHandshake(dynamic message) async {
 }
 
 Future<TestStepResult> basicStandardHandshake(dynamic message) async {
-  const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
+  const BasicMessageChannel<dynamic> channel =
+      BasicMessageChannel<dynamic>(
     'std-msg',
     ExtendedStandardMessageCodec(),
   );
-  return _basicMessageHandshake<dynamic>('Standard >${toString(message)}<', channel, message);
+  return _basicMessageHandshake<dynamic>(
+      'Standard >${toString(message)}<', channel, message);
 }
 
 Future<void> _basicBackgroundStandardEchoMain(List<Object> args) async {
   final SendPort sendPort = args[2] as SendPort;
   final Object message = args[1];
   final String name = 'Background Echo >${toString(message)}<';
-  const String description = 'Uses a platform channel from a background isolate.';
+  const String description =
+      'Uses a platform channel from a background isolate.';
   try {
-    BackgroundIsolateBinaryMessenger.ensureInitialized(args[0] as RootIsolateToken);
+    BackgroundIsolateBinaryMessenger.ensureInitialized(
+        args[0] as RootIsolateToken);
     const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
       'std-echo',
       ExtendedStandardMessageCodec(),
@@ -90,7 +97,8 @@ Future<void> _basicBackgroundStandardEchoMain(List<Object> args) async {
         : TestStatus.failed;
     sendPort.send(TestStepResult(name, description, testStatus));
   } catch (ex) {
-    sendPort.send(TestStepResult(name, description, TestStatus.failed, error: ex.toString()));
+    sendPort.send(TestStepResult(name, description, TestStatus.failed,
+        error: ex.toString()));
   }
 }
 
@@ -105,7 +113,8 @@ Future<TestStepResult> basicBackgroundStandardEcho(Object message) async {
 }
 
 Future<TestStepResult> basicBinaryMessageToUnknownChannel() async {
-  const BasicMessageChannel<ByteData?> channel = BasicMessageChannel<ByteData?>(
+  const BasicMessageChannel<ByteData?> channel =
+      BasicMessageChannel<ByteData?>(
     'binary-unknown',
     BinaryCodec(),
   );
@@ -121,7 +130,8 @@ Future<TestStepResult> basicStringMessageToUnknownChannel() async {
 }
 
 Future<TestStepResult> basicJsonMessageToUnknownChannel() async {
-  const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
+  const BasicMessageChannel<dynamic> channel =
+      BasicMessageChannel<dynamic>(
     'json-unknown',
     JSONMessageCodec(),
   );
@@ -129,7 +139,8 @@ Future<TestStepResult> basicJsonMessageToUnknownChannel() async {
 }
 
 Future<TestStepResult> basicStandardMessageToUnknownChannel() async {
-  const BasicMessageChannel<dynamic> channel = BasicMessageChannel<dynamic>(
+  const BasicMessageChannel<dynamic> channel =
+      BasicMessageChannel<dynamic>(
     'std-unknown',
     ExtendedStandardMessageCodec(),
   );
@@ -193,7 +204,9 @@ Future<TestStepResult> _basicMessageToUnknownChannel<T>(
 
 String toString(dynamic message) {
   if (message is ByteData) {
-    return message.buffer.asUint8List(message.offsetInBytes, message.lengthInBytes).toString();
+    return message.buffer
+        .asUint8List(message.offsetInBytes, message.lengthInBytes)
+        .toString();
   } else {
     return '$message';
   }

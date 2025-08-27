@@ -9,7 +9,11 @@ void main() {
   testWidgets('Rendering Error', (WidgetTester tester) async {
     // this should fail
     await tester.pumpWidget(
-      CustomScrollView(slivers: <Widget>[SliverToBoxAdapter(child: Container())]),
+      CustomScrollView(
+        slivers: <Widget>[
+          SliverToBoxAdapter(child: Container()),
+        ],
+      )
     );
   });
 }

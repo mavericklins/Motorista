@@ -15,7 +15,10 @@ class ObscuredTextFieldSample extends StatelessWidget {
       width: 250,
       child: TextField(
         obscureText: true,
-        decoration: InputDecoration(border: OutlineInputBorder(), labelText: 'Password'),
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: 'Password',
+        ),
       ),
     );
   }
@@ -28,7 +31,9 @@ class TextFieldExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Obscured Textfield')),
-        body: const Center(child: ObscuredTextFieldSample()),
+        body: const Center(
+          child: ObscuredTextFieldSample(),
+        ),
       ),
     );
   }

@@ -25,7 +25,12 @@ void main() {
     expect(a.width, null);
     expect(a.height, null);
     final Positioned b = Positioned.fromRect(
-      rect: const Rect.fromLTRB(102.0, 302.0, 202.0, 502.0),
+      rect: const Rect.fromLTRB(
+        102.0,
+        302.0,
+        202.0,
+        502.0,
+      ),
       child: child,
     );
     expect(b.left, 102.0);
@@ -35,7 +40,12 @@ void main() {
     expect(b.width, 100.0);
     expect(b.height, 200.0);
     final Positioned c = Positioned.fromRelativeRect(
-      rect: const RelativeRect.fromLTRB(103.0, 303.0, 203.0, 403.0),
+      rect: const RelativeRect.fromLTRB(
+        103.0,
+        303.0,
+        203.0,
+        403.0,
+      ),
       child: child,
     );
     expect(c.left, 103.0);
@@ -84,7 +94,9 @@ void main() {
               children: <Widget>[
                 PositionedTransition(
                   rect: rect.animate(controller),
-                  child: Container(key: key),
+                  child: Container(
+                    key: key,
+                  ),
                 ),
               ],
             ),
@@ -112,28 +124,8 @@ void main() {
     expect(completer.isCompleted, isFalse);
     recordMetrics();
 
-    expect(
-      sizes,
-      equals(<Size>[
-        const Size(10.0, 10.0),
-        const Size(10.0, 10.0),
-        const Size(10.0, 10.0),
-        const Size(10.0, 10.0),
-        const Size(10.0, 10.0),
-        const Size(10.0, 10.0),
-      ]),
-    );
-    expect(
-      positions,
-      equals(<Offset>[
-        const Offset(10.0, 10.0),
-        const Offset(10.0, 10.0),
-        const Offset(17.0, 17.0),
-        const Offset(24.0, 24.0),
-        const Offset(45.0, 45.0),
-        const Offset(80.0, 80.0),
-      ]),
-    );
+    expect(sizes, equals(<Size>[const Size(10.0, 10.0), const Size(10.0, 10.0), const Size(10.0, 10.0), const Size(10.0, 10.0), const Size(10.0, 10.0), const Size(10.0, 10.0)]));
+    expect(positions, equals(<Offset>[const Offset(10.0, 10.0), const Offset(10.0, 10.0), const Offset(17.0, 17.0), const Offset(24.0, 24.0), const Offset(45.0, 45.0), const Offset(80.0, 80.0)]));
 
     controller.stop(canceled: false);
     await tester.pump();

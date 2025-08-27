@@ -22,7 +22,8 @@ void main() {
     });
 
     test('web_extension should register a function', () {
-      expect(() => registerWebServiceExtension(call), returnsNormally);
+      expect(() => registerWebServiceExtension(call),
+          returnsNormally);
 
       expect(_window.hasProperty(r'$flutterDriver'.toJS).toDart, true);
       expect(_window.getProperty(r'$flutterDriver'.toJS), isNotNull);

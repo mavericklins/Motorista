@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/widgets.dart';
-library;
-
 import 'dart:math' as math;
 
 import 'package:flutter/animation.dart';
@@ -48,7 +45,7 @@ abstract class ListWheelChildManager {
   /// nothing.
   ///
   /// It is possible to create children with negative indices.
-  void createChild(int index, {required RenderBox? after});
+  void createChild(int index, { required RenderBox? after });
 
   /// Removes the child element corresponding with the given RenderBox.
   void removeChild(RenderBox child);
@@ -144,7 +141,8 @@ class ListWheelParentData extends ContainerBoxParentData<RenderBox> {
 ///    plane's viewport painting coordinates** is also done such that the child
 ///    in the center of that plane will be mostly untransformed with children
 ///    above and below it being transformed more as the angle increases.
-class RenderListWheelViewport extends RenderBox
+class RenderListWheelViewport
+    extends RenderBox
     with ContainerRenderObjectMixin<RenderBox, ListWheelParentData>
     implements RenderAbstractViewport {
   /// Creates a [RenderListWheelViewport] which renders children on a wheel.
@@ -196,14 +194,12 @@ class RenderListWheelViewport extends RenderBox
   static const double defaultPerspective = 0.003;
 
   /// An error message to show when the provided [diameterRatio] is zero.
-  static const String diameterRatioZeroMessage =
-      "You can't set a diameterRatio "
+  static const String diameterRatioZeroMessage = "You can't set a diameterRatio "
       'of 0 or of a negative number. It would imply a cylinder of 0 in diameter '
       'in which case nothing will be drawn.';
 
   /// An error message to show when the [perspective] value is too high.
-  static const String perspectiveTooHighMessage =
-      'A perspective too high will '
+  static const String perspectiveTooHighMessage = 'A perspective too high will '
       'be clipped in the z-axis and therefore not renderable. Value must be '
       'between 0 and 0.01.';
 
@@ -251,18 +247,18 @@ class RenderListWheelViewport extends RenderBox
   /// A value smaller than 1 means items at the edges of the cylinder are
   /// entirely contained inside the viewport.
   ///
-  /// A value larger than 1 means angles less than ±[math.pi] / 2 from the
+  /// A value larger than 1 means angles less than ±[pi] / 2 from the
   /// center of the cylinder are visible.
   ///
   /// The same number of children will be visible in the viewport regardless of
   /// the [diameterRatio]. The number of children visible is based on the
   /// viewport's length along the main axis divided by the children's
   /// [itemExtent]. Then the children are evenly distributed along the visible
-  /// angles up to ±[math.pi] / 2.
+  /// angles up to ±[pi] / 2.
   ///
   /// Just as it's impossible to stretch a paper to cover the an entire
   /// half of a cylinder's surface where the cylinder has the same diameter
-  /// as the paper's length, choosing a [diameterRatio] smaller than [math.pi]
+  /// as the paper's length, choosing a [diameterRatio] smaller than [pi]
   /// will leave same gaps between the children.
   ///
   /// Defaults to an arbitrary but aesthetically reasonable number of 2.0.
@@ -272,7 +268,10 @@ class RenderListWheelViewport extends RenderBox
   double get diameterRatio => _diameterRatio;
   double _diameterRatio;
   set diameterRatio(double value) {
-    assert(value > 0, diameterRatioZeroMessage);
+    assert(
+      value > 0,
+      diameterRatioZeroMessage,
+    );
     if (value == _diameterRatio) {
       return;
     }
@@ -299,7 +298,10 @@ class RenderListWheelViewport extends RenderBox
   double _perspective;
   set perspective(double value) {
     assert(value > 0);
-    assert(value <= 0.01, perspectiveTooHighMessage);
+    assert(
+      value <= 0.01,
+      perspectiveTooHighMessage,
+    );
     if (value == _perspective) {
       return;
     }
@@ -355,7 +357,6 @@ class RenderListWheelViewport extends RenderBox
     _useMagnifier = value;
     markNeedsPaint();
   }
-
   /// {@template flutter.rendering.RenderListWheelViewport.magnification}
   /// The zoomed-in rate of the magnifier, if it is used.
   ///
@@ -412,6 +413,7 @@ class RenderListWheelViewport extends RenderBox
     _itemExtent = value;
     markNeedsLayout();
   }
+
 
   /// {@template flutter.rendering.RenderListWheelViewport.squeeze}
   /// The angular compactness of the children on the wheel.
@@ -582,12 +584,16 @@ class RenderListWheelViewport extends RenderBox
 
   @override
   double computeMinIntrinsicWidth(double height) {
-    return _getIntrinsicCrossAxis((RenderBox child) => child.getMinIntrinsicWidth(height));
+    return _getIntrinsicCrossAxis(
+      (RenderBox child) => child.getMinIntrinsicWidth(height),
+    );
   }
 
   @override
   double computeMaxIntrinsicWidth(double height) {
-    return _getIntrinsicCrossAxis((RenderBox child) => child.getMaxIntrinsicWidth(height));
+    return _getIntrinsicCrossAxis(
+      (RenderBox child) => child.getMaxIntrinsicWidth(height),
+    );
   }
 
   @override
@@ -630,7 +636,7 @@ class RenderListWheelViewport extends RenderBox
   /// Returns the scroll offset of the child with the given index.
   double indexToScrollOffset(int index) => index * itemExtent;
 
-  void _createChild(int index, {RenderBox? after}) {
+  void _createChild(int index, { RenderBox? after }) {
     invokeLayoutCallback<BoxConstraints>((BoxConstraints constraints) {
       assert(constraints == this.constraints);
       childManager.createChild(index, after: after);
@@ -682,7 +688,8 @@ class RenderListWheelViewport extends RenderBox
       visibleHeight *= 2;
     }
 
-    final double firstVisibleOffset = offset.pixels + _itemExtent / 2 - visibleHeight / 2;
+    final double firstVisibleOffset =
+      offset.pixels + _itemExtent / 2 - visibleHeight / 2;
     final double lastVisibleOffset = firstVisibleOffset + visibleHeight;
 
     // The index range that we want to spawn children. We find indexes that
@@ -729,10 +736,10 @@ class RenderListWheelViewport extends RenderBox
     }
 
     final BoxConstraints childConstraints = constraints.copyWith(
-      minHeight: _itemExtent,
-      maxHeight: _itemExtent,
-      minWidth: 0.0,
-    );
+        minHeight: _itemExtent,
+        maxHeight: _itemExtent,
+        minWidth: 0.0,
+      );
     // If there is no child at this stage, we add the first one that is in
     // target range.
     if (childCount == 0) {
@@ -778,18 +785,19 @@ class RenderListWheelViewport extends RenderBox
     // estimated value. Otherwise, we set the dimension limited to our target
     // range.
     final double minScrollExtent = childManager.childExistsAt(targetFirstIndex - 1)
-        ? _minEstimatedScrollExtent
-        : indexToScrollOffset(targetFirstIndex);
+      ? _minEstimatedScrollExtent
+      : indexToScrollOffset(targetFirstIndex);
     final double maxScrollExtent = childManager.childExistsAt(targetLastIndex + 1)
-        ? _maxEstimatedScrollExtent
-        : indexToScrollOffset(targetLastIndex);
+      ? _maxEstimatedScrollExtent
+      : indexToScrollOffset(targetLastIndex);
     offset.applyContentDimensions(minScrollExtent, maxScrollExtent);
   }
 
   bool _shouldClipAtCurrentOffset() {
-    final double highestUntransformedPaintY = _getUntransformedPaintingCoordinateY(0.0);
-    return highestUntransformedPaintY < 0.0 ||
-        size.height < highestUntransformedPaintY + _maxEstimatedScrollExtent + _itemExtent;
+    final double highestUntransformedPaintY =
+      _getUntransformedPaintingCoordinateY(0.0);
+    return highestUntransformedPaintY < 0.0
+      || size.height < highestUntransformedPaintY + _maxEstimatedScrollExtent + _itemExtent;
   }
 
   @override
@@ -819,9 +827,7 @@ class RenderListWheelViewport extends RenderBox
     _childOpacityLayerHandler.layer = null;
     super.dispose();
   }
-
   final LayerHandle<OpacityLayer> _childOpacityLayerHandler = LayerHandle<OpacityLayer>();
-
   /// Paints all children visible in the current viewport.
   void _paintVisibleChildren(PaintingContext context, Offset offset) {
     // The magnifier cannot be turned off if the opacity is less than 1.0.
@@ -832,17 +838,13 @@ class RenderListWheelViewport extends RenderBox
 
     // In order to reduce the number of opacity layers, we first paint all
     // partially opaque children, then finally paint the fully opaque children.
-    _childOpacityLayerHandler.layer = context.pushOpacity(
-      offset,
-      (overAndUnderCenterOpacity * 255).round(),
-      (PaintingContext context, Offset offset) {
-        _paintAllChildren(context, offset, center: false);
-      },
-    );
+    _childOpacityLayerHandler.layer = context.pushOpacity(offset, (overAndUnderCenterOpacity * 255).round(), (PaintingContext context, Offset offset) {
+      _paintAllChildren(context, offset, center: false);
+    });
     _paintAllChildren(context, offset, center: true);
   }
 
-  void _paintAllChildren(PaintingContext context, Offset offset, {bool? center}) {
+  void _paintAllChildren(PaintingContext context, Offset offset, { bool? center }) {
     RenderBox? childToPaint = firstChild;
     while (childToPaint != null) {
       final ListWheelParentData childParentData = childToPaint.parentData! as ListWheelParentData;
@@ -863,8 +865,11 @@ class RenderListWheelViewport extends RenderBox
     Offset layoutOffset, {
     required bool? center,
   }) {
-    final Offset untransformedPaintingCoordinates =
-        offset + Offset(layoutOffset.dx, _getUntransformedPaintingCoordinateY(layoutOffset.dy));
+    final Offset untransformedPaintingCoordinates = offset
+        + Offset(
+            layoutOffset.dx,
+            _getUntransformedPaintingCoordinateY(layoutOffset.dy),
+        );
 
     // Get child's center as a fraction of the viewport's height.
     final double fractionalY =
@@ -892,15 +897,7 @@ class RenderListWheelViewport extends RenderBox
 
     final bool shouldApplyOffCenterDim = overAndUnderCenterOpacity < 1;
     if (useMagnifier || shouldApplyOffCenterDim) {
-      _paintChildWithMagnifier(
-        context,
-        offset,
-        child,
-        transform,
-        offsetToCenter,
-        untransformedPaintingCoordinates,
-        center: center,
-      );
+      _paintChildWithMagnifier(context, offset, child, transform, offsetToCenter, untransformedPaintingCoordinates, center: center);
     } else {
       assert(center == null);
       _paintChildCylindrically(context, offset, child, transform, offsetToCenter);
@@ -929,14 +926,15 @@ class RenderListWheelViewport extends RenderBox
     Offset untransformedPaintingCoordinates, {
     required bool? center,
   }) {
-    final double magnifierTopLinePosition = size.height / 2 - _itemExtent * _magnification / 2;
-    final double magnifierBottomLinePosition = size.height / 2 + _itemExtent * _magnification / 2;
+    final double magnifierTopLinePosition =
+        size.height / 2 - _itemExtent * _magnification / 2;
+    final double magnifierBottomLinePosition =
+        size.height / 2 + _itemExtent * _magnification / 2;
 
-    final bool isAfterMagnifierTopLine =
-        untransformedPaintingCoordinates.dy >=
-        magnifierTopLinePosition - _itemExtent * _magnification;
-    final bool isBeforeMagnifierBottomLine =
-        untransformedPaintingCoordinates.dy <= magnifierBottomLinePosition;
+    final bool isAfterMagnifierTopLine = untransformedPaintingCoordinates.dy
+        >= magnifierTopLinePosition - _itemExtent * _magnification;
+    final bool isBeforeMagnifierBottomLine = untransformedPaintingCoordinates.dy
+        <= magnifierBottomLinePosition;
 
     final Rect centerRect = Rect.fromLTWH(
       0.0,
@@ -944,7 +942,12 @@ class RenderListWheelViewport extends RenderBox
       size.width,
       _itemExtent * _magnification,
     );
-    final Rect topHalfRect = Rect.fromLTWH(0.0, 0.0, size.width, magnifierTopLinePosition);
+    final Rect topHalfRect = Rect.fromLTWH(
+      0.0,
+      0.0,
+      size.width,
+      magnifierTopLinePosition,
+    );
     final Rect bottomHalfRect = Rect.fromLTWH(
       0.0,
       magnifierBottomLinePosition,
@@ -956,17 +959,21 @@ class RenderListWheelViewport extends RenderBox
 
     if ((center == null || center) && inCenter) {
       // Clipping the part in the center.
-      context.pushClipRect(needsCompositing, offset, centerRect, (
-        PaintingContext context,
-        Offset offset,
-      ) {
-        context.pushTransform(needsCompositing, offset, _magnifyTransform(), (
-          PaintingContext context,
-          Offset offset,
-        ) {
-          context.paintChild(child, offset + untransformedPaintingCoordinates);
-        });
-      });
+      context.pushClipRect(
+        needsCompositing,
+        offset,
+        centerRect,
+        (PaintingContext context, Offset offset) {
+          context.pushTransform(
+            needsCompositing,
+            offset,
+            _magnifyTransform(),
+            (PaintingContext context, Offset offset) {
+              context.paintChild(child, offset + untransformedPaintingCoordinates);
+            },
+          );
+        },
+      );
     }
 
     // Clipping the part in either the top-half or bottom-half of the wheel.
@@ -975,16 +982,28 @@ class RenderListWheelViewport extends RenderBox
         needsCompositing,
         offset,
         untransformedPaintingCoordinates.dy <= magnifierTopLinePosition
-            ? topHalfRect
-            : bottomHalfRect,
+          ? topHalfRect
+          : bottomHalfRect,
         (PaintingContext context, Offset offset) {
-          _paintChildCylindrically(context, offset, child, cylindricalTransform, offsetToCenter);
+            _paintChildCylindrically(
+              context,
+              offset,
+              child,
+              cylindricalTransform,
+              offsetToCenter,
+            );
         },
       );
     }
 
     if ((center == null || !center) && !inCenter) {
-      _paintChildCylindrically(context, offset, child, cylindricalTransform, offsetToCenter);
+      _paintChildCylindrically(
+        context,
+        offset,
+        child,
+        cylindricalTransform,
+        offsetToCenter,
+      );
     }
   }
 
@@ -1018,17 +1037,18 @@ class RenderListWheelViewport extends RenderBox
     final ListWheelParentData childParentData = child.parentData! as ListWheelParentData;
     // Save the final transform that accounts both for the offset and cylindrical transform.
     final Matrix4 transform = _centerOriginTransform(cylindricalTransform)
-      ..translateByDouble(paintOriginOffset.dx, paintOriginOffset.dy, 0, 1);
+      ..translate(paintOriginOffset.dx, paintOriginOffset.dy);
     childParentData.transform = transform;
   }
 
   /// Return the Matrix4 transformation that would zoom in content in the
   /// magnified area.
   Matrix4 _magnifyTransform() {
-    return Matrix4.identity()
-      ..translateByDouble(size.width * (-_offAxisFraction + 0.5), size.height / 2, 0, 1)
-      ..scaleByDouble(_magnification, _magnification, _magnification, 1.0)
-      ..translateByDouble(-size.width * (-_offAxisFraction + 0.5), -size.height / 2, 0, 1);
+    final Matrix4 magnify = Matrix4.identity();
+    magnify.translate(size.width * (-_offAxisFraction + 0.5), size.height / 2);
+    magnify.scale(_magnification, _magnification, _magnification);
+    magnify.translate(-size.width * (-_offAxisFraction + 0.5), -size.height / 2);
+    return magnify;
   }
 
   /// Apply incoming transformation with the transformation's origin at the
@@ -1036,18 +1056,14 @@ class RenderListWheelViewport extends RenderBox
   Matrix4 _centerOriginTransform(Matrix4 originalMatrix) {
     final Matrix4 result = Matrix4.identity();
     final Offset centerOriginTranslation = Alignment.center.alongSize(size);
-    result.translateByDouble(
+    result.translate(
       centerOriginTranslation.dx * (-_offAxisFraction * 2 + 1),
       centerOriginTranslation.dy,
-      0,
-      1,
     );
     result.multiply(originalMatrix);
-    result.translateByDouble(
+    result.translate(
       -centerOriginTranslation.dx * (-_offAxisFraction * 2 + 1),
       -centerOriginTranslation.dy,
-      0,
-      1,
     );
     return result;
   }
@@ -1077,7 +1093,7 @@ class RenderListWheelViewport extends RenderBox
   }
 
   @override
-  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+  bool hitTestChildren(BoxHitTestResult result, { required Offset position }) {
     RenderBox? child = lastChild;
     while (child != null) {
       final ListWheelParentData childParentData = child.parentData! as ListWheelParentData;
@@ -1089,21 +1105,11 @@ class RenderListWheelViewport extends RenderBox
           position: position,
           hitTest: (BoxHitTestResult result, Offset transformed) {
             assert(() {
-              final Matrix4? inverted = Matrix4.tryInvert(
-                PointerEvent.removePerspectiveTransform(transform),
-              );
+              final Matrix4? inverted = Matrix4.tryInvert(PointerEvent.removePerspectiveTransform(transform));
               if (inverted == null) {
-                return _debugAssertValidHitTestOffsets(
-                  'Null inverted transform',
-                  transformed,
-                  position,
-                );
+                return _debugAssertValidHitTestOffsets('Null inverted transform', transformed, position);
               }
-              return _debugAssertValidHitTestOffsets(
-                'MatrixUtils.transformPoint',
-                transformed,
-                MatrixUtils.transformPoint(inverted, position),
-              );
+              return _debugAssertValidHitTestOffsets('MatrixUtils.transformPoint', transformed, MatrixUtils.transformPoint(inverted, position));
             }());
             return child!.hitTest(result, position: transformed);
           },
@@ -1163,6 +1169,10 @@ class RenderListWheelViewport extends RenderBox
       rect = revealedOffset.rect;
     }
 
-    super.showOnScreen(rect: rect, duration: duration, curve: curve);
+    super.showOnScreen(
+      rect: rect,
+      duration: duration,
+      curve: curve,
+    );
   }
 }

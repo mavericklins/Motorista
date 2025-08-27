@@ -24,7 +24,10 @@ abstract class Signals {
   }) => LocalSignals._(exitSignals, shutdownHooks: shutdownHooks);
 
   // The default list of signals that should cause the process to exit.
-  static const defaultExitSignals = <ProcessSignal>[ProcessSignal.sigterm, ProcessSignal.sigint];
+  static const List<ProcessSignal> defaultExitSignals = <ProcessSignal>[
+    ProcessSignal.sigterm,
+    ProcessSignal.sigint,
+  ];
 
   /// Adds a signal handler to run on receipt of signal.
   ///
@@ -50,33 +53,40 @@ abstract class Signals {
 /// We use a singleton instance of this class to ensure that all handlers for
 /// fatal signals run before this class calls exit().
 class LocalSignals implements Signals {
-  LocalSignals._(this.exitSignals, {ShutdownHooks? shutdownHooks})
-    : _shutdownHooks = shutdownHooks ?? globals.shutdownHooks;
+  LocalSignals._(
+    this.exitSignals, {
+    ShutdownHooks? shutdownHooks,
+  }) : _shutdownHooks = shutdownHooks ?? globals.shutdownHooks;
 
-  static var instance = LocalSignals._(Signals.defaultExitSignals);
+  static LocalSignals instance = LocalSignals._(
+    Signals.defaultExitSignals,
+  );
 
   final List<ProcessSignal> exitSignals;
   final ShutdownHooks _shutdownHooks;
 
   // A table mapping (signal, token) -> signal handler.
-  final _handlersTable = <ProcessSignal, Map<Object, SignalHandler>>{};
+  final Map<ProcessSignal, Map<Object, SignalHandler>> _handlersTable =
+      <ProcessSignal, Map<Object, SignalHandler>>{};
 
   // A table mapping (signal) -> signal handler list. The list is in the order
   // that the signal handlers should be run.
-  final _handlersList = <ProcessSignal, List<SignalHandler>>{};
+  final Map<ProcessSignal, List<SignalHandler>> _handlersList =
+      <ProcessSignal, List<SignalHandler>>{};
 
   // A table mapping (signal) -> low-level signal event stream.
-  final _streamSubscriptions = <ProcessSignal, StreamSubscription<ProcessSignal>>{};
+  final Map<ProcessSignal, StreamSubscription<ProcessSignal>> _streamSubscriptions =
+    <ProcessSignal, StreamSubscription<ProcessSignal>>{};
 
   // The stream controller for errors coming from signal handlers.
-  final _errorStreamController = StreamController<Object>.broadcast();
+  final StreamController<Object> _errorStreamController = StreamController<Object>.broadcast();
 
   @override
   Stream<Object> get errors => _errorStreamController.stream;
 
   @override
   Object addHandler(ProcessSignal signal, SignalHandler handler) {
-    final token = Object();
+    final Object token = Object();
     _handlersTable.putIfAbsent(signal, () => <Object, SignalHandler>{});
     _handlersTable[signal]![token] = handler;
 
@@ -118,7 +128,7 @@ class LocalSignals implements Signals {
 
     // If _handlersList[signal] is empty, then lookup the cached stream
     // controller and unsubscribe from the stream.
-    if (_handlersList[signal]!.isEmpty) {
+    if (_handlersList.isEmpty) {
       await _streamSubscriptions[signal]?.cancel();
     }
     return true;
@@ -128,7 +138,7 @@ class LocalSignals implements Signals {
     final List<SignalHandler>? handlers = _handlersList[s];
     if (handlers != null) {
       final List<SignalHandler> handlersCopy = handlers.toList();
-      for (final handler in handlersCopy) {
+      for (final SignalHandler handler in handlersCopy) {
         try {
           await asyncGuard<void>(() async => handler(s));
         } on Exception catch (e) {

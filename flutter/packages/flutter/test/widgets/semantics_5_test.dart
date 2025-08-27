@@ -32,17 +32,21 @@ void main() {
       ),
     );
 
-    expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(id: 1, rect: TestSemantics.fullScreen),
-            TestSemantics.rootChild(id: 2, label: 'label', rect: TestSemantics.fullScreen),
-          ],
-        ),
+    expect(semantics, hasSemantics(
+      TestSemantics.root(
+        children: <TestSemantics>[
+          TestSemantics.rootChild(
+            id: 1,
+            rect: TestSemantics.fullScreen,
+          ),
+          TestSemantics.rootChild(
+            id: 2,
+            label: 'label',
+            rect: TestSemantics.fullScreen,
+          ),
+        ],
       ),
-    );
+    ));
 
     semantics.dispose();
   });

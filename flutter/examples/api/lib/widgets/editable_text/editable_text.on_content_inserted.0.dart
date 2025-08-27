@@ -6,7 +6,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-/// Flutter code sample for [EditableText.contentInsertionConfiguration].
+/// Flutter code sample for [EditableText.onContentInserted].
 
 void main() => runApp(const KeyboardInsertedContentApp());
 
@@ -15,7 +15,9 @@ class KeyboardInsertedContentApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: KeyboardInsertedContentDemo());
+    return const MaterialApp(
+      home: KeyboardInsertedContentDemo(),
+    );
   }
 }
 

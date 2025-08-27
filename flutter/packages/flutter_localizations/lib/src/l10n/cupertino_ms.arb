@@ -27,7 +27,5 @@
   "lookUpButtonLabel": "Lihat ke Atas",
   "searchWebButtonLabel": "Buat carian pada Web",
   "shareButtonLabel": "Kongsi...",
-  "clearButtonLabel": "Kosongkan",
-  "cancelButtonLabel": "Batal",
-  "backButtonLabel": "Kembali"
+  "clearButtonLabel": "Clear"
 }

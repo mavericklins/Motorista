@@ -2,13 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'dart:ui';
-///
-/// @docImport 'package:flutter/widgets.dart';
-///
-/// @docImport 'system_chrome.dart';
-library;
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -27,7 +20,6 @@ import 'raw_keyboard.dart' show RawKeyboard;
 import 'restoration.dart';
 import 'service_extensions.dart';
 import 'system_channels.dart';
-import 'system_chrome.dart';
 import 'text_input.dart';
 
 export 'dart:ui' show ChannelBuffers, RootIsolateToken;
@@ -51,15 +43,10 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
     _restorationManager = createRestorationManager();
     _initKeyboard();
     initLicenses();
-    SystemChannels.system.setMessageHandler(
-      (dynamic message) => handleSystemMessage(message as Object),
-    );
-    SystemChannels.accessibility.setMessageHandler(
-      (dynamic message) => _handleAccessibilityMessage(message as Object),
-    );
+    SystemChannels.system.setMessageHandler((dynamic message) => handleSystemMessage(message as Object));
+    SystemChannels.accessibility.setMessageHandler((dynamic message) => _handleAccessibilityMessage(message as Object));
     SystemChannels.lifecycle.setMessageHandler(_handleLifecycleMessage);
     SystemChannels.platform.setMethodCallHandler(_handlePlatformMessage);
-    platformDispatcher.onViewFocusChange = handleViewFocusChanged;
     TextInput.ensureInitialized();
     readInitialLifecycleStateFromNativeWindow();
     initializationComplete();
@@ -204,22 +191,10 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
           // The compressed version doesn't have a more common .gz extension
           // because gradle for Android non-transparently manipulates .gz files.
           final ByteData licenseBytes = await rootBundle.load('NOTICES.Z');
-          final List<int> unzippedBytes = await compute<List<int>, List<int>>(
-            gzip.decode,
-            licenseBytes.buffer.asUint8List(),
-            debugLabel: 'decompressLicenses',
-          );
-          rawLicenses = await compute<List<int>, String>(
-            utf8.decode,
-            unzippedBytes,
-            debugLabel: 'utf8DecodeLicenses',
-          );
+          final List<int> unzippedBytes = await compute<List<int>, List<int>>(gzip.decode, licenseBytes.buffer.asUint8List(), debugLabel: 'decompressLicenses');
+          rawLicenses = await compute<List<int>, String>(utf8.decode, unzippedBytes, debugLabel: 'utf8DecodeLicenses');
         }
-        final List<LicenseEntry> licenses = await compute<String, List<LicenseEntry>>(
-          _parseLicenses,
-          rawLicenses,
-          debugLabel: 'parseLicenses',
-        );
+        final List<LicenseEntry> licenses = await compute<String, List<LicenseEntry>>(_parseLicenses, rawLicenses, debugLabel: 'parseLicenses');
         licenses.forEach(controller.add);
         await controller.close();
       },
@@ -230,16 +205,20 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
   // This is run in another isolate created by _addLicenses above.
   static List<LicenseEntry> _parseLicenses(String rawLicenses) {
     final String licenseSeparator = '\n${'-' * 80}\n';
-    return <LicenseEntry>[
-      for (final String license in rawLicenses.split(licenseSeparator))
-        if (license.indexOf('\n\n') case final int split when split >= 0)
-          LicenseEntryWithLineBreaks(
-            license.substring(0, split).split('\n'),
-            license.substring(split + 2),
-          )
-        else
-          LicenseEntryWithLineBreaks(const <String>[], license),
-    ];
+    final List<LicenseEntry> result = <LicenseEntry>[];
+    final List<String> licenses = rawLicenses.split(licenseSeparator);
+    for (final String license in licenses) {
+      final int split = license.indexOf('\n\n');
+      if (split >= 0) {
+        result.add(LicenseEntryWithLineBreaks(
+          license.substring(0, split).split('\n'),
+          license.substring(split + 2),
+        ));
+      } else {
+        result.add(LicenseEntryWithLineBreaks(const <String>[], license));
+      }
+    }
+    return result;
   }
 
   @override
@@ -302,17 +281,11 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
   Future<String?> _handleLifecycleMessage(String? message) async {
     final AppLifecycleState? state = _parseAppLifecycleMessage(message!);
     final List<AppLifecycleState> generated = _generateStateTransitions(lifecycleState, state!);
-    for (final AppLifecycleState stateChange in generated) {
-      handleAppLifecycleStateChanged(stateChange);
-      SystemChrome.handleAppLifecycleStateChanged(stateChange);
-    }
+    generated.forEach(handleAppLifecycleStateChanged);
     return null;
   }
 
-  List<AppLifecycleState> _generateStateTransitions(
-    AppLifecycleState? previousState,
-    AppLifecycleState state,
-  ) {
+  List<AppLifecycleState> _generateStateTransitions(AppLifecycleState? previousState, AppLifecycleState state) {
     if (previousState == state) {
       return const <AppLifecycleState>[];
     }
@@ -340,19 +313,16 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
         }
       }
     }
-    assert(
-      () {
-        AppLifecycleState? starting = previousState;
-        for (final AppLifecycleState ending in stateChanges) {
-          if (!_debugVerifyLifecycleChange(starting, ending)) {
-            return false;
-          }
-          starting = ending;
+    assert((){
+      AppLifecycleState? starting = previousState;
+      for (final AppLifecycleState ending in stateChanges) {
+        if (!_debugVerifyLifecycleChange(starting, ending)) {
+          return false;
         }
-        return true;
-      }(),
-      'Invalid lifecycle state transition generated from $previousState to $state (generated $stateChanges)',
-    );
+        starting = ending;
+      }
+      return true;
+    }(), 'Invalid lifecycle state transition generated from $previousState to $state (generated $stateChanges)');
     return stateChanges;
   }
 
@@ -367,61 +337,33 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
     }
     return switch (starting) {
       // Can't go from resumed to detached directly (must go through paused).
-      AppLifecycleState.resumed => ending == AppLifecycleState.inactive,
-      AppLifecycleState.detached =>
-        ending == AppLifecycleState.resumed || ending == AppLifecycleState.paused,
-      AppLifecycleState.inactive =>
-        ending == AppLifecycleState.resumed || ending == AppLifecycleState.hidden,
-      AppLifecycleState.hidden =>
-        ending == AppLifecycleState.paused || ending == AppLifecycleState.inactive,
-      AppLifecycleState.paused =>
-        ending == AppLifecycleState.hidden || ending == AppLifecycleState.detached,
+      AppLifecycleState.resumed  => ending == AppLifecycleState.inactive,
+      AppLifecycleState.detached => ending == AppLifecycleState.resumed || ending == AppLifecycleState.paused,
+      AppLifecycleState.inactive => ending == AppLifecycleState.resumed || ending == AppLifecycleState.hidden,
+      AppLifecycleState.hidden   => ending == AppLifecycleState.paused  || ending == AppLifecycleState.inactive,
+      AppLifecycleState.paused   => ending == AppLifecycleState.hidden  || ending == AppLifecycleState.detached,
     };
   }
+
 
   /// Listenable that notifies when the accessibility focus on the system have changed.
   final ValueNotifier<int?> accessibilityFocus = ValueNotifier<int?>(null);
 
   Future<void> _handleAccessibilityMessage(Object accessibilityMessage) async {
-    final Map<String, dynamic> message = (accessibilityMessage as Map<Object?, Object?>)
-        .cast<String, dynamic>();
+    final Map<String, dynamic> message =
+        (accessibilityMessage as Map<Object?, Object?>).cast<String, dynamic>();
     final String type = message['type'] as String;
     switch (type) {
       case 'didGainFocus':
-        accessibilityFocus.value = message['nodeId'] as int;
+       accessibilityFocus.value = message['nodeId'] as int;
     }
     return;
   }
 
-  /// Called whenever the [PlatformDispatcher] receives a notification that the
-  /// focus state on a view has changed.
-  ///
-  /// The [event] contains the view ID for the view that changed its focus
-  /// state.
-  ///
-  /// See also:
-  ///
-  /// * [PlatformDispatcher.onViewFocusChange], which calls this method.
-  @protected
-  @mustCallSuper
-  void handleViewFocusChanged(ui.ViewFocusEvent event) {}
-
   Future<dynamic> _handlePlatformMessage(MethodCall methodCall) async {
     final String method = methodCall.method;
+    assert(method == 'SystemChrome.systemUIChange' || method == 'System.requestAppExit');
     switch (method) {
-      // Called when the system dismisses the system context menu, such as when
-      // the user taps outside the menu. Not called when Flutter shows a new
-      // system context menu while an old one is still visible.
-      case 'ContextMenu.onDismissSystemContextMenu':
-        if (_systemContextMenuClient == null) {
-          assert(
-            false,
-            'Platform sent onDismissSystemContextMenu when no SystemContextMenuClient was registered.',
-          );
-          return;
-        }
-        _systemContextMenuClient!.handleSystemHide();
-        _systemContextMenuClient = null;
       case 'SystemChrome.systemUIChange':
         final List<dynamic> args = methodCall.arguments as List<dynamic>;
         if (_systemUiChangeCallback != null) {
@@ -429,17 +371,15 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
         }
       case 'System.requestAppExit':
         return <String, dynamic>{'response': (await handleRequestAppExit()).name};
-      default:
-        throw AssertionError('Method "$method" not handled.');
     }
   }
 
   static AppLifecycleState? _parseAppLifecycleMessage(String message) {
     return switch (message) {
-      'AppLifecycleState.resumed' => AppLifecycleState.resumed,
+      'AppLifecycleState.resumed'  => AppLifecycleState.resumed,
       'AppLifecycleState.inactive' => AppLifecycleState.inactive,
-      'AppLifecycleState.hidden' => AppLifecycleState.hidden,
-      'AppLifecycleState.paused' => AppLifecycleState.paused,
+      'AppLifecycleState.hidden'   => AppLifecycleState.hidden,
+      'AppLifecycleState.paused'   => AppLifecycleState.paused,
       'AppLifecycleState.detached' => AppLifecycleState.detached,
       _ => null,
     };
@@ -510,12 +450,11 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
   /// * [WidgetsBindingObserver.didRequestAppExit] for a handler you can
   ///   override on a [WidgetsBindingObserver] to receive exit requests.
   Future<ui.AppExitResponse> exitApplication(ui.AppExitType exitType, [int exitCode = 0]) async {
-    final Map<String, Object?>? result = await SystemChannels.platform
-        .invokeMethod<Map<String, Object?>>('System.exitApplication', <String, Object?>{
-          'type': exitType.name,
-          'exitCode': exitCode,
-        });
-    if (result == null) {
+    final Map<String, Object?>? result = await SystemChannels.platform.invokeMethod<Map<String, Object?>>(
+      'System.exitApplication',
+      <String, Object?>{'type': exitType.name, 'exitCode': exitCode},
+    );
+    if (result == null ) {
       return ui.AppExitResponse.cancel;
     }
     switch (result['response']) {
@@ -576,16 +515,6 @@ mixin ServicesBinding on BindingBase, SchedulerBinding {
   Future<void> initializationComplete() async {
     await SystemChannels.platform.invokeMethod('System.initializationComplete');
   }
-
-  SystemContextMenuClient? _systemContextMenuClient;
-
-  /// Registers a [SystemContextMenuClient] that will receive system context
-  /// menu calls from the engine.
-  ///
-  /// To unregister, set to null.
-  static set systemContextMenuClient(SystemContextMenuClient? client) {
-    instance._systemContextMenuClient = client;
-  }
 }
 
 /// Signature for listening to changes in the [SystemUiMode].
@@ -607,7 +536,11 @@ class _DefaultBinaryMessenger extends BinaryMessenger {
     ByteData? message,
     ui.PlatformMessageResponseCallback? callback,
   ) async {
-    ui.channelBuffers.push(channel, message, (ByteData? data) => callback?.call(data));
+    ui.channelBuffers.push(channel, message, (ByteData? data) {
+      if (callback != null) {
+        callback(data);
+      }
+    });
   }
 
   @override
@@ -626,14 +559,12 @@ class _DefaultBinaryMessenger extends BinaryMessenger {
       try {
         completer.complete(reply);
       } catch (exception, stack) {
-        FlutterError.reportError(
-          FlutterErrorDetails(
-            exception: exception,
-            stack: stack,
-            library: 'services library',
-            context: ErrorDescription('during a platform message response callback'),
-          ),
-        );
+        FlutterError.reportError(FlutterErrorDetails(
+          exception: exception,
+          stack: stack,
+          library: 'services library',
+          context: ErrorDescription('during a platform message response callback'),
+        ));
       }
     });
     return completer.future;
@@ -644,49 +575,21 @@ class _DefaultBinaryMessenger extends BinaryMessenger {
     if (handler == null) {
       ui.channelBuffers.clearListener(channel);
     } else {
-      ui.channelBuffers.setListener(channel, (
-        ByteData? data,
-        ui.PlatformMessageResponseCallback callback,
-      ) async {
+      ui.channelBuffers.setListener(channel, (ByteData? data, ui.PlatformMessageResponseCallback callback) async {
         ByteData? response;
         try {
           response = await handler(data);
         } catch (exception, stack) {
-          FlutterError.reportError(
-            FlutterErrorDetails(
-              exception: exception,
-              stack: stack,
-              library: 'services library',
-              context: ErrorDescription('during a platform message callback'),
-            ),
-          );
+          FlutterError.reportError(FlutterErrorDetails(
+            exception: exception,
+            stack: stack,
+            library: 'services library',
+            context: ErrorDescription('during a platform message callback'),
+          ));
         } finally {
           callback(response);
         }
       });
     }
   }
-}
-
-/// An interface to receive calls related to the system context menu from the
-/// engine.
-///
-/// Currently this is only supported on iOS 16+.
-///
-/// See also:
-///  * [SystemContextMenuController], which uses this to provide a fully
-///    featured way to control the system context menu.
-///  * [ServicesBinding.systemContextMenuClient], which can be set to a
-///    [SystemContextMenuClient] to register it to receive events, or null to
-///    unregister.
-///  * [MediaQuery.maybeSupportsShowingSystemContextMenu], which indicates
-///    whether the system context menu is supported.
-///  * [SystemContextMenu], which provides a widget interface for displaying the
-///    system context menu.
-mixin SystemContextMenuClient {
-  /// Handles the system hiding a context menu.
-  ///
-  /// Called only on the single active instance registered with
-  /// [ServicesBinding.systemContextMenuClient].
-  void handleSystemHide();
 }

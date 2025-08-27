@@ -90,7 +90,10 @@ class _AnimatedGridSampleState extends State<AnimatedGridSample> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('AnimatedGrid', style: TextStyle(fontSize: 30)),
+          title: const Text(
+            'AnimatedGrid',
+            style: TextStyle(fontSize: 30),
+          ),
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.remove_circle),
@@ -125,8 +128,7 @@ class _AnimatedGridSampleState extends State<AnimatedGridSample> {
   }
 }
 
-typedef RemovedItemBuilder<T> =
-    Widget Function(T item, BuildContext context, Animation<double> animation);
+typedef RemovedItemBuilder<T> = Widget Function(T item, BuildContext context, Animation<double> animation);
 
 /// Keeps a Dart [List] in sync with an [AnimatedGrid].
 ///
@@ -136,10 +138,13 @@ typedef RemovedItemBuilder<T> =
 /// This class only exposes as much of the Dart List API as is needed by the
 /// sample app. More list methods are easily added, however methods that
 /// mutate the list must make the same changes to the animated list in terms
-/// of [AnimatedGridState.insertItem] and [AnimatedGridState.removeItem].
+/// of [AnimatedGridState.insertItem] and [AnimatedGrid.removeItem].
 class ListModel<E> {
-  ListModel({required this.listKey, required this.removedItemBuilder, Iterable<E>? initialItems})
-    : _items = List<E>.from(initialItems ?? <E>[]);
+  ListModel({
+    required this.listKey,
+    required this.removedItemBuilder,
+    Iterable<E>? initialItems,
+  }) : _items = List<E>.from(initialItems ?? <E>[]);
 
   final GlobalKey<AnimatedGridState> listKey;
   final RemovedItemBuilder<E> removedItemBuilder;
@@ -149,15 +154,21 @@ class ListModel<E> {
 
   void insert(int index, E item) {
     _items.insert(index, item);
-    _animatedGrid!.insertItem(index, duration: const Duration(milliseconds: 500));
+    _animatedGrid!.insertItem(
+      index,
+      duration: const Duration(milliseconds: 500),
+    );
   }
 
   E removeAt(int index) {
     final E removedItem = _items.removeAt(index);
     if (removedItem != null) {
-      _animatedGrid!.removeItem(index, (BuildContext context, Animation<double> animation) {
-        return removedItemBuilder(removedItem, context, animation);
-      });
+      _animatedGrid!.removeItem(
+        index,
+        (BuildContext context, Animation<double> animation) {
+          return removedItemBuilder(removedItem, context, animation);
+        },
+      );
     }
     return removedItem;
   }
@@ -200,10 +211,7 @@ class CardItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: ScaleTransition(
-        scale: CurvedAnimation(
-          parent: animation,
-          curve: removing ? Curves.easeInOut : Curves.bounceOut,
-        ),
+        scale: CurvedAnimation(parent: animation, curve: removing ? Curves.easeInOut : Curves.bounceOut),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: onTap,
@@ -211,7 +219,9 @@ class CardItem extends StatelessWidget {
             height: 80.0,
             child: Card(
               color: Colors.primaries[item % Colors.primaries.length],
-              child: Center(child: Text('${item + 1}', style: textStyle)),
+              child: Center(
+                child: Text('${item + 1}', style: textStyle),
+              ),
             ),
           ),
         ),

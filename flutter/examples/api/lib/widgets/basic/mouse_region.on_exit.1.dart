@@ -16,7 +16,9 @@ class MouseRegionApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('MouseRegion.onExit Sample')),
-        body: const Center(child: MouseRegionExample()),
+        body: const Center(
+          child: MouseRegionExample(),
+        ),
       ),
     );
   }

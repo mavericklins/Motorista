@@ -29,7 +29,8 @@ void main() {
       find.byWidgetPredicate(
         (Widget widget) =>
             widget is Text &&
-            widget.data!.startsWith('Platform: ${web.window.navigator.platform}\n'),
+            widget.data!
+                .startsWith('Platform: ${web.window.navigator.platform}\n'),
       ),
       findsOneWidget,
     );

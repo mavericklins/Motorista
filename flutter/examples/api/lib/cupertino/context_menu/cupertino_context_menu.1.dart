@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 /// Flutter code sample for [CupertinoContextMenu].
 
@@ -41,7 +42,10 @@ class ContextMenuExample extends StatelessWidget {
     return _tween.animate(
       CurvedAnimation(
         parent: animation,
-        curve: Interval(0.0, CupertinoContextMenu.animationOpensAt),
+        curve: Interval(
+          0.0,
+          CupertinoContextMenu.animationOpensAt,
+        ),
       ),
     );
   }
@@ -49,7 +53,9 @@ class ContextMenuExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(middle: Text('CupertinoContextMenu Sample')),
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('CupertinoContextMenu Sample'),
+      ),
       child: Center(
         child: SizedBox(
           width: 100,
@@ -88,14 +94,11 @@ class ContextMenuExample extends StatelessWidget {
               ),
             ],
             builder: (BuildContext context, Animation<double> animation) {
-              final Animation<Decoration> boxDecorationAnimation = _boxDecorationAnimation(
-                animation,
-              );
+              final Animation<Decoration> boxDecorationAnimation = _boxDecorationAnimation(animation);
 
               return Container(
-                decoration: animation.value < CupertinoContextMenu.animationOpensAt
-                    ? boxDecorationAnimation.value
-                    : null,
+                decoration:
+                    animation.value < CupertinoContextMenu.animationOpensAt ? boxDecorationAnimation.value : null,
                 child: Container(
                   decoration: BoxDecoration(
                     color: CupertinoColors.systemYellow,

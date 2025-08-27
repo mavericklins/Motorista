@@ -14,7 +14,8 @@ class CupertinoSliderDemo extends StatefulWidget {
   State<CupertinoSliderDemo> createState() => _CupertinoSliderDemoState();
 }
 
-class _CupertinoSliderDemoState extends State<CupertinoSliderDemo> with RestorationMixin {
+class _CupertinoSliderDemoState extends State<CupertinoSliderDemo>
+    with RestorationMixin {
   final RestorableDouble _value = RestorableDouble(25.0);
   final RestorableDouble _discreteValue = RestorableDouble(20.0);
 
@@ -53,10 +54,16 @@ class _CupertinoSliderDemoState extends State<CupertinoSliderDemo> with Restorat
                       });
                     },
                   ),
-                  CupertinoSlider(value: _value.value, max: 100.0, onChanged: null),
+                  CupertinoSlider(
+                    value: _value.value,
+                    max: 100.0,
+                    onChanged: null,
+                  ),
                   MergeSemantics(
                     child: Text(
-                      localizations.demoCupertinoSliderContinuous(_value.value.toStringAsFixed(1)),
+                      localizations.demoCupertinoSliderContinuous(
+                        _value.value.toStringAsFixed(1),
+                      ),
                     ),
                   ),
                 ],

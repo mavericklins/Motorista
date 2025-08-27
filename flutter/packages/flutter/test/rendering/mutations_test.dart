@@ -8,13 +8,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'rendering_tester.dart';
 
 class RenderLayoutTestBox extends RenderProxyBox {
-  RenderLayoutTestBox(this.onLayout, {this.onPerformLayout});
+  RenderLayoutTestBox(this.onLayout, {
+    this.onPerformLayout,
+  });
 
   final VoidCallback onLayout;
   final VoidCallback? onPerformLayout;
 
   @override
-  void layout(Constraints constraints, {bool parentUsesSize = false}) {
+  void layout(Constraints constraints, { bool parentUsesSize = false }) {
     // Doing this in tests is ok, but if you're writing your own
     // render object, you want to override performLayout(), not
     // layout(). Overriding layout() would remove many critical
@@ -42,16 +44,8 @@ void main() {
     bool movedChild1 = false;
     bool movedChild2 = false;
     final RenderFlex block = RenderFlex(textDirection: TextDirection.ltr);
-    block.add(
-      child1 = RenderLayoutTestBox(() {
-        movedChild1 = true;
-      }),
-    );
-    block.add(
-      child2 = RenderLayoutTestBox(() {
-        movedChild2 = true;
-      }),
-    );
+    block.add(child1 = RenderLayoutTestBox(() { movedChild1 = true; }));
+    block.add(child2 = RenderLayoutTestBox(() { movedChild2 = true; }));
 
     expect(movedChild1, isFalse);
     expect(movedChild2, isFalse);
@@ -88,12 +82,9 @@ void main() {
   group('Throws when illegal mutations are attempted: ', () {
     FlutterError catchLayoutError(RenderBox box) {
       Object? error;
-      layout(
-        box,
-        onErrors: () {
-          error = TestRenderingFlutterBinding.instance.takeFlutterErrorDetails()!.exception;
-        },
-      );
+      layout(box, onErrors: () {
+        error = TestRenderingFlutterBinding.instance.takeFlutterErrorDetails()!.exception;
+      });
       expect(error, isFlutterError);
       return error! as FlutterError;
     }
@@ -115,22 +106,15 @@ void main() {
         equalsIgnoringWhitespace(
           'A disposed RenderObject was mutated.\n'
           'The disposed RenderObject was:\n'
-          '${box.toStringShort()}',
-        ),
+          '${box.toStringShort()}'
+        )
       );
     });
 
     test('marking itself dirty in performLayout', () {
       late RenderBox child1;
       final RenderFlex block = RenderFlex(textDirection: TextDirection.ltr);
-      block.add(
-        child1 = RenderLayoutTestBox(
-          () {},
-          onPerformLayout: () {
-            child1.markNeedsLayout();
-          },
-        ),
-      );
+      block.add(child1 = RenderLayoutTestBox(() {}, onPerformLayout: () { child1.markNeedsLayout(); }));
 
       expect(
         catchLayoutError(block).message,
@@ -139,8 +123,8 @@ void main() {
           'A RenderObject must not re-dirty itself while still being laid out.\n'
           'The RenderObject being mutated was:\n'
           '${child1.toStringShort()}\n'
-          'Consider using the LayoutBuilder widget to dynamically change a subtree during layout.',
-        ),
+          'Consider using the LayoutBuilder widget to dynamically change a subtree during layout.'
+        )
       );
     });
 
@@ -148,14 +132,7 @@ void main() {
       late RenderBox child1, child2;
       final RenderFlex block = RenderFlex(textDirection: TextDirection.ltr);
       block.add(child1 = RenderLayoutTestBox(() {}));
-      block.add(
-        child2 = RenderLayoutTestBox(
-          () {},
-          onPerformLayout: () {
-            child1.markNeedsLayout();
-          },
-        ),
-      );
+      block.add(child2 = RenderLayoutTestBox(() {}, onPerformLayout: () { child1.markNeedsLayout(); }));
 
       expect(
         catchLayoutError(block).message,
@@ -168,8 +145,8 @@ void main() {
           '${child2.toStringShort()}\n'
           'Their common ancestor was:\n'
           '${block.toStringShort()}\n'
-          'Mutating the layout of another RenderObject may cause some RenderObjects in its subtree to be laid out more than once. Consider using the LayoutBuilder widget to dynamically mutate a subtree during layout.',
-        ),
+          'Mutating the layout of another RenderObject may cause some RenderObjects in its subtree to be laid out more than once. Consider using the LayoutBuilder widget to dynamically mutate a subtree during layout.'
+        )
       );
     });
 
@@ -188,7 +165,7 @@ void main() {
           '${child1.toStringShort()}\n'
           'The ancestor RenderObject that was mutating the said RenderLayoutTestBox was:\n'
           '${block.toStringShort()}\n'
-          'Mutating the layout of another RenderObject may cause some RenderObjects in its subtree to be laid out more than once. Consider using the LayoutBuilder widget to dynamically mutate a subtree during layout.',
+          'Mutating the layout of another RenderObject may cause some RenderObjects in its subtree to be laid out more than once. Consider using the LayoutBuilder widget to dynamically mutate a subtree during layout.'
         ),
       );
     });
@@ -210,13 +187,9 @@ void main() {
       child2.child = child21 = RenderLayoutTestBox(() {}, onPerformLayout: child11.markNeedsLayout);
 
       FlutterError? error;
-      pumpFrame(
-        onErrors: () {
-          error =
-              TestRenderingFlutterBinding.instance.takeFlutterErrorDetails()!.exception
-                  as FlutterError;
-        },
-      );
+      pumpFrame(onErrors: () {
+        error = TestRenderingFlutterBinding.instance.takeFlutterErrorDetails()!.exception as FlutterError;
+      });
 
       expect(
         error?.message,
@@ -226,7 +199,7 @@ void main() {
           'The RenderObject being mutated was:\n'
           '${child11.toStringShort()}\n'
           'The RenderObject that was mutating the said RenderLayoutTestBox was:\n'
-          '${child21.toStringShort()}',
+          '${child21.toStringShort()}'
         ),
       );
     });

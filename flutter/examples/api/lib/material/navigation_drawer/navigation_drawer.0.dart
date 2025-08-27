@@ -32,7 +32,11 @@ class NavigationDrawerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(debugShowCheckedModeBanner: false, home: NavigationDrawerExample());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true),
+      home: const NavigationDrawerExample(),
+    );
   }
 }
 
@@ -64,7 +68,9 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[Text('Page Index = $screenIndex')],
+          children: <Widget>[
+            Text('Page Index = $screenIndex'),
+          ],
         ),
       ),
       bottomNavigationBar: NavigationBar(
@@ -74,14 +80,16 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
             screenIndex = index;
           });
         },
-        destinations: destinations.map((ExampleDestination destination) {
-          return NavigationDestination(
-            label: destination.label,
-            icon: destination.icon,
-            selectedIcon: destination.selectedIcon,
-            tooltip: destination.label,
-          );
-        }).toList(),
+        destinations: destinations.map(
+          (ExampleDestination destination) {
+            return NavigationDestination(
+              label: destination.label,
+              icon: destination.icon,
+              selectedIcon: destination.selectedIcon,
+              tooltip: destination.label,
+            );
+          },
+        ).toList(),
       ),
     );
   }
@@ -98,13 +106,15 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: NavigationRail(
                 minWidth: 50,
-                destinations: destinations.map((ExampleDestination destination) {
-                  return NavigationRailDestination(
-                    label: Text(destination.label),
-                    icon: destination.icon,
-                    selectedIcon: destination.selectedIcon,
-                  );
-                }).toList(),
+                destinations: destinations.map(
+                  (ExampleDestination destination) {
+                    return NavigationRailDestination(
+                      label: Text(destination.label),
+                      icon: destination.icon,
+                      selectedIcon: destination.selectedIcon,
+                    );
+                  },
+                ).toList(),
                 selectedIndex: screenIndex,
                 useIndicator: true,
                 onDestinationSelected: (int index) {
@@ -120,7 +130,10 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Text('Page Index = $screenIndex'),
-                  ElevatedButton(onPressed: openDrawer, child: const Text('Open Drawer')),
+                  ElevatedButton(
+                    onPressed: openDrawer,
+                    child: const Text('Open Drawer'),
+                  ),
                 ],
               ),
             ),
@@ -133,16 +146,24 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
-            child: Text('Header', style: Theme.of(context).textTheme.titleSmall),
+            child: Text(
+              'Header',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
           ),
-          ...destinations.map((ExampleDestination destination) {
-            return NavigationDrawerDestination(
-              label: Text(destination.label),
-              icon: destination.icon,
-              selectedIcon: destination.selectedIcon,
-            );
-          }),
-          const Padding(padding: EdgeInsets.fromLTRB(28, 16, 28, 10), child: Divider()),
+          ...destinations.map(
+            (ExampleDestination destination) {
+              return NavigationDrawerDestination(
+                label: Text(destination.label),
+                icon: destination.icon,
+                selectedIcon: destination.selectedIcon,
+              );
+            },
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
+            child: Divider(),
+          ),
         ],
       ),
     );

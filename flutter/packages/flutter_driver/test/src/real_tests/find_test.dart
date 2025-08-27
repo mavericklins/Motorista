@@ -13,7 +13,12 @@ void main() {
     const SerializableFinder of = ByType('Text');
     final SerializableFinder matching = ByValueKey('hello');
 
-    final Ancestor a = Ancestor(of: of, matching: matching, matchRoot: true, firstMatchOnly: true);
+    final Ancestor a = Ancestor(
+      of: of,
+      matching: matching,
+      matchRoot: true,
+      firstMatchOnly: true,
+    );
     expect(a.serialize(), <String, String>{
       'finderType': 'Ancestor',
       'of': '{"finderType":"ByType","type":"Text"}',
@@ -75,4 +80,4 @@ void main() {
   });
 }
 
-class FakeDeserialize extends Fake with DeserializeFinderFactory {}
+class FakeDeserialize extends Fake with DeserializeFinderFactory { }

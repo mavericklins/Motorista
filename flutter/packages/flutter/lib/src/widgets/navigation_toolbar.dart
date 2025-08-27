@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/cupertino.dart';
-/// @docImport 'package:flutter/material.dart';
-library;
-
 import 'dart:math' as math;
 
 import 'basic.dart';
@@ -24,6 +20,7 @@ import 'framework.dart';
 /// the iOS [CupertinoNavigationBar] or wrap this widget with more theming
 /// specifications for your own custom app bar.
 class NavigationToolbar extends StatelessWidget {
+
   /// Creates a widget that lays out its children in a manner suitable for a
   /// toolbar.
   const NavigationToolbar({
@@ -76,7 +73,11 @@ class NavigationToolbar extends StatelessWidget {
   }
 }
 
-enum _ToolbarSlot { leading, middle, trailing }
+enum _ToolbarSlot {
+  leading,
+  middle,
+  trailing,
+}
 
 class _ToolbarLayout extends MultiChildLayoutDelegate {
   _ToolbarLayout({
@@ -128,10 +129,7 @@ class _ToolbarLayout extends MultiChildLayoutDelegate {
     }
 
     if (hasChild(_ToolbarSlot.middle)) {
-      final double maxWidth = math.max(
-        size.width - leadingWidth - trailingWidth - middleSpacing * 2.0,
-        0.0,
-      );
+      final double maxWidth = math.max(size.width - leadingWidth - trailingWidth - middleSpacing * 2.0, 0.0);
       final BoxConstraints constraints = BoxConstraints.loose(size).copyWith(maxWidth: maxWidth);
       final Size middleSize = layoutChild(_ToolbarSlot.middle, constraints);
 
@@ -160,8 +158,8 @@ class _ToolbarLayout extends MultiChildLayoutDelegate {
 
   @override
   bool shouldRelayout(_ToolbarLayout oldDelegate) {
-    return oldDelegate.centerMiddle != centerMiddle ||
-        oldDelegate.middleSpacing != middleSpacing ||
-        oldDelegate.textDirection != textDirection;
+    return oldDelegate.centerMiddle != centerMiddle
+        || oldDelegate.middleSpacing != middleSpacing
+        || oldDelegate.textDirection != textDirection;
   }
 }

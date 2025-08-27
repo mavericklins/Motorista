@@ -10,7 +10,9 @@ void main() {
   testWidgets('Open and dismiss general dialog', (WidgetTester tester) async {
     const String dialogText = 'Alert!';
 
-    await tester.pumpWidget(const example.GeneralDialogApp());
+    await tester.pumpWidget(
+      const example.GeneralDialogApp(),
+    );
 
     expect(find.text(dialogText), findsNothing);
 

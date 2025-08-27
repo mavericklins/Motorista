@@ -5,17 +5,13 @@
 import 'template.dart';
 
 class BottomAppBarTemplate extends TokenTemplate {
-  const BottomAppBarTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
+  const BottomAppBarTemplate(super.blockName, super.fileName, super.tokens, {
     super.colorSchemePrefix = '_colors.',
   });
 
   @override
-  String generate() =>
-      '''
-class _${blockName}DefaultsM3 extends BottomAppBarThemeData {
+  String generate() => '''
+class _${blockName}DefaultsM3 extends BottomAppBarTheme {
   _${blockName}DefaultsM3(this.context)
     : super(
       elevation: ${elevation('md.comp.bottom-app-bar.container')},

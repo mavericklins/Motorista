@@ -10,7 +10,11 @@ import 'material_demo_types.dart';
 // BEGIN bottomNavigationDemo
 
 class BottomNavigationDemo extends StatefulWidget {
-  const BottomNavigationDemo({super.key, required this.restorationId, required this.type});
+  const BottomNavigationDemo({
+    super.key,
+    required this.restorationId,
+    required this.type,
+  });
 
   final String restorationId;
   final BottomNavigationDemoType type;
@@ -19,7 +23,8 @@ class BottomNavigationDemo extends StatefulWidget {
   State<BottomNavigationDemo> createState() => _BottomNavigationDemoState();
 }
 
-class _BottomNavigationDemoState extends State<BottomNavigationDemo> with RestorationMixin {
+class _BottomNavigationDemoState extends State<BottomNavigationDemo>
+    with RestorationMixin {
   final RestorableInt _currentIndex = RestorableInt(0);
 
   @override
@@ -77,21 +82,20 @@ class _BottomNavigationDemoState extends State<BottomNavigationDemo> with Restor
 
     if (widget.type == BottomNavigationDemoType.withLabels) {
       bottomNavigationBarItems = bottomNavigationBarItems.sublist(
-        0,
-        bottomNavigationBarItems.length - 2,
-      );
-      _currentIndex.value = _currentIndex.value.clamp(0, bottomNavigationBarItems.length - 1);
+          0, bottomNavigationBarItems.length - 2);
+      _currentIndex.value = _currentIndex.value
+          .clamp(0, bottomNavigationBarItems.length - 1)
+          ;
     }
 
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false, title: Text(_title(context))),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(_title(context)),
+      ),
       body: Center(
         child: PageTransitionSwitcher(
-          transitionBuilder: (
-            Widget child,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-          ) {
+          transitionBuilder: (Widget child, Animation<double> animation, Animation<double> secondaryAnimation) {
             return FadeThroughTransition(
               animation: animation,
               secondaryAnimation: secondaryAnimation,
@@ -106,7 +110,8 @@ class _BottomNavigationDemoState extends State<BottomNavigationDemo> with Restor
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        showUnselectedLabels: widget.type == BottomNavigationDemoType.withLabels,
+        showUnselectedLabels:
+            widget.type == BottomNavigationDemoType.withLabels,
         items: bottomNavigationBarItems,
         currentIndex: _currentIndex.value,
         type: BottomNavigationBarType.fixed,
@@ -126,7 +131,10 @@ class _BottomNavigationDemoState extends State<BottomNavigationDemo> with Restor
 }
 
 class _NavigationDestinationView extends StatelessWidget {
-  const _NavigationDestinationView({super.key, required this.item});
+  const _NavigationDestinationView({
+    super.key,
+    required this.item,
+  });
 
   final BottomNavigationBarItem item;
 
@@ -150,11 +158,15 @@ class _NavigationDestinationView extends StatelessWidget {
         ),
         Center(
           child: IconTheme(
-            data: const IconThemeData(color: Colors.white, size: 80),
+            data: const IconThemeData(
+              color: Colors.white,
+              size: 80,
+            ),
             child: Semantics(
-              label: GalleryLocalizations.of(
-                context,
-              )!.bottomNavigationContentPlaceholder(item.label!),
+              label: GalleryLocalizations.of(context)!
+                  .bottomNavigationContentPlaceholder(
+                item.label!,
+              ),
               child: item.icon,
             ),
           ),

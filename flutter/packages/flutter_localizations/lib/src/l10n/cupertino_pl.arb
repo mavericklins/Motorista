@@ -37,7 +37,5 @@
   "lookUpButtonLabel": "Sprawdź",
   "searchWebButtonLabel": "Szukaj w internecie",
   "shareButtonLabel": "Udostępnij…",
-  "clearButtonLabel": "Wyczyść",
-  "cancelButtonLabel": "Anuluj",
-  "backButtonLabel": "Wstecz"
+  "clearButtonLabel": "Clear"
 }

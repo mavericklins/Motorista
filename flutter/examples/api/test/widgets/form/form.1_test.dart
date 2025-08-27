@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can go back when form is clean', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.FormApp());
+    await tester.pumpWidget(
+      const example.FormApp(),
+    );
 
     expect(find.text('Are you sure?'), findsNothing);
 
@@ -19,7 +21,9 @@ void main() {
   });
 
   testWidgets('Cannot go back when form is dirty', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.FormApp());
+    await tester.pumpWidget(
+      const example.FormApp(),
+    );
 
     expect(find.text('Are you sure?'), findsNothing);
 

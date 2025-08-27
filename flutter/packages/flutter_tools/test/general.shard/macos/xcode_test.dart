@@ -9,7 +9,6 @@ import 'package:flutter_tools/src/artifacts.dart';
 import 'package:flutter_tools/src/base/io.dart' show ProcessException;
 import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/base/platform.dart';
-import 'package:flutter_tools/src/base/process.dart';
 import 'package:flutter_tools/src/base/user_messages.dart';
 import 'package:flutter_tools/src/base/version.dart';
 import 'package:flutter_tools/src/build_info.dart';
@@ -52,7 +51,7 @@ void main() {
       });
 
       testWithoutContext('isInstalledAndMeetsVersionCheck is false when not macOS', () {
-        final xcode = Xcode.test(
+        final Xcode xcode = Xcode.test(
           platform: FakePlatform(operatingSystem: 'windows'),
           processManager: fakeProcessManager,
           xcodeProjectInterpreter: xcodeProjectInterpreter,
@@ -63,9 +62,17 @@ void main() {
 
       testWithoutContext('isSimctlInstalled is true when simctl list succeeds', () {
         fakeProcessManager.addCommand(
-          const FakeCommand(command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted']),
+          const FakeCommand(
+            command: <String>[
+              'xcrun',
+              'simctl',
+              'list',
+              'devices',
+              'booted',
+            ],
+          ),
         );
-        final xcode = Xcode.test(
+        final Xcode xcode = Xcode.test(
           processManager: fakeProcessManager,
           xcodeProjectInterpreter: xcodeProjectInterpreter,
         );
@@ -77,53 +84,38 @@ void main() {
       testWithoutContext('isSimctlInstalled is false when simctl list fails', () {
         fakeProcessManager.addCommand(
           const FakeCommand(
-            command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted'],
-            stderr: 'failed to run',
+            command: <String>[
+              'xcrun',
+              'simctl',
+              'list',
+              'devices',
+              'booted',
+            ],
             exitCode: 1,
           ),
         );
-        final xcode = Xcode.test(
+        final Xcode xcode = Xcode.test(
           processManager: fakeProcessManager,
           xcodeProjectInterpreter: xcodeProjectInterpreter,
-          logger: logger,
         );
 
         expect(xcode.isSimctlInstalled, isFalse);
         expect(fakeProcessManager, hasNoRemainingExpectations);
-        expect(logger.statusText, isEmpty);
-        expect(logger.errorText, isEmpty);
       });
-
-      testWithoutContext(
-        'isSimctlInstalled is false when simctl list throws process exception',
-        () {
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['xcrun', 'simctl', 'list', 'devices', 'booted'],
-              exception: ProcessException('xcrun', <String>['simctl']),
-            ),
-          );
-          final xcode = Xcode.test(
-            processManager: fakeProcessManager,
-            xcodeProjectInterpreter: xcodeProjectInterpreter,
-            logger: logger,
-          );
-
-          expect(xcode.isSimctlInstalled, isFalse);
-          expect(fakeProcessManager, hasNoRemainingExpectations);
-          expect(logger.statusText, isEmpty);
-          expect(logger.errorText, isEmpty);
-          expect(logger.traceText, contains('ProcessException'));
-        },
-      );
 
       group('isDevicectlInstalled', () {
         testWithoutContext('is true when Xcode is 15+ and devicectl succeeds', () {
           fakeProcessManager.addCommand(
-            const FakeCommand(command: <String>['xcrun', 'devicectl', '--version']),
+            const FakeCommand(
+              command: <String>[
+                'xcrun',
+                'devicectl',
+                '--version',
+              ],
+            ),
           );
           xcodeProjectInterpreter.version = Version(15, 0, 0);
-          final xcode = Xcode.test(
+          final Xcode xcode = Xcode.test(
             processManager: fakeProcessManager,
             xcodeProjectInterpreter: xcodeProjectInterpreter,
           );
@@ -134,46 +126,28 @@ void main() {
 
         testWithoutContext('is false when devicectl fails', () {
           fakeProcessManager.addCommand(
-            const FakeCommand(command: <String>['xcrun', 'devicectl', '--version'], exitCode: 1),
-          );
-          xcodeProjectInterpreter.version = Version(15, 0, 0);
-          final xcode = Xcode.test(
-            processManager: fakeProcessManager,
-            xcodeProjectInterpreter: xcodeProjectInterpreter,
-            logger: logger,
-          );
-
-          expect(xcode.isDevicectlInstalled, isFalse);
-          expect(fakeProcessManager, hasNoRemainingExpectations);
-          expect(logger.statusText, isEmpty);
-          expect(logger.errorText, isEmpty);
-        });
-
-        testWithoutContext('is false when devicectl throws process exception', () {
-          fakeProcessManager.addCommand(
             const FakeCommand(
-              command: <String>['xcrun', 'devicectl', '--version'],
+              command: <String>[
+                'xcrun',
+                'devicectl',
+                '--version',
+              ],
               exitCode: 1,
-              exception: ProcessException('xcrun', <String>['devicectl']),
             ),
           );
           xcodeProjectInterpreter.version = Version(15, 0, 0);
-          final xcode = Xcode.test(
+          final Xcode xcode = Xcode.test(
             processManager: fakeProcessManager,
             xcodeProjectInterpreter: xcodeProjectInterpreter,
-            logger: logger,
           );
 
           expect(xcode.isDevicectlInstalled, isFalse);
           expect(fakeProcessManager, hasNoRemainingExpectations);
-          expect(logger.statusText, isEmpty);
-          expect(logger.errorText, isEmpty);
-          expect(logger.traceText, contains('ProcessException'));
         });
 
         testWithoutContext('is false when Xcode is less than 15', () {
           xcodeProjectInterpreter.version = Version(14, 0, 0);
-          final xcode = Xcode.test(
+          final Xcode xcode = Xcode.test(
             processManager: fakeProcessManager,
             xcodeProjectInterpreter: xcodeProjectInterpreter,
           );
@@ -191,51 +165,56 @@ void main() {
         });
 
         testWithoutContext('parses correctly', () {
-          final xcode = Xcode.test(
+          final Xcode xcode = Xcode.test(
             processManager: fakeProcessManager,
             xcodeProjectInterpreter: xcodeProjectInterpreter,
           );
 
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['/usr/bin/xcode-select', '--print-path'],
-              stdout: '/Applications/Xcode.app/Contents/Developer',
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['/usr/bin/xcode-select', '--print-path'],
+            stdout: '/Applications/Xcode.app/Contents/Developer',
+          ));
 
           expect(xcode.xcodeAppPath, '/Applications/Xcode.app');
           expect(fakeProcessManager, hasNoRemainingExpectations);
         });
 
         testWithoutContext('throws error if not found', () {
-          final xcode = Xcode.test(
+          final Xcode xcode = Xcode.test(
             processManager: FakeProcessManager.any(),
             xcodeProjectInterpreter: xcodeProjectInterpreter,
           );
 
-          expect(() => xcode.xcodeAppPath, throwsToolExit(message: userMessages.xcodeMissing));
+          expect(
+            () => xcode.xcodeAppPath,
+            throwsToolExit(message: userMessages.xcodeMissing),
+          );
         });
 
         testWithoutContext('throws error with unexpected outcome', () {
-          final xcode = Xcode.test(
+          final Xcode xcode = Xcode.test(
             processManager: fakeProcessManager,
             xcodeProjectInterpreter: xcodeProjectInterpreter,
           );
 
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['/usr/bin/xcode-select', '--print-path'],
-              stdout: '/Library/Developer/CommandLineTools',
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              '/usr/bin/xcode-select',
+              '--print-path',
+            ],
+            stdout: '/Library/Developer/CommandLineTools',
+          ));
 
-          expect(() => xcode.xcodeAppPath, throwsToolExit(message: userMessages.xcodeMissing));
+          expect(
+            () => xcode.xcodeAppPath,
+            throwsToolExit(message: userMessages.xcodeMissing),
+          );
           expect(fakeProcessManager, hasNoRemainingExpectations);
         });
       });
 
       group('pathToXcodeAutomationScript', () {
-        const flutterRoot = '/path/to/flutter';
+        const String flutterRoot = '/path/to/flutter';
 
         late MemoryFileSystem fileSystem;
 
@@ -244,16 +223,14 @@ void main() {
         });
 
         testWithoutContext('returns path when file is found', () {
-          final xcode = Xcode.test(
+          final Xcode xcode = Xcode.test(
             processManager: fakeProcessManager,
             xcodeProjectInterpreter: xcodeProjectInterpreter,
             fileSystem: fileSystem,
             flutterRoot: flutterRoot,
           );
 
-          fileSystem
-              .file('$flutterRoot/packages/flutter_tools/bin/xcode_debug.js')
-              .createSync(recursive: true);
+          fileSystem.file('$flutterRoot/packages/flutter_tools/bin/xcode_debug.js').createSync(recursive: true);
 
           expect(
             xcode.xcodeAutomationScriptPath,
@@ -262,14 +239,17 @@ void main() {
         });
 
         testWithoutContext('throws error when not found', () {
-          final xcode = Xcode.test(
+          final Xcode xcode = Xcode.test(
             processManager: fakeProcessManager,
             xcodeProjectInterpreter: xcodeProjectInterpreter,
             fileSystem: fileSystem,
             flutterRoot: flutterRoot,
           );
 
-          expect(() => xcode.xcodeAutomationScriptPath, throwsToolExit());
+          expect(() =>
+            xcode.xcodeAutomationScriptPath,
+            throwsToolExit()
+          );
         });
       });
 
@@ -288,12 +268,11 @@ void main() {
         });
 
         testWithoutContext('xcodeSelectPath returns path when xcode-select is installed', () {
-          const xcodePath = '/Applications/Xcode8.0.app/Contents/Developer';
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['/usr/bin/xcode-select', '--print-path'],
-              stdout: xcodePath,
-            ),
+          const String xcodePath = '/Applications/Xcode8.0.app/Contents/Developer';
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['/usr/bin/xcode-select', '--print-path'],
+            stdout: xcodePath,
+          ),
           );
 
           expect(xcode.xcodeSelectPath, xcodePath);
@@ -301,24 +280,18 @@ void main() {
         });
 
         testWithoutContext('xcodeSelectPath returns null when xcode-select is not installed', () {
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['/usr/bin/xcode-select', '--print-path'],
-              exception: ProcessException('/usr/bin/xcode-select', <String>['--print-path']),
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['/usr/bin/xcode-select', '--print-path'],
+            exception: ProcessException('/usr/bin/xcode-select', <String>['--print-path']),
+          ));
 
           expect(xcode.xcodeSelectPath, isNull);
           expect(fakeProcessManager, hasNoRemainingExpectations);
 
-          fakeProcessManager.addCommand(
-            FakeCommand(
-              command: const <String>['/usr/bin/xcode-select', '--print-path'],
-              exception: ArgumentError(
-                'Invalid argument(s): Cannot find executable for /usr/bin/xcode-select',
-              ),
-            ),
-          );
+          fakeProcessManager.addCommand(FakeCommand(
+            command: const <String>['/usr/bin/xcode-select', '--print-path'],
+            exception: ArgumentError('Invalid argument(s): Cannot find executable for /usr/bin/xcode-select'),
+          ));
 
           expect(xcode.xcodeSelectPath, isNull);
           expect(fakeProcessManager, hasNoRemainingExpectations);
@@ -339,16 +312,13 @@ void main() {
           expect(xcode.isRecommendedVersionSatisfactory, isFalse);
         });
 
-        testWithoutContext(
-          'version checks pass when version meets minimum but not recommended',
-          () {
-            xcodeProjectInterpreter.isInstalled = true;
-            xcodeProjectInterpreter.version = Version(14, null, null);
+        testWithoutContext('version checks pass when version meets minimum but not recommended', () {
+          xcodeProjectInterpreter.isInstalled = true;
+          xcodeProjectInterpreter.version = Version(14, null, null);
 
-            expect(xcode.isRequiredVersionSatisfactory, isTrue);
-            expect(xcode.isRecommendedVersionSatisfactory, isFalse);
-          },
-        );
+          expect(xcode.isRequiredVersionSatisfactory, isTrue);
+          expect(xcode.isRecommendedVersionSatisfactory, isFalse);
+        });
 
         testWithoutContext('version checks pass when major version exceeds minimum', () {
           xcodeProjectInterpreter.isInstalled = true;
@@ -402,43 +372,35 @@ void main() {
           expect(fakeProcessManager, hasNoRemainingExpectations);
         });
 
-        testWithoutContext(
-          'isInstalledAndMeetsVersionCheck is false when version not satisfied',
-          () {
-            xcodeProjectInterpreter.isInstalled = true;
-            xcodeProjectInterpreter.version = Version(10, 2, 0);
+        testWithoutContext('isInstalledAndMeetsVersionCheck is false when version not satisfied', () {
+          xcodeProjectInterpreter.isInstalled = true;
+          xcodeProjectInterpreter.version = Version(10, 2, 0);
 
-            expect(xcode.isInstalledAndMeetsVersionCheck, isFalse);
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-        );
+          expect(xcode.isInstalledAndMeetsVersionCheck, isFalse);
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        });
 
-        testWithoutContext(
-          'isInstalledAndMeetsVersionCheck is true when macOS and installed and version is satisfied',
-          () {
-            xcodeProjectInterpreter.isInstalled = true;
-            xcodeProjectInterpreter.version = Version(14, null, null);
+        testWithoutContext('isInstalledAndMeetsVersionCheck is true when macOS and installed and version is satisfied', () {
+          xcodeProjectInterpreter.isInstalled = true;
+          xcodeProjectInterpreter.version = Version(14, null, null);
 
-            expect(xcode.isInstalledAndMeetsVersionCheck, isTrue);
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-        );
+          expect(xcode.isInstalledAndMeetsVersionCheck, isTrue);
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        });
 
-        testWithoutContext(
-          'eulaSigned is false when clang output indicates EULA not yet accepted',
-          () {
-            fakeProcessManager.addCommands(const <FakeCommand>[
-              FakeCommand(
-                command: <String>['xcrun', 'clang'],
-                exitCode: 1,
-                stderr: 'Xcode EULA has not been accepted.\nLaunch Xcode and accept the license.',
-              ),
-            ]);
+        testWithoutContext('eulaSigned is false when clang output indicates EULA not yet accepted', () {
+          fakeProcessManager.addCommands(const <FakeCommand>[
+            FakeCommand(
+              command: <String>['xcrun', 'clang'],
+              exitCode: 1,
+              stderr:
+                  'Xcode EULA has not been accepted.\nLaunch Xcode and accept the license.',
+            ),
+          ]);
 
-            expect(xcode.eulaSigned, isFalse);
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-        );
+          expect(xcode.eulaSigned, isFalse);
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        });
 
         testWithoutContext('eulaSigned is false when clang is not installed', () {
           fakeProcessManager.addCommand(
@@ -451,20 +413,19 @@ void main() {
           expect(xcode.eulaSigned, isFalse);
         });
 
-        testWithoutContext(
-          'eulaSigned is true when clang output indicates EULA has been accepted',
-          () {
-            fakeProcessManager.addCommands(const <FakeCommand>[
+        testWithoutContext('eulaSigned is true when clang output indicates EULA has been accepted', () {
+          fakeProcessManager.addCommands(
+            const <FakeCommand>[
               FakeCommand(
                 command: <String>['xcrun', 'clang'],
                 exitCode: 1,
                 stderr: 'clang: error: no input files',
               ),
-            ]);
-            expect(xcode.eulaSigned, isTrue);
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-        );
+            ],
+          );
+          expect(xcode.eulaSigned, isTrue);
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        });
 
         testWithoutContext('SDK name', () {
           expect(getSDKNameForIOSEnvironmentType(EnvironmentType.physical), 'iphoneos');
@@ -472,132 +433,78 @@ void main() {
         });
 
         group('SDK location', () {
-          const sdkroot =
-              'Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk';
+          const String sdkroot = 'Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk';
 
           testWithoutContext('--show-sdk-path iphoneos', () async {
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>['xcrun', '--sdk', 'iphoneos', '--show-sdk-path'],
-                stdout: sdkroot,
-              ),
-            );
+            fakeProcessManager.addCommand(const FakeCommand(
+              command: <String>['xcrun', '--sdk', 'iphoneos', '--show-sdk-path'],
+              stdout: sdkroot,
+            ));
 
             expect(await xcode.sdkLocation(EnvironmentType.physical), sdkroot);
             expect(fakeProcessManager, hasNoRemainingExpectations);
           });
 
           testWithoutContext('--show-sdk-path fails', () async {
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>['xcrun', '--sdk', 'iphoneos', '--show-sdk-path'],
-                exitCode: 1,
-                stderr: 'xcrun: error:',
-              ),
-            );
+            fakeProcessManager.addCommand(const FakeCommand(
+              command: <String>['xcrun', '--sdk', 'iphoneos', '--show-sdk-path'],
+              exitCode: 1,
+              stderr: 'xcrun: error:',
+            ));
 
-            expect(
-              () async => xcode.sdkLocation(EnvironmentType.physical),
-              throwsToolExit(message: 'Could not find SDK location'),
-            );
+            expect(() async => xcode.sdkLocation(EnvironmentType.physical),
+              throwsToolExit(message: 'Could not find SDK location'));
             expect(fakeProcessManager, hasNoRemainingExpectations);
           });
         });
 
         group('SDK Platform Version', () {
           testWithoutContext('--show-sdk-platform-version iphonesimulator', () async {
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>[
-                  'xcrun',
-                  '--sdk',
-                  'iphonesimulator',
-                  '--show-sdk-platform-version',
-                ],
-                stdout: '16.4',
-              ),
-            );
+            fakeProcessManager.addCommand(const FakeCommand(
+              command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
+              stdout: '16.4',
+            ));
 
             expect(await xcode.sdkPlatformVersion(EnvironmentType.simulator), Version(16, 4, null));
             expect(fakeProcessManager, hasNoRemainingExpectations);
           });
 
-          testWithoutContext(
-            '--show-sdk-platform-version iphonesimulator with leading and trailing new line',
-            () async {
-              fakeProcessManager.addCommand(
-                const FakeCommand(
-                  command: <String>[
-                    'xcrun',
-                    '--sdk',
-                    'iphonesimulator',
-                    '--show-sdk-platform-version',
-                  ],
-                  stdout: '\n16.4\n',
-                ),
-              );
+          testWithoutContext('--show-sdk-platform-version iphonesimulator with leading and trailing new line', () async {
+            fakeProcessManager.addCommand(const FakeCommand(
+              command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
+              stdout: '\n16.4\n',
+            ));
 
-              expect(
-                await xcode.sdkPlatformVersion(EnvironmentType.simulator),
-                Version(16, 4, null),
-              );
-              expect(fakeProcessManager, hasNoRemainingExpectations);
-            },
-          );
+            expect(await xcode.sdkPlatformVersion(EnvironmentType.simulator), Version(16, 4, null));
+            expect(fakeProcessManager, hasNoRemainingExpectations);
+          });
 
-          testWithoutContext(
-            '--show-sdk-platform-version returns version followed by text',
-            () async {
-              fakeProcessManager.addCommand(
-                const FakeCommand(
-                  command: <String>[
-                    'xcrun',
-                    '--sdk',
-                    'iphonesimulator',
-                    '--show-sdk-platform-version',
-                  ],
-                  stdout: '13.2 (a) 12344',
-                ),
-              );
+          testWithoutContext('--show-sdk-platform-version returns version followed by text', () async {
+            fakeProcessManager.addCommand(const FakeCommand(
+              command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
+              stdout: '13.2 (a) 12344',
+            ));
 
-              expect(
-                await xcode.sdkPlatformVersion(EnvironmentType.simulator),
-                Version(13, 2, null, text: '13.2 (a) 12344'),
-              );
-              expect(fakeProcessManager, hasNoRemainingExpectations);
-            },
-          );
+            expect(await xcode.sdkPlatformVersion(EnvironmentType.simulator), Version(13, 2, null, text: '13.2 (a) 12344'));
+            expect(fakeProcessManager, hasNoRemainingExpectations);
+          });
 
           testWithoutContext('--show-sdk-platform-version returns something unexpected', () async {
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>[
-                  'xcrun',
-                  '--sdk',
-                  'iphonesimulator',
-                  '--show-sdk-platform-version',
-                ],
-                stdout: 'bogus',
-              ),
-            );
+            fakeProcessManager.addCommand(const FakeCommand(
+              command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
+              stdout: 'bogus',
+            ));
 
             expect(await xcode.sdkPlatformVersion(EnvironmentType.simulator), null);
             expect(fakeProcessManager, hasNoRemainingExpectations);
           });
 
           testWithoutContext('--show-sdk-platform-version fails', () async {
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>[
-                  'xcrun',
-                  '--sdk',
-                  'iphonesimulator',
-                  '--show-sdk-platform-version',
-                ],
-                exitCode: 1,
-                stderr: 'xcrun: error:',
-              ),
-            );
+            fakeProcessManager.addCommand(const FakeCommand(
+              command: <String>['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-platform-version'],
+              exitCode: 1,
+              stderr: 'xcrun: error:',
+            ));
             expect(await xcode.sdkPlatformVersion(EnvironmentType.simulator), null);
             expect(fakeProcessManager, hasNoRemainingExpectations);
             expect(logger.errorText, contains('Could not find SDK Platform Version'));
@@ -632,7 +539,6 @@ void main() {
           coreDeviceControl: FakeIOSCoreDeviceControl(),
           xcodeDebug: FakeXcodeDebug(),
           analytics: const NoOpAnalytics(),
-          shutdownHooks: FakeShutdownHooks(),
         );
       });
 
@@ -641,45 +547,10 @@ void main() {
 
         expect(xcdevice.isInstalled, false);
         expect(xcdevice.observedDeviceEvents(), isNull);
-        expect(
-          logger.traceText,
-          contains("Xcode not found. Run 'flutter doctor' for more information."),
-        );
+        expect(logger.traceText, contains("Xcode not found. Run 'flutter doctor' for more information."));
         expect(await xcdevice.getAvailableIOSDevices(), isEmpty);
         expect(await xcdevice.getDiagnostics(), isEmpty);
       });
-    });
-
-    testWithoutContext('shutdown hooks disposes xcdevice observers', () async {
-      final shutdownHooks = ShutdownHooks();
-
-      final xcdevice = XCDevice(
-        processManager: FakeProcessManager.any(),
-        logger: logger,
-        xcode: Xcode.test(processManager: FakeProcessManager.any()),
-        platform: FakePlatform(operatingSystem: 'macos'),
-        artifacts: Artifacts.test(),
-        cache: Cache.test(processManager: FakeProcessManager.any()),
-        iproxy: IProxy.test(logger: logger, processManager: FakeProcessManager.any()),
-        fileSystem: MemoryFileSystem.test(),
-        coreDeviceControl: FakeIOSCoreDeviceControl(),
-        xcodeDebug: FakeXcodeDebug(),
-        analytics: const NoOpAnalytics(),
-        shutdownHooks: shutdownHooks,
-      );
-
-      expect(shutdownHooks.registeredHooks, hasLength(1));
-      final doneCompleter = Completer<void>();
-      xcdevice.observedDeviceEvents()!.listen(
-        null,
-        onDone: () {
-          doneCompleter.complete();
-        },
-      );
-      await doneCompleter.future;
-      xcdevice.dispose();
-      expect(logger.traceText, contains('xcdevice observe --usb exited with code 0'));
-      expect(logger.traceText, contains('xcdevice observe --wifi exited with code 0'));
     });
 
     group('xcdevice', () {
@@ -709,58 +580,49 @@ void main() {
           coreDeviceControl: coreDeviceControl,
           xcodeDebug: FakeXcodeDebug(),
           analytics: fakeAnalytics,
-          shutdownHooks: FakeShutdownHooks(),
         );
       });
 
       group('observe device events', () {
         testUsingContext('relays events', () async {
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'observe',
-                '--usb',
-              ],
-              stdout:
-                  'Listening for all devices, on USB.\n'
-                  'Attach: d83d5bc53967baa0ee18626ba87b6254b2ab5418\n'
-                  'Attach: 00008027-00192736010F802E\n'
-                  'Detach: d83d5bc53967baa0ee18626ba87b6254b2ab5418',
-              stderr: 'Some usb error',
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'observe',
+              '--usb',
+            ], stdout: 'Listening for all devices, on USB.\n'
+              'Attach: d83d5bc53967baa0ee18626ba87b6254b2ab5418\n'
+              'Attach: 00008027-00192736010F802E\n'
+              'Detach: d83d5bc53967baa0ee18626ba87b6254b2ab5418',
+            stderr: 'Some usb error',
+          ));
 
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'observe',
-                '--wifi',
-              ],
-              stdout:
-                  'Listening for all devices, on WiFi.\n'
-                  'Attach: 00000001-0000000000000000\n'
-                  'Detach: 00000001-0000000000000000',
-              stderr: 'Some wifi error',
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'observe',
+              '--wifi',
+            ], stdout: 'Listening for all devices, on WiFi.\n'
+              'Attach: 00000001-0000000000000000\n'
+              'Detach: 00000001-0000000000000000',
+            stderr: 'Some wifi error',
+          ));
 
-          final attach1 = Completer<void>();
-          final attach2 = Completer<void>();
-          final detach1 = Completer<void>();
-          final attach3 = Completer<void>();
-          final detach2 = Completer<void>();
+          final Completer<void> attach1 = Completer<void>();
+          final Completer<void> attach2 = Completer<void>();
+          final Completer<void> detach1 = Completer<void>();
+          final Completer<void> attach3 = Completer<void>();
+          final Completer<void> detach2 = Completer<void>();
 
           // Attach: d83d5bc53967baa0ee18626ba87b6254b2ab5418
           // Attach: 00008027-00192736010F802E
@@ -769,7 +631,8 @@ void main() {
             if (event.eventType == XCDeviceEvent.attach) {
               if (event.deviceIdentifier == 'd83d5bc53967baa0ee18626ba87b6254b2ab5418') {
                 attach1.complete();
-              } else if (event.deviceIdentifier == '00008027-00192736010F802E') {
+              } else
+              if (event.deviceIdentifier == '00008027-00192736010F802E') {
                 attach2.complete();
               }
               if (event.deviceIdentifier == '00000001-0000000000000000') {
@@ -796,87 +659,77 @@ void main() {
         });
 
         testUsingContext('handles exit code', () async {
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'observe',
-                '--usb',
-              ],
-            ),
-          );
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'observe',
-                '--wifi',
-              ],
-              exitCode: 1,
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'observe',
+              '--usb',
+            ],
+          ));
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'observe',
+              '--wifi',
+            ],
+            exitCode: 1,
+          ));
 
-          final doneCompleter = Completer<void>();
-          xcdevice.observedDeviceEvents()!.listen(
-            null,
-            onDone: () {
-              doneCompleter.complete();
-            },
-          );
+          final Completer<void> doneCompleter = Completer<void>();
+          xcdevice.observedDeviceEvents()!.listen(null, onDone: () {
+            doneCompleter.complete();
+          });
           await doneCompleter.future;
           expect(logger.traceText, contains('xcdevice observe --usb exited with code 0'));
           expect(logger.traceText, contains('xcdevice observe --wifi exited with code 0'));
         });
+
       });
 
       group('wait device events', () {
         testUsingContext('relays events', () async {
-          const deviceId = '00000001-0000000000000000';
+          const String deviceId = '00000001-0000000000000000';
 
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'wait',
-                '--usb',
-                deviceId,
-              ],
-              stdout: 'Waiting for $deviceId to appear, on USB.\n',
-            ),
-          );
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'wait',
-                '--wifi',
-                deviceId,
-              ],
-              stdout:
-                  'Waiting for $deviceId to appear, on WiFi.\n'
-                  'Attach: 00000001-0000000000000000\n',
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'wait',
+              '--usb',
+              deviceId,
+            ],
+            stdout: 'Waiting for $deviceId to appear, on USB.\n',
+          ));
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'wait',
+              '--wifi',
+              deviceId,
+            ],
+            stdout:
+            'Waiting for $deviceId to appear, on WiFi.\n'
+            'Attach: 00000001-0000000000000000\n',
+          ));
 
           // Attach: 00000001-0000000000000000
 
@@ -888,40 +741,36 @@ void main() {
         });
 
         testUsingContext('handles exit code', () async {
-          const deviceId = '00000001-0000000000000000';
+          const String deviceId = '00000001-0000000000000000';
 
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'wait',
-                '--usb',
-                deviceId,
-              ],
-              exitCode: 1,
-              stderr: 'Some error',
-            ),
-          );
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'wait',
-                '--wifi',
-                deviceId,
-              ],
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'wait',
+              '--usb',
+              deviceId,
+            ],
+            exitCode: 1,
+            stderr: 'Some error',
+          ));
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'wait',
+              '--wifi',
+              deviceId,
+            ],
+          ));
 
           final XCDeviceEventNotification? event = await xcdevice.waitForDeviceToConnect(deviceId);
 
@@ -933,42 +782,36 @@ void main() {
         });
 
         testUsingContext('handles cancel', () async {
-          const deviceId = '00000001-0000000000000000';
+          const String deviceId = '00000001-0000000000000000';
 
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'wait',
-                '--usb',
-                deviceId,
-              ],
-            ),
-          );
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>[
-                'script',
-                '-t',
-                '0',
-                '/dev/null',
-                'xcrun',
-                'xcdevice',
-                'wait',
-                '--wifi',
-                deviceId,
-              ],
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'wait',
+              '--usb',
+              deviceId,
+            ],
+          ));
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>[
+              'script',
+              '-t',
+              '0',
+              '/dev/null',
+              'xcrun',
+              'xcdevice',
+              'wait',
+              '--wifi',
+              deviceId,
+            ],
+          ));
 
-          final Future<XCDeviceEventNotification?> futureEvent = xcdevice.waitForDeviceToConnect(
-            deviceId,
-          );
+          final Future<XCDeviceEventNotification?> futureEvent = xcdevice.waitForDeviceToConnect(deviceId);
           xcdevice.cancelWaitForDeviceToConnect();
           final XCDeviceEventNotification? event = await futureEvent;
 
@@ -980,11 +823,9 @@ void main() {
       });
 
       group('available devices', () {
-        final macPlatform = FakePlatform(operatingSystem: 'macos');
-        testUsingContext(
-          'returns devices',
-          () async {
-            const devicesOutput = '''
+        final FakePlatform macPlatform = FakePlatform(operatingSystem: 'macos');
+        testUsingContext('returns devices', () async {
+          const String devicesOutput = '''
 [
   {
     "simulator" : true,
@@ -1077,89 +918,73 @@ void main() {
 ]
 ''';
 
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-                stdout: devicesOutput,
-              ),
-            );
-            final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
-            expect(devices, hasLength(5));
-            expect(devices[0].id, '00008027-00192736010F802E');
-            expect(devices[0].name, 'An iPhone (Space Gray)');
-            expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
-            expect(devices[0].cpuArchitecture, DarwinArch.arm64);
-            expect(devices[0].connectionInterface, DeviceConnectionInterface.attached);
-            expect(devices[0].isConnected, true);
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
+          final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
+          expect(devices, hasLength(5));
+          expect(devices[0].id, '00008027-00192736010F802E');
+          expect(devices[0].name, 'An iPhone (Space Gray)');
+          expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
+          expect(devices[0].cpuArchitecture, DarwinArch.arm64);
+          expect(devices[0].connectionInterface, DeviceConnectionInterface.attached);
+          expect(devices[0].isConnected, true);
 
-            expect(devices[1].id, '98206e7a4afd4aedaff06e687594e089dede3c44');
-            expect(devices[1].name, 'iPad 1');
-            expect(await devices[1].sdkNameAndVersion, 'iOS 10.1 14C54');
-            expect(devices[1].cpuArchitecture, DarwinArch.armv7);
-            expect(devices[1].connectionInterface, DeviceConnectionInterface.attached);
-            expect(devices[1].isConnected, true);
+          expect(devices[1].id, '98206e7a4afd4aedaff06e687594e089dede3c44');
+          expect(devices[1].name, 'iPad 1');
+          expect(await devices[1].sdkNameAndVersion, 'iOS 10.1 14C54');
+          expect(devices[1].cpuArchitecture, DarwinArch.armv7);
+          expect(devices[1].connectionInterface, DeviceConnectionInterface.attached);
+          expect(devices[1].isConnected, true);
 
-            expect(devices[2].id, '234234234234234234345445687594e089dede3c44');
-            expect(devices[2].name, 'A networked iPad');
-            expect(await devices[2].sdkNameAndVersion, 'iOS 10.1 14C54');
-            expect(
-              devices[2].cpuArchitecture,
-              DarwinArch.arm64,
-            ); // Defaults to arm64 for unknown architecture.
-            expect(devices[2].connectionInterface, DeviceConnectionInterface.wireless);
-            expect(devices[2].isConnected, true);
+          expect(devices[2].id, '234234234234234234345445687594e089dede3c44');
+          expect(devices[2].name, 'A networked iPad');
+          expect(await devices[2].sdkNameAndVersion, 'iOS 10.1 14C54');
+          expect(devices[2].cpuArchitecture, DarwinArch.arm64); // Defaults to arm64 for unknown architecture.
+          expect(devices[2].connectionInterface, DeviceConnectionInterface.wireless);
+          expect(devices[2].isConnected, true);
 
-            expect(devices[3].id, 'f577a7903cc54959be2e34bc4f7f80b7009efcf4');
-            expect(devices[3].name, 'iPad 2');
-            expect(await devices[3].sdkNameAndVersion, 'iOS 10.1 14C54');
-            expect(
-              devices[3].cpuArchitecture,
-              DarwinArch.arm64,
-            ); // Defaults to arm64 for unknown architecture.
-            expect(devices[3].connectionInterface, DeviceConnectionInterface.attached);
-            expect(devices[3].isConnected, true);
+          expect(devices[3].id, 'f577a7903cc54959be2e34bc4f7f80b7009efcf4');
+          expect(devices[3].name, 'iPad 2');
+          expect(await devices[3].sdkNameAndVersion, 'iOS 10.1 14C54');
+          expect(devices[3].cpuArchitecture, DarwinArch.arm64); // Defaults to arm64 for unknown architecture.
+          expect(devices[3].connectionInterface, DeviceConnectionInterface.attached);
+          expect(devices[3].isConnected, true);
 
-            expect(devices[4].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
-            expect(devices[4].name, 'iPhone');
-            expect(await devices[4].sdkNameAndVersion, 'iOS 13.3 17C54');
-            expect(devices[4].cpuArchitecture, DarwinArch.arm64);
-            expect(devices[4].connectionInterface, DeviceConnectionInterface.attached);
-            expect(devices[4].isConnected, false);
+          expect(devices[4].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
+          expect(devices[4].name, 'iPhone');
+          expect(await devices[4].sdkNameAndVersion, 'iOS 13.3 17C54');
+          expect(devices[4].cpuArchitecture, DarwinArch.arm64);
+          expect(devices[4].connectionInterface, DeviceConnectionInterface.attached);
+          expect(devices[4].isConnected, false);
 
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-          overrides: <Type, Generator>{
-            Platform: () => macPlatform,
-            Artifacts: () => Artifacts.test(),
-          },
-        );
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+          Artifacts: () => Artifacts.test(),
+        });
 
         testWithoutContext('available devices xcdevice fails', () async {
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-              exception: ProcessException('xcrun', <String>['xcdevice', 'list', '--timeout', '2']),
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            exception: ProcessException('xcrun', <String>['xcdevice', 'list', '--timeout', '2']),
+          ));
 
           expect(await xcdevice.getAvailableIOSDevices(), isEmpty);
         });
 
         testWithoutContext('uses timeout', () async {
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '20'],
-              stdout: '[]',
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '20'],
+            stdout: '[]',
+          ));
           await xcdevice.getAvailableIOSDevices(timeout: const Duration(seconds: 20));
           expect(fakeProcessManager, hasNoRemainingExpectations);
         });
 
-        testUsingContext(
-          'ignores "Preparing debugger support for iPhone" error',
-          () async {
-            const devicesOutput = '''
+        testUsingContext('ignores "Preparing debugger support for iPhone" error', () async {
+          const String devicesOutput = '''
 [
   {
     "simulator" : false,
@@ -1183,27 +1008,21 @@ void main() {
 ]
 ''';
 
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-                stdout: devicesOutput,
-              ),
-            );
-            final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
-            expect(devices, hasLength(1));
-            expect(devices[0].id, '43ad2fda7991b34fe1acbda82f9e2fd3d6ddc9f7');
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-          overrides: <Type, Generator>{
-            Platform: () => macPlatform,
-            Artifacts: () => Artifacts.test(),
-          },
-        );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
+          final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
+          expect(devices, hasLength(1));
+          expect(devices[0].id, '43ad2fda7991b34fe1acbda82f9e2fd3d6ddc9f7');
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+          Artifacts: () => Artifacts.test(),
+        });
 
-        testUsingContext(
-          'handles unknown architectures',
-          () async {
-            const devicesOutput = '''
+        testUsingContext('handles unknown architectures', () async {
+          const String devicesOutput = '''
 [
   {
     "simulator" : false,
@@ -1232,25 +1051,21 @@ void main() {
 ]
 ''';
 
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-                stdout: devicesOutput,
-              ),
-            );
-            final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
-            expect(devices[0].cpuArchitecture, DarwinArch.armv7);
-            expect(devices[1].cpuArchitecture, DarwinArch.arm64);
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-          overrides: <Type, Generator>{
-            Platform: () => macPlatform,
-            Artifacts: () => Artifacts.test(),
-          },
-        );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
+          final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
+          expect(devices[0].cpuArchitecture, DarwinArch.armv7);
+          expect(devices[1].cpuArchitecture, DarwinArch.arm64);
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+          Artifacts: () => Artifacts.test(),
+        });
 
-        testUsingContext('Sdk Version is parsed correctly', () async {
-          const devicesOutput = '''
+        testUsingContext('Sdk Version is parsed correctly',()  async {
+          const String devicesOutput = '''
 [
   {
     "simulator" : false,
@@ -1289,23 +1104,21 @@ void main() {
   }
 ]
 ''';
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-              stdout: devicesOutput,
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
 
           final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
-          expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
-          expect(await devices[1].sdkNameAndVersion, 'iOS 10.1');
-          expect(await devices[2].sdkNameAndVersion, 'iOS unknown version');
-        }, overrides: <Type, Generator>{Platform: () => macPlatform});
+          expect(await devices[0].sdkNameAndVersion,'iOS 13.3 17C54');
+          expect(await devices[1].sdkNameAndVersion,'iOS 10.1');
+          expect(await devices[2].sdkNameAndVersion,'iOS unknown version');
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+        });
 
-        testUsingContext(
-          'use connected entry when filtering out duplicates',
-          () async {
-            const devicesOutput = '''
+        testUsingContext('use connected entry when filtering out duplicates', () async {
+          const String devicesOutput = '''
 [
   {
     "simulator" : false,
@@ -1341,34 +1154,28 @@ void main() {
 ]
 ''';
 
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-                stdout: devicesOutput,
-              ),
-            );
-            final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
-            expect(devices, hasLength(1));
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
+          final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
+          expect(devices, hasLength(1));
 
-            expect(devices[0].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
-            expect(devices[0].name, 'iPhone');
-            expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
-            expect(devices[0].cpuArchitecture, DarwinArch.arm64);
-            expect(devices[0].connectionInterface, DeviceConnectionInterface.attached);
-            expect(devices[0].isConnected, true);
+          expect(devices[0].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
+          expect(devices[0].name, 'iPhone');
+          expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
+          expect(devices[0].cpuArchitecture, DarwinArch.arm64);
+          expect(devices[0].connectionInterface, DeviceConnectionInterface.attached);
+          expect(devices[0].isConnected, true);
 
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-          overrides: <Type, Generator>{
-            Platform: () => macPlatform,
-            Artifacts: () => Artifacts.test(),
-          },
-        );
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+          Artifacts: () => Artifacts.test(),
+        });
 
-        testUsingContext(
-          'use entry with sdk when filtering out duplicates',
-          () async {
-            const devicesOutput = '''
+        testUsingContext('use entry with sdk when filtering out duplicates', () async {
+          const String devicesOutput = '''
 [
   {
     "simulator" : false,
@@ -1410,34 +1217,28 @@ void main() {
 ]
 ''';
 
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-                stdout: devicesOutput,
-              ),
-            );
-            final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
-            expect(devices, hasLength(1));
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
+          final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
+          expect(devices, hasLength(1));
 
-            expect(devices[0].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
-            expect(devices[0].name, 'iPhone_2');
-            expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
-            expect(devices[0].cpuArchitecture, DarwinArch.arm64);
-            expect(devices[0].connectionInterface, DeviceConnectionInterface.attached);
-            expect(devices[0].isConnected, false);
+          expect(devices[0].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
+          expect(devices[0].name, 'iPhone_2');
+          expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
+          expect(devices[0].cpuArchitecture, DarwinArch.arm64);
+          expect(devices[0].connectionInterface, DeviceConnectionInterface.attached);
+          expect(devices[0].isConnected, false);
 
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-          overrides: <Type, Generator>{
-            Platform: () => macPlatform,
-            Artifacts: () => Artifacts.test(),
-          },
-        );
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+          Artifacts: () => Artifacts.test(),
+        });
 
-        testUsingContext(
-          'use entry with higher sdk when filtering out duplicates',
-          () async {
-            const devicesOutput = '''
+        testUsingContext('use entry with higher sdk when filtering out duplicates', () async {
+          const String devicesOutput = '''
 [
   {
     "simulator" : false,
@@ -1480,48 +1281,42 @@ void main() {
 ]
 ''';
 
-            fakeProcessManager.addCommand(
-              const FakeCommand(
-                command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-                stdout: devicesOutput,
-              ),
-            );
-            final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
-            expect(devices, hasLength(1));
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
+          final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
+          expect(devices, hasLength(1));
 
-            expect(devices[0].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
-            expect(devices[0].name, 'iPhone_1');
-            expect(await devices[0].sdkNameAndVersion, 'iOS 14.3 17C54');
-            expect(devices[0].cpuArchitecture, DarwinArch.arm64);
-            expect(devices[0].connectionInterface, DeviceConnectionInterface.attached);
-            expect(devices[0].isConnected, false);
+          expect(devices[0].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
+          expect(devices[0].name, 'iPhone_1');
+          expect(await devices[0].sdkNameAndVersion, 'iOS 14.3 17C54');
+          expect(devices[0].cpuArchitecture, DarwinArch.arm64);
+          expect(devices[0].connectionInterface, DeviceConnectionInterface.attached);
+          expect(devices[0].isConnected, false);
 
-            expect(fakeProcessManager, hasNoRemainingExpectations);
-          },
-          overrides: <Type, Generator>{
-            Platform: () => macPlatform,
-            Artifacts: () => Artifacts.test(),
-          },
-        );
+          expect(fakeProcessManager, hasNoRemainingExpectations);
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+          Artifacts: () => Artifacts.test(),
+        });
 
-        testUsingContext('handles bad output', () async {
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-              stdout: 'Something bad happened, not JSON',
-            ),
-          );
+        testUsingContext('handles bad output',()  async {
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: 'Something bad happened, not JSON',
+          ));
 
           final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
           expect(devices, isEmpty);
           expect(logger.errorText, contains('xcdevice returned non-JSON response'));
-        }, overrides: <Type, Generator>{Platform: () => macPlatform});
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+        });
 
         group('with CoreDevices', () {
-          testUsingContext(
-            'returns devices with corresponding CoreDevices',
-            () async {
-              const devicesOutput = '''
+          testUsingContext('returns devices with corresponding CoreDevices', () async {
+            const String devicesOutput = '''
 [
   {
     "simulator" : true,
@@ -1613,101 +1408,94 @@ void main() {
   }
 ]
 ''';
-              coreDeviceControl.devices.addAll(<FakeIOSCoreDevice>[
-                FakeIOSCoreDevice(
-                  udid: '00008027-00192736010F802E',
-                  connectionInterface: DeviceConnectionInterface.wireless,
-                  developerModeStatus: 'enabled',
-                ),
-                FakeIOSCoreDevice(
-                  connectionInterface: DeviceConnectionInterface.wireless,
-                  developerModeStatus: 'enabled',
-                ),
-                FakeIOSCoreDevice(
-                  udid: '234234234234234234345445687594e089dede3c44',
-                  connectionInterface: DeviceConnectionInterface.attached,
-                ),
-                FakeIOSCoreDevice(
-                  udid: 'f577a7903cc54959be2e34bc4f7f80b7009efcf4',
-                  connectionInterface: DeviceConnectionInterface.attached,
-                  developerModeStatus: 'disabled',
-                ),
-              ]);
+            coreDeviceControl.devices.addAll(<FakeIOSCoreDevice>[
+              FakeIOSCoreDevice(
+                udid: '00008027-00192736010F802E',
+                connectionInterface: DeviceConnectionInterface.wireless,
+                developerModeStatus: 'enabled',
+              ),
+              FakeIOSCoreDevice(
+                connectionInterface: DeviceConnectionInterface.wireless,
+                developerModeStatus: 'enabled',
+              ),
+              FakeIOSCoreDevice(
+                udid: '234234234234234234345445687594e089dede3c44',
+                connectionInterface: DeviceConnectionInterface.attached,
+              ),
+              FakeIOSCoreDevice(
+                udid: 'f577a7903cc54959be2e34bc4f7f80b7009efcf4',
+                connectionInterface: DeviceConnectionInterface.attached,
+                developerModeStatus: 'disabled',
+              ),
+            ]);
 
-              fakeProcessManager.addCommand(
-                const FakeCommand(
-                  command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-                  stdout: devicesOutput,
-                ),
-              );
+            fakeProcessManager.addCommand(const FakeCommand(
+              command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+              stdout: devicesOutput,
+            ));
 
-              final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
-              expect(devices, hasLength(5));
-              expect(devices[0].id, '00008027-00192736010F802E');
-              expect(devices[0].name, 'An iPhone (Space Gray)');
-              expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
-              expect(devices[0].cpuArchitecture, DarwinArch.arm64);
-              expect(devices[0].connectionInterface, DeviceConnectionInterface.wireless);
-              expect(devices[0].isConnected, true);
-              expect(devices[0].devModeEnabled, true);
+            final List<IOSDevice> devices = await xcdevice.getAvailableIOSDevices();
+            expect(devices, hasLength(5));
+            expect(devices[0].id, '00008027-00192736010F802E');
+            expect(devices[0].name, 'An iPhone (Space Gray)');
+            expect(await devices[0].sdkNameAndVersion, 'iOS 13.3 17C54');
+            expect(devices[0].cpuArchitecture, DarwinArch.arm64);
+            expect(devices[0].connectionInterface, DeviceConnectionInterface.wireless);
+            expect(devices[0].isConnected, true);
+            expect(devices[0].devModeEnabled, true);
 
-              expect(devices[1].id, '98206e7a4afd4aedaff06e687594e089dede3c44');
-              expect(devices[1].name, 'iPad 1');
-              expect(await devices[1].sdkNameAndVersion, 'iOS 10.1 14C54');
-              expect(devices[1].cpuArchitecture, DarwinArch.armv7);
-              expect(devices[1].connectionInterface, DeviceConnectionInterface.attached);
-              expect(devices[1].isConnected, true);
-              expect(devices[1].devModeEnabled, true);
+            expect(devices[1].id, '98206e7a4afd4aedaff06e687594e089dede3c44');
+            expect(devices[1].name, 'iPad 1');
+            expect(await devices[1].sdkNameAndVersion, 'iOS 10.1 14C54');
+            expect(devices[1].cpuArchitecture, DarwinArch.armv7);
+            expect(devices[1].connectionInterface, DeviceConnectionInterface.attached);
+            expect(devices[1].isConnected, true);
+            expect(devices[1].devModeEnabled, true);
 
-              expect(devices[2].id, '234234234234234234345445687594e089dede3c44');
-              expect(devices[2].name, 'A networked iPad');
-              expect(await devices[2].sdkNameAndVersion, 'iOS 10.1 14C54');
-              expect(
-                devices[2].cpuArchitecture,
-                DarwinArch.arm64,
-              ); // Defaults to arm64 for unknown architecture.
-              expect(devices[2].connectionInterface, DeviceConnectionInterface.attached);
-              expect(devices[2].isConnected, true);
-              expect(devices[2].devModeEnabled, false);
+            expect(devices[2].id, '234234234234234234345445687594e089dede3c44');
+            expect(devices[2].name, 'A networked iPad');
+            expect(await devices[2].sdkNameAndVersion, 'iOS 10.1 14C54');
+            expect(devices[2].cpuArchitecture, DarwinArch.arm64); // Defaults to arm64 for unknown architecture.
+            expect(devices[2].connectionInterface, DeviceConnectionInterface.attached);
+            expect(devices[2].isConnected, true);
+            expect(devices[2].devModeEnabled, false);
 
-              expect(devices[3].id, 'f577a7903cc54959be2e34bc4f7f80b7009efcf4');
-              expect(devices[3].name, 'iPad 2');
-              expect(await devices[3].sdkNameAndVersion, 'iOS 10.1 14C54');
-              expect(
-                devices[3].cpuArchitecture,
-                DarwinArch.arm64,
-              ); // Defaults to arm64 for unknown architecture.
-              expect(devices[3].connectionInterface, DeviceConnectionInterface.attached);
-              expect(devices[3].isConnected, true);
-              expect(devices[3].devModeEnabled, false);
+            expect(devices[3].id, 'f577a7903cc54959be2e34bc4f7f80b7009efcf4');
+            expect(devices[3].name, 'iPad 2');
+            expect(await devices[3].sdkNameAndVersion, 'iOS 10.1 14C54');
+            expect(devices[3].cpuArchitecture, DarwinArch.arm64); // Defaults to arm64 for unknown architecture.
+            expect(devices[3].connectionInterface, DeviceConnectionInterface.attached);
+            expect(devices[3].isConnected, true);
+            expect(devices[3].devModeEnabled, false);
 
-              expect(devices[4].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
-              expect(devices[4].name, 'iPhone');
-              expect(await devices[4].sdkNameAndVersion, 'iOS 13.3 17C54');
-              expect(devices[4].cpuArchitecture, DarwinArch.arm64);
-              expect(devices[4].connectionInterface, DeviceConnectionInterface.attached);
-              expect(devices[4].isConnected, false);
-              expect(devices[4].devModeEnabled, true);
+            expect(devices[4].id, 'c4ca6f7a53027d1b7e4972e28478e7a28e2faee2');
+            expect(devices[4].name, 'iPhone');
+            expect(await devices[4].sdkNameAndVersion, 'iOS 13.3 17C54');
+            expect(devices[4].cpuArchitecture, DarwinArch.arm64);
+            expect(devices[4].connectionInterface, DeviceConnectionInterface.attached);
+            expect(devices[4].isConnected, false);
+            expect(devices[4].devModeEnabled, true);
 
-              expect(fakeProcessManager, hasNoRemainingExpectations);
+            expect(fakeProcessManager, hasNoRemainingExpectations);
 
-              expect(
-                fakeAnalytics.sentEvents,
-                contains(Event.appleUsageEvent(workflow: 'device', parameter: 'ios-trust-failure')),
-              );
-            },
-            overrides: <Type, Generator>{
-              Platform: () => macPlatform,
-              Artifacts: () => Artifacts.test(),
-            },
-          );
+            expect(fakeAnalytics.sentEvents, contains(
+              Event.appleUsageEvent(
+                  workflow: 'device',
+                  parameter: 'ios-trust-failure',
+                )
+            ));
+          }, overrides: <Type, Generator>{
+            Platform: () => macPlatform,
+            Artifacts: () => Artifacts.test(),
+          });
+
         });
       });
 
       group('diagnostics', () {
-        final macPlatform = FakePlatform(operatingSystem: 'macos');
+        final FakePlatform macPlatform = FakePlatform(operatingSystem: 'macos');
         testUsingContext('uses cache', () async {
-          const devicesOutput = '''
+          const String devicesOutput = '''
 [
   {
     "simulator" : false,
@@ -1728,32 +1516,30 @@ void main() {
 ]
 ''';
 
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-              stdout: devicesOutput,
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
 
           await xcdevice.getAvailableIOSDevices();
           final List<String> errors = await xcdevice.getDiagnostics();
           expect(errors, hasLength(1));
           expect(fakeProcessManager, hasNoRemainingExpectations);
-        }, overrides: <Type, Generator>{Platform: () => macPlatform});
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+        });
 
         testWithoutContext('diagnostics xcdevice fails', () async {
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-              exception: ProcessException('xcrun', <String>['xcdevice', 'list', '--timeout', '2']),
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            exception: ProcessException('xcrun', <String>['xcdevice', 'list', '--timeout', '2']),
+          ));
 
           expect(await xcdevice.getDiagnostics(), isEmpty);
         });
 
         testUsingContext('returns error message', () async {
-          const devicesOutput = '''
+          const String devicesOutput = '''
 [
    {
     "simulator" : false,
@@ -1867,29 +1653,23 @@ void main() {
 ]
 ''';
 
-          fakeProcessManager.addCommand(
-            const FakeCommand(
-              command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
-              stdout: devicesOutput,
-            ),
-          );
+          fakeProcessManager.addCommand(const FakeCommand(
+            command: <String>['xcrun', 'xcdevice', 'list', '--timeout', '2'],
+            stdout: devicesOutput,
+          ));
 
           final List<String> errors = await xcdevice.getDiagnostics();
           expect(errors, hasLength(4));
 
-          expect(
-            errors[0],
-            'Error: iPhone is not paired with your computer. To use iPhone with Xcode, unlock it and choose to trust this computer when prompted. (code -9)',
-          );
+          expect(errors[0], 'Error: iPhone is not paired with your computer. To use iPhone with Xcode, unlock it and choose to trust this computer when prompted. (code -9)');
           expect(errors[1], 'Error: iPhone is not paired with your computer.');
           expect(errors[2], 'Error: Xcode pairing error. (code -13)');
-          expect(
-            errors[3],
-            'Error: iPhone is busy: Preparing debugger support for iPhone. Xcode will continue when iPhone is finished. (code -10)',
-          );
+          expect(errors[3], 'Error: iPhone is busy: Preparing debugger support for iPhone. Xcode will continue when iPhone is finished. (code -10)');
           expect(errors, isNot(contains('Xcode will continue')));
           expect(fakeProcessManager, hasNoRemainingExpectations);
-        }, overrides: <Type, Generator>{Platform: () => macPlatform});
+        }, overrides: <Type, Generator>{
+          Platform: () => macPlatform,
+        });
       });
     });
   });
@@ -1897,10 +1677,10 @@ void main() {
 
 class FakeXcodeProjectInterpreter extends Fake implements XcodeProjectInterpreter {
   @override
-  var version = Version(0, 0, 0);
+  Version version = Version(0, 0, 0);
 
   @override
-  var isInstalled = false;
+  bool isInstalled = false;
 
   @override
   List<String> xcrunCommand() => <String>['xcrun'];
@@ -1908,13 +1688,9 @@ class FakeXcodeProjectInterpreter extends Fake implements XcodeProjectInterprete
 
 class FakeXcodeDebug extends Fake implements XcodeDebug {}
 
-class FakeShutdownHooks extends Fake implements ShutdownHooks {
-  @override
-  void addShutdownHook(ShutdownHook shutdownHook) {}
-}
-
 class FakeIOSCoreDeviceControl extends Fake implements IOSCoreDeviceControl {
-  var devices = <FakeIOSCoreDevice>[];
+
+  List<FakeIOSCoreDevice> devices = <FakeIOSCoreDevice>[];
 
   @override
   Future<List<IOSCoreDevice>> getCoreDevices({Duration timeout = Duration.zero}) async {
@@ -1923,7 +1699,11 @@ class FakeIOSCoreDeviceControl extends Fake implements IOSCoreDeviceControl {
 }
 
 class FakeIOSCoreDevice extends Fake implements IOSCoreDevice {
-  FakeIOSCoreDevice({this.udid, this.connectionInterface, this.developerModeStatus});
+  FakeIOSCoreDevice({
+    this.udid,
+    this.connectionInterface,
+    this.developerModeStatus,
+  });
 
   final String? developerModeStatus;
 
@@ -1934,8 +1714,7 @@ class FakeIOSCoreDevice extends Fake implements IOSCoreDevice {
   final DeviceConnectionInterface? connectionInterface;
 
   @override
-  IOSCoreDeviceProperties? get deviceProperties =>
-      FakeIOSCoreDeviceProperties(developerModeStatus: developerModeStatus);
+  IOSCoreDeviceProperties? get deviceProperties => FakeIOSCoreDeviceProperties(developerModeStatus: developerModeStatus);
 }
 
 class FakeIOSCoreDeviceProperties extends Fake implements IOSCoreDeviceProperties {

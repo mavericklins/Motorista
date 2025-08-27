@@ -8,7 +8,7 @@ import '../common.dart';
 
 const int _kNumIters = 10000;
 
-Future<void> execute() async {
+void main() {
   assert(false, "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
   final Stopwatch watch = Stopwatch();
   print('RRect contains benchmark...');
@@ -27,11 +27,4 @@ Future<void> execute() async {
     name: 'rrect_contains_iteration',
   );
   printer.printToStdout();
-}
-
-//
-//  Note that the benchmark is normally run by benchmark_collection.dart.
-//
-Future<void> main() async {
-  return execute();
 }

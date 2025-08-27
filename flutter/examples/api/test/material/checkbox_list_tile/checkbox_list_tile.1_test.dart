@@ -3,13 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/checkbox_list_tile/checkbox_list_tile.1.dart'
-    as example;
+import 'package:flutter_api_samples/material/checkbox_list_tile/checkbox_list_tile.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Checkbox aligns appropriately', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.CheckboxListTileApp());
+    await tester.pumpWidget(
+      const example.CheckboxListTileApp(),
+    );
 
     expect(find.byType(CheckboxListTile), findsNWidgets(3));
 
@@ -33,7 +34,9 @@ void main() {
   });
 
   testWidgets('Checkboxes can be checked', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.CheckboxListTileApp());
+    await tester.pumpWidget(
+      const example.CheckboxListTileApp(),
+    );
 
     expect(find.byType(CheckboxListTile), findsNWidgets(3));
 

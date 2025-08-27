@@ -16,7 +16,9 @@ class RadioExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Radio Sample')),
-        body: const Center(child: RadioExample()),
+        body: const Center(
+          child: RadioExample(),
+        ),
       ),
     );
   }
@@ -36,25 +38,33 @@ class _RadioExampleState extends State<RadioExample> {
 
   @override
   Widget build(BuildContext context) {
-    return RadioGroup<SingingCharacter>(
-      groupValue: _character,
-      onChanged: (SingingCharacter? value) {
-        setState(() {
-          _character = value;
-        });
-      },
-      child: const Column(
-        children: <Widget>[
-          ListTile(
-            title: Text('Lafayette'),
-            leading: Radio<SingingCharacter>(value: SingingCharacter.lafayette),
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: const Text('Lafayette'),
+          leading: Radio<SingingCharacter>(
+            value: SingingCharacter.lafayette,
+            groupValue: _character,
+            onChanged: (SingingCharacter? value) {
+              setState(() {
+                _character = value;
+              });
+            },
           ),
-          ListTile(
-            title: Text('Thomas Jefferson'),
-            leading: Radio<SingingCharacter>(value: SingingCharacter.jefferson),
+        ),
+        ListTile(
+          title: const Text('Thomas Jefferson'),
+          leading: Radio<SingingCharacter>(
+            value: SingingCharacter.jefferson,
+            groupValue: _character,
+            onChanged: (SingingCharacter? value) {
+              setState(() {
+                _character = value;
+              });
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

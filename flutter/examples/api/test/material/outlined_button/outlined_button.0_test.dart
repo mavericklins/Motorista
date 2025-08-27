@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('OutlinedButton Smoke Test', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.OutlinedButtonExampleApp());
+    await tester.pumpWidget(
+      const example.OutlinedButtonExampleApp(),
+    );
 
     expect(find.widgetWithText(AppBar, 'OutlinedButton Sample'), findsOneWidget);
     final Finder outlinedButton = find.widgetWithText(OutlinedButton, 'Click Me');

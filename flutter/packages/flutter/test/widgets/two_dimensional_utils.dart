@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ViewportOffset;
 
+
 // BUILDER DELEGATE ---
 
 final TwoDimensionalChildBuilderDelegate builderDelegate = TwoDimensionalChildBuilderDelegate(
@@ -18,13 +19,15 @@ final TwoDimensionalChildBuilderDelegate builderDelegate = TwoDimensionalChildBu
     return Container(
       key: ValueKey<ChildVicinity>(vicinity),
       color: vicinity.xIndex.isEven && vicinity.yIndex.isEven
-          ? Colors.amber[100]
-          : (vicinity.xIndex.isOdd && vicinity.yIndex.isOdd ? Colors.blueAccent[100] : null),
+        ? Colors.amber[100]
+        : (vicinity.xIndex.isOdd && vicinity.yIndex.isOdd
+        ? Colors.blueAccent[100]
+        : null),
       height: 200,
       width: 200,
       child: Center(child: Text('R${vicinity.xIndex}:C${vicinity.yIndex}')),
     );
-  },
+  }
 );
 
 // Creates a simple 2D table of 200x200 squares with a builder delegate.
@@ -81,7 +84,6 @@ class SimpleBuilderTableView extends TwoDimensionalScrollView {
     this.applyDimensions = true,
     this.forgetToLayoutChild = false,
     this.setLayoutOffset = true,
-    super.hitTestBehavior,
   }) : super(delegate: delegate);
 
   // Piped through for testing in RenderTwoDimensionalViewport
@@ -91,11 +93,7 @@ class SimpleBuilderTableView extends TwoDimensionalScrollView {
   final bool setLayoutOffset;
 
   @override
-  Widget buildViewport(
-    BuildContext context,
-    ViewportOffset verticalOffset,
-    ViewportOffset horizontalOffset,
-  ) {
+  Widget buildViewport(BuildContext context, ViewportOffset verticalOffset, ViewportOffset horizontalOffset) {
     return SimpleBuilderTableViewport(
       horizontalOffset: horizontalOffset,
       horizontalAxisDirection: horizontalDetails.direction,
@@ -215,8 +213,7 @@ class RenderSimpleBuilderTableViewport extends RenderTwoDimensionalViewport {
     final double verticalPixels = verticalOffset.pixels;
     final double viewportWidth = viewportDimension.width + (useCacheExtent ? cacheExtent : 0.0);
     final double viewportHeight = viewportDimension.height + (useCacheExtent ? cacheExtent : 0.0);
-    final TwoDimensionalChildBuilderDelegate builderDelegate =
-        delegate as TwoDimensionalChildBuilderDelegate;
+    final TwoDimensionalChildBuilderDelegate builderDelegate = delegate as TwoDimensionalChildBuilderDelegate;
 
     final int maxRowIndex;
     final int maxColumnIndex;
@@ -229,19 +226,22 @@ class RenderSimpleBuilderTableViewport extends RenderTwoDimensionalViewport {
       ((horizontalPixels + viewportWidth) / 200).ceil(),
       maxColumnIndex,
     );
-    final int trailingRow = math.min(((verticalPixels + viewportHeight) / 200).ceil(), maxRowIndex);
+    final int trailingRow = math.min(
+      ((verticalPixels + viewportHeight) / 200).ceil(),
+      maxRowIndex,
+    );
 
     double xLayoutOffset = (leadingColumn * 200) - horizontalOffset.pixels;
     for (int column = leadingColumn; column <= trailingColumn; column++) {
       double yLayoutOffset = (leadingRow * 200) - verticalOffset.pixels;
       for (int row = leadingRow; row <= trailingRow; row++) {
         final ChildVicinity vicinity = ChildVicinity(xIndex: column, yIndex: row);
-        final RenderBox? child = buildOrObtainChildFor(vicinity);
+        final RenderBox child = buildOrObtainChildFor(vicinity)!;
         if (!forgetToLayoutChild) {
-          child?.layout(constraints.tighten(width: 200.0, height: 200.0));
+          child.layout(constraints.tighten(width: 200.0, height: 200.0));
         }
 
-        if (setLayoutOffset && child != null) {
+        if (setLayoutOffset) {
           parentDataOf(child).layoutOffset = Offset(xLayoutOffset, yLayoutOffset);
         }
         yLayoutOffset += 200;
@@ -264,18 +264,26 @@ class RenderSimpleBuilderTableViewport extends RenderTwoDimensionalViewport {
 }
 
 // LIST DELEGATE ---
-final List<List<Widget>> children = List<List<Widget>>.generate(100, (int xIndex) {
-  return List<Widget>.generate(100, (int yIndex) {
-    return Container(
-      color: xIndex.isEven && yIndex.isEven
-          ? Colors.amber[100]
-          : (xIndex.isOdd && yIndex.isOdd ? Colors.blueAccent[100] : null),
-      height: 200,
-      width: 200,
-      child: Center(child: Text('R$xIndex:C$yIndex')),
+final List<List<Widget>> children = List<List<Widget>>.generate(
+  100,
+  (int xIndex) {
+    return List<Widget>.generate(
+      100,
+      (int yIndex) {
+        return Container(
+          color: xIndex.isEven && yIndex.isEven
+            ? Colors.amber[100]
+            : (xIndex.isOdd && yIndex.isOdd
+              ? Colors.blueAccent[100]
+              : null),
+          height: 200,
+          width: 200,
+          child: Center(child: Text('R$xIndex:C$yIndex')),
+        );
+      },
     );
-  });
-});
+  },
+);
 
 // Builds a simple 2D table of 200x200 squares with a list delegate.
 Widget simpleListTest({
@@ -289,6 +297,7 @@ Widget simpleListTest({
   Clip? clipBehavior,
 }) {
   return MaterialApp(
+    theme: ThemeData(useMaterial3: true),
     home: Scaffold(
       body: SimpleListTableView(
         mainAxis: mainAxis,
@@ -319,11 +328,7 @@ class SimpleListTableView extends TwoDimensionalScrollView {
   }) : super(delegate: delegate);
 
   @override
-  Widget buildViewport(
-    BuildContext context,
-    ViewportOffset verticalOffset,
-    ViewportOffset horizontalOffset,
-  ) {
+  Widget buildViewport(BuildContext context, ViewportOffset verticalOffset, ViewportOffset horizontalOffset) {
     return SimpleListTableViewport(
       horizontalOffset: horizontalOffset,
       horizontalAxisDirection: horizontalDetails.direction,
@@ -398,8 +403,7 @@ class RenderSimpleListTableViewport extends RenderTwoDimensionalViewport {
     // Every child is 200x200 square
     final double horizontalPixels = horizontalOffset.pixels;
     final double verticalPixels = verticalOffset.pixels;
-    final TwoDimensionalChildListDelegate listDelegate =
-        delegate as TwoDimensionalChildListDelegate;
+    final TwoDimensionalChildListDelegate listDelegate = delegate as TwoDimensionalChildListDelegate;
     final int rowCount;
     final int columnCount;
     rowCount = listDelegate.children.length;
@@ -442,7 +446,7 @@ class RenderSimpleListTableViewport extends RenderTwoDimensionalViewport {
 }
 
 class KeepAliveCheckBox extends StatefulWidget {
-  const KeepAliveCheckBox({super.key});
+  const KeepAliveCheckBox({ super.key });
 
   @override
   KeepAliveCheckBoxState createState() => KeepAliveCheckBoxState();
@@ -488,7 +492,11 @@ class TestExtendedParentData extends TwoDimensionalViewportParentData {
 }
 
 class TestParentDataWidget extends ParentDataWidget<TestExtendedParentData> {
-  const TestParentDataWidget({super.key, required super.child, this.testValue});
+  const TestParentDataWidget({
+    super.key,
+    required super.child,
+    this.testValue,
+  });
 
   final int? testValue;
 
@@ -504,7 +512,7 @@ class TestParentDataWidget extends ParentDataWidget<TestExtendedParentData> {
 }
 
 class KeepAliveOnlyWhenHovered extends StatefulWidget {
-  const KeepAliveOnlyWhenHovered({required this.child, super.key});
+  const KeepAliveOnlyWhenHovered({ required this.child, super.key });
 
   final Widget child;
 
@@ -512,8 +520,7 @@ class KeepAliveOnlyWhenHovered extends StatefulWidget {
   KeepAliveOnlyWhenHoveredState createState() => KeepAliveOnlyWhenHoveredState();
 }
 
-class KeepAliveOnlyWhenHoveredState extends State<KeepAliveOnlyWhenHovered>
-    with AutomaticKeepAliveClientMixin {
+class KeepAliveOnlyWhenHoveredState extends State<KeepAliveOnlyWhenHovered> with AutomaticKeepAliveClientMixin {
   bool _hovered = false;
 
   @override

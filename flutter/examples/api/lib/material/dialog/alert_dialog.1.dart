@@ -14,10 +14,12 @@ class AlertDialogExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(colorSchemeSeed: const Color(0xff6750a4)),
+      theme: ThemeData(colorSchemeSeed: const Color(0xff6750a4), useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(title: const Text('AlertDialog Sample')),
-        body: const Center(child: DialogExample()),
+        body: const Center(
+          child: DialogExample(),
+        ),
       ),
     );
   }
@@ -39,7 +41,10 @@ class DialogExample extends StatelessWidget {
               onPressed: () => Navigator.pop(context, 'Cancel'),
               child: const Text('Cancel'),
             ),
-            TextButton(onPressed: () => Navigator.pop(context, 'OK'), child: const Text('OK')),
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
           ],
         ),
       ),

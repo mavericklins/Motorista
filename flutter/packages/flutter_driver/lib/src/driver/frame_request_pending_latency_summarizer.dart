@@ -8,7 +8,7 @@ import 'timeline.dart';
 /// Event name for frame request pending timeline events.
 const String kFrameRequestPendingEvent = 'Frame Request Pending';
 
-/// Summarizes [TimelineEvent]s corresponding to [kFrameRequestPendingEvent] events.
+/// Summarizes [TimelineEvents]s corresponding to [kFrameRequestPendingEvent] events.
 ///
 /// `FrameRequestPendingLatency` is the time between `Animator::RequestFrame`
 /// and `Animator::BeginFrame` for each frame built by the Flutter engine.
@@ -16,12 +16,13 @@ class FrameRequestPendingLatencySummarizer {
   /// Creates a FrameRequestPendingLatencySummarizer given the timeline events.
   FrameRequestPendingLatencySummarizer(this.frameRequestPendingEvents);
 
-  /// Timeline events with names in [kFrameRequestPendingEvent].
+  /// Timeline events with names in [kFrameRequestPendingTimelineEventNames].
   final List<TimelineEvent> frameRequestPendingEvents;
 
   /// Computes the average `FrameRequestPendingLatency` over the period of the timeline.
   double computeAverageFrameRequestPendingLatency() {
-    final List<double> frameRequestPendingLatencies = _computeFrameRequestPendingLatencies();
+    final List<double> frameRequestPendingLatencies =
+        _computeFrameRequestPendingLatencies();
     if (frameRequestPendingLatencies.isEmpty) {
       return 0;
     }
@@ -33,7 +34,8 @@ class FrameRequestPendingLatencySummarizer {
   /// Computes the [percentile]-th percentile `FrameRequestPendingLatency` over the
   /// period of the timeline.
   double computePercentileFrameRequestPendingLatency(double percentile) {
-    final List<double> frameRequestPendingLatencies = _computeFrameRequestPendingLatencies();
+    final List<double> frameRequestPendingLatencies =
+        _computeFrameRequestPendingLatencies();
     if (frameRequestPendingLatencies.isEmpty) {
       return 0;
     }
@@ -43,16 +45,18 @@ class FrameRequestPendingLatencySummarizer {
   List<double> _computeFrameRequestPendingLatencies() {
     final List<double> result = <double>[];
     final Map<String, int> starts = <String, int>{};
-    for (final TimelineEvent event in frameRequestPendingEvents) {
-      switch (event) {
-        case TimelineEvent(phase: 'b', json: {'id': final String id}):
+    for (int i = 0; i < frameRequestPendingEvents.length; i++) {
+      final TimelineEvent event = frameRequestPendingEvents[i];
+      if (event.phase == 'b') {
+        final String? id = event.json['id'] as String?;
+        if (id != null) {
           starts[id] = event.timestampMicros!;
-
-        case TimelineEvent(phase: 'e', json: {'id': final String id}):
-          final int? start = starts[id];
-          if (start != null) {
-            result.add((event.timestampMicros! - start).toDouble());
-          }
+        }
+      } else if (event.phase == 'e') {
+        final int? start = starts[event.json['id']];
+        if (start != null) {
+          result.add((event.timestampMicros! - start).toDouble());
+        }
       }
     }
     return result;

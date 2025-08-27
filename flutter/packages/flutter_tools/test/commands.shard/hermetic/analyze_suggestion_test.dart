@@ -20,28 +20,11 @@ import '../../src/test_flutter_command_runner.dart';
 
 class ProjectValidatorDummy extends ProjectValidator {
   @override
-  Future<List<ProjectValidatorResult>> start(
-    FlutterProject project, {
-    Logger? logger,
-    FileSystem? fileSystem,
-  }) async {
+  Future<List<ProjectValidatorResult>> start(FlutterProject project, {Logger? logger, FileSystem? fileSystem}) async {
     return <ProjectValidatorResult>[
-      const ProjectValidatorResult(
-        name: 'pass',
-        value: 'value',
-        status: StatusProjectValidator.success,
-      ),
-      const ProjectValidatorResult(
-        name: 'fail',
-        value: 'my error',
-        status: StatusProjectValidator.error,
-      ),
-      const ProjectValidatorResult(
-        name: 'pass two',
-        value: 'pass',
-        warning: 'my warning',
-        status: StatusProjectValidator.warning,
-      ),
+      const ProjectValidatorResult(name: 'pass', value: 'value', status: StatusProjectValidator.success),
+      const ProjectValidatorResult(name: 'fail', value: 'my error', status: StatusProjectValidator.error),
+      const ProjectValidatorResult(name: 'pass two', value: 'pass', warning: 'my warning', status: StatusProjectValidator.warning),
     ];
   }
 
@@ -56,22 +39,10 @@ class ProjectValidatorDummy extends ProjectValidator {
 
 class ProjectValidatorSecondDummy extends ProjectValidator {
   @override
-  Future<List<ProjectValidatorResult>> start(
-    FlutterProject project, {
-    Logger? logger,
-    FileSystem? fileSystem,
-  }) async {
+  Future<List<ProjectValidatorResult>> start(FlutterProject project, {Logger? logger, FileSystem? fileSystem}) async {
     return <ProjectValidatorResult>[
-      const ProjectValidatorResult(
-        name: 'second',
-        value: 'pass',
-        status: StatusProjectValidator.success,
-      ),
-      const ProjectValidatorResult(
-        name: 'other fail',
-        value: 'second fail',
-        status: StatusProjectValidator.error,
-      ),
+      const ProjectValidatorResult(name: 'second', value: 'pass', status: StatusProjectValidator.success),
+      const ProjectValidatorResult(name: 'other fail', value: 'second fail', status: StatusProjectValidator.error),
     ];
   }
 
@@ -86,11 +57,7 @@ class ProjectValidatorSecondDummy extends ProjectValidator {
 
 class ProjectValidatorCrash extends ProjectValidator {
   @override
-  Future<List<ProjectValidatorResult>> start(
-    FlutterProject project, {
-    Logger? logger,
-    FileSystem? fileSystem,
-  }) async {
+  Future<List<ProjectValidatorResult>> start(FlutterProject project, {Logger? logger, FileSystem? fileSystem}) async {
     throw Exception('my exception');
   }
 
@@ -110,6 +77,7 @@ void main() {
   late Platform platform;
 
   group('analyze --suggestions command', () {
+
     setUp(() {
       fileSystem = MemoryFileSystem.test();
       terminal = Terminal.test();
@@ -118,8 +86,8 @@ void main() {
     });
 
     testUsingContext('success, error and warning', () async {
-      final loggerTest = BufferLogger.test();
-      final command = AnalyzeCommand(
+      final BufferLogger loggerTest = BufferLogger.test();
+      final AnalyzeCommand command = AnalyzeCommand(
         artifacts: Artifacts.test(),
         fileSystem: fileSystem,
         logger: loggerTest,
@@ -128,7 +96,7 @@ void main() {
         processManager: processManager,
         allProjectValidators: <ProjectValidator>[
           ProjectValidatorDummy(),
-          ProjectValidatorSecondDummy(),
+          ProjectValidatorSecondDummy()
         ],
         suppressAnalytics: true,
       );
@@ -136,8 +104,7 @@ void main() {
 
       await runner.run(<String>['analyze', '--suggestions', './']);
 
-      const expected =
-          '\n'
+      const String expected = '\n'
           '┌──────────────────────────────────────────┐\n'
           '│ First Dummy                              │\n'
           '│ [✓] pass: value                          │\n'
@@ -152,29 +119,31 @@ void main() {
     });
 
     testUsingContext('crash', () async {
-      final loggerTest = BufferLogger.test();
-      final command = AnalyzeCommand(
-        artifacts: Artifacts.test(),
-        fileSystem: fileSystem,
-        logger: loggerTest,
-        platform: platform,
-        terminal: terminal,
-        processManager: processManager,
-        allProjectValidators: <ProjectValidator>[ProjectValidatorCrash()],
-        suppressAnalytics: true,
+      final BufferLogger loggerTest = BufferLogger.test();
+      final AnalyzeCommand command = AnalyzeCommand(
+          artifacts: Artifacts.test(),
+          fileSystem: fileSystem,
+          logger: loggerTest,
+          platform: platform,
+          terminal: terminal,
+          processManager: processManager,
+          allProjectValidators: <ProjectValidator>[
+            ProjectValidatorCrash(),
+          ],
+          suppressAnalytics: true,
       );
       final CommandRunner<void> runner = createTestCommandRunner(command);
 
       await runner.run(<String>['analyze', '--suggestions', './']);
 
-      const expected = '[☠] Exception: my exception: #0      ProjectValidatorCrash.start';
+      const String expected = '[☠] Exception: my exception: #0      ProjectValidatorCrash.start';
 
       expect(loggerTest.statusText, contains(expected));
     });
 
     testUsingContext('--watch and --suggestions not compatible together', () async {
-      final loggerTest = BufferLogger.test();
-      final command = AnalyzeCommand(
+      final BufferLogger loggerTest = BufferLogger.test();
+      final AnalyzeCommand command = AnalyzeCommand(
         artifacts: Artifacts.test(),
         fileSystem: fileSystem,
         logger: loggerTest,
@@ -185,7 +154,7 @@ void main() {
         suppressAnalytics: true,
       );
       final CommandRunner<void> runner = createTestCommandRunner(command);
-      Future<void> result() => runner.run(<String>['analyze', '--suggestions', '--watch']);
+      Future<void> result () => runner.run(<String>['analyze', '--suggestions', '--watch']);
 
       expect(result, throwsToolExit(message: 'flag --watch is not compatible with --suggestions'));
     });

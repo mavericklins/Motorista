@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/animation.dart';
-library;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -23,7 +20,11 @@ export 'package:flutter/scheduler.dart' show TickerProvider;
 /// [TickerProviderStateMixin] or a [SingleTickerProviderStateMixin].
 class TickerMode extends StatefulWidget {
   /// Creates a widget that enables or disables tickers.
-  const TickerMode({super.key, required this.enabled, required this.child});
+  const TickerMode({
+    super.key,
+    required this.enabled,
+    required this.child,
+  });
 
   /// The requested ticker mode for this subtree.
   ///
@@ -57,8 +58,7 @@ class TickerMode extends StatefulWidget {
   /// bool tickingEnabled = TickerMode.of(context);
   /// ```
   static bool of(BuildContext context) {
-    final _EffectiveTickerMode? widget = context
-        .dependOnInheritedWidgetOfExactType<_EffectiveTickerMode>();
+    final _EffectiveTickerMode? widget = context.dependOnInheritedWidgetOfExactType<_EffectiveTickerMode>();
     return widget?.enabled ?? true;
   }
 
@@ -93,8 +93,7 @@ class TickerMode extends StatefulWidget {
   /// In the absence of a [TickerMode] widget, this function returns a
   /// [ValueListenable], whose [ValueListenable.value] is always true.
   static ValueListenable<bool> getNotifier(BuildContext context) {
-    final _EffectiveTickerMode? widget = context
-        .getInheritedWidgetOfExactType<_EffectiveTickerMode>();
+    final _EffectiveTickerMode? widget = context.getInheritedWidgetOfExactType<_EffectiveTickerMode>();
     return widget?.notifier ?? const _ConstantValueListenable<bool>(true);
   }
 
@@ -141,20 +140,16 @@ class _TickerModeState extends State<TickerMode> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      FlagProperty(
-        'requested mode',
-        value: widget.enabled,
-        ifTrue: 'enabled',
-        ifFalse: 'disabled',
-        showName: true,
-      ),
-    );
+    properties.add(FlagProperty('requested mode', value: widget.enabled, ifTrue: 'enabled', ifFalse: 'disabled', showName: true));
   }
 }
 
 class _EffectiveTickerMode extends InheritedWidget {
-  const _EffectiveTickerMode({required this.enabled, required this.notifier, required super.child});
+  const _EffectiveTickerMode({
+    required this.enabled,
+    required this.notifier,
+    required super.child,
+  });
 
   final bool enabled;
   final ValueNotifier<bool> notifier;
@@ -165,15 +160,7 @@ class _EffectiveTickerMode extends InheritedWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      FlagProperty(
-        'effective mode',
-        value: enabled,
-        ifTrue: 'enabled',
-        ifFalse: 'disabled',
-        showName: true,
-      ),
-    );
+    properties.add(FlagProperty('effective mode', value: enabled, ifTrue: 'enabled', ifFalse: 'disabled', showName: true));
   }
 }
 
@@ -188,8 +175,7 @@ class _EffectiveTickerMode extends InheritedWidget {
 /// [AnimationController] objects over the lifetime of the [State], use a full
 /// [TickerProviderStateMixin] instead.
 @optionalTypeArgs
-mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
-    implements TickerProvider {
+mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T> implements TickerProvider {
   Ticker? _ticker;
 
   @override
@@ -199,12 +185,8 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
         return true;
       }
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary(
-          '$runtimeType is a SingleTickerProviderStateMixin but multiple tickers were created.',
-        ),
-        ErrorDescription(
-          'A SingleTickerProviderStateMixin can only be used as a TickerProvider once.',
-        ),
+        ErrorSummary('$runtimeType is a SingleTickerProviderStateMixin but multiple tickers were created.'),
+        ErrorDescription('A SingleTickerProviderStateMixin can only be used as a TickerProvider once.'),
         ErrorHint(
           'If a State is used for multiple AnimationController objects, or if it is passed to other '
           'objects and those objects might use it more than one time in total, then instead of '
@@ -212,10 +194,7 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
         ),
       ]);
     }());
-    _ticker = Ticker(
-      onTick,
-      debugLabel: kDebugMode ? 'created by ${describeIdentity(this)}' : null,
-    );
+    _ticker = Ticker(onTick, debugLabel: kDebugMode ? 'created by ${describeIdentity(this)}' : null);
     _updateTickerModeNotifier();
     _updateTicker(); // Sets _ticker.mute correctly.
     return _ticker!;
@@ -257,7 +236,11 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
     _updateTicker();
   }
 
-  void _updateTicker() => _ticker?.muted = !_tickerModeNotifier!.value;
+  void _updateTicker() {
+    if (_ticker != null) {
+      _ticker!.muted = !_tickerModeNotifier!.value;
+    }
+  }
 
   void _updateTickerModeNotifier() {
     final ValueListenable<bool> newNotifier = TickerMode.getNotifier(context);
@@ -272,22 +255,19 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final String? tickerDescription = switch ((_ticker?.isActive, _ticker?.muted)) {
-      (true, true) => 'active but muted',
-      (true, _) => 'active',
-      (false, true) => 'inactive and muted',
-      (false, _) => 'inactive',
-      (null, _) => null,
-    };
-    properties.add(
-      DiagnosticsProperty<Ticker>(
-        'ticker',
-        _ticker,
-        description: tickerDescription,
-        showSeparator: false,
-        defaultValue: null,
-      ),
-    );
+    String? tickerDescription;
+    if (_ticker != null) {
+      if (_ticker!.isActive && _ticker!.muted) {
+        tickerDescription = 'active but muted';
+      } else if (_ticker!.isActive) {
+        tickerDescription = 'active';
+      } else if (_ticker!.muted) {
+        tickerDescription = 'inactive and muted';
+      } else {
+        tickerDescription = 'inactive';
+      }
+    }
+    properties.add(DiagnosticsProperty<Ticker>('ticker', _ticker, description: tickerDescription, showSeparator: false, defaultValue: null));
   }
 }
 
@@ -301,11 +281,6 @@ mixin SingleTickerProviderStateMixin<T extends StatefulWidget> on State<T>
 /// If you only have a single [Ticker] (for example only a single
 /// [AnimationController]) for the lifetime of your [State], then using a
 /// [SingleTickerProviderStateMixin] is more efficient. This is the common case.
-///
-/// When creating multiple [AnimationController]s, using a single state with
-/// [TickerProviderStateMixin] as vsync for all [AnimationController]s is more
-/// efficient than creating multiple states with
-/// [SingleTickerProviderStateMixin].
 @optionalTypeArgs
 mixin TickerProviderStateMixin<T extends StatefulWidget> on State<T> implements TickerProvider {
   Set<Ticker>? _tickers;
@@ -318,11 +293,8 @@ mixin TickerProviderStateMixin<T extends StatefulWidget> on State<T> implements 
     }
     assert(_tickerModeNotifier != null);
     _tickers ??= <_WidgetTicker>{};
-    final _WidgetTicker result = _WidgetTicker(
-      onTick,
-      this,
-      debugLabel: kDebugMode ? 'created by ${describeIdentity(this)}' : null,
-    )..muted = !_tickerModeNotifier!.value;
+    final _WidgetTicker result = _WidgetTicker(onTick, this, debugLabel: kDebugMode ? 'created by ${describeIdentity(this)}' : null)
+      ..muted = !_tickerModeNotifier!.value;
     _tickers!.add(result);
     return result;
   }
@@ -395,16 +367,14 @@ mixin TickerProviderStateMixin<T extends StatefulWidget> on State<T> implements 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<Set<Ticker>>(
-        'tickers',
-        _tickers,
-        description: _tickers != null
-            ? 'tracking ${_tickers!.length} ticker${_tickers!.length == 1 ? "" : "s"}'
-            : null,
-        defaultValue: null,
-      ),
-    );
+    properties.add(DiagnosticsProperty<Set<Ticker>>(
+      'tickers',
+      _tickers,
+      description: _tickers != null ?
+        'tracking ${_tickers!.length} ticker${_tickers!.length == 1 ? "" : "s"}' :
+        null,
+      defaultValue: null,
+    ));
   }
 }
 
@@ -413,7 +383,7 @@ mixin TickerProviderStateMixin<T extends StatefulWidget> on State<T> implements 
 // confusing. Instead we use the less precise but more anodyne "_WidgetTicker",
 // which attracts less attention.
 class _WidgetTicker extends Ticker {
-  _WidgetTicker(super.onTick, this._creator, {super.debugLabel});
+  _WidgetTicker(super.onTick, this._creator, { super.debugLabel });
 
   final TickerProviderStateMixin _creator;
 

@@ -16,12 +16,10 @@ class EditableTextToolbarBuilderExampleApp extends StatefulWidget {
   const EditableTextToolbarBuilderExampleApp({super.key});
 
   @override
-  State<EditableTextToolbarBuilderExampleApp> createState() =>
-      _EditableTextToolbarBuilderExampleAppState();
+  State<EditableTextToolbarBuilderExampleApp> createState() => _EditableTextToolbarBuilderExampleAppState();
 }
 
-class _EditableTextToolbarBuilderExampleAppState
-    extends State<EditableTextToolbarBuilderExampleApp> {
+class _EditableTextToolbarBuilderExampleAppState extends State<EditableTextToolbarBuilderExampleApp> {
   final TextEditingController _controller = TextEditingController(
     text: 'Right click (desktop) or long press (mobile) to see the menu with custom buttons.',
   );
@@ -48,7 +46,9 @@ class _EditableTextToolbarBuilderExampleAppState
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: const Text('Custom button appearance')),
+        appBar: AppBar(
+          title: const Text('Custom button appearance'),
+        ),
         body: Center(
           child: Column(
             children: <Widget>[
@@ -61,10 +61,9 @@ class _EditableTextToolbarBuilderExampleAppState
                     // Build the default buttons, but make them look custom.
                     // In a real project you may want to build different
                     // buttons depending on the platform.
-                    children: editableTextState.contextMenuButtonItems.map((
-                      ContextMenuButtonItem buttonItem,
-                    ) {
+                    children: editableTextState.contextMenuButtonItems.map((ContextMenuButtonItem buttonItem) {
                       return CupertinoButton(
+                        borderRadius: null,
                         color: const Color(0xffaaaa00),
                         disabledColor: const Color(0xffaaaaff),
                         onPressed: buttonItem.onPressed,

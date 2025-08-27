@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/bottom_sheet/show_modal_bottom_sheet.1.dart'
-    as example;
+import 'package:flutter_api_samples/material/bottom_sheet/show_modal_bottom_sheet.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -12,7 +11,9 @@ void main() {
     const String titleText = 'Modal BottomSheet';
     const String closeText = 'Close BottomSheet';
 
-    await tester.pumpWidget(const example.BottomSheetApp());
+    await tester.pumpWidget(
+      const example.BottomSheetApp(),
+    );
 
     expect(find.text(titleText), findsNothing);
     expect(find.text(closeText), findsNothing);

@@ -17,7 +17,9 @@ class ShortcutsExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Shortcuts Sample')),
-        body: const Center(child: ShortcutsExample()),
+        body: const Center(
+          child: ShortcutsExample(),
+        ),
       ),
     );
   }
@@ -83,9 +85,9 @@ class _ShortcutsExampleState extends State<ShortcutsExample> {
   @override
   Widget build(BuildContext context) {
     return Shortcuts(
-      shortcuts: const <ShortcutActivator, Intent>{
-        SingleActivator(LogicalKeyboardKey.arrowUp): IncrementIntent(2),
-        SingleActivator(LogicalKeyboardKey.arrowDown): DecrementIntent(2),
+      shortcuts: <ShortcutActivator, Intent>{
+        LogicalKeySet(LogicalKeyboardKey.arrowUp): const IncrementIntent(2),
+        LogicalKeySet(LogicalKeyboardKey.arrowDown): const DecrementIntent(2),
       },
       child: Actions(
         actions: <Type, Action<Intent>>{

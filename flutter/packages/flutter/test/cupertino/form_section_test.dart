@@ -40,7 +40,11 @@ void main() {
   testWidgets('Shows long dividers in edge-to-edge section part 1', (WidgetTester tester) async {
     await tester.pumpWidget(
       CupertinoApp(
-        home: Center(child: CupertinoFormSection(children: <Widget>[CupertinoTextFormFieldRow()])),
+        home: Center(
+          child: CupertinoFormSection(
+            children: <Widget>[CupertinoTextFormFieldRow()],
+          ),
+        ),
       ),
     );
 
@@ -55,7 +59,10 @@ void main() {
       CupertinoApp(
         home: Center(
           child: CupertinoFormSection(
-            children: <Widget>[CupertinoTextFormFieldRow(), CupertinoTextFormFieldRow()],
+            children: <Widget>[
+              CupertinoTextFormFieldRow(),
+              CupertinoTextFormFieldRow(),
+            ],
           ),
         ),
       ),
@@ -68,13 +75,13 @@ void main() {
     expect(childrenColumn.children.length, 5);
   });
 
-  testWidgets('Does not show long dividers in insetGrouped section part 1', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Does not show long dividers in insetGrouped section part 1', (WidgetTester tester) async {
     await tester.pumpWidget(
       CupertinoApp(
         home: Center(
-          child: CupertinoFormSection.insetGrouped(children: <Widget>[CupertinoTextFormFieldRow()]),
+          child: CupertinoFormSection.insetGrouped(
+            children: <Widget>[CupertinoTextFormFieldRow()],
+          ),
         ),
       ),
     );
@@ -86,15 +93,16 @@ void main() {
     expect(childrenColumn.children.length, 1);
   });
 
-  testWidgets('Does not show long dividers in insetGrouped section part 2', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Does not show long dividers in insetGrouped section part 2', (WidgetTester tester) async {
     await tester.pumpWidget(
       CupertinoApp(
         restorationScopeId: 'App',
         home: Center(
           child: CupertinoFormSection.insetGrouped(
-            children: <Widget>[CupertinoTextFormFieldRow(), CupertinoTextFormFieldRow()],
+            children: <Widget>[
+              CupertinoTextFormFieldRow(),
+              CupertinoTextFormFieldRow(),
+            ],
           ),
         ),
       ),
@@ -123,8 +131,10 @@ void main() {
       ),
     );
 
-    final DecoratedBox decoratedBox = tester.widget(find.byType(DecoratedBox).first);
-    final BoxDecoration boxDecoration = decoratedBox.decoration as BoxDecoration;
+    final DecoratedBox decoratedBox =
+        tester.widget(find.byType(DecoratedBox).first);
+    final BoxDecoration boxDecoration =
+        decoratedBox.decoration as BoxDecoration;
     expect(boxDecoration.color, backgroundColor);
   });
 
@@ -140,20 +150,21 @@ void main() {
       ),
     );
 
-    expect(find.byType(ClipRSuperellipse), findsOneWidget);
+    expect(find.byType(ClipRRect), findsOneWidget);
   });
 
-  testWidgets('Not setting clipBehavior does not produce a RenderClipRSuperellipse object', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Not setting clipBehavior does not produce a RenderClipRRect object', (WidgetTester tester) async {
     await tester.pumpWidget(
       CupertinoApp(
-        home: Center(child: CupertinoFormSection(children: <Widget>[CupertinoTextFormFieldRow()])),
+        home: Center(
+          child: CupertinoFormSection(
+            children: <Widget>[CupertinoTextFormFieldRow()],
+          ),
+        ),
       ),
     );
 
-    final Iterable<RenderClipRSuperellipse> renderClips = tester.allRenderObjects
-        .whereType<RenderClipRSuperellipse>();
+    final Iterable<RenderClipRRect> renderClips = tester.allRenderObjects.whereType<RenderClipRRect>();
     expect(renderClips, isEmpty);
   });
 
@@ -188,10 +199,7 @@ void main() {
       ),
     );
 
-    expect(
-      tester.getTopLeft(find.byWidget(footer)),
-      offsetMoreOrLessEquals(const Offset(20, 65), epsilon: 1),
-    );
+    expect(tester.getTopLeft(find.byWidget(footer)), offsetMoreOrLessEquals(const Offset(20, 65), epsilon: 1));
   });
 
   testWidgets('Sets custom margin', (WidgetTester tester) async {
@@ -210,9 +218,6 @@ void main() {
       ),
     );
 
-    expect(
-      tester.getTopLeft(find.byWidget(child)),
-      offsetMoreOrLessEquals(const Offset(margin, 22 + margin), epsilon: 1),
-    );
+    expect(tester.getTopLeft(find.byWidget(child)), offsetMoreOrLessEquals(const Offset(margin, 22 + margin), epsilon: 1));
   });
 }

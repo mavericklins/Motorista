@@ -5,24 +5,19 @@
 import 'template.dart';
 
 class DialogTemplate extends TokenTemplate {
-  const DialogTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
+  const DialogTemplate(super.blockName, super.fileName, super.tokens, {
     super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
+    super.textThemePrefix = '_textTheme.'
   });
 
   @override
-  String generate() =>
-      '''
-class _${blockName}DefaultsM3 extends DialogThemeData {
+  String generate() => '''
+class _${blockName}DefaultsM3 extends DialogTheme {
   _${blockName}DefaultsM3(this.context)
     : super(
         alignment: Alignment.center,
         elevation: ${elevation("md.comp.dialog.container")},
         shape: ${shape("md.comp.dialog.container")},
-        clipBehavior: Clip.none,
       );
 
   final BuildContext context;
@@ -57,10 +52,9 @@ class DialogFullscreenTemplate extends TokenTemplate {
   const DialogFullscreenTemplate(super.blockName, super.fileName, super.tokens);
 
   @override
-  String generate() =>
-      '''
-class _${blockName}DefaultsM3 extends DialogThemeData {
-  const _${blockName}DefaultsM3(this.context): super(clipBehavior: Clip.none);
+  String generate() => '''
+class _${blockName}DefaultsM3 extends DialogTheme {
+  const _${blockName}DefaultsM3(this.context);
 
   final BuildContext context;
 

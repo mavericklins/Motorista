@@ -30,9 +30,7 @@ class FakeCodec implements ui.Codec {
     for (int i = 0; i < frameCount; i += 1) {
       frameInfos.add(await codec.getNextFrame());
     }
-    final int repetitionCount = codec.repetitionCount;
-    codec.dispose();
-    return FakeCodec._(frameCount, repetitionCount, frameInfos);
+    return FakeCodec._(frameCount, codec.repetitionCount, frameInfos);
   }
 
   @override
@@ -46,11 +44,12 @@ class FakeCodec implements ui.Codec {
   @override
   Future<ui.FrameInfo> getNextFrame() {
     _numFramesAsked += 1;
-    final Future<ui.FrameInfo> result = Future<ui.FrameInfo>.value(_frameInfos[_nextFrame]);
+    final SynchronousFuture<ui.FrameInfo> result =
+      SynchronousFuture<ui.FrameInfo>(_frameInfos[_nextFrame]);
     _nextFrame = (_nextFrame + 1) % _frameCount;
     return result;
   }
 
   @override
-  void dispose() {}
+  void dispose() { }
 }

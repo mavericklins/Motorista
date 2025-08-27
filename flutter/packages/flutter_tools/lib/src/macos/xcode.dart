@@ -26,21 +26,16 @@ Version get xcodeRequiredVersion => Version(14, null, null);
 /// warning, not error, that users should upgrade Xcode.
 Version get xcodeRecommendedVersion => Version(15, null, null);
 
-/// SDK name passed to `xcrun --sdk`.
+/// SDK name passed to `xcrun --sdk`. Corresponds to undocumented Xcode
+/// SUPPORTED_PLATFORMS values.
 ///
-/// Corresponds to undocumented Xcode `SUPPORTED_PLATFORMS` values.
-///
-/// Usage:
-///
-/// ```text
-/// xcrun [options] <tool name> ... arguments ...
+/// Usage: xcrun [options] <tool name> ... arguments ...
 /// ...
 /// --sdk <sdk name>            find the tool for the given SDK name.
-/// ```
 String getSDKNameForIOSEnvironmentType(EnvironmentType environmentType) {
   return (environmentType == EnvironmentType.simulator)
-      ? XcodeSdk.IPhoneSimulator.platformName
-      : XcodeSdk.IPhoneOS.platformName;
+      ? 'iphonesimulator'
+      : 'iphoneos';
 }
 
 /// A utility class for interacting with Xcode command line tools.
@@ -53,13 +48,14 @@ class Xcode {
     required XcodeProjectInterpreter xcodeProjectInterpreter,
     required UserMessages userMessages,
     String? flutterRoot,
-  }) : _platform = platform,
-       _fileSystem = fileSystem,
-       _xcodeProjectInterpreter = xcodeProjectInterpreter,
-       _userMessage = userMessages,
-       _flutterRoot = flutterRoot,
-       _processUtils = ProcessUtils(logger: logger, processManager: processManager),
-       _logger = logger;
+  })  : _platform = platform,
+        _fileSystem = fileSystem,
+        _xcodeProjectInterpreter = xcodeProjectInterpreter,
+        _userMessage = userMessages,
+        _flutterRoot = flutterRoot,
+        _processUtils =
+            ProcessUtils(logger: logger, processManager: processManager),
+        _logger = logger;
 
   /// Create an [Xcode] for testing.
   ///
@@ -74,7 +70,10 @@ class Xcode {
     String? flutterRoot,
     Logger? logger,
   }) {
-    platform ??= FakePlatform(operatingSystem: 'macos', environment: <String, String>{});
+    platform ??= FakePlatform(
+      operatingSystem: 'macos',
+      environment: <String, String>{},
+    );
     logger ??= BufferLogger.test();
     return Xcode(
       platform: platform,
@@ -83,8 +82,7 @@ class Xcode {
       userMessages: UserMessages(),
       flutterRoot: flutterRoot,
       logger: logger,
-      xcodeProjectInterpreter:
-          xcodeProjectInterpreter ?? XcodeProjectInterpreter.test(processManager: processManager),
+      xcodeProjectInterpreter: xcodeProjectInterpreter ?? XcodeProjectInterpreter.test(processManager: processManager),
     );
   }
 
@@ -96,17 +94,15 @@ class Xcode {
   final String? _flutterRoot;
   final Logger _logger;
 
-  bool get isInstalledAndMeetsVersionCheck =>
-      _platform.isMacOS && isInstalled && isRequiredVersionSatisfactory;
+  bool get isInstalledAndMeetsVersionCheck => _platform.isMacOS && isInstalled && isRequiredVersionSatisfactory;
 
   String? _xcodeSelectPath;
   String? get xcodeSelectPath {
     if (_xcodeSelectPath == null) {
       try {
-        _xcodeSelectPath = _processUtils
-            .runSync(<String>['/usr/bin/xcode-select', '--print-path'])
-            .stdout
-            .trim();
+        _xcodeSelectPath = _processUtils.runSync(
+          <String>['/usr/bin/xcode-select', '--print-path'],
+        ).stdout.trim();
       } on ProcessException {
         // Ignored, return null below.
       } on ArgumentError {
@@ -141,7 +137,7 @@ class Xcode {
       'flutter_tools',
     );
 
-    final filePath = '$flutterToolsAbsolutePath/bin/xcode_debug.js';
+    final String filePath = '$flutterToolsAbsolutePath/bin/xcode_debug.js';
     if (!_fileSystem.file(filePath).existsSync()) {
       throwToolExit('Unable to find Xcode automation script at $filePath');
     }
@@ -157,12 +153,13 @@ class Xcode {
   String? get versionText => _xcodeProjectInterpreter.versionText;
 
   bool? _eulaSigned;
-
   /// Has the EULA been signed?
   bool get eulaSigned {
     if (_eulaSigned == null) {
       try {
-        final RunResult result = _processUtils.runSync(<String>[...xcrunCommand(), 'clang']);
+        final RunResult result = _processUtils.runSync(
+          <String>[...xcrunCommand(), 'clang'],
+        );
         if (result.stdout.contains('license')) {
           _eulaSigned = false;
         } else if (result.stderr.contains('license')) {
@@ -181,15 +178,18 @@ class Xcode {
 
   /// Verifies that simctl is installed by trying to run it.
   bool get isSimctlInstalled {
-    // This command will error if additional components need to be installed in
-    // xcode 9.2 and above.
-    _isSimctlInstalled ??= _processUtils.exitsHappySync(<String>[
-      ...xcrunCommand(),
-      'simctl',
-      'list',
-      'devices',
-      'booted',
-    ]);
+    if (_isSimctlInstalled == null) {
+      try {
+        // This command will error if additional components need to be installed in
+        // xcode 9.2 and above.
+        final RunResult result = _processUtils.runSync(
+          <String>[...xcrunCommand(), 'simctl', 'list', 'devices', 'booted'],
+        );
+        _isSimctlInstalled = result.exitCode == 0;
+      } on ProcessException {
+        _isSimctlInstalled = false;
+      }
+    }
     return _isSimctlInstalled ?? false;
   }
 
@@ -199,15 +199,18 @@ class Xcode {
   /// to run it. `devicectl` is made available in Xcode 15.
   bool get isDevicectlInstalled {
     if (_isDevicectlInstalled == null) {
-      if (currentVersion == null || currentVersion!.major < 15) {
+      try {
+        if (currentVersion == null || currentVersion!.major < 15) {
+          _isDevicectlInstalled = false;
+          return _isDevicectlInstalled!;
+        }
+        final RunResult result = _processUtils.runSync(
+          <String>[...xcrunCommand(), 'devicectl', '--version'],
+        );
+        _isDevicectlInstalled = result.exitCode == 0;
+      } on ProcessException {
         _isDevicectlInstalled = false;
-        return _isDevicectlInstalled!;
       }
-      _isDevicectlInstalled = _processUtils.exitsHappySync(<String>[
-        ...xcrunCommand(),
-        'devicectl',
-        '--version',
-      ]);
     }
     return _isDevicectlInstalled ?? false;
   }
@@ -240,16 +243,16 @@ class Xcode {
   Future<RunResult> strip(List<String> args) => _run('strip', args);
 
   Future<RunResult> _run(String command, List<String> args) {
-    return _processUtils.run(<String>[...xcrunCommand(), command, ...args], throwOnError: true);
+    return _processUtils.run(
+      <String>[...xcrunCommand(), command, ...args],
+      throwOnError: true,
+    );
   }
 
   Future<String> sdkLocation(EnvironmentType environmentType) async {
-    final RunResult runResult = await _processUtils.run(<String>[
-      ...xcrunCommand(),
-      '--sdk',
-      getSDKNameForIOSEnvironmentType(environmentType),
-      '--show-sdk-path',
-    ]);
+    final RunResult runResult = await _processUtils.run(
+      <String>[...xcrunCommand(), '--sdk', getSDKNameForIOSEnvironmentType(environmentType), '--show-sdk-path'],
+    );
     if (runResult.exitCode != 0) {
       throwToolExit('Could not find SDK location: ${runResult.stderr}');
     }
@@ -267,12 +270,9 @@ class Xcode {
 
   /// Gets the version number of the platform for the selected SDK.
   Future<Version?> sdkPlatformVersion(EnvironmentType environmentType) async {
-    final RunResult runResult = await _processUtils.run(<String>[
-      ...xcrunCommand(),
-      '--sdk',
-      getSDKNameForIOSEnvironmentType(environmentType),
-      '--show-sdk-platform-version',
-    ]);
+    final RunResult runResult = await _processUtils.run(
+      <String>[...xcrunCommand(), '--sdk', getSDKNameForIOSEnvironmentType(environmentType), '--show-sdk-platform-version'],
+    );
     if (runResult.exitCode != 0) {
       _logger.printError('Could not find SDK Platform Version: ${runResult.stderr}');
       return null;

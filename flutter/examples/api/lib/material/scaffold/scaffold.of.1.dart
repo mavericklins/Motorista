@@ -13,7 +13,9 @@ class OfExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: OfExample());
+    return const MaterialApp(
+      home: OfExample(),
+    );
   }
 }
 
@@ -23,7 +25,7 @@ class OfExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Scaffold.of Example')),
+      appBar: AppBar(title: const Text('Demo')),
       body: Builder(
         // Create an inner BuildContext so that the onPressed methods
         // can refer to the Scaffold with Scaffold.of().
@@ -32,27 +34,29 @@ class OfExample extends StatelessWidget {
             child: ElevatedButton(
               child: const Text('SHOW BOTTOM SHEET'),
               onPressed: () {
-                Scaffold.of(context).showBottomSheet((BuildContext context) {
-                  return Container(
-                    alignment: Alignment.center,
-                    height: 200,
-                    color: Colors.amber,
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          const Text('BottomSheet'),
-                          ElevatedButton(
-                            child: const Text('Close BottomSheet'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
+                Scaffold.of(context).showBottomSheet(
+                  (BuildContext context) {
+                    return Container(
+                      alignment: Alignment.center,
+                      height: 200,
+                      color: Colors.amber,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Text('BottomSheet'),
+                            ElevatedButton(
+                              child: const Text('Close BottomSheet'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                });
+                    );
+                  },
+                );
               },
             ),
           );

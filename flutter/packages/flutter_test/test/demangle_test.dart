@@ -37,7 +37,9 @@ Future<void> main() async {
       final DebugPrintCallback oldDebugPrint = debugPrint;
       try {
         debugPrint = (String? message, {int? wrapWidth}) {};
-        debugPrintStack(stackTrace: await getMangledStack());
+        debugPrintStack(
+          stackTrace: await getMangledStack(),
+        );
       } finally {
         debugPrint = oldDebugPrint;
       }

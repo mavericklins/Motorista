@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/widgets.dart';
-///
-/// @docImport 'stack.dart';
-library;
-
 import 'dart:ui' as ui show Color;
 
 import 'package:flutter/foundation.dart';
@@ -46,7 +41,7 @@ abstract class FlowPaintingContext {
   /// x increasing rightward and y increasing downward.
   ///
   /// The container will clip the children to its bounds.
-  void paintChild(int i, {Matrix4 transform, double opacity = 1.0});
+  void paintChild(int i, { Matrix4 transform, double opacity = 1.0 });
 }
 
 /// A delegate that controls the appearance of a flow layout.
@@ -63,7 +58,7 @@ abstract class FlowPaintingContext {
 ///  * [RenderFlow]
 abstract class FlowDelegate {
   /// The flow will repaint whenever [repaint] notifies its listeners.
-  const FlowDelegate({Listenable? repaint}) : _repaint = repaint;
+  const FlowDelegate({ Listenable? repaint }) : _repaint = repaint;
 
   final Listenable? _repaint;
 
@@ -177,9 +172,8 @@ class FlowParentData extends ContainerBoxParentData<RenderBox> {
 ///  * [FlowDelegate]
 ///  * [RenderStack]
 class RenderFlow extends RenderBox
-    with
-        ContainerRenderObjectMixin<RenderBox, FlowParentData>,
-        RenderBoxContainerDefaultsMixin<RenderBox, FlowParentData>
+    with ContainerRenderObjectMixin<RenderBox, FlowParentData>,
+         RenderBoxContainerDefaultsMixin<RenderBox, FlowParentData>
     implements FlowPaintingContext {
   /// Creates a render object for a flow layout.
   ///
@@ -207,7 +201,6 @@ class RenderFlow extends RenderBox
   /// The delegate that controls the transformation matrices of the children.
   FlowDelegate get delegate => _delegate;
   FlowDelegate _delegate;
-
   /// When the delegate is changed to a new delegate with the same runtimeType
   /// as the old delegate, this object will call the delegate's
   /// [FlowDelegate.shouldRelayout] and [FlowDelegate.shouldRepaint] functions
@@ -220,8 +213,7 @@ class RenderFlow extends RenderBox
     final FlowDelegate oldDelegate = _delegate;
     _delegate = newDelegate;
 
-    if (newDelegate.runtimeType != oldDelegate.runtimeType ||
-        newDelegate.shouldRelayout(oldDelegate)) {
+    if (newDelegate.runtimeType != oldDelegate.runtimeType || newDelegate.shouldRelayout(oldDelegate)) {
       markNeedsLayout();
     } else if (newDelegate.shouldRepaint(oldDelegate)) {
       markNeedsPaint();
@@ -349,7 +341,7 @@ class RenderFlow extends RenderBox
   }
 
   @override
-  void paintChild(int i, {Matrix4? transform, double opacity = 1.0}) {
+  void paintChild(int i, { Matrix4? transform, double opacity = 1.0 }) {
     transform ??= Matrix4.identity();
     final RenderBox child = _randomAccessChildren[i];
     final FlowParentData childParentData = child.parentData! as FlowParentData;
@@ -375,14 +367,10 @@ class RenderFlow extends RenderBox
     void painter(PaintingContext context, Offset offset) {
       context.paintChild(child, offset);
     }
-
     if (opacity == 1.0) {
       _paintingContext!.pushTransform(needsCompositing, _paintingOffset!, transform, painter);
     } else {
-      _paintingContext!.pushOpacity(_paintingOffset!, ui.Color.getAlphaFromOpacity(opacity), (
-        PaintingContext context,
-        Offset offset,
-      ) {
+      _paintingContext!.pushOpacity(_paintingOffset!, ui.Color.getAlphaFromOpacity(opacity), (PaintingContext context, Offset offset) {
         context.pushTransform(needsCompositing, offset, transform!, painter);
       });
     }
@@ -425,7 +413,7 @@ class RenderFlow extends RenderBox
   }
 
   @override
-  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+  bool hitTestChildren(BoxHitTestResult result, { required Offset position }) {
     final List<RenderBox> children = getChildrenAsList();
     for (int i = _lastPaintOrder.length - 1; i >= 0; --i) {
       final int childIndex = _lastPaintOrder[i];

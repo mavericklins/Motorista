@@ -6,7 +6,7 @@ Dart VM and Flutter integration.
 
 Use this command to run (from the `flutter_tools` directory):
 
-```sh
+```shell
 ../../bin/cache/dart-sdk/bin/dart run test test/integration.shard
 ```
 

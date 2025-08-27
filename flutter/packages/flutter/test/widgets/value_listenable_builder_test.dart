@@ -10,7 +10,9 @@ void main() {
   late SpyStringValueNotifier valueListenable;
   late Widget textBuilderUnderTest;
 
-  Widget builderForValueListenable(ValueListenable<String?> valueListenable) {
+  Widget builderForValueListenable(
+    ValueListenable<String?> valueListenable,
+  ) {
     return Directionality(
       textDirection: TextDirection.ltr,
       child: ValueListenableBuilder<String?>(
@@ -78,9 +80,7 @@ void main() {
     expect(find.text('Hendricks'), findsOneWidget);
   });
 
-  testWidgets('Stops listening to old listenable after changing listenable', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Stops listening to old listenable after changing listenable', (WidgetTester tester) async {
     await tester.pumpWidget(textBuilderUnderTest);
 
     valueListenable.value = 'Gilfoyle';

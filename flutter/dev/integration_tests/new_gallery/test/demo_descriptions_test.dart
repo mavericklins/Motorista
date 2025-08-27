@@ -34,7 +34,13 @@ void main() {
     final List<String> allDemoDescriptions = allDemos.map((GalleryDemo d) => d.describe).toList();
 
     expect(_isUnique(allDemoDescriptions), true);
-    expect(_stringListEquality.equals(allDemoDescriptions, Demos.allDescriptions()), true);
+    expect(
+      _stringListEquality.equals(
+        allDemoDescriptions,
+        Demos.allDescriptions(),
+      ),
+      true,
+    );
   });
 
   test('Special demo descriptions are correct', () {

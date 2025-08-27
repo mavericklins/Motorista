@@ -4,16 +4,18 @@
 
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
-import 'package:meta/meta.dart';
 
 import 'base/common.dart';
 import 'base/file_system.dart';
 
 /// Placeholder for base href
-const kBaseHrefPlaceholder = r'$FLUTTER_BASE_HREF';
+const String kBaseHrefPlaceholder = r'$FLUTTER_BASE_HREF';
 
 class WebTemplateWarning {
-  WebTemplateWarning(this.warningText, this.lineNumber);
+  WebTemplateWarning(
+    this.warningText,
+    this.lineNumber,
+  );
   final String warningText;
   final int lineNumber;
 }
@@ -30,12 +32,16 @@ class WebTemplateWarning {
 /// }
 /// ```
 class WebTemplate {
-  const WebTemplate(this._content);
+  WebTemplate(this._content);
 
-  final String _content;
+  String get content => _content;
+  String _content;
 
-  static String baseHref(String html) {
-    final Element? baseElement = parse(html).querySelector('base');
+  Document _getDocument() => parse(_content);
+
+  /// Parses the base href from the index.html file.
+  String getBaseHref() {
+    final Element? baseElement = _getDocument().querySelector('base');
     final String? baseHref = baseElement?.attributes == null
         ? null
         : baseElement!.attributes['href'];
@@ -45,7 +51,7 @@ class WebTemplate {
     }
 
     if (!baseHref.startsWith('/')) {
-      throwToolExit(
+      throw ToolExit(
         'Error: The base href in "web/index.html" must be absolute (i.e. start '
         'with a "/"), but found: `${baseElement!.outerHtml}`.\n'
         '$_kBasePathExample',
@@ -53,7 +59,7 @@ class WebTemplate {
     }
 
     if (!baseHref.endsWith('/')) {
-      throwToolExit(
+      throw ToolExit(
         'Error: The base href in "web/index.html" must end with a "/", but found: `${baseElement!.outerHtml}`.\n'
         '$_kBasePathExample',
       );
@@ -66,15 +72,15 @@ class WebTemplate {
     return <WebTemplateWarning>[
       ..._getWarningsForPattern(
         RegExp('(const|var) serviceWorkerVersion = null'),
-        'Local variable for "serviceWorkerVersion" is deprecated. Use "{{flutter_service_worker_version}}" template token instead. See https://docs.flutter.dev/platform-integration/web/initialization for more details.',
+        'Local variable for "serviceWorkerVersion" is deprecated. Use "{{flutter_service_worker_version}}" template token instead.',
       ),
       ..._getWarningsForPattern(
         "navigator.serviceWorker.register('flutter_service_worker.js')",
-        'Manual service worker registration deprecated. Use flutter.js service worker bootstrapping instead. See https://docs.flutter.dev/platform-integration/web/initialization for more details.',
+        'Manual service worker registration deprecated. Use flutter.js service worker bootstrapping instead.',
       ),
       ..._getWarningsForPattern(
         '_flutter.loader.loadEntrypoint(',
-        '"FlutterLoader.loadEntrypoint" is deprecated. Use "FlutterLoader.load" instead. See https://docs.flutter.dev/platform-integration/web/initialization for more details.',
+        '"FlutterLoader.loadEntrypoint" is deprecated. Use "FlutterLoader.load" instead.',
       ),
     ];
   }
@@ -82,34 +88,29 @@ class WebTemplate {
   List<WebTemplateWarning> _getWarningsForPattern(Pattern pattern, String warningText) {
     return <WebTemplateWarning>[
       for (final Match match in pattern.allMatches(_content))
-        _getWarningForMatch(match, warningText),
+        _getWarningForMatch(match, warningText)
     ];
   }
 
   WebTemplateWarning _getWarningForMatch(Match match, String warningText) {
-    final int lineCount = RegExp(
-      r'(\r\n|\r|\n)',
-    ).allMatches(_content.substring(0, match.start)).length;
+    final int lineCount = RegExp(r'(\r\n|\r|\n)').allMatches(_content.substring(0, match.start)).length;
     return WebTemplateWarning(warningText, lineCount + 1);
   }
 
-  /// Applies substitutions to the content of the index.html file and returns the result.
-  @useResult
-  String withSubstitutions({
+  /// Applies substitutions to the content of the index.html file.
+  void applySubstitutions({
     required String baseHref,
     required String? serviceWorkerVersion,
     required File flutterJsFile,
     String? buildConfig,
     String? flutterBootstrapJs,
   }) {
-    String newContent = _content;
-
-    if (newContent.contains(kBaseHrefPlaceholder)) {
-      newContent = newContent.replaceAll(kBaseHrefPlaceholder, baseHref);
+    if (_content.contains(kBaseHrefPlaceholder)) {
+      _content = _content.replaceAll(kBaseHrefPlaceholder, baseHref);
     }
 
     if (serviceWorkerVersion != null) {
-      newContent = newContent
+      _content = _content
           .replaceFirst(
             // Support older `var` syntax as well as new `const` syntax
             RegExp('(const|var) serviceWorkerVersion = null'),
@@ -122,22 +123,30 @@ class WebTemplate {
             "navigator.serviceWorker.register('flutter_service_worker.js?v=$serviceWorkerVersion')",
           );
     }
-    newContent = newContent.replaceAll(
+    _content = _content.replaceAll(
       '{{flutter_service_worker_version}}',
       serviceWorkerVersion != null ? '"$serviceWorkerVersion"' : 'null',
     );
     if (buildConfig != null) {
-      newContent = newContent.replaceAll('{{flutter_build_config}}', buildConfig);
+      _content = _content.replaceAll(
+        '{{flutter_build_config}}',
+        buildConfig,
+      );
     }
 
-    if (newContent.contains('{{flutter_js}}')) {
-      newContent = newContent.replaceAll('{{flutter_js}}', flutterJsFile.readAsStringSync());
+    if (_content.contains('{{flutter_js}}')) {
+      _content = _content.replaceAll(
+        '{{flutter_js}}',
+        flutterJsFile.readAsStringSync(),
+      );
     }
 
     if (flutterBootstrapJs != null) {
-      newContent = newContent.replaceAll('{{flutter_bootstrap_js}}', flutterBootstrapJs);
+      _content = _content.replaceAll(
+        '{{flutter_bootstrap_js}}',
+        flutterBootstrapJs,
+      );
     }
-    return newContent;
   }
 }
 
@@ -157,7 +166,7 @@ String stripTrailingSlash(String path) {
   return path;
 }
 
-const _kBasePathExample = '''
+const String _kBasePathExample = '''
 For example, to serve from the root use:
 
     <base href="/">

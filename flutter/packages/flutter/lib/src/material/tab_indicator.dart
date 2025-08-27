@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'tabs.dart';
-library;
-
 import 'package:flutter/widgets.dart';
 
 import 'colors.dart';
@@ -66,7 +63,7 @@ class UnderlineTabIndicator extends Decoration {
   }
 
   @override
-  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+  BoxPainter createBoxPainter([ VoidCallback? onChanged ]) {
     return _UnderlinePainter(this, borderRadius, onChanged);
   }
 
@@ -83,14 +80,20 @@ class UnderlineTabIndicator extends Decoration {
   @override
   Path getClipPath(Rect rect, TextDirection textDirection) {
     if (borderRadius != null) {
-      return Path()..addRRect(borderRadius!.toRRect(_indicatorRectFor(rect, textDirection)));
+      return Path()..addRRect(
+        borderRadius!.toRRect(_indicatorRectFor(rect, textDirection))
+      );
     }
     return Path()..addRect(_indicatorRectFor(rect, textDirection));
   }
 }
 
 class _UnderlinePainter extends BoxPainter {
-  _UnderlinePainter(this.decoration, this.borderRadius, super.onChanged);
+  _UnderlinePainter(
+    this.decoration,
+    this.borderRadius,
+    super.onChanged,
+  );
 
   final UnderlineTabIndicator decoration;
   final BorderRadius? borderRadius;
@@ -114,9 +117,8 @@ class _UnderlinePainter extends BoxPainter {
       canvas.drawRRect(rrect, paint);
     } else {
       paint = decoration.borderSide.toPaint()..strokeCap = StrokeCap.square;
-      final Rect indicator = decoration
-          ._indicatorRectFor(rect, textDirection)
-          .deflate(decoration.borderSide.width / 2.0);
+      final Rect indicator = decoration._indicatorRectFor(rect, textDirection)
+        .deflate(decoration.borderSide.width / 2.0);
       canvas.drawLine(indicator.bottomLeft, indicator.bottomRight, paint);
     }
   }

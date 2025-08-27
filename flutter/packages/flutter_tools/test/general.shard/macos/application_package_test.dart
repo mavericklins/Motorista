@@ -21,12 +21,12 @@ import '../../src/common.dart';
 import '../../src/context.dart';
 
 void main() {
-  group('PrebuiltMacOSApp', () {
+group('PrebuiltMacOSApp', () {
     late FakeOperatingSystemUtils os;
     late FileSystem fileSystem;
     late BufferLogger logger;
 
-    final overrides = <Type, Generator>{
+    final Map<Type, Generator> overrides = <Type, Generator>{
       FileSystem: () => fileSystem,
       ProcessManager: () => FakeProcessManager.any(),
       PlistParser: () => FakePlistUtils(fileSystem),
@@ -41,8 +41,7 @@ void main() {
     });
 
     testUsingContext('Error on non-existing file', () {
-      final macosApp =
-          MacOSApp.fromPrebuiltApp(fileSystem.file('not_existing.app')) as PrebuiltMacOSApp?;
+      final PrebuiltMacOSApp? macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('not_existing.app')) as PrebuiltMacOSApp?;
 
       expect(macosApp, isNull);
       expect(logger.errorText, contains('File "not_existing.app" does not exist.'));
@@ -50,8 +49,7 @@ void main() {
 
     testUsingContext('Error on non-app-bundle folder', () {
       fileSystem.directory('regular_folder').createSync();
-      final macosApp =
-          MacOSApp.fromPrebuiltApp(fileSystem.file('regular_folder')) as PrebuiltMacOSApp?;
+      final PrebuiltMacOSApp? macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('regular_folder')) as PrebuiltMacOSApp?;
 
       expect(macosApp, isNull);
       expect(logger.errorText, contains('Folder "regular_folder" is not an app bundle.'));
@@ -59,53 +57,42 @@ void main() {
 
     testUsingContext('Error on no info.plist', () {
       fileSystem.directory('bundle.app').createSync();
-      final macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('bundle.app')) as PrebuiltMacOSApp?;
+      final PrebuiltMacOSApp? macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('bundle.app')) as PrebuiltMacOSApp?;
 
       expect(macosApp, isNull);
-      expect(
-        logger.errorText,
-        contains('Invalid prebuilt macOS app. Does not contain Info.plist.'),
-      );
+      expect(logger.errorText, contains('Invalid prebuilt macOS app. Does not contain Info.plist.'));
     }, overrides: overrides);
 
     testUsingContext('Error on info.plist missing bundle identifier', () {
       final String contentsDirectory = fileSystem.path.join('bundle.app', 'Contents');
       fileSystem.directory(contentsDirectory).createSync(recursive: true);
-      fileSystem
-          .file(fileSystem.path.join('bundle.app', 'Contents', 'Info.plist'))
-          .writeAsStringSync(badPlistData);
-      final macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('bundle.app')) as PrebuiltMacOSApp?;
+      fileSystem.file(fileSystem.path.join('bundle.app', 'Contents', 'Info.plist'))
+        .writeAsStringSync(badPlistData);
+      final PrebuiltMacOSApp? macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('bundle.app')) as PrebuiltMacOSApp?;
 
       expect(macosApp, isNull);
-      expect(
-        logger.errorText,
-        contains('Invalid prebuilt macOS app. Info.plist does not contain bundle identifier'),
-      );
+      expect(logger.errorText, contains('Invalid prebuilt macOS app. Info.plist does not contain bundle identifier'));
     }, overrides: overrides);
 
     testUsingContext('Error on info.plist missing executable', () {
       final String contentsDirectory = fileSystem.path.join('bundle.app', 'Contents');
       fileSystem.directory(contentsDirectory).createSync(recursive: true);
-      fileSystem
-          .file(fileSystem.path.join('bundle.app', 'Contents', 'Info.plist'))
-          .writeAsStringSync(badPlistDataNoExecutable);
-      final macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('bundle.app')) as PrebuiltMacOSApp?;
+      fileSystem.file(fileSystem.path.join('bundle.app', 'Contents', 'Info.plist'))
+        .writeAsStringSync(badPlistDataNoExecutable);
+      final PrebuiltMacOSApp? macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('bundle.app')) as PrebuiltMacOSApp?;
 
       expect(macosApp, isNull);
-      expect(
-        logger.errorText,
-        contains('Invalid prebuilt macOS app. Info.plist does not contain bundle executable'),
-      );
+      expect(logger.errorText, contains('Invalid prebuilt macOS app. Info.plist does not contain bundle executable'));
     }, overrides: overrides);
 
     testUsingContext('Success with app bundle', () {
       final String appDirectory = fileSystem.path.join('bundle.app', 'Contents', 'MacOS');
       fileSystem.directory(appDirectory).createSync(recursive: true);
-      fileSystem
-          .file(fileSystem.path.join('bundle.app', 'Contents', 'Info.plist'))
-          .writeAsStringSync(plistData);
-      fileSystem.file(fileSystem.path.join(appDirectory, executableName)).createSync();
-      final macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('bundle.app'))! as PrebuiltMacOSApp;
+      fileSystem.file(fileSystem.path.join('bundle.app', 'Contents', 'Info.plist'))
+        .writeAsStringSync(plistData);
+      fileSystem.file(fileSystem.path.join(appDirectory, executableName))
+        .createSync();
+      final PrebuiltMacOSApp macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('bundle.app'))! as PrebuiltMacOSApp;
 
       expect(logger.errorText, isEmpty);
       expect(macosApp.uncompressedBundle.path, 'bundle.app');
@@ -115,7 +102,7 @@ void main() {
 
     testUsingContext('Bad zipped app, no payload dir', () {
       fileSystem.file('app.zip').createSync();
-      final macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('app.zip')) as PrebuiltMacOSApp?;
+      final PrebuiltMacOSApp? macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('app.zip')) as PrebuiltMacOSApp?;
 
       expect(macosApp, isNull);
       expect(logger.errorText, contains('Archive "app.zip" does not contain a single app bundle.'));
@@ -132,7 +119,7 @@ void main() {
         fileSystem.directory(bundlePath1).createSync(recursive: true);
         fileSystem.directory(bundlePath2).createSync(recursive: true);
       };
-      final macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('app.zip')) as PrebuiltMacOSApp?;
+      final PrebuiltMacOSApp? macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('app.zip')) as PrebuiltMacOSApp?;
 
       expect(macosApp, isNull);
       expect(logger.errorText, contains('Archive "app.zip" does not contain a single app bundle.'));
@@ -144,19 +131,17 @@ void main() {
         if (zipFile.path != 'app.zip') {
           return;
         }
-        final Directory bundleAppContentsDir = fileSystem.directory(
-          fileSystem.path.join(targetDirectory.path, 'bundle.app', 'Contents'),
-        );
+        final Directory bundleAppContentsDir = fileSystem.directory(fileSystem.path.join(targetDirectory.path, 'bundle.app', 'Contents'));
         bundleAppContentsDir.createSync(recursive: true);
-        fileSystem
-            .file(fileSystem.path.join(bundleAppContentsDir.path, 'Info.plist'))
-            .writeAsStringSync(plistData);
-        fileSystem.directory(fileSystem.path.join(bundleAppContentsDir.path, 'MacOS')).createSync();
-        fileSystem
-            .file(fileSystem.path.join(bundleAppContentsDir.path, 'MacOS', executableName))
-            .createSync();
+        fileSystem.file(fileSystem.path.join(bundleAppContentsDir.path, 'Info.plist'))
+          .writeAsStringSync(plistData);
+        fileSystem.directory(fileSystem.path.join(bundleAppContentsDir.path, 'MacOS'))
+          .createSync();
+        fileSystem.file(fileSystem.path
+          .join(bundleAppContentsDir.path, 'MacOS', executableName))
+          .createSync();
       };
-      final macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('app.zip'))! as PrebuiltMacOSApp;
+      final PrebuiltMacOSApp macosApp = MacOSApp.fromPrebuiltApp(fileSystem.file('app.zip'))! as PrebuiltMacOSApp;
 
       expect(logger.errorText, isEmpty);
       expect(macosApp.uncompressedBundle.path, endsWith('bundle.app'));
@@ -165,9 +150,7 @@ void main() {
     }, overrides: overrides);
 
     testUsingContext('Success with project', () {
-      final macosApp = MacOSApp.fromMacOSProject(
-        FlutterProject.fromDirectory(globals.fs.currentDirectory).macos,
-      );
+      final MacOSApp macosApp = MacOSApp.fromMacOSProject(FlutterProject.fromDirectory(globals.fs.currentDirectory).macos);
 
       expect(logger.errorText, isEmpty);
       expect(macosApp.id, 'com.example.placeholder');
@@ -176,25 +159,16 @@ void main() {
 
     testUsingContext('Chooses the correct directory for application.', () {
       final MacOSProject project = FlutterProject.fromDirectory(globals.fs.currentDirectory).macos;
-      final macosApp = MacOSApp.fromMacOSProject(project) as BuildableMacOSApp;
+      final BuildableMacOSApp macosApp = MacOSApp.fromMacOSProject(project) as BuildableMacOSApp;
 
-      const vanillaApp = BuildInfo(
-        BuildMode.debug,
-        null,
-        treeShakeIcons: false,
-        packageConfigPath: '.dart_tool/package_config.json',
-      );
+      const BuildInfo vanillaApp = BuildInfo(BuildMode.debug, null, treeShakeIcons: false);
       String? applicationBundle = macosApp.bundleDirectory(vanillaApp);
       expect(applicationBundle, 'Debug');
 
-      const flavoredApp = BuildInfo(
-        BuildMode.release,
-        'flavor',
-        treeShakeIcons: false,
-        packageConfigPath: '.dart_tool/package_config.json',
-      );
+      const BuildInfo flavoredApp = BuildInfo(BuildMode.release, 'flavor', treeShakeIcons: false);
       applicationBundle = macosApp.bundleDirectory(flavoredApp);
       expect(applicationBundle, 'Release-flavor');
+
     }, overrides: overrides);
   });
 }
@@ -226,18 +200,17 @@ class FakePlistUtils extends Fake implements PlistParser {
 }
 
 // Contains no bundle identifier.
-const badPlistData = '''
+const String badPlistData = '''
 {}
 ''';
 
 // Contains no bundle executable.
-const badPlistDataNoExecutable = '''
+const String badPlistDataNoExecutable = '''
 {"CFBundleIdentifier": "fooBundleId"}
 ''';
 
-const executableName = 'foo';
+const String executableName = 'foo';
 
-const plistData =
-    '''
+const String plistData = '''
 {"CFBundleIdentifier": "fooBundleId", "CFBundleExecutable": "$executableName"}
 ''';

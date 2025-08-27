@@ -20,11 +20,4 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Page 3'), findsOneWidget);
   });
-
-  testWidgets('navigation bar has one h1 tag', (WidgetTester tester) async {
-    await pumpsUseCase(tester, NavigationBarUseCase());
-    final Finder findHeadingLevelOnes = find.bySemanticsLabel('NavigationBar Demo');
-    await tester.pumpAndSettle();
-    expect(findHeadingLevelOnes, findsOne);
-  });
 }

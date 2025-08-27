@@ -8,13 +8,21 @@ import 'package:flutter/rendering.dart';
 /// Flutter code sample for [SlottedMultiChildRenderObjectWidget].
 
 /// Slots used for the children of [Diagonal] and [RenderDiagonal].
-enum DiagonalSlot { topLeft, bottomRight }
+enum DiagonalSlot {
+  topLeft,
+  bottomRight,
+}
 
 /// A widget that demonstrates the usage of
 /// [SlottedMultiChildRenderObjectWidget] by providing slots for two
 /// children that will be arranged diagonally.
 class Diagonal extends SlottedMultiChildRenderObjectWidget<DiagonalSlot, RenderBox> {
-  const Diagonal({super.key, this.topLeft, this.bottomRight, this.backgroundColor});
+  const Diagonal({
+    super.key,
+    this.topLeft,
+    this.bottomRight,
+    this.backgroundColor,
+  });
 
   final Widget? topLeft;
   final Widget? bottomRight;
@@ -26,7 +34,7 @@ class Diagonal extends SlottedMultiChildRenderObjectWidget<DiagonalSlot, RenderB
   @override
   Widget? childForSlot(DiagonalSlot slot) {
     return switch (slot) {
-      DiagonalSlot.topLeft => topLeft,
+      DiagonalSlot.topLeft     => topLeft,
       DiagonalSlot.bottomRight => bottomRight,
     };
   }
@@ -42,7 +50,9 @@ class Diagonal extends SlottedMultiChildRenderObjectWidget<DiagonalSlot, RenderB
   SlottedContainerRenderObjectMixin<DiagonalSlot, RenderBox> createRenderObject(
     BuildContext context,
   ) {
-    return RenderDiagonal(backgroundColor: backgroundColor);
+    return RenderDiagonal(
+      backgroundColor: backgroundColor,
+    );
   }
 
   @override
@@ -87,10 +97,12 @@ class RenderDiagonal extends RenderBox
 
   // Returns children in hit test order.
   @override
-  Iterable<RenderBox> get children => <RenderBox>[
-    if (_topLeft != null) _topLeft!,
-    if (_bottomRight != null) _bottomRight!,
-  ];
+  Iterable<RenderBox> get children {
+    return <RenderBox>[
+      if (_topLeft != null) _topLeft!,
+      if (_bottomRight != null) _bottomRight!,
+    ];
+  }
 
   // LAYOUT
 
@@ -114,7 +126,10 @@ class RenderDiagonal extends RenderBox
     final RenderBox? bottomRight = _bottomRight;
     if (bottomRight != null) {
       bottomRight.layout(childConstraints, parentUsesSize: true);
-      _positionChild(bottomRight, Offset(topLeftSize.width, topLeftSize.height));
+      _positionChild(
+        bottomRight,
+        Offset(topLeftSize.width, topLeftSize.height),
+      );
       bottomRightSize = bottomRight.size;
     }
 
@@ -137,7 +152,10 @@ class RenderDiagonal extends RenderBox
   void paint(PaintingContext context, Offset offset) {
     // Paint the background.
     if (backgroundColor != null) {
-      context.canvas.drawRect(offset & size, Paint()..color = backgroundColor!);
+      context.canvas.drawRect(
+        offset & size,
+        Paint()..color = backgroundColor!,
+      );
     }
 
     void paintChild(RenderBox child, PaintingContext context, Offset offset) {
@@ -158,7 +176,12 @@ class RenderDiagonal extends RenderBox
     // Paint an overflow indicator in debug mode if the children want to be
     // larger than the incoming constraints allow.
     assert(() {
-      paintOverflowIndicator(context, offset, Offset.zero & size, Offset.zero & _childrenSize);
+      paintOverflowIndicator(
+        context,
+        offset,
+        Offset.zero & size,
+        Offset.zero & _childrenSize,
+      );
       return true;
     }());
   }
@@ -221,9 +244,10 @@ class RenderDiagonal extends RenderBox
     const BoxConstraints childConstraints = BoxConstraints();
     final Size topLeftSize = _topLeft?.getDryLayout(childConstraints) ?? Size.zero;
     final Size bottomRightSize = _bottomRight?.getDryLayout(childConstraints) ?? Size.zero;
-    return constraints.constrain(
-      Size(topLeftSize.width + bottomRightSize.width, topLeftSize.height + bottomRightSize.height),
-    );
+    return constraints.constrain(Size(
+      topLeftSize.width + bottomRightSize.width,
+      topLeftSize.height + bottomRightSize.height,
+    ));
   }
 }
 
@@ -241,13 +265,17 @@ class ExampleWidget extends StatelessWidget {
               color: Colors.green,
               height: 100,
               width: 200,
-              child: const Center(child: Text('topLeft')),
+              child: const Center(
+                child: Text('topLeft'),
+              ),
             ),
             bottomRight: Container(
               color: Colors.yellow,
               height: 60,
               width: 30,
-              child: const Center(child: Text('bottomRight')),
+              child: const Center(
+                child: Text('bottomRight'),
+              ),
             ),
             backgroundColor: Colors.blue,
           ),

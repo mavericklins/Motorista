@@ -66,8 +66,7 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
   // Insert the "next item" into the list model.
   void _insert() {
     final int index = _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
-    _list.insert(index, _nextItem);
-    _nextItem++;
+    _list.insert(index, _nextItem++);
   }
 
   // Remove the selected item from the list model.
@@ -112,8 +111,7 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
   }
 }
 
-typedef RemovedItemBuilder<T> =
-    Widget Function(T item, BuildContext context, Animation<double> animation);
+typedef RemovedItemBuilder<T> = Widget Function(T item, BuildContext context, Animation<double> animation);
 
 /// Keeps a Dart [List] in sync with an [AnimatedList].
 ///
@@ -123,10 +121,13 @@ typedef RemovedItemBuilder<T> =
 /// This class only exposes as much of the Dart List API as is needed by the
 /// sample app. More list methods are easily added, however methods that
 /// mutate the list must make the same changes to the animated list in terms
-/// of [AnimatedListState.insertItem] and [AnimatedListState.removeItem].
+/// of [AnimatedListState.insertItem] and [AnimatedList.removeItem].
 class ListModel<E> {
-  ListModel({required this.listKey, required this.removedItemBuilder, Iterable<E>? initialItems})
-    : _items = List<E>.from(initialItems ?? <E>[]);
+  ListModel({
+    required this.listKey,
+    required this.removedItemBuilder,
+    Iterable<E>? initialItems,
+  }) : _items = List<E>.from(initialItems ?? <E>[]);
 
   final GlobalKey<AnimatedListState> listKey;
   final RemovedItemBuilder<E> removedItemBuilder;
@@ -142,9 +143,12 @@ class ListModel<E> {
   E removeAt(int index) {
     final E removedItem = _items.removeAt(index);
     if (removedItem != null) {
-      _animatedList!.removeItem(index, (BuildContext context, Animation<double> animation) {
-        return removedItemBuilder(removedItem, context, animation);
-      });
+      _animatedList!.removeItem(
+        index,
+        (BuildContext context, Animation<double> animation) {
+          return removedItemBuilder(removedItem, context, animation);
+        },
+      );
     }
     return removedItem;
   }
@@ -193,7 +197,9 @@ class CardItem extends StatelessWidget {
             height: 80.0,
             child: Card(
               color: Colors.primaries[item % Colors.primaries.length],
-              child: Center(child: Text('Item $item', style: textStyle)),
+              child: Center(
+                child: Text('Item $item', style: textStyle),
+              ),
             ),
           ),
         ),

@@ -27,7 +27,5 @@
   "lookUpButtonLabel": "Tepaga qarang",
   "searchWebButtonLabel": "Internetdan qidirish",
   "shareButtonLabel": "Ulashish…",
-  "clearButtonLabel": "Tozalash",
-  "cancelButtonLabel": "Bekor qilish",
-  "backButtonLabel": "Orqaga"
+  "clearButtonLabel": "Clear"
 }

@@ -8,31 +8,15 @@ import 'package:flutter_tools/src/base/terminal.dart';
 class LoggingLogger extends BufferLogger {
   LoggingLogger() : super.test();
 
-  var messages = <String>[];
+  List<String> messages = <String>[];
 
   @override
-  void printError(
-    String message, {
-    StackTrace? stackTrace,
-    bool? emphasis,
-    TerminalColor? color,
-    int? indent,
-    int? hangingIndent,
-    bool? wrap,
-  }) {
+  void printError(String message, {StackTrace? stackTrace, bool? emphasis, TerminalColor? color, int? indent, int? hangingIndent, bool? wrap}) {
     messages.add(message);
   }
 
   @override
-  void printStatus(
-    String message, {
-    bool? emphasis,
-    TerminalColor? color,
-    bool? newline,
-    int? indent,
-    int? hangingIndent,
-    bool? wrap,
-  }) {
+  void printStatus(String message, {bool? emphasis, TerminalColor? color, bool? newline, int? indent, int? hangingIndent, bool? wrap}) {
     messages.add(message);
   }
 

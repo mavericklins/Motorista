@@ -46,12 +46,6 @@ class PlatformSelectableRegionContextMenu extends StatelessWidget {
   @visibleForTesting
   static RegisterViewFactory? debugOverrideRegisterViewFactory;
 
-  /// Resets the view factory registration to its initial state.
-  @visibleForTesting
-  static void debugResetRegistry() {
-    throw UnimplementedError();
-  }
-
   @override
   Widget build(BuildContext context) => throw UnimplementedError();
 }

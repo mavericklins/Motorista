@@ -39,7 +39,10 @@ class _ListViewExampleState extends State<ListViewExample> {
         child: ListView.custom(
           childrenDelegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-              return KeepAliveItem(data: items[index], key: ValueKey<String>(items[index]));
+              return KeepAliveItem(
+                data: items[index],
+                key: ValueKey<String>(items[index]),
+              );
             },
             childCount: items.length,
             findChildIndexCallback: (Key key) {
@@ -58,7 +61,10 @@ class _ListViewExampleState extends State<ListViewExample> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextButton(onPressed: () => _reverse(), child: const Text('Reverse items')),
+            TextButton(
+              onPressed: () => _reverse(),
+              child: const Text('Reverse items'),
+            ),
           ],
         ),
       ),
@@ -67,7 +73,10 @@ class _ListViewExampleState extends State<ListViewExample> {
 }
 
 class KeepAliveItem extends StatefulWidget {
-  const KeepAliveItem({required Key super.key, required this.data});
+  const KeepAliveItem({
+    required Key key,
+    required this.data,
+  }) : super(key: key);
 
   final String data;
 
@@ -75,7 +84,8 @@ class KeepAliveItem extends StatefulWidget {
   State<KeepAliveItem> createState() => _KeepAliveItemState();
 }
 
-class _KeepAliveItemState extends State<KeepAliveItem> with AutomaticKeepAliveClientMixin {
+class _KeepAliveItemState extends State<KeepAliveItem>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 

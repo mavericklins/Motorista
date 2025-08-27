@@ -13,7 +13,9 @@ class CupertinoListSectionBaseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CupertinoApp(home: ListSectionBaseExample());
+    return const CupertinoApp(
+      home: ListSectionBaseExample(),
+    );
   }
 }
 
@@ -81,6 +83,10 @@ class _SecondPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(child: Center(child: Text(text)));
+    return CupertinoPageScaffold(
+      child: Center(
+        child: Text(text),
+      ),
+    );
   }
 }

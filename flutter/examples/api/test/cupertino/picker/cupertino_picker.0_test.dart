@@ -10,7 +10,9 @@ const Offset _kRowOffset = Offset(0.0, -50.0);
 
 void main() {
   testWidgets('Change selected fruit using CupertinoPicker', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.CupertinoPickerApp());
+    await tester.pumpWidget(
+      const example.CupertinoPickerApp(),
+    );
 
     // Open the Cupertino picker.
     await tester.tap(find.widgetWithText(CupertinoButton, 'Apple'));
@@ -21,12 +23,7 @@ void main() {
     expect(picker.scrollController!.initialItem, 0);
 
     // Drag the wheel to change fruit selection.
-    await tester.drag(
-      find.text('Mango'),
-      _kRowOffset,
-      touchSlopY: 0,
-      warnIfMissed: false,
-    ); // see top of file
+    await tester.drag(find.text('Mango'), _kRowOffset, touchSlopY: 0, warnIfMissed: false); // see top of file
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 

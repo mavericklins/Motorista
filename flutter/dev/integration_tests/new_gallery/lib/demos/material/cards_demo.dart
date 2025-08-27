@@ -9,7 +9,11 @@ const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 
 // BEGIN cardsDemo
 
-enum CardType { standard, tappable, selectable }
+enum CardType {
+  standard,
+  tappable,
+  selectable,
+}
 
 class TravelDestination {
   const TravelDestination({
@@ -65,7 +69,8 @@ List<TravelDestination> destinations(BuildContext context) {
 }
 
 class TravelDestinationItem extends StatelessWidget {
-  const TravelDestinationItem({super.key, required this.destination, this.shape});
+  const TravelDestinationItem(
+      {super.key, required this.destination, this.shape});
 
   // This height will allow for all the Card's content to fit comfortably within the card.
   static const double height = 360.0;
@@ -81,7 +86,9 @@ class TravelDestinationItem extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: <Widget>[
-            SectionTitle(title: GalleryLocalizations.of(context)!.settingsTextScalingNormal),
+            SectionTitle(
+                title: GalleryLocalizations.of(context)!
+                    .settingsTextScalingNormal),
             SizedBox(
               height: height,
               child: Card(
@@ -102,7 +109,11 @@ class TravelDestinationItem extends StatelessWidget {
 }
 
 class TappableTravelDestinationItem extends StatelessWidget {
-  const TappableTravelDestinationItem({super.key, required this.destination, this.shape});
+  const TappableTravelDestinationItem({
+    super.key,
+    required this.destination,
+    this.shape,
+  });
 
   // This height will allow for all the Card's content to fit comfortably within the card.
   static const double height = 298.0;
@@ -118,7 +129,8 @@ class TappableTravelDestinationItem extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: <Widget>[
-            SectionTitle(title: GalleryLocalizations.of(context)!.cardsDemoTappable),
+            SectionTitle(
+                title: GalleryLocalizations.of(context)!.cardsDemoTappable),
             SizedBox(
               height: height,
               child: Card(
@@ -128,7 +140,8 @@ class TappableTravelDestinationItem extends StatelessWidget {
                 child: InkWell(
                   onTap: () {},
                   // Generally, material cards use onSurface with 12% opacity for the pressed state.
-                  splashColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
+                  splashColor:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
                   // Generally, material cards do not have a highlight overlay.
                   highlightColor: Colors.transparent,
                   child: Semantics(
@@ -165,10 +178,9 @@ class SelectableTravelDestinationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final String selectedStatus =
-        isSelected
-            ? GalleryLocalizations.of(context)!.selected
-            : GalleryLocalizations.of(context)!.notSelected;
+    final String selectedStatus = isSelected
+        ? GalleryLocalizations.of(context)!.selected
+        : GalleryLocalizations.of(context)!.notSelected;
 
     return SafeArea(
       top: false,
@@ -195,20 +207,19 @@ class SelectableTravelDestinationItem extends StatelessWidget {
                   child: Stack(
                     children: <Widget>[
                       Container(
-                        color:
-                            isSelected
-                                // Generally, material cards use primary with 8% opacity for the selected state.
-                                // See: https://material.io/design/interaction/states.html#anatomy
-                                ? colorScheme.primary.withOpacity(0.08)
-                                : Colors.transparent,
+                        color: isSelected
+                            // Generally, material cards use primary with 8% opacity for the selected state.
+                            // See: https://material.io/design/interaction/states.html#anatomy
+                            ? colorScheme.primary.withOpacity(0.08)
+                            : Colors.transparent,
                       ),
                       Semantics(
                         label: '${destination.title}, $selectedStatus',
-                        onLongPressHint:
-                            isSelected
-                                ? GalleryLocalizations.of(context)!.deselect
-                                : GalleryLocalizations.of(context)!.select,
-                        child: TravelDestinationContent(destination: destination),
+                        onLongPressHint: isSelected
+                            ? GalleryLocalizations.of(context)!.deselect
+                            : GalleryLocalizations.of(context)!.select,
+                        child:
+                            TravelDestinationContent(destination: destination),
                       ),
                       Align(
                         alignment: Alignment.topRight,
@@ -216,7 +227,9 @@ class SelectableTravelDestinationItem extends StatelessWidget {
                           padding: const EdgeInsets.all(8),
                           child: Icon(
                             Icons.check_circle,
-                            color: isSelected ? colorScheme.primary : Colors.transparent,
+                            color: isSelected
+                                ? colorScheme.primary
+                                : Colors.transparent,
                           ),
                         ),
                       ),
@@ -234,7 +247,10 @@ class SelectableTravelDestinationItem extends StatelessWidget {
 }
 
 class SectionTitle extends StatelessWidget {
-  const SectionTitle({super.key, required this.title});
+  const SectionTitle({
+    super.key,
+    required this.title,
+  });
 
   final String title;
 
@@ -258,7 +274,9 @@ class TravelDestinationContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final TextStyle titleStyle = theme.textTheme.headlineSmall!.copyWith(color: Colors.white);
+    final TextStyle titleStyle = theme.textTheme.headlineSmall!.copyWith(
+      color: Colors.white,
+    );
     final TextStyle descriptionStyle = theme.textTheme.titleMedium!;
     final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
 
@@ -275,7 +293,10 @@ class TravelDestinationContent extends StatelessWidget {
                 // part of the Material and display ink effects above it. Using
                 // a standard Image will obscure the ink splash.
                 child: Ink.image(
-                  image: AssetImage(destination.assetName, package: destination.assetPackage),
+                  image: AssetImage(
+                    destination.assetName,
+                    package: destination.assetPackage,
+                  ),
                   fit: BoxFit.cover,
                   child: Container(),
                 ),
@@ -290,7 +311,10 @@ class TravelDestinationContent extends StatelessWidget {
                   child: Semantics(
                     container: true,
                     header: true,
-                    child: Text(destination.title, style: titleStyle),
+                    child: Text(
+                      destination.title,
+                      style: titleStyle,
+                    ),
                   ),
                 ),
               ),
@@ -335,17 +359,15 @@ class TravelDestinationContent extends StatelessWidget {
               children: <Widget>[
                 TextButton(
                   onPressed: () {},
-                  child: Text(
-                    localizations.demoMenuShare,
-                    semanticsLabel: localizations.cardsDemoShareSemantics(destination.title),
-                  ),
+                  child: Text(localizations.demoMenuShare,
+                      semanticsLabel: localizations
+                          .cardsDemoShareSemantics(destination.title)),
                 ),
                 TextButton(
                   onPressed: () {},
-                  child: Text(
-                    localizations.cardsDemoExplore,
-                    semanticsLabel: localizations.cardsDemoExploreSemantics(destination.title),
-                  ),
+                  child: Text(localizations.cardsDemoExplore,
+                      semanticsLabel: localizations
+                          .cardsDemoExploreSemantics(destination.title)),
                 ),
               ],
             ),
@@ -394,18 +416,20 @@ class _CardsDemoState extends State<CardsDemo> with RestorationMixin {
             for (final TravelDestination destination in destinations(context))
               Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                child: switch (destination.cardType) {
-                  CardType.standard => TravelDestinationItem(destination: destination),
-                  CardType.tappable => TappableTravelDestinationItem(destination: destination),
-                  CardType.selectable => SelectableTravelDestinationItem(
-                    destination: destination,
-                    isSelected: _isSelected.value,
-                    onSelected:
-                        () => setState(() {
-                          _isSelected.value = !_isSelected.value;
-                        }),
-                  ),
-                },
+                child: (destination.cardType == CardType.standard)
+                    ? TravelDestinationItem(destination: destination)
+                    : destination.cardType == CardType.tappable
+                        ? TappableTravelDestinationItem(
+                            destination: destination)
+                        : SelectableTravelDestinationItem(
+                            destination: destination,
+                            isSelected: _isSelected.value,
+                            onSelected: () {
+                              setState(() {
+                                _isSelected.value = !_isSelected.value;
+                              });
+                            },
+                          ),
               ),
           ],
         ),

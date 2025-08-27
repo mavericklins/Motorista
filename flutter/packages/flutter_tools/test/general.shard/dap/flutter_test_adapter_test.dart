@@ -15,28 +15,28 @@ import 'mocks.dart';
 
 void main() {
   // Use the real platform as a base so that Windows bots test paths.
-  final platform = FakePlatform.fromPlatform(globals.platform);
-  final FileSystemStyle fsStyle = platform.isWindows
-      ? FileSystemStyle.windows
-      : FileSystemStyle.posix;
+  final FakePlatform platform = FakePlatform.fromPlatform(globals.platform);
+  final FileSystemStyle fsStyle = platform.isWindows ? FileSystemStyle.windows : FileSystemStyle.posix;
 
   group('flutter test adapter', () {
-    final expectedFlutterExecutable = platform.isWindows
+    final String expectedFlutterExecutable = platform.isWindows
         ? r'C:\fake\flutter\bin\flutter.bat'
         : '/fake/flutter/bin/flutter';
 
     setUpAll(() {
-      Cache.flutterRoot = platform.isWindows ? r'C:\fake\flutter' : '/fake/flutter';
+      Cache.flutterRoot = platform.isWindows
+          ? r'C:\fake\flutter'
+          : '/fake/flutter';
     });
 
     test('includes toolArgs', () async {
-      final adapter = FakeFlutterTestDebugAdapter(
+      final MockFlutterTestDebugAdapter adapter = MockFlutterTestDebugAdapter(
         fileSystem: MemoryFileSystem.test(style: fsStyle),
         platform: platform,
       );
-      final responseCompleter = Completer<void>();
-      final request = FakeRequest();
-      final args = FlutterLaunchRequestArguments(
+      final Completer<void> responseCompleter = Completer<void>();
+      final MockRequest request = MockRequest();
+      final FlutterLaunchRequestArguments args = FlutterLaunchRequestArguments(
         cwd: '.',
         program: 'foo.dart',
         toolArgs: <String>['tool_arg'],
@@ -52,16 +52,18 @@ void main() {
     });
 
     test('includes env variables', () async {
-      final adapter = FakeFlutterTestDebugAdapter(
+      final MockFlutterTestDebugAdapter adapter = MockFlutterTestDebugAdapter(
         fileSystem: MemoryFileSystem.test(style: fsStyle),
         platform: platform,
       );
-      final responseCompleter = Completer<void>();
-      final request = FakeRequest();
-      final args = FlutterLaunchRequestArguments(
+      final Completer<void> responseCompleter = Completer<void>();
+      final MockRequest request = MockRequest();
+      final FlutterLaunchRequestArguments args = FlutterLaunchRequestArguments(
         cwd: '.',
         program: 'foo.dart',
-        env: <String, String>{'MY_TEST_ENV': 'MY_TEST_VALUE'},
+        env: <String, String>{
+          'MY_TEST_ENV': 'MY_TEST_VALUE',
+        },
       );
 
       await adapter.configurationDoneRequest(request, null, () {});
@@ -73,13 +75,13 @@ void main() {
 
     group('includes customTool', () {
       test('with no args replaced', () async {
-        final adapter = FakeFlutterTestDebugAdapter(
+        final MockFlutterTestDebugAdapter adapter = MockFlutterTestDebugAdapter(
           fileSystem: MemoryFileSystem.test(style: fsStyle),
           platform: platform,
         );
-        final responseCompleter = Completer<void>();
-        final request = FakeRequest();
-        final args = FlutterLaunchRequestArguments(
+        final Completer<void> responseCompleter = Completer<void>();
+        final MockRequest request = MockRequest();
+        final FlutterLaunchRequestArguments args = FlutterLaunchRequestArguments(
           cwd: '.',
           program: 'foo.dart',
           customTool: '/custom/flutter',
@@ -96,13 +98,13 @@ void main() {
       });
 
       test('with all args replaced', () async {
-        final adapter = FakeFlutterTestDebugAdapter(
+        final MockFlutterTestDebugAdapter adapter = MockFlutterTestDebugAdapter(
           fileSystem: MemoryFileSystem.test(style: fsStyle),
           platform: platform,
         );
-        final responseCompleter = Completer<void>();
-        final request = FakeRequest();
-        final args = FlutterLaunchRequestArguments(
+        final Completer<void> responseCompleter = Completer<void>();
+        final MockRequest request = MockRequest();
+        final FlutterLaunchRequestArguments args = FlutterLaunchRequestArguments(
           cwd: '.',
           program: 'foo.dart',
           customTool: '/custom/flutter',

@@ -17,11 +17,4 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(DatePickerDialog), findsOneWidget);
   });
-
-  testWidgets('datepicker has one h1 tag', (WidgetTester tester) async {
-    await pumpsUseCase(tester, DatePickerUseCase());
-    final Finder findHeadingLevelOnes = find.bySemanticsLabel('DatePicker Demo');
-    await tester.pumpAndSettle();
-    expect(findHeadingLevelOnes, findsOne);
-  });
 }

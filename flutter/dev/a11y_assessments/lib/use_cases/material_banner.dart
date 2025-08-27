@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import '../utils.dart';
+
 import 'use_cases.dart';
 
 class MaterialBannerUseCase extends UseCase {
+
   @override
   String get name => 'MaterialBanner';
 
@@ -25,53 +26,45 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainWidgetState extends State<MainWidget> {
-  final FocusNode dismissButtonFocusNode = FocusNode();
-  final FocusNode showButtonFocusNode = FocusNode();
-
-  String pageTitle = getUseCaseName(MaterialBannerUseCase());
-
-  @override
-  void dispose() {
-    dismissButtonFocusNode.dispose();
-    showButtonFocusNode.dispose();
-    super.dispose();
-  }
-
-  void hideBanner() {
-    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-    showButtonFocusNode.requestFocus();
-  }
-
-  void showBanner() {
-    ScaffoldMessenger.of(context).showMaterialBanner(
-      MaterialBanner(
-        padding: const EdgeInsets.all(20),
-        content: const Text('Hello, I am a Material Banner'),
-        leading: const Icon(Icons.agriculture_outlined),
-        backgroundColor: Colors.yellowAccent,
-        actions: <Widget>[
-          TextButton(
-            focusNode: dismissButtonFocusNode,
-            onPressed: hideBanner,
-            child: const Text('DISMISS'),
-          ),
-        ],
-      ),
-    );
-    dismissButtonFocusNode.requestFocus();
-  }
+  double currentSliderValue = 20;
+  ScaffoldFeatureController<MaterialBanner, MaterialBannerClosedReason>? controller;
 
   @override
   Widget build(BuildContext context) {
+    VoidCallback? onPress;
+    if (controller == null) {
+      onPress = () {
+        setState(() {
+          controller = ScaffoldMessenger.of(context).showMaterialBanner(
+            MaterialBanner(
+              padding: const EdgeInsets.all(20),
+              content: const Text('Hello, I am a Material Banner'),
+              leading: const Icon(Icons.agriculture_outlined),
+              backgroundColor: Colors.green,
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    controller!.close();
+                    setState(() {
+                      controller = null;
+                    });
+                  },
+                  child: const Text('DISMISS'),
+                ),
+              ],
+            ),
+          );
+        });
+      };
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo')),
+        title: const Text('MaterialBanner'),
       ),
       body: Center(
         child: ElevatedButton(
-          focusNode: showButtonFocusNode,
-          onPressed: showBanner,
+          onPressed: onPress,
           child: const Text('Show a MaterialBanner'),
         ),
       ),

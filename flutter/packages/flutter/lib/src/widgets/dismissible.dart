@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'scroll_view.dart';
-library;
-
 import 'package:flutter/gestures.dart';
 
 import 'automatic_keep_alive.dart';
@@ -61,7 +58,7 @@ enum DismissDirection {
   down,
 
   /// The [Dismissible] cannot be dismissed by dragging.
-  none,
+  none
 }
 
 /// A widget that can be dismissed by dragging in the indicated [direction].
@@ -100,7 +97,7 @@ class Dismissible extends StatefulWidget {
   /// dismissed item. Using keys causes the widgets to sync according to their
   /// keys and avoids this pitfall.
   const Dismissible({
-    required Key super.key,
+    required Key key,
     required this.child,
     this.background,
     this.secondaryBackground,
@@ -115,7 +112,8 @@ class Dismissible extends StatefulWidget {
     this.crossAxisEndOffset = 0.0,
     this.dragStartBehavior = DragStartBehavior.start,
     this.behavior = HitTestBehavior.opaque,
-  }) : assert(secondaryBackground == null || background != null);
+  }) : assert(secondaryBackground == null || background != null),
+       super(key: key);
 
   /// The widget below this widget in the tree.
   ///
@@ -136,10 +134,10 @@ class Dismissible extends StatefulWidget {
   ///
   /// The widget cannot be dragged again until the returned future resolves.
   ///
-  /// If the returned `Future<bool>` completes true, then this widget will be
+  /// If the returned Future<bool> completes true, then this widget will be
   /// dismissed, otherwise it will be moved back to its original location.
   ///
-  /// If the returned `Future<bool?>` completes to false or null the [onResize]
+  /// If the returned Future<bool?> completes to false or null the [onResize]
   /// and [onDismissed] callbacks will not run.
   final ConfirmDismissCallback? confirmDismiss;
 
@@ -260,8 +258,10 @@ class DismissUpdateDetails {
 }
 
 class _DismissibleClipper extends CustomClipper<Rect> {
-  _DismissibleClipper({required this.axis, required this.moveAnimation})
-    : super(reclip: moveAnimation);
+  _DismissibleClipper({
+    required this.axis,
+    required this.moveAnimation,
+  }) : super(reclip: moveAnimation);
 
   final Axis axis;
   final Animation<Offset> moveAnimation;
@@ -289,27 +289,24 @@ class _DismissibleClipper extends CustomClipper<Rect> {
 
   @override
   bool shouldReclip(_DismissibleClipper oldClipper) {
-    return oldClipper.axis != axis || oldClipper.moveAnimation.value != moveAnimation.value;
+    return oldClipper.axis != axis
+        || oldClipper.moveAnimation.value != moveAnimation.value;
   }
 }
 
 enum _FlingGestureKind { none, forward, reverse }
 
-class _DismissibleState extends State<Dismissible>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class _DismissibleState extends State<Dismissible> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    _moveController
+    _moveController = AnimationController(duration: widget.movementDuration, vsync: this)
       ..addStatusListener(_handleDismissStatusChanged)
       ..addListener(_handleDismissUpdateValueChanged);
     _updateMoveAnimation();
   }
 
-  late final AnimationController _moveController = AnimationController(
-    duration: widget.movementDuration,
-    vsync: this,
-  );
+  AnimationController? _moveController;
   late Animation<Offset> _moveAnimation;
 
   AnimationController? _resizeController;
@@ -324,20 +321,19 @@ class _DismissibleState extends State<Dismissible>
   final GlobalKey _contentKey = GlobalKey();
 
   @override
-  bool get wantKeepAlive =>
-      _moveController.isAnimating || (_resizeController?.isAnimating ?? false);
+  bool get wantKeepAlive => (_moveController?.isAnimating ?? false) || (_resizeController?.isAnimating ?? false);
 
   @override
   void dispose() {
-    _moveController.dispose();
+    _moveController!.dispose();
     _resizeController?.dispose();
     super.dispose();
   }
 
   bool get _directionIsXAxis {
-    return widget.direction == DismissDirection.horizontal ||
-        widget.direction == DismissDirection.endToStart ||
-        widget.direction == DismissDirection.startToEnd;
+    return widget.direction == DismissDirection.horizontal
+        || widget.direction == DismissDirection.endToStart
+        || widget.direction == DismissDirection.startToEnd;
   }
 
   DismissDirection _extentToDirection(double extent) {
@@ -356,7 +352,9 @@ class _DismissibleState extends State<Dismissible>
 
   DismissDirection get _dismissDirection => _extentToDirection(_dragExtent);
 
-  double get _dismissThreshold => widget.dismissThresholds[_dismissDirection] ?? _kDismissThreshold;
+  bool get _isActive {
+    return _dragUnderway || _moveController!.isAnimating;
+  }
 
   double get _overallDragAxisExtent {
     final Size size = context.size!;
@@ -368,12 +366,12 @@ class _DismissibleState extends State<Dismissible>
       return;
     }
     _dragUnderway = true;
-    if (_moveController.isAnimating) {
-      _dragExtent = _moveController.value * _overallDragAxisExtent * _dragExtent.sign;
-      _moveController.stop();
+    if (_moveController!.isAnimating) {
+      _dragExtent = _moveController!.value * _overallDragAxisExtent * _dragExtent.sign;
+      _moveController!.stop();
     } else {
       _dragExtent = 0.0;
-      _moveController.value = 0.0;
+      _moveController!.value = 0.0;
     }
     setState(() {
       _updateMoveAnimation();
@@ -381,7 +379,7 @@ class _DismissibleState extends State<Dismissible>
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
-    if (!_dragUnderway || _moveController.isAnimating) {
+    if (!_isActive || _moveController!.isAnimating) {
       return;
     }
 
@@ -434,20 +432,20 @@ class _DismissibleState extends State<Dismissible>
         _updateMoveAnimation();
       });
     }
-    if (!_moveController.isAnimating) {
-      _moveController.value = _dragExtent.abs() / _overallDragAxisExtent;
+    if (!_moveController!.isAnimating) {
+      _moveController!.value = _dragExtent.abs() / _overallDragAxisExtent;
     }
   }
 
   void _handleDismissUpdateValueChanged() {
     if (widget.onUpdate != null) {
       final bool oldDismissThresholdReached = _dismissThresholdReached;
-      _dismissThresholdReached = _moveController.value > _dismissThreshold;
+      _dismissThresholdReached = _moveController!.value > (widget.dismissThresholds[_dismissDirection] ?? _kDismissThreshold);
       final DismissUpdateDetails details = DismissUpdateDetails(
-        direction: _dismissDirection,
-        reached: _dismissThresholdReached,
-        previousReached: oldDismissThresholdReached,
-        progress: _moveController.value,
+          direction: _dismissDirection,
+          reached: _dismissThresholdReached,
+          previousReached: oldDismissThresholdReached,
+          progress: _moveController!.value,
       );
       widget.onUpdate!(details);
     }
@@ -455,7 +453,7 @@ class _DismissibleState extends State<Dismissible>
 
   void _updateMoveAnimation() {
     final double end = _dragExtent.sign;
-    _moveAnimation = _moveController.drive(
+    _moveAnimation = _moveController!.drive(
       Tween<Offset>(
         begin: Offset.zero,
         end: _directionIsXAxis
@@ -498,46 +496,43 @@ class _DismissibleState extends State<Dismissible>
   }
 
   void _handleDragEnd(DragEndDetails details) {
-    if (!_dragUnderway || _moveController.isAnimating) {
+    if (!_isActive || _moveController!.isAnimating) {
       return;
     }
     _dragUnderway = false;
-    if (_moveController.isCompleted) {
+    if (_moveController!.isCompleted) {
       _handleMoveCompleted();
       return;
     }
-    final double flingVelocity = _directionIsXAxis
-        ? details.velocity.pixelsPerSecond.dx
-        : details.velocity.pixelsPerSecond.dy;
+    final double flingVelocity = _directionIsXAxis ? details.velocity.pixelsPerSecond.dx : details.velocity.pixelsPerSecond.dy;
     switch (_describeFlingGesture(details.velocity)) {
       case _FlingGestureKind.forward:
         assert(_dragExtent != 0.0);
-        assert(!_moveController.isDismissed);
-        if (_dismissThreshold >= 1.0) {
-          _moveController.reverse();
+        assert(!_moveController!.isDismissed);
+        if ((widget.dismissThresholds[_dismissDirection] ?? _kDismissThreshold) >= 1.0) {
+          _moveController!.reverse();
           break;
         }
         _dragExtent = flingVelocity.sign;
-        _moveController.fling(velocity: flingVelocity.abs() * _kFlingVelocityScale);
+        _moveController!.fling(velocity: flingVelocity.abs() * _kFlingVelocityScale);
       case _FlingGestureKind.reverse:
         assert(_dragExtent != 0.0);
-        assert(!_moveController.isDismissed);
+        assert(!_moveController!.isDismissed);
         _dragExtent = flingVelocity.sign;
-        _moveController.fling(velocity: -flingVelocity.abs() * _kFlingVelocityScale);
+        _moveController!.fling(velocity: -flingVelocity.abs() * _kFlingVelocityScale);
       case _FlingGestureKind.none:
-        if (!_moveController.isDismissed) {
-          // we already know it's not completed, we check that above
-          if (_moveController.value > _dismissThreshold) {
-            _moveController.forward();
+        if (!_moveController!.isDismissed) { // we already know it's not completed, we check that above
+          if (_moveController!.value > (widget.dismissThresholds[_dismissDirection] ?? _kDismissThreshold)) {
+            _moveController!.forward();
           } else {
-            _moveController.reverse();
+            _moveController!.reverse();
           }
         }
     }
   }
 
   Future<void> _handleDismissStatusChanged(AnimationStatus status) async {
-    if (status.isCompleted && !_dragUnderway) {
+    if (status == AnimationStatus.completed && !_dragUnderway) {
       await _handleMoveCompleted();
     }
     if (mounted) {
@@ -546,8 +541,8 @@ class _DismissibleState extends State<Dismissible>
   }
 
   Future<void> _handleMoveCompleted() async {
-    if (_dismissThreshold >= 1.0) {
-      _moveController.reverse();
+    if ((widget.dismissThresholds[_dismissDirection] ?? _kDismissThreshold) >= 1.0) {
+      _moveController!.reverse();
       return;
     }
     final bool result = await _confirmStartResizeAnimation();
@@ -555,7 +550,7 @@ class _DismissibleState extends State<Dismissible>
       if (result) {
         _startResizeAnimation();
       } else {
-        _moveController.reverse();
+        _moveController!.reverse();
       }
     }
   }
@@ -574,7 +569,7 @@ class _DismissibleState extends State<Dismissible>
   }
 
   void _startResizeAnimation() {
-    assert(_moveController.isCompleted);
+    assert(_moveController!.isCompleted);
     assert(_resizeController == null);
     assert(_sizePriorToCollapse == null);
     if (widget.resizeDuration == null) {
@@ -589,9 +584,16 @@ class _DismissibleState extends State<Dismissible>
       _resizeController!.forward();
       setState(() {
         _sizePriorToCollapse = context.size;
-        _resizeAnimation = _resizeController!
-            .drive(CurveTween(curve: _kResizeTimeCurve))
-            .drive(Tween<double>(begin: 1.0, end: 0.0));
+        _resizeAnimation = _resizeController!.drive(
+          CurveTween(
+            curve: _kResizeTimeCurve,
+          ),
+        ).drive(
+          Tween<double>(
+            begin: 1.0,
+            end: 0.0,
+          ),
+        );
       });
     }
   }
@@ -622,7 +624,7 @@ class _DismissibleState extends State<Dismissible>
       // we've been dragged aside, and are now resizing.
       assert(() {
         if (_resizeAnimation!.status != AnimationStatus.forward) {
-          assert(_resizeAnimation!.isCompleted);
+          assert(_resizeAnimation!.status == AnimationStatus.completed);
           throw FlutterError.fromParts(<DiagnosticsNode>[
             ErrorSummary('A dismissed Dismissible widget is still part of the tree.'),
             ErrorHint(
@@ -651,21 +653,19 @@ class _DismissibleState extends State<Dismissible>
     );
 
     if (background != null) {
-      content = Stack(
-        children: <Widget>[
-          if (!_moveAnimation.isDismissed)
-            Positioned.fill(
-              child: ClipRect(
-                clipper: _DismissibleClipper(
-                  axis: _directionIsXAxis ? Axis.horizontal : Axis.vertical,
-                  moveAnimation: _moveAnimation,
-                ),
-                child: background,
+      content = Stack(children: <Widget>[
+        if (!_moveAnimation.isDismissed)
+          Positioned.fill(
+            child: ClipRect(
+              clipper: _DismissibleClipper(
+                axis: _directionIsXAxis ? Axis.horizontal : Axis.vertical,
+                moveAnimation: _moveAnimation,
               ),
+              child: background,
             ),
-          content,
-        ],
-      );
+          ),
+        content,
+      ]);
     }
 
     // If the DismissDirection is none, we do not add drag gestures because the content

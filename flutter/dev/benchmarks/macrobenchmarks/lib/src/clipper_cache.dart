@@ -13,7 +13,8 @@ class ClipperCachePage extends StatefulWidget {
   State<ClipperCachePage> createState() => _ClipperCachePageState();
 }
 
-class _ClipperCachePageState extends State<ClipperCachePage> with TickerProviderStateMixin {
+class _ClipperCachePageState extends State<ClipperCachePage>
+    with TickerProviderStateMixin {
   final double _animateOffset = 100;
   final ScrollController _controller = ScrollController();
   final bool _isComplex = true;
@@ -24,21 +25,13 @@ class _ClipperCachePageState extends State<ClipperCachePage> with TickerProvider
     super.initState();
     _controller.addListener(() {
       if (_controller.offset < 10) {
-        _controller.animateTo(
-          _animateOffset,
-          duration: const Duration(milliseconds: 1000),
-          curve: Curves.ease,
-        );
+        _controller.animateTo(_animateOffset, duration: const Duration(milliseconds: 1000), curve: Curves.ease);
       } else if (_controller.offset > _animateOffset - 10) {
         _controller.animateTo(0, duration: const Duration(milliseconds: 1000), curve: Curves.ease);
       }
     });
     Timer(const Duration(milliseconds: 500), () {
-      _controller.animateTo(
-        _animateOffset,
-        duration: const Duration(milliseconds: 1000),
-        curve: Curves.ease,
-      );
+      _controller.animateTo(_animateOffset, duration: const Duration(milliseconds: 1000), curve: Curves.ease);
     });
   }
 
@@ -62,9 +55,18 @@ class _ClipperCachePageState extends State<ClipperCachePage> with TickerProvider
         controller: _controller,
         children: <Widget>[
           SizedBox(height: _topMargin),
-          ClipPath(clipBehavior: Clip.antiAliasWithSaveLayer, child: _makeChild(0, _isComplex)),
-          ClipRect(clipBehavior: Clip.antiAliasWithSaveLayer, child: _makeChild(1, _isComplex)),
-          ClipRRect(clipBehavior: Clip.antiAliasWithSaveLayer, child: _makeChild(2, _isComplex)),
+          ClipPath(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: _makeChild(0, _isComplex)
+          ),
+          ClipRect(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: _makeChild(1, _isComplex)
+          ),
+          ClipRRect(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: _makeChild(2, _isComplex)
+          ),
           const SizedBox(height: 1000),
         ],
       ),
@@ -74,7 +76,11 @@ class _ClipperCachePageState extends State<ClipperCachePage> with TickerProvider
   Widget _makeChild(int itemIndex, bool complex) {
     final BoxDecoration decoration = BoxDecoration(
       color: Colors.white70,
-      boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 5.0)],
+      boxShadow: const <BoxShadow>[
+        BoxShadow(
+          blurRadius: 5.0,
+        ),
+      ],
       borderRadius: BorderRadius.circular(5.0),
     );
     return RepaintBoundary(

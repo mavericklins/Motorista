@@ -13,7 +13,9 @@ class DecoratedBoxTransitionExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: DecoratedBoxTransitionExample());
+    return const MaterialApp(
+      home: DecoratedBoxTransitionExample(),
+    );
   }
 }
 
@@ -26,8 +28,7 @@ class DecoratedBoxTransitionExample extends StatefulWidget {
 
 /// [AnimationController]s can be created with `vsync: this` because of
 /// [TickerProviderStateMixin].
-class _DecoratedBoxTransitionExampleState extends State<DecoratedBoxTransitionExample>
-    with TickerProviderStateMixin {
+class _DecoratedBoxTransitionExampleState extends State<DecoratedBoxTransitionExample> with TickerProviderStateMixin {
   final DecorationTween decorationTween = DecorationTween(
     begin: BoxDecoration(
       color: const Color(0xFFFFFFFF),
@@ -44,7 +45,9 @@ class _DecoratedBoxTransitionExampleState extends State<DecoratedBoxTransitionEx
     ),
     end: BoxDecoration(
       color: const Color(0xFFFFFFFF),
-      border: Border.all(style: BorderStyle.none),
+      border: Border.all(
+        style: BorderStyle.none,
+      ),
       borderRadius: BorderRadius.zero,
       // No shadow.
     ),

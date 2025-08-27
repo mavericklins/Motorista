@@ -15,7 +15,9 @@ class FlowApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: const Text('Flow Example')),
+        appBar: AppBar(
+          title: const Text('Flow Example'),
+        ),
         body: const FlowMenu(),
       ),
     );
@@ -49,7 +51,10 @@ class _FlowMenuState extends State<FlowMenu> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    menuAnimation = AnimationController(duration: const Duration(milliseconds: 250), vsync: this);
+    menuAnimation = AnimationController(
+      duration: const Duration(milliseconds: 250),
+      vsync: this,
+    );
   }
 
   Widget flowMenuItem(IconData icon) {
@@ -63,11 +68,13 @@ class _FlowMenuState extends State<FlowMenu> with SingleTickerProviderStateMixin
         constraints: BoxConstraints.tight(Size(buttonDiameter, buttonDiameter)),
         onPressed: () {
           _updateMenu(icon);
-          menuAnimation.status == AnimationStatus.completed
-              ? menuAnimation.reverse()
-              : menuAnimation.forward();
+          menuAnimation.status == AnimationStatus.completed ? menuAnimation.reverse() : menuAnimation.forward();
         },
-        child: Icon(icon, color: Colors.white, size: 45.0),
+        child: Icon(
+          icon,
+          color: Colors.white,
+          size: 45.0,
+        ),
       ),
     );
   }
@@ -96,7 +103,14 @@ class FlowMenuDelegate extends FlowDelegate {
     double dx = 0.0;
     for (int i = 0; i < context.childCount; ++i) {
       dx = context.getChildSize(i)!.width * i;
-      context.paintChild(i, transform: Matrix4.translationValues(dx * menuAnimation.value, 0, 0));
+      context.paintChild(
+        i,
+        transform: Matrix4.translationValues(
+          dx * menuAnimation.value,
+          0,
+          0,
+        ),
+      );
     }
   }
 }

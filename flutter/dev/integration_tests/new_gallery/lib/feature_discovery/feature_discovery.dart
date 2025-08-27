@@ -16,6 +16,7 @@ import 'overlay.dart';
 /// Users wanting to use [FeatureDiscovery] need to put this controller
 /// above [FeatureDiscovery] widgets in the widget tree.
 class FeatureDiscoveryController extends StatefulWidget {
+
   const FeatureDiscoveryController(this.child, {super.key});
   final Widget child;
 
@@ -27,17 +28,18 @@ class FeatureDiscoveryController extends StatefulWidget {
     }
 
     throw FlutterError(
-      'FeatureDiscoveryController.of() called with a context that does not '
-      'contain a FeatureDiscoveryController.\n The context used was:\n '
-      '$context',
-    );
+        'FeatureDiscoveryController.of() called with a context that does not '
+        'contain a FeatureDiscoveryController.\n The context used was:\n '
+        '$context');
   }
 
   @override
-  State<FeatureDiscoveryController> createState() => _FeatureDiscoveryControllerState();
+  State<FeatureDiscoveryController> createState() =>
+      _FeatureDiscoveryControllerState();
 }
 
-class _FeatureDiscoveryControllerState extends State<FeatureDiscoveryController> {
+class _FeatureDiscoveryControllerState
+    extends State<FeatureDiscoveryController> {
   bool _isLocked = false;
 
   /// Flag to indicate whether a [FeatureDiscovery] widget descendant is
@@ -63,7 +65,8 @@ class _FeatureDiscoveryControllerState extends State<FeatureDiscoveryController>
   void didChangeDependencies() {
     super.didChangeDependencies();
     assert(
-      context.findAncestorStateOfType<_FeatureDiscoveryControllerState>() == null,
+      context.findAncestorStateOfType<_FeatureDiscoveryControllerState>() ==
+          null,
       'There should not be another ancestor of type '
       'FeatureDiscoveryController in the widget tree.',
     );
@@ -78,6 +81,7 @@ class _FeatureDiscoveryControllerState extends State<FeatureDiscoveryController>
 /// This widget loosely follows the guidelines set forth in the Material Specs:
 /// https://material.io/archive/guidelines/growth-communications/feature-discovery.html.
 class FeatureDiscovery extends StatefulWidget {
+
   const FeatureDiscovery({
     super.key,
     required this.title,
@@ -88,7 +92,6 @@ class FeatureDiscovery extends StatefulWidget {
     this.onTap,
     this.color,
   });
-
   /// Title to be displayed in the overlay.
   final String title;
 
@@ -121,7 +124,8 @@ class FeatureDiscovery extends StatefulWidget {
   State<FeatureDiscovery> createState() => _FeatureDiscoveryState();
 }
 
-class _FeatureDiscoveryState extends State<FeatureDiscovery> with TickerProviderStateMixin {
+class _FeatureDiscoveryState extends State<FeatureDiscovery>
+    with TickerProviderStateMixin {
   bool showOverlay = false;
   FeatureDiscoveryStatus status = FeatureDiscoveryStatus.closed;
 
@@ -175,7 +179,11 @@ class _FeatureDiscoveryState extends State<FeatureDiscovery> with TickerProvider
             description: widget.description,
             textTheme: Theme.of(ctx).textTheme,
           ),
-          Ripple(animations: animations, status: status, center: center),
+          Ripple(
+            animations: animations,
+            status: status,
+            center: center,
+          ),
           TapTarget(
             animations: animations,
             status: status,
@@ -211,38 +219,36 @@ class _FeatureDiscoveryState extends State<FeatureDiscovery> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext ctx, _) {
-        if (overlay != null) {
+    return LayoutBuilder(builder: (BuildContext ctx, _) {
+      if (overlay != null) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          // [OverlayEntry] needs to be explicitly rebuilt when necessary.
+          overlay!.markNeedsBuild();
+        });
+      } else {
+        if (showOverlay && !FeatureDiscoveryController._of(ctx).isLocked) {
+          final OverlayEntry entry = OverlayEntry(
+            builder: (_) => buildOverlay(ctx, getOverlayCenter(ctx)),
+          );
+
+          // Lock [FeatureDiscoveryController] early in order to prevent
+          // another [FeatureDiscovery] widget from trying to show its
+          // overlay while the post frame callback and set state are not
+          // complete.
+          FeatureDiscoveryController._of(ctx).lock();
+
           SchedulerBinding.instance.addPostFrameCallback((_) {
-            // [OverlayEntry] needs to be explicitly rebuilt when necessary.
-            overlay!.markNeedsBuild();
-          });
-        } else {
-          if (showOverlay && !FeatureDiscoveryController._of(ctx).isLocked) {
-            final OverlayEntry entry = OverlayEntry(
-              builder: (_) => buildOverlay(ctx, getOverlayCenter(ctx)),
-            );
-
-            // Lock [FeatureDiscoveryController] early in order to prevent
-            // another [FeatureDiscovery] widget from trying to show its
-            // overlay while the post frame callback and set state are not
-            // complete.
-            FeatureDiscoveryController._of(ctx).lock();
-
-            SchedulerBinding.instance.addPostFrameCallback((_) {
-              setState(() {
-                overlay = entry;
-                status = FeatureDiscoveryStatus.closed;
-                openController.forward(from: 0.0);
-              });
-              Overlay.of(context).insert(entry);
+            setState(() {
+              overlay = entry;
+              status = FeatureDiscoveryStatus.closed;
+              openController.forward(from: 0.0);
             });
-          }
+            Overlay.of(context).insert(entry);
+          });
         }
-        return widget.child;
-      },
-    );
+      }
+      return widget.child;
+    });
   }
 
   /// Compute the center position of the overlay.
@@ -273,79 +279,76 @@ class _FeatureDiscoveryState extends State<FeatureDiscovery> with TickerProvider
   }
 
   void initAnimationControllers() {
-    openController =
-        AnimationController(duration: const Duration(milliseconds: 500), vsync: this)
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener((AnimationStatus animationStatus) {
-            switch (animationStatus) {
-              case AnimationStatus.forward:
-                setState(() => status = FeatureDiscoveryStatus.open);
-              case AnimationStatus.completed:
-                rippleController.forward(from: 0.0);
-              case AnimationStatus.reverse:
-              case AnimationStatus.dismissed:
-                break;
-            }
-          });
+    openController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    )
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((AnimationStatus animationStatus) {
+        if (animationStatus == AnimationStatus.forward) {
+          setState(() => status = FeatureDiscoveryStatus.open);
+        } else if (animationStatus == AnimationStatus.completed) {
+          rippleController.forward(from: 0.0);
+        }
+      });
 
-    rippleController =
-        AnimationController(duration: const Duration(milliseconds: 1000), vsync: this)
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener((AnimationStatus animationStatus) {
-            switch (animationStatus) {
-              case AnimationStatus.forward:
-                setState(() => status = FeatureDiscoveryStatus.ripple);
-              case AnimationStatus.completed:
-                rippleController.forward(from: 0.0);
-              case AnimationStatus.reverse:
-              case AnimationStatus.dismissed:
-                break;
-            }
-          });
+    rippleController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    )
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((AnimationStatus animationStatus) {
+        if (animationStatus == AnimationStatus.forward) {
+          setState(() => status = FeatureDiscoveryStatus.ripple);
+        } else if (animationStatus == AnimationStatus.completed) {
+          rippleController.forward(from: 0.0);
+        }
+      });
 
-    tapController =
-        AnimationController(duration: const Duration(milliseconds: 250), vsync: this)
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener((AnimationStatus animationStatus) {
-            switch (animationStatus) {
-              case AnimationStatus.forward:
-                setState(() => status = FeatureDiscoveryStatus.tap);
-              case AnimationStatus.completed:
-                widget.onTap?.call();
-                cleanUponOverlayClose();
-              case AnimationStatus.reverse:
-              case AnimationStatus.dismissed:
-                break;
-            }
-          });
+    tapController = AnimationController(
+      duration: const Duration(milliseconds: 250),
+      vsync: this,
+    )
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((AnimationStatus animationStatus) {
+        if (animationStatus == AnimationStatus.forward) {
+          setState(() => status = FeatureDiscoveryStatus.tap);
+        } else if (animationStatus == AnimationStatus.completed) {
+          widget.onTap?.call();
+          cleanUponOverlayClose();
+        }
+      });
 
-    dismissController =
-        AnimationController(duration: const Duration(milliseconds: 250), vsync: this)
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener((AnimationStatus animationStatus) {
-            switch (animationStatus) {
-              case AnimationStatus.forward:
-                setState(() => status = FeatureDiscoveryStatus.dismiss);
-              case AnimationStatus.completed:
-                widget.onDismiss?.call();
-                cleanUponOverlayClose();
-              case AnimationStatus.reverse:
-              case AnimationStatus.dismissed:
-                break;
-            }
-          });
+    dismissController = AnimationController(
+      duration: const Duration(milliseconds: 250),
+      vsync: this,
+    )
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((AnimationStatus animationStatus) {
+        if (animationStatus == AnimationStatus.forward) {
+          setState(() => status = FeatureDiscoveryStatus.dismiss);
+        } else if (animationStatus == AnimationStatus.completed) {
+          widget.onDismiss?.call();
+          cleanUponOverlayClose();
+        }
+      });
   }
 
   void initAnimations() {
-    animations = Animations(openController, tapController, rippleController, dismissController);
+    animations = Animations(
+      openController,
+      tapController,
+      rippleController,
+      dismissController,
+    );
   }
 
   /// Clean up once overlay has been dismissed or tap target has been tapped.

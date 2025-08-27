@@ -20,7 +20,11 @@ void main() {
         child: Center(
           child: SizedBox(
             width: 200.0,
-            child: GridView.extent(maxCrossAxisExtent: 100.0, shrinkWrap: true, children: children),
+            child: GridView.extent(
+              maxCrossAxisExtent: 100.0,
+              shrinkWrap: true,
+              children: children,
+            ),
           ),
         ),
       ),
@@ -45,7 +49,11 @@ void main() {
         child: Center(
           child: SizedBox(
             width: 200.0,
-            child: GridView.extent(maxCrossAxisExtent: 60.0, shrinkWrap: true, children: children),
+            child: GridView.extent(
+              maxCrossAxisExtent: 60.0,
+              shrinkWrap: true,
+              children: children,
+            ),
           ),
         ),
       ),

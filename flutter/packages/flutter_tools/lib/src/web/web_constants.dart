@@ -2,13 +2,4 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-const kWasmMoreInfo = 'See https://flutter.dev/to/wasm for more information.';
-
-/// Headers required to run Wasm-compiled applications with multi-threading.
-///
-/// See https://developer.chrome.com/blog/coep-credentialless-origin-trial
-/// for more information.
-const kMultiThreadedHeaders = <String, String>{
-  'Cross-Origin-Opener-Policy': 'same-origin',
-  'Cross-Origin-Embedder-Policy': 'credentialless',
-};
+const String kWasmMoreInfo = 'See https://flutter.dev/wasm for more information.';

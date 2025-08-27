@@ -22,7 +22,11 @@ void main() {
     addTearDown(focusNode.dispose);
 
     await tester.pumpWidget(
-      RawKeyboardListener(focusNode: focusNode, onKey: events.add, child: Container()),
+      RawKeyboardListener(
+        focusNode: focusNode,
+        onKey: events.add,
+        child: Container(),
+      ),
     );
 
     focusNode.requestFocus();
@@ -50,7 +54,11 @@ void main() {
     addTearDown(focusNode.dispose);
 
     await tester.pumpWidget(
-      RawKeyboardListener(focusNode: focusNode, onKey: events.add, child: Container()),
+      RawKeyboardListener(
+        focusNode: focusNode,
+        onKey: events.add,
+        child: Container(),
+      ),
     );
 
     focusNode.requestFocus();
@@ -77,7 +85,11 @@ void main() {
     addTearDown(focusNode.dispose);
 
     await tester.pumpWidget(
-      RawKeyboardListener(focusNode: focusNode, onKey: events.add, child: Container()),
+      RawKeyboardListener(
+        focusNode: focusNode,
+        onKey: events.add,
+        child: Container(),
+      ),
     );
 
     focusNode.requestFocus();

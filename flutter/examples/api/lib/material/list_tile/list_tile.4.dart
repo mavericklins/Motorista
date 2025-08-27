@@ -13,7 +13,10 @@ class ListTileApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: ListTileExample());
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const ListTileExample(),
+    );
   }
 }
 
@@ -36,11 +39,13 @@ class _ListTileExampleState extends State<ListTileExample> {
           const Divider(),
           ListTile(
             titleAlignment: titleAlignment,
-            leading: Checkbox(value: true, onChanged: (bool? value) {}),
+            leading: Checkbox(
+              value: true,
+              onChanged: (bool? value) {},
+            ),
             title: const Text('Headline Text'),
             subtitle: const Text(
-              'Tapping on the trailing widget will show a menu that allows you to change the title alignment. The title alignment is set to threeLine by default if `ThemeData.useMaterial3` is true. Otherwise, defaults to titleHeight.',
-            ),
+                'Tapping on the trailing widget will show a menu that allows you to change the title alignment. The title alignment is set to threeLine by default if `ThemeData.useMaterial3` is true. Otherwise, defaults to titleHeight.'),
             trailing: PopupMenuButton<ListTileTitleAlignment>(
               onSelected: (ListTileTitleAlignment? value) {
                 setState(() {

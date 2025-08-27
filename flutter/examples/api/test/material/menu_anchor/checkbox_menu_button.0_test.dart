@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can open menu and show message', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.MenuApp());
+    await tester.pumpWidget(
+      const example.MenuApp(),
+    );
 
     await tester.tap(find.byType(TextButton));
     await tester.pumpAndSettle();
@@ -27,7 +29,9 @@ void main() {
     const double safeAreaPadding = 100.0;
     await tester.pumpWidget(
       const MediaQuery(
-        data: MediaQueryData(padding: EdgeInsets.symmetric(vertical: safeAreaPadding)),
+        data: MediaQueryData(
+          padding: EdgeInsets.symmetric(vertical: safeAreaPadding),
+        ),
         child: example.MenuApp(),
       ),
     );

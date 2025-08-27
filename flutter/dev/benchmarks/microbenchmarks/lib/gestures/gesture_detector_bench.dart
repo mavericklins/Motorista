@@ -10,7 +10,7 @@ import 'apps/button_matrix_app.dart' as button_matrix;
 const int _kNumWarmUpIters = 20;
 const int _kNumIters = 300;
 
-Future<void> execute() async {
+Future<void> main() async {
   assert(false, "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
   final Stopwatch watch = Stopwatch();
   print('GestureDetector semantics benchmark...');
@@ -48,11 +48,4 @@ Future<void> execute() async {
     name: 'gesture_detector_bench',
   );
   printer.printToStdout();
-}
-
-//
-//  Note that the benchmark is normally run by benchmark_collection.dart.
-//
-Future<void> main() async {
-  return execute();
 }

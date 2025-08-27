@@ -16,7 +16,9 @@ class ActionsExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Actions Sample')),
-        body: const Center(child: ActionsExample()),
+        body: const Center(
+          child: ActionsExample(),
+        ),
       ),
     );
   }
@@ -24,8 +26,8 @@ class ActionsExampleApp extends StatelessWidget {
 
 // A simple model class that notifies listeners when it changes.
 class Model {
-  final ValueNotifier<bool> isDirty = ValueNotifier<bool>(false);
-  final ValueNotifier<int> data = ValueNotifier<int>(0);
+  ValueNotifier<bool> isDirty = ValueNotifier<bool>(false);
+  ValueNotifier<int> data = ValueNotifier<int>(0);
 
   int save() {
     if (isDirty.value) {
@@ -38,11 +40,6 @@ class Model {
   void setValue(int newValue) {
     isDirty.value = data.value != newValue;
     data.value = newValue;
-  }
-
-  void dispose() {
-    isDirty.dispose();
-    data.dispose();
   }
 }
 
@@ -90,7 +87,7 @@ class SaveButton extends StatefulWidget {
 }
 
 class _SaveButtonState extends State<SaveButton> {
-  int _savedValue = 0;
+  int savedValue = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -99,15 +96,15 @@ class _SaveButtonState extends State<SaveButton> {
       builder: (BuildContext context, Widget? child) {
         return TextButton.icon(
           icon: const Icon(Icons.save),
-          label: Text('$_savedValue'),
+          label: Text('$savedValue'),
           style: ButtonStyle(
-            foregroundColor: WidgetStatePropertyAll<Color>(
+            foregroundColor: MaterialStatePropertyAll<Color>(
               widget.valueNotifier.value ? Colors.red : Colors.green,
             ),
           ),
           onPressed: () {
             setState(() {
-              _savedValue = Actions.invoke(context, const SaveIntent())! as int;
+              savedValue = Actions.invoke(context, const SaveIntent())! as int;
             });
           },
         );
@@ -124,21 +121,15 @@ class ActionsExample extends StatefulWidget {
 }
 
 class _ActionsExampleState extends State<ActionsExample> {
-  final Model _model = Model();
-  int _count = 0;
-
-  @override
-  void dispose() {
-    _model.dispose();
-    super.dispose();
-  }
+  Model model = Model();
+  int count = 0;
 
   @override
   Widget build(BuildContext context) {
     return Actions(
       actions: <Type, Action<Intent>>{
-        ModifyIntent: ModifyAction(_model),
-        SaveIntent: SaveAction(_model),
+        ModifyIntent: ModifyAction(model),
+        SaveIntent: SaveAction(model),
       },
       child: Builder(
         builder: (BuildContext context) {
@@ -152,30 +143,26 @@ class _ActionsExampleState extends State<ActionsExample> {
                   IconButton(
                     icon: const Icon(Icons.exposure_plus_1),
                     onPressed: () {
-                      Actions.invoke(context, ModifyIntent(++_count));
+                      Actions.invoke(context, ModifyIntent(++count));
                     },
                   ),
                   ListenableBuilder(
-                    listenable: _model.data,
-                    builder: (BuildContext context, Widget? child) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Value: ${_model.data.value}',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                      );
-                    },
-                  ),
+                      listenable: model.data,
+                      builder: (BuildContext context, Widget? child) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('${model.data.value}', style: Theme.of(context).textTheme.headlineMedium),
+                        );
+                      }),
                   IconButton(
                     icon: const Icon(Icons.exposure_minus_1),
                     onPressed: () {
-                      Actions.invoke(context, ModifyIntent(--_count));
+                      Actions.invoke(context, ModifyIntent(--count));
                     },
                   ),
                 ],
               ),
-              SaveButton(_model.isDirty),
+              SaveButton(model.isDirty),
               const Spacer(),
             ],
           );

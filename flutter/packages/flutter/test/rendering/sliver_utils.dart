@@ -8,7 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class RenderMockSliverToBoxAdapter extends RenderSliverToBoxAdapter {
-  RenderMockSliverToBoxAdapter({super.child, required this.incrementCounter});
+  RenderMockSliverToBoxAdapter({
+    super.child,
+    required this.incrementCounter,
+  });
   final void Function() incrementCounter;
 
   @override
@@ -19,11 +22,15 @@ class RenderMockSliverToBoxAdapter extends RenderSliverToBoxAdapter {
 
 class MockSliverToBoxAdapter extends SingleChildRenderObjectWidget {
   /// Creates a sliver that contains a single box widget.
-  const MockSliverToBoxAdapter({super.key, super.child, required this.incrementCounter});
+  const MockSliverToBoxAdapter({
+    super.key,
+    super.child,
+    required this.incrementCounter,
+  });
 
   final void Function() incrementCounter;
 
   @override
   RenderMockSliverToBoxAdapter createRenderObject(BuildContext context) =>
-      RenderMockSliverToBoxAdapter(incrementCounter: incrementCounter);
+    RenderMockSliverToBoxAdapter(incrementCounter: incrementCounter);
 }

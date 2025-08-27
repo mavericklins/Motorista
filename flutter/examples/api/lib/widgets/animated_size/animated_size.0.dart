@@ -11,16 +11,13 @@ void main() => runApp(const AnimatedSizeExampleApp());
 class AnimatedSizeExampleApp extends StatelessWidget {
   const AnimatedSizeExampleApp({super.key});
 
-  static const Duration duration = Duration(seconds: 1);
-  static const Curve curve = Curves.easeIn;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('AnimatedSize Sample')),
         body: const Center(
-          child: AnimatedSizeExample(duration: duration, curve: curve),
+          child: AnimatedSizeExample(),
         ),
       ),
     );
@@ -28,36 +25,33 @@ class AnimatedSizeExampleApp extends StatelessWidget {
 }
 
 class AnimatedSizeExample extends StatefulWidget {
-  const AnimatedSizeExample({required this.duration, required this.curve, super.key});
-
-  final Duration duration;
-
-  final Curve curve;
+  const AnimatedSizeExample({super.key});
 
   @override
   State<AnimatedSizeExample> createState() => _AnimatedSizeExampleState();
 }
 
 class _AnimatedSizeExampleState extends State<AnimatedSizeExample> {
-  bool _isSelected = false;
+  double _size = 50.0;
+  bool _large = false;
+
+  void _updateSize() {
+    setState(() {
+      _size = _large ? 250.0 : 100.0;
+      _large = !_large;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _isSelected = !_isSelected;
-        });
-      },
+      onTap: () => _updateSize(),
       child: ColoredBox(
         color: Colors.amberAccent,
         child: AnimatedSize(
-          duration: widget.duration,
-          curve: widget.curve,
-          child: SizedBox.square(
-            dimension: _isSelected ? 250.0 : 100.0,
-            child: const Center(child: FlutterLogo(size: 75.0)),
-          ),
+          curve: Curves.easeIn,
+          duration: const Duration(seconds: 1),
+          child: FlutterLogo(size: _size),
         ),
       ),
     );

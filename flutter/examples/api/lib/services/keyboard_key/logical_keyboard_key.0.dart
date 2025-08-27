@@ -60,9 +60,7 @@ class _MyKeyExampleState extends State<MyKeyExample> {
         }
       }
     });
-    return event.logicalKey == LogicalKeyboardKey.keyQ
-        ? KeyEventResult.handled
-        : KeyEventResult.ignored;
+    return event.logicalKey == LogicalKeyboardKey.keyQ ? KeyEventResult.handled : KeyEventResult.ignored;
   }
 
   @override

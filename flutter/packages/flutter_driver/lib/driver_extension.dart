@@ -22,8 +22,6 @@
 ///       enableFlutterDriverExtension();
 ///       runApp(ExampleApp());
 ///     }
-///
-/// @docImport 'src/extension/extension.dart';
 library flutter_driver_extension;
 
 export 'src/common/deserialization_factory.dart';

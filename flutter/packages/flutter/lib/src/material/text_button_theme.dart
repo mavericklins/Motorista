@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'text_button.dart';
-library;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -21,7 +18,7 @@ import 'theme.dart';
 /// The [style]'s properties override [TextButton]'s default style,
 /// i.e. the [ButtonStyle] returned by [TextButton.defaultStyleOf]. Only
 /// the style's non-null property values or resolved non-null
-/// [WidgetStateProperty] values are used.
+/// [MaterialStateProperty] values are used.
 ///
 /// See also:
 ///
@@ -30,8 +27,8 @@ import 'theme.dart';
 ///    for text buttons.
 ///  * [TextButton.styleFrom], which converts simple values into a
 ///    [ButtonStyle] that's consistent with [TextButton]'s defaults.
-///  * [WidgetStateProperty.resolve], "resolve" a material state property
-///    to a simple value based on a set of [WidgetState]s.
+///  * [MaterialStateProperty.resolve], "resolve" a material state property
+///    to a simple value based on a set of [MaterialState]s.
 ///  * [ThemeData.textButtonTheme], which can be used to override the default
 ///    [ButtonStyle] for [TextButton]s below the overall [Theme].
 @immutable
@@ -39,11 +36,11 @@ class TextButtonThemeData with Diagnosticable {
   /// Creates a [TextButtonThemeData].
   ///
   /// The [style] may be null.
-  const TextButtonThemeData({this.style});
+  const TextButtonThemeData({ this.style });
 
   /// Overrides for [TextButton]'s default style.
   ///
-  /// Non-null properties or non-null resolved [WidgetStateProperty]
+  /// Non-null properties or non-null resolved [MaterialStateProperty]
   /// values override the [ButtonStyle] returned by
   /// [TextButton.defaultStyleOf].
   ///
@@ -55,7 +52,9 @@ class TextButtonThemeData with Diagnosticable {
     if (identical(a, b)) {
       return a;
     }
-    return TextButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
+    return TextButtonThemeData(
+      style: ButtonStyle.lerp(a?.style, b?.style, t),
+    );
   }
 
   @override
@@ -92,12 +91,16 @@ class TextButtonThemeData with Diagnosticable {
 ///    [ButtonStyle] for [TextButton]s below the overall [Theme].
 class TextButtonTheme extends InheritedTheme {
   /// Create a [TextButtonTheme].
-  const TextButtonTheme({super.key, required this.data, required super.child});
+  const TextButtonTheme({
+    super.key,
+    required this.data,
+    required super.child,
+  });
 
   /// The configuration of this theme.
   final TextButtonThemeData data;
 
-  /// Retrieves the [TextButtonThemeData] from the closest ancestor [TextButtonTheme].
+  /// The closest instance of this class that encloses the given context.
   ///
   /// If there is no enclosing [TextButtonTheme] widget, then
   /// [ThemeData.textButtonTheme] is used.
@@ -108,8 +111,7 @@ class TextButtonTheme extends InheritedTheme {
   /// TextButtonThemeData theme = TextButtonTheme.of(context);
   /// ```
   static TextButtonThemeData of(BuildContext context) {
-    final TextButtonTheme? buttonTheme = context
-        .dependOnInheritedWidgetOfExactType<TextButtonTheme>();
+    final TextButtonTheme? buttonTheme = context.dependOnInheritedWidgetOfExactType<TextButtonTheme>();
     return buttonTheme?.data ?? Theme.of(context).textButtonTheme;
   }
 

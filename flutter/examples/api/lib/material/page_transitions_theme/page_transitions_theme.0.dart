@@ -15,6 +15,7 @@ class PageTransitionsThemeApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        useMaterial3: true,
         // Defines the page transition animations used by MaterialPageRoute
         // for different target platforms.
         // Non-specified target platforms will default to
@@ -43,7 +44,9 @@ class HomePage extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute<SecondPage>(builder: (BuildContext context) => const SecondPage()),
+              MaterialPageRoute<SecondPage>(
+                builder: (BuildContext context) => const SecondPage(),
+              ),
             );
           },
           child: const Text('To SecondPage'),

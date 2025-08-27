@@ -25,11 +25,10 @@ class RallyApp extends StatelessWidget {
   static const String loginRoute = routes.loginRoute;
   static const String homeRoute = routes.homeRoute;
 
-  static const SharedAxisPageTransitionsBuilder sharedZAxisTransitionBuilder =
-      SharedAxisPageTransitionsBuilder(
-        fillColor: RallyColors.primaryBackground,
-        transitionType: SharedAxisTransitionType.scaled,
-      );
+  static const SharedAxisPageTransitionsBuilder sharedZAxisTransitionBuilder = SharedAxisPageTransitionsBuilder(
+    fillColor: RallyColors.primaryBackground,
+    transitionType: SharedAxisTransitionType.scaled,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -68,14 +67,19 @@ class RallyApp extends StatelessWidget {
       scaffoldBackgroundColor: RallyColors.primaryBackground,
       focusColor: RallyColors.focusColor,
       textTheme: _buildRallyTextTheme(base.textTheme),
-      inputDecorationTheme: const InputDecorationThemeData(
-        labelStyle: TextStyle(color: RallyColors.gray, fontWeight: FontWeight.w500),
+      inputDecorationTheme: const InputDecorationTheme(
+        labelStyle: TextStyle(
+          color: RallyColors.gray,
+          fontWeight: FontWeight.w500,
+        ),
         filled: true,
         fillColor: RallyColors.inputBackground,
         focusedBorder: InputBorder.none,
       ),
       visualDensity: VisualDensity.standard,
-      colorScheme: base.colorScheme.copyWith(primary: RallyColors.primaryBackground),
+      colorScheme: base.colorScheme.copyWith(
+        primary: RallyColors.primaryBackground,
+      ),
     );
   }
 
@@ -102,6 +106,9 @@ class RallyApp extends StatelessWidget {
             letterSpacing: letterSpacingOrNone(1.4),
           ),
         )
-        .apply(displayColor: Colors.white, bodyColor: Colors.white);
+        .apply(
+          displayColor: Colors.white,
+          bodyColor: Colors.white,
+        );
   }
 }

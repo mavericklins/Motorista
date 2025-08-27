@@ -27,9 +27,13 @@ typedef GestureTest = void Function(GestureTester tester);
 
 @isTest
 void testGesture(String description, GestureTest callback, {LeakTesting? experimentalLeakTesting}) {
-  testWidgets(description, (_) async {
-    FakeAsync().run((FakeAsync async) {
-      callback(GestureTester._(async));
-    });
-  }, experimentalLeakTesting: experimentalLeakTesting);
+  testWidgets(
+    description,
+    (_) async {
+      FakeAsync().run((FakeAsync async) {
+        callback(GestureTester._(async));
+      });
+    },
+    experimentalLeakTesting: experimentalLeakTesting,
+  );
 }

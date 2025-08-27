@@ -30,12 +30,15 @@ Future<void> main() async {
         (String value) {},
         onError: (Object error, StackTrace stack) {
           assert(stack is stack_trace.Chain);
-          FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stack));
-        },
+          FlutterError.reportError(FlutterErrorDetails(
+            exception: error,
+            stack: stack,
+          ));
+        }
       );
 
       completer.completeError(const CustomException());
-    }, () {});
+    }, () { });
 
     final FlutterErrorDetails details = await errorCompleter.future;
     expect(details, isNotNull);

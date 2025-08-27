@@ -8,7 +8,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Flex overflow indicator', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const Center(child: Column(children: <Widget>[SizedBox(width: 200.0, height: 200.0)])),
+      const Center(
+        child: Column(
+          children: <Widget>[
+            SizedBox(width: 200.0, height: 200.0),
+          ],
+        ),
+      ),
     );
 
     expect(find.byType(Column), isNot(paints..rect()));
@@ -17,7 +23,11 @@ void main() {
       const Center(
         child: SizedBox(
           height: 100.0,
-          child: Column(children: <Widget>[SizedBox(width: 200.0, height: 200.0)]),
+          child: Column(
+            children: <Widget>[
+              SizedBox(width: 200.0, height: 200.0),
+            ],
+          ),
         ),
       ),
     );
@@ -30,7 +40,11 @@ void main() {
       const Center(
         child: SizedBox(
           height: 0.0,
-          child: Column(children: <Widget>[SizedBox(width: 200.0, height: 200.0)]),
+          child: Column(
+            children: <Widget>[
+              SizedBox(width: 200.0, height: 200.0),
+            ],
+          ),
         ),
       ),
     );

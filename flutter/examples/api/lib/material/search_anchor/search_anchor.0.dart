@@ -37,9 +37,7 @@ class _SearchBarAppState extends State<SearchBarApp> {
 
   Iterable<Widget> getSuggestions(SearchController controller) {
     final String input = controller.value.text;
-    return ColorLabel.values
-        .where((ColorLabel color) => color.label.contains(input))
-        .map(
+    return ColorLabel.values.where((ColorLabel color) => color.label.contains(input)).map(
           (ColorLabel filteredColor) => ListTile(
             leading: CircleAvatar(backgroundColor: filteredColor.color),
             title: Text(filteredColor.label),
@@ -70,7 +68,7 @@ class _SearchBarAppState extends State<SearchBarApp> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = ThemeData(colorSchemeSeed: selectedColorSeed);
+    final ThemeData themeData = ThemeData(useMaterial3: true, colorSchemeSeed: selectedColorSeed);
     final ColorScheme colors = themeData.colorScheme;
 
     return MaterialApp(
@@ -88,11 +86,7 @@ class _SearchBarAppState extends State<SearchBarApp> {
                     if (searchHistory.isNotEmpty) {
                       return getHistoryList(controller);
                     }
-                    return <Widget>[
-                      Center(
-                        child: Text('No search history.', style: TextStyle(color: colors.outline)),
-                      ),
-                    ];
+                    return <Widget>[Center(child: Text('No search history.', style: TextStyle(color: colors.outline)))];
                   }
                   return getSuggestions(controller);
                 },
@@ -112,7 +106,10 @@ class _SearchBarAppState extends State<SearchBarApp> {
   }
 }
 
-SizedBox cardSize = const SizedBox(width: 80, height: 30);
+SizedBox cardSize = const SizedBox(
+  width: 80,
+  height: 30,
+);
 
 enum ColorLabel {
   red('red', Colors.red),

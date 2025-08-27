@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Switch tabs in the TabBar', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.TabBarApp());
+    await tester.pumpWidget(
+      const example.TabBarApp(),
+    );
 
     final TabBar tabBar = tester.widget<TabBar>(find.byType(TabBar));
     expect(tabBar.tabs.length, 3);

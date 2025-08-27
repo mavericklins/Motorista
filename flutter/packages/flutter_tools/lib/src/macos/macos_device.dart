@@ -28,21 +28,21 @@ class MacOSDevice extends DesktopDevice {
        _logger = logger,
        _operatingSystemUtils = operatingSystemUtils,
        super(
-         'macos',
-         platformType: PlatformType.macos,
-         ephemeral: false,
-         processManager: processManager,
-         logger: logger,
-         fileSystem: fileSystem,
-         operatingSystemUtils: operatingSystemUtils,
-       );
+        'macos',
+        platformType: PlatformType.macos,
+        ephemeral: false,
+        processManager: processManager,
+        logger: logger,
+        fileSystem: fileSystem,
+        operatingSystemUtils: operatingSystemUtils,
+      );
 
   final ProcessManager _processManager;
   final Logger _logger;
   final OperatingSystemUtils _operatingSystemUtils;
 
   @override
-  Future<bool> isSupported() async => true;
+  bool isSupported() => true;
 
   @override
   String get name => 'macOS';
@@ -70,14 +70,12 @@ class MacOSDevice extends DesktopDevice {
   Future<void> buildForDevice({
     required BuildInfo buildInfo,
     String? mainPath,
-    bool usingCISystem = false,
   }) async {
     await buildMacOS(
       flutterProject: FlutterProject.current(),
       buildInfo: buildInfo,
       targetOverride: mainPath,
       verboseLogging: _logger.isVerbose,
-      usingCISystem: usingCISystem,
     );
   }
 
@@ -97,7 +95,9 @@ class MacOSDevice extends DesktopDevice {
       _logger.printError('Failed to foreground app; application bundle not found');
       return;
     }
-    _processManager.run(<String>['open', applicationBundle]).then((ProcessResult result) {
+    _processManager.run(<String>[
+      'open', applicationBundle,
+    ]).then((ProcessResult result) {
       if (result.exitCode != 0) {
         _logger.printError('Failed to foreground app; open returned ${result.exitCode}');
       }
@@ -135,7 +135,7 @@ class MacOSDevices extends PollingDeviceDiscovery {
   bool get canListAnything => _macOSWorkflow.canListDevices;
 
   @override
-  Future<List<Device>> pollingGetDevices({Duration? timeout}) async {
+  Future<List<Device>> pollingGetDevices({ Duration? timeout }) async {
     if (!canListAnything) {
       return const <Device>[];
     }

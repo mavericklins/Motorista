@@ -93,21 +93,23 @@ class IntegerSpinnerField extends StatelessWidget {
       // Add a text formatter that only allows integer values and a leading
       // minus sign.
       inputFormatters: <TextInputFormatter>[
-        TextInputFormatter.withFunction((TextEditingValue oldValue, TextEditingValue newValue) {
-          String newString;
-          if (newValue.text.startsWith('-')) {
-            newString = '-${newValue.text.replaceAll(RegExp(r'\D'), '')}';
-          } else {
-            newString = newValue.text.replaceAll(RegExp(r'\D'), '');
-          }
-          return newValue.copyWith(
-            text: newString,
-            selection: newValue.selection.copyWith(
-              baseOffset: newValue.selection.baseOffset.clamp(0, newString.length),
-              extentOffset: newValue.selection.extentOffset.clamp(0, newString.length),
-            ),
-          );
-        }),
+        TextInputFormatter.withFunction(
+          (TextEditingValue oldValue, TextEditingValue newValue) {
+            String newString;
+            if (newValue.text.startsWith('-')) {
+              newString = '-${newValue.text.replaceAll(RegExp(r'\D'), '')}';
+            } else {
+              newString = newValue.text.replaceAll(RegExp(r'\D'), '');
+            }
+            return newValue.copyWith(
+              text: newString,
+              selection: newValue.selection.copyWith(
+                baseOffset: newValue.selection.baseOffset.clamp(0, newString.length),
+                extentOffset: newValue.selection.extentOffset.clamp(0, newString.length),
+              ),
+            );
+          },
+        )
       ],
     );
   }
@@ -209,7 +211,9 @@ class _SpinnerFieldState<T> extends State<SpinnerField<T>> {
             child: TextField(
               autofocus: widget.autofocus,
               inputFormatters: widget.inputFormatters,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
               onChanged: (String value) => widget.onChanged?.call(widget.fromString(value)),
               controller: controller,
               textAlign: TextAlign.center,
@@ -225,14 +229,20 @@ class _SpinnerFieldState<T> extends State<SpinnerField<T>> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
-                  child: OutlinedButton(onPressed: _increment, child: const Icon(Icons.add)),
+                  child: OutlinedButton(
+                    onPressed: _increment,
+                    child: const Icon(Icons.add),
+                  ),
                 ),
                 Expanded(
-                  child: OutlinedButton(onPressed: _decrement, child: const Icon(Icons.remove)),
+                  child: OutlinedButton(
+                    onPressed: _decrement,
+                    child: const Icon(Icons.remove),
+                  ),
                 ),
               ],
             ),
-          ),
+          )
         ],
       ),
     );

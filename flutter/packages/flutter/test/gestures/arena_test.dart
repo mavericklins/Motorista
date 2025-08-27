@@ -15,7 +15,6 @@ class TestGestureArenaMember extends GestureArenaMember {
     expect(key, equals(primaryKey));
     acceptRan = true;
   }
-
   bool rejectRan = false;
 
   @override
@@ -156,18 +155,15 @@ void main() {
     tester.expectFirstWin();
   });
 
-  test(
-    'Win before close is delayed to close, and only first winner should win, regardless of order',
-    () {
-      final GestureTester tester = GestureTester();
-      tester.addFirst();
-      tester.addSecond();
-      tester.expectNothing();
-      tester.secondEntry.resolve(GestureDisposition.accepted);
-      tester.firstEntry.resolve(GestureDisposition.accepted);
-      tester.expectNothing();
-      tester.arena.close(primaryKey);
-      tester.expectSecondWin();
-    },
-  );
+  test('Win before close is delayed to close, and only first winner should win, regardless of order', () {
+    final GestureTester tester = GestureTester();
+    tester.addFirst();
+    tester.addSecond();
+    tester.expectNothing();
+    tester.secondEntry.resolve(GestureDisposition.accepted);
+    tester.firstEntry.resolve(GestureDisposition.accepted);
+    tester.expectNothing();
+    tester.arena.close(primaryKey);
+    tester.expectSecondWin();
+  });
 }

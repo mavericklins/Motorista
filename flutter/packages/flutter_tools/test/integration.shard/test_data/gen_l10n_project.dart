@@ -11,7 +11,10 @@ class GenL10nProject extends Project {
   GenL10nProject({required this.useNamedParameters});
 
   @override
-  Future<void> setUpIn(Directory dir, {bool useDeferredLoading = false}) {
+  Future<void> setUpIn(Directory dir, {
+    bool useDeferredLoading = false,
+    bool useSyntheticPackage = false,
+  }) {
     this.dir = dir;
     writeFile(fileSystem.path.join(dir.path, 'lib', 'l10n', 'app_en.arb'), appEn);
     writeFile(fileSystem.path.join(dir.path, 'lib', 'l10n', 'app_en_CA.arb'), appEnCa);
@@ -22,18 +25,20 @@ class GenL10nProject extends Project {
     writeFile(fileSystem.path.join(dir.path, 'lib', 'l10n', 'app_zh_Hant.arb'), appZhHant);
     writeFile(fileSystem.path.join(dir.path, 'lib', 'l10n', 'app_zh_Hans.arb'), appZhHans);
     writeFile(fileSystem.path.join(dir.path, 'lib', 'l10n', 'app_zh_Hant_TW.arb'), appZhHantTw);
-    writeFile(
-      fileSystem.path.join(dir.path, 'l10n.yaml'),
-      l10nYaml(useDeferredLoading: useDeferredLoading, useNamedParameters: useNamedParameters),
-    );
+    writeFile(fileSystem.path.join(dir.path, 'l10n.yaml'), l10nYaml(
+      useDeferredLoading: useDeferredLoading,
+      useSyntheticPackage: useSyntheticPackage,
+      useNamedParameters: useNamedParameters,
+    ));
     return super.setUpIn(dir);
   }
 
+
   @override
-  final pubspec = '''
+  final String pubspec = '''
 name: test_l10n_project
 environment:
-  sdk: ^3.7.0-0
+  sdk: '>=3.2.0-0 <4.0.0'
 
 dependencies:
   flutter:
@@ -41,19 +46,17 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any # Pick up the pinned version from flutter_localizations
-
-flutter:
-  generate: true
 ''';
 
   String? _main;
 
   @override
-  String get main => _main ??= (useNamedParameters ? _getMainWithNamedParameters() : _getMain());
+  String get main =>
+      _main ??= (useNamedParameters ? _getMainWithNamedParameters() : _getMain());
 
   final bool useNamedParameters;
 
-  final appEn = r'''
+  final String appEn = r'''
 {
   "@@locale": "en",
 
@@ -410,32 +413,18 @@ flutter:
     }
   },
   "datetime1": "{today, date, ::yMd}",
-  "datetime2": "{current, time, ::jms}",
-  "datetimeAddedFormats": "{firstDate} and {secondDate}",
-  "@datetimeAddedFormats": {
-    "description": "A message with two dates, with added formats",
-    "placeholders": {
-      "firstDate": {
-        "type": "DateTime",
-        "format": "yMd+jms"
-      },
-      "secondDate": {
-        "type": "DateTime",
-        "format": "yMMMMEEEEd+Hms+QQQQ"
-      }
-    }
-  }
+  "datetime2": "{current, time, ::jms}"
 }
 ''';
 
-  final appEnCa = r'''
+  final String appEnCa = r'''
 {
   "@@locale": "en_CA",
   "helloWorld": "CA Hello World"
 }
 ''';
 
-  final appEnGb = r'''
+  final String appEnGb = r'''
 {
   "@@locale": "en_GB",
   "helloWorld": "GB Hello World"
@@ -445,7 +434,7 @@ flutter:
   // All these messages are the template language's message with 'ES - '
   // appended. This makes validating test behavior easier. The interpolated
   // messages are different where applicable.
-  final appEs = r'''
+  final String appEs = r'''
 {
   "@@locale": "es",
   "helloWorld": "ES - Hello world",
@@ -477,7 +466,7 @@ flutter:
 }
 ''';
 
-  final appEs419 = r'''
+  final String appEs419 = r'''
 {
   "@@locale": "es_419",
   "helloWorld": "ES 419 - Hello World",
@@ -485,7 +474,7 @@ flutter:
 }
 ''';
 
-  final appZh = r'''
+  final String appZh = r'''
 {
   "@@locale": "zh",
   "helloWorld": "你好世界",
@@ -494,21 +483,21 @@ flutter:
 }
 ''';
 
-  final appZhHans = r'''
+  final String appZhHans = r'''
 {
   "@@locale": "zh_Hans",
   "helloWorld": "简体你好世界"
 }
   ''';
 
-  final appZhHant = r'''
+  final String appZhHant = r'''
 {
   "@@locale": "zh_Hant",
   "helloWorld": "繁體你好世界"
 }
   ''';
 
-  final appZhHantTw = r'''
+  final String appZhHantTw = r'''
 {
   "@@locale": "zh_Hant_TW",
   "helloWorld": "台灣繁體你好世界"
@@ -704,7 +693,6 @@ class Home extends StatelessWidget {
               "${localizations.selectInPlural('female', 1)}",
               '${localizations.datetime1(DateTime(2023, 6, 26))}',
               '${localizations.datetime2(DateTime(2023, 6, 26, 5, 23))}',
-              '${localizations.datetimeAddedFormats(DateTime(2024, 10, 6, 23, 29, 48), DateTime(2000, 7, 4, 12, 54, 32))}',
             ]);
           },
         ),
@@ -989,7 +977,6 @@ class Home extends StatelessWidget {
               "${localizations.selectInPlural(gender: 'female', count: 1)}",
               '${localizations.datetime1(today: DateTime(2023, 6, 26))}',
               '${localizations.datetime2(current: DateTime(2023, 6, 26, 5, 23))}',
-              '${localizations.datetimeAddedFormats(firstDate: DateTime(2024, 10, 6, 23, 29, 48), secondDate: DateTime(2000, 7, 4, 12, 54, 32))}',
             ]);
           },
         ),
@@ -1084,11 +1071,19 @@ void main() {
   );
 }''';
 
-  String l10nYaml({required bool useDeferredLoading, required bool useNamedParameters}) {
-    var l10nYamlString = '';
+  String l10nYaml({
+    required bool useDeferredLoading,
+    required bool useSyntheticPackage,
+    required bool useNamedParameters,
+  }) {
+    String l10nYamlString = '';
 
     if (useDeferredLoading) {
       l10nYamlString += 'use-deferred-loading: true\n';
+    }
+
+    if (!useSyntheticPackage) {
+      l10nYamlString += 'synthetic-package: false\n';
     }
 
     if (useNamedParameters) {

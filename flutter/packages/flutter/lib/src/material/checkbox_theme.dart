@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'checkbox.dart';
-library;
-
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/foundation.dart';
@@ -64,10 +61,10 @@ class CheckboxThemeData with Diagnosticable {
   /// {@macro flutter.material.checkbox.checkColor}
   ///
   /// Resolves in the following states:
-  ///  * [WidgetState.selected].
-  ///  * [WidgetState.hovered].
-  ///  * [WidgetState.focused].
-  ///  * [WidgetState.disabled].
+  ///  * [MaterialState.selected].
+  ///  * [MaterialState.hovered].
+  ///  * [MaterialState.focused].
+  ///  * [MaterialState.disabled].
   ///
   /// If specified, overrides the default value of [Checkbox.checkColor].
   final MaterialStateProperty<Color?>? checkColor;
@@ -140,12 +137,7 @@ class CheckboxThemeData with Diagnosticable {
       mouseCursor: t < 0.5 ? a?.mouseCursor : b?.mouseCursor,
       fillColor: MaterialStateProperty.lerp<Color?>(a?.fillColor, b?.fillColor, t, Color.lerp),
       checkColor: MaterialStateProperty.lerp<Color?>(a?.checkColor, b?.checkColor, t, Color.lerp),
-      overlayColor: MaterialStateProperty.lerp<Color?>(
-        a?.overlayColor,
-        b?.overlayColor,
-        t,
-        Color.lerp,
-      ),
+      overlayColor: MaterialStateProperty.lerp<Color?>(a?.overlayColor, b?.overlayColor, t, Color.lerp),
       splashRadius: lerpDouble(a?.splashRadius, b?.splashRadius, t),
       materialTapTargetSize: t < 0.5 ? a?.materialTapTargetSize : b?.materialTapTargetSize,
       visualDensity: t < 0.5 ? a?.visualDensity : b?.visualDensity,
@@ -175,60 +167,28 @@ class CheckboxThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is CheckboxThemeData &&
-        other.mouseCursor == mouseCursor &&
-        other.fillColor == fillColor &&
-        other.checkColor == checkColor &&
-        other.overlayColor == overlayColor &&
-        other.splashRadius == splashRadius &&
-        other.materialTapTargetSize == materialTapTargetSize &&
-        other.visualDensity == visualDensity &&
-        other.shape == shape &&
-        other.side == side;
+    return other is CheckboxThemeData
+      && other.mouseCursor == mouseCursor
+      && other.fillColor == fillColor
+      && other.checkColor == checkColor
+      && other.overlayColor == overlayColor
+      && other.splashRadius == splashRadius
+      && other.materialTapTargetSize == materialTapTargetSize
+      && other.visualDensity == visualDensity
+      && other.shape == shape
+      && other.side == side;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<MaterialStateProperty<MouseCursor?>>(
-        'mouseCursor',
-        mouseCursor,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<MaterialStateProperty<Color?>>(
-        'fillColor',
-        fillColor,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<MaterialStateProperty<Color?>>(
-        'checkColor',
-        checkColor,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<MaterialStateProperty<Color?>>(
-        'overlayColor',
-        overlayColor,
-        defaultValue: null,
-      ),
-    );
+    properties.add(DiagnosticsProperty<MaterialStateProperty<MouseCursor?>>('mouseCursor', mouseCursor, defaultValue: null));
+    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('fillColor', fillColor, defaultValue: null));
+    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('checkColor', checkColor, defaultValue: null));
+    properties.add(DiagnosticsProperty<MaterialStateProperty<Color?>>('overlayColor', overlayColor, defaultValue: null));
     properties.add(DoubleProperty('splashRadius', splashRadius, defaultValue: null));
-    properties.add(
-      DiagnosticsProperty<MaterialTapTargetSize>(
-        'materialTapTargetSize',
-        materialTapTargetSize,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<VisualDensity>('visualDensity', visualDensity, defaultValue: null),
-    );
+    properties.add(DiagnosticsProperty<MaterialTapTargetSize>('materialTapTargetSize', materialTapTargetSize, defaultValue: null));
+    properties.add(DiagnosticsProperty<VisualDensity>('visualDensity', visualDensity, defaultValue: null));
     properties.add(DiagnosticsProperty<OutlinedBorder>('shape', shape, defaultValue: null));
     properties.add(DiagnosticsProperty<BorderSide>('side', side, defaultValue: null));
   }
@@ -241,13 +201,7 @@ class CheckboxThemeData with Diagnosticable {
     if (identical(a, b)) {
       return a;
     }
-    if (a is MaterialStateBorderSide) {
-      a = a.resolve(<WidgetState>{});
-    }
-    if (b is MaterialStateBorderSide) {
-      b = b.resolve(<WidgetState>{});
-    }
-    return BorderSide.lerp(a!, b!, t);
+    return BorderSide.lerp(a, b, t);
   }
 }
 
@@ -267,7 +221,11 @@ class CheckboxThemeData with Diagnosticable {
 class CheckboxTheme extends InheritedWidget {
   /// Constructs a checkbox theme that configures all descendant [Checkbox]
   /// widgets.
-  const CheckboxTheme({super.key, required this.data, required super.child});
+  const CheckboxTheme({
+    super.key,
+    required this.data,
+    required super.child,
+  });
 
   /// The properties used for all descendant [Checkbox] widgets.
   final CheckboxThemeData data;
@@ -281,8 +239,7 @@ class CheckboxTheme extends InheritedWidget {
   /// CheckboxThemeData theme = CheckboxTheme.of(context);
   /// ```
   static CheckboxThemeData of(BuildContext context) {
-    final CheckboxTheme? checkboxTheme = context
-        .dependOnInheritedWidgetOfExactType<CheckboxTheme>();
+    final CheckboxTheme? checkboxTheme = context.dependOnInheritedWidgetOfExactType<CheckboxTheme>();
     return checkboxTheme?.data ?? Theme.of(context).checkboxTheme;
   }
 

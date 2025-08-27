@@ -32,7 +32,10 @@ class _CupertinoTextFieldDemoState extends State<CupertinoTextFieldDemo> {
       textCapitalization: TextCapitalization.sentences,
       placeholder: 'Text Message',
       decoration: BoxDecoration(
-        border: Border.all(width: 0.0, color: CupertinoColors.inactiveGray),
+        border: Border.all(
+          width: 0.0,
+          color: CupertinoColors.inactiveGray,
+        ),
         borderRadius: BorderRadius.circular(15.0),
       ),
       maxLines: null,
@@ -53,7 +56,7 @@ class _CupertinoTextFieldDemoState extends State<CupertinoTextFieldDemo> {
       ),
       autofocus: true,
       suffixMode: OverlayVisibilityMode.editing,
-      onSubmitted: (String text) => setState(() => _chatTextController!.clear()),
+      onSubmitted: (String text)=> setState(()=> _chatTextController!.clear()),
     );
   }
 

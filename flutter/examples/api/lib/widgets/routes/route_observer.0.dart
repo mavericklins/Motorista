@@ -18,7 +18,7 @@ class RouteObserverApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorObservers: <NavigatorObserver>[routeObserver],
+      navigatorObservers: <NavigatorObserver>[ routeObserver ],
       home: const RouteObserverExample(),
     );
   }
@@ -65,7 +65,10 @@ class _RouteObserverExampleState extends State<RouteObserverExample> with RouteA
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('RouteObserver log:', style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              'RouteObserver log:',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 300.0),
               child: ListView.builder(
@@ -74,14 +77,19 @@ class _RouteObserverExampleState extends State<RouteObserverExample> with RouteA
                   if (log.isEmpty) {
                     return const SizedBox.shrink();
                   }
-                  return Text(log[index], textAlign: TextAlign.center);
+                  return Text(
+                    log[index],
+                    textAlign: TextAlign.center,
+                  );
                 },
               ),
             ),
             OutlinedButton(
               onPressed: () {
                 Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(builder: (BuildContext context) => const NextPage()),
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const NextPage(),
+                  ),
                 );
               },
               child: const Text('Go to next page'),
@@ -105,7 +113,7 @@ class NextPage extends StatelessWidget {
             Navigator.of(context).pop();
           },
           child: const Text('Go back to RouteAware page'),
-        ),
+        )
       ),
     );
   }

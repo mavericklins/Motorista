@@ -29,6 +29,7 @@ class AndroidClassName {
 
 /// Action constants which correspond to `AccessibilityAction` in Android.
 enum AndroidSemanticsAction {
+
   /// Matches `AccessibilityAction.ACTION_FOCUS`.
   focus(_kFocusIndex),
 

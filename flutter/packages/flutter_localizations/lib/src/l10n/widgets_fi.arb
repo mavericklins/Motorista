@@ -4,12 +4,5 @@
   "reorderItemUp": "Siirrä ylös",
   "reorderItemDown": "Siirrä alas",
   "reorderItemLeft": "Siirrä vasemmalle",
-  "reorderItemRight": "Siirrä oikealle",
-  "copyButtonLabel": "Kopioi",
-  "cutButtonLabel": "Leikkaa",
-  "lookUpButtonLabel": "Hae",
-  "searchWebButtonLabel": "Hae verkosta",
-  "shareButtonLabel": "Jaa",
-  "pasteButtonLabel": "Liitä",
-  "selectAllButtonLabel": "Valitse kaikki"
+  "reorderItemRight": "Siirrä oikealle"
 }

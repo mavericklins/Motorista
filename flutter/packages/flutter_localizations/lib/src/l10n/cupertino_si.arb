@@ -27,7 +27,5 @@
   "lookUpButtonLabel": "උඩ බලන්න",
   "searchWebButtonLabel": "වෙබය සොයන්න",
   "shareButtonLabel": "බෙදා ගන්න...",
-  "clearButtonLabel": "හිස් කරන්න",
-  "cancelButtonLabel": "අවලංගු කරන්න",
-  "backButtonLabel": "Back"
+  "clearButtonLabel": "Clear"
 }

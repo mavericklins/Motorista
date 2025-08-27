@@ -2,13 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'action_chip.dart';
-/// @docImport 'circle_avatar.dart';
-/// @docImport 'filter_chip.dart';
-/// @docImport 'input_chip.dart';
-/// @docImport 'material.dart';
-library;
-
 import 'package:flutter/foundation.dart' show clampDouble;
 import 'package:flutter/widgets.dart';
 
@@ -100,8 +93,6 @@ class ChoiceChip extends StatelessWidget
     this.checkmarkColor,
     this.avatarBorder = const CircleBorder(),
     this.avatarBoxConstraints,
-    this.chipAnimationStyle,
-    this.mouseCursor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.flat;
@@ -143,8 +134,6 @@ class ChoiceChip extends StatelessWidget
     this.checkmarkColor,
     this.avatarBorder = const CircleBorder(),
     this.avatarBoxConstraints,
-    this.chipAnimationStyle,
-    this.mouseCursor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.elevated;
@@ -207,10 +196,6 @@ class ChoiceChip extends StatelessWidget
   final IconThemeData? iconTheme;
   @override
   final BoxConstraints? avatarBoxConstraints;
-  @override
-  final ChipAnimationStyle? chipAnimationStyle;
-  @override
-  final MouseCursor? mouseCursor;
 
   @override
   bool get isEnabled => onSelected != null;
@@ -222,8 +207,8 @@ class ChoiceChip extends StatelessWidget
     assert(debugCheckHasMaterial(context));
     final ChipThemeData chipTheme = ChipTheme.of(context);
     final ChipThemeData? defaults = Theme.of(context).useMaterial3
-        ? _ChoiceChipDefaultsM3(context, isEnabled, selected, _chipVariant)
-        : null;
+      ? _ChoiceChipDefaultsM3(context, isEnabled, selected, _chipVariant)
+      : null;
     return RawChip(
       defaultProperties: defaults,
       avatar: avatar,
@@ -256,8 +241,6 @@ class ChoiceChip extends StatelessWidget
       avatarBorder: avatarBorder,
       iconTheme: iconTheme,
       avatarBoxConstraints: avatarBoxConstraints,
-      chipAnimationStyle: chipAnimationStyle,
-      mouseCursor: mouseCursor,
     );
   }
 }
@@ -269,7 +252,6 @@ class ChoiceChip extends StatelessWidget
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
-// dart format off
 class _ChoiceChipDefaultsM3 extends ChipThemeData {
   _ChoiceChipDefaultsM3(
     this.context,
@@ -353,7 +335,7 @@ class _ChoiceChipDefaultsM3 extends ChipThemeData {
   @override
   BorderSide? get side => _chipVariant == _ChipVariant.flat && !isSelected
     ? isEnabled
-      ? BorderSide(color: _colors.outlineVariant)
+      ? BorderSide(color: _colors.outline)
       : BorderSide(color: _colors.onSurface.withOpacity(0.12))
     : const BorderSide(color: Colors.transparent);
 
@@ -389,6 +371,5 @@ class _ChoiceChipDefaultsM3 extends ChipThemeData {
     )!;
   }
 }
-// dart format on
 
 // END GENERATED TOKEN PROPERTIES - ChoiceChip

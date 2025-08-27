@@ -13,7 +13,13 @@ class SliderApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: SliderExample());
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: const Color(0xff6750a4),
+        useMaterial3: true,
+      ),
+      home: const SliderExample(),
+    );
   }
 }
 
@@ -25,36 +31,22 @@ class SliderExample extends StatefulWidget {
 }
 
 class _SliderExampleState extends State<SliderExample> {
-  double _currentSliderPrimaryValue = 0.2;
-  double _currentSliderSecondaryValue = 0.5;
+  double _currentSliderValue = 20;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Slider')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Slider(
-            value: _currentSliderPrimaryValue,
-            secondaryTrackValue: _currentSliderSecondaryValue,
-            label: _currentSliderPrimaryValue.round().toString(),
-            onChanged: (double value) {
-              setState(() {
-                _currentSliderPrimaryValue = value;
-              });
-            },
-          ),
-          Slider(
-            value: _currentSliderSecondaryValue,
-            label: _currentSliderSecondaryValue.round().toString(),
-            onChanged: (double value) {
-              setState(() {
-                _currentSliderSecondaryValue = value;
-              });
-            },
-          ),
-        ],
+      body: Slider(
+        value: _currentSliderValue,
+        max: 100,
+        divisions: 5,
+        label: _currentSliderValue.round().toString(),
+        onChanged: (double value) {
+          setState(() {
+            _currentSliderValue = value;
+          });
+        },
       ),
     );
   }

@@ -18,7 +18,7 @@
   "cutButtonLabel": "Αποκοπή",
   "copyButtonLabel": "Αντιγραφή",
   "pasteButtonLabel": "Επικόλληση",
-  "clearButtonLabel": "Διαγραφή",
+  "clearButtonLabel": "Clear",
   "selectAllButtonLabel": "Επιλογή όλων",
   "tabSemanticsLabel": "Καρτέλα $tabIndex από $tabCount",
   "modalBarrierDismissLabel": "Παράβλεψη",
@@ -27,7 +27,5 @@
   "menuDismissLabel": "Παράβλεψη μενού",
   "lookUpButtonLabel": "Look Up",
   "searchWebButtonLabel": "Αναζήτηση στον ιστό",
-  "shareButtonLabel": "Κοινοποίηση…",
-  "cancelButtonLabel": "Ακύρωση",
-  "backButtonLabel": "Πίσω"
+  "shareButtonLabel": "Κοινοποίηση…"
 }

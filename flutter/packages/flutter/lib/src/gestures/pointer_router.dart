@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
 import 'package:flutter/foundation.dart';
 
 import 'events.dart';
@@ -105,15 +106,13 @@ class PointerRouter {
         ];
         return true;
       }());
-      FlutterError.reportError(
-        FlutterErrorDetails(
-          exception: exception,
-          stack: stack,
-          library: 'gesture library',
-          context: ErrorDescription('while routing a pointer event'),
-          informationCollector: collector,
-        ),
-      );
+      FlutterError.reportError(FlutterErrorDetails(
+        exception: exception,
+        stack: stack,
+        library: 'gesture library',
+        context: ErrorDescription('while routing a pointer event'),
+        informationCollector: collector,
+      ));
     }
   }
 
@@ -123,11 +122,13 @@ class PointerRouter {
   /// PointerRouter object.
   void route(PointerEvent event) {
     final Map<PointerRoute, Matrix4?>? routes = _routeMap[event.pointer];
-    final Map<PointerRoute, Matrix4?> copiedGlobalRoutes = Map<PointerRoute, Matrix4?>.of(
-      _globalRoutes,
-    );
+    final Map<PointerRoute, Matrix4?> copiedGlobalRoutes = Map<PointerRoute, Matrix4?>.of(_globalRoutes);
     if (routes != null) {
-      _dispatchEventToRoutes(event, routes, Map<PointerRoute, Matrix4?>.of(routes));
+      _dispatchEventToRoutes(
+        event,
+        routes,
+        Map<PointerRoute, Matrix4?>.of(routes),
+      );
     }
     _dispatchEventToRoutes(event, _globalRoutes, copiedGlobalRoutes);
   }

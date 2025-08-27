@@ -5,6 +5,7 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+
 void main() {
   test('Disposing controller removes listeners to avoid memory leaks', () {
     final _TestAnimationController controller = _TestAnimationController(
@@ -36,7 +37,10 @@ void main() {
 }
 
 class _TestAnimationController extends AnimationController {
-  _TestAnimationController({super.duration, required super.vsync});
+  _TestAnimationController({
+    super.duration,
+    required super.vsync,
+  });
 
   void publicNotifyListeners() {
     super.notifyListeners();

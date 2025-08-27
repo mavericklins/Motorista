@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'form.dart';
-library;
-
 import 'framework.dart';
 import 'navigator.dart';
 import 'routes.dart';
@@ -19,17 +16,21 @@ import 'routes.dart';
 ///  * [Form], which provides an `onWillPop` callback that enables the form
 ///    to veto a `pop` initiated by the app's back button.
 @Deprecated(
-  'Use PopScope instead. The Android predictive back feature will not work with WillPopScope. '
+  'Use PopScope instead. '
   'This feature was deprecated after v3.12.0-1.0.pre.',
 )
 class WillPopScope extends StatefulWidget {
   /// Creates a widget that registers a callback to veto attempts by the user to
   /// dismiss the enclosing [ModalRoute].
   @Deprecated(
-    'Use PopScope instead. The Android predictive back feature will not work with WillPopScope. '
+    'Use PopScope instead. '
     'This feature was deprecated after v3.12.0-1.0.pre.',
   )
-  const WillPopScope({super.key, required this.child, required this.onWillPop});
+  const WillPopScope({
+    super.key,
+    required this.child,
+    required this.onWillPop,
+  });
 
   /// The widget below this widget in the tree.
   ///

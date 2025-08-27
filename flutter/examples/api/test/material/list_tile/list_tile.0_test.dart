@@ -10,7 +10,9 @@ void main() {
   testWidgets('ListTile with Hero does not throw', (WidgetTester tester) async {
     const int totalTiles = 3;
 
-    await tester.pumpWidget(const example.ListTileApp());
+    await tester.pumpWidget(
+      const example.ListTileApp(),
+    );
 
     expect(find.byType(ListTile), findsNWidgets(totalTiles));
 

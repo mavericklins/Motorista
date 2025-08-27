@@ -19,7 +19,10 @@ const int _deviationImprovementThreshold = 10;
 
 /// Height of a product image, paired with the product's id.
 class _TaggedHeightData {
-  const _TaggedHeightData({required this.index, required this.height});
+  const _TaggedHeightData({
+    required this.index,
+    required this.height,
+  });
 
   /// The id of the corresponding product.
   final int index;
@@ -44,9 +47,8 @@ String _encodeParameters({
   required double largeImageWidth,
   required double smallImageWidth,
 }) {
-  final String productString = <String>[
-    for (final Product product in products) product.id.toString(),
-  ].join(',');
+  final String productString =
+      <String>[for (final Product product in products) product.id.toString()].join(',');
   return '$columnCount;$productString,$largeImageWidth,$smallImageWidth';
 }
 
@@ -57,7 +59,9 @@ List<List<Product>> _generateLayout({
 }) {
   return <List<Product>>[
     for (final List<int> column in layout)
-      <Product>[for (final int index in column) products[index]],
+      <Product>[
+        for (final int index in column) products[index],
+      ]
   ];
 }
 
@@ -66,7 +70,10 @@ List<List<Product>> _generateLayout({
 /// [_iterateUntilBalanced] moves and swaps objects between columns
 /// until their heights are sufficiently close to each other.
 /// This prevents the layout having significant, avoidable gaps at the bottom.
-void _iterateUntilBalanced(List<Set<_TaggedHeightData>> columnObjects, List<double> columnHeights) {
+void _iterateUntilBalanced(
+  List<Set<_TaggedHeightData>> columnObjects,
+  List<double> columnHeights,
+) {
   int failedMoves = 0;
   final int columnCount = columnObjects.length;
 
@@ -102,7 +109,9 @@ void _iterateUntilBalanced(List<Set<_TaggedHeightData>> columnObjects, List<doub
             if (a.index == _emptyElement && b.index == _emptyElement) {
               continue;
             } else {
-              final double score = (columnHeights[source] - a.height + b.height - bestHeight).abs();
+              final double score =
+                  (columnHeights[source] - a.height + b.height - bestHeight)
+                      .abs();
               if (score < scoreLimit - _deviationImprovementThreshold) {
                 success = true;
                 if (bestScore == null || score < bestScore) {
@@ -157,9 +166,7 @@ List<List<int>> _balancedDistribution({
   assert(biases.length == columnCount);
 
   final List<Set<_TaggedHeightData>> columnObjects = List<Set<_TaggedHeightData>>.generate(
-    columnCount,
-    (int column) => <_TaggedHeightData>{},
-  );
+      columnCount, (int column) => <_TaggedHeightData>{});
 
   final List<double> columnHeights = List<double>.from(biases);
 
@@ -198,7 +205,10 @@ List<List<Product>> balancedLayout({
 
   // Check if this layout is cached.
   if (LayoutCache.of(context).containsKey(encodedParameters)) {
-    return _generateLayout(products: products, layout: LayoutCache.of(context)[encodedParameters]!);
+    return _generateLayout(
+      products: products,
+      layout: LayoutCache.of(context)[encodedParameters]!,
+    );
   }
 
   final List<double> productHeights = <double>[
@@ -220,7 +230,10 @@ List<List<Product>> balancedLayout({
 
   LayoutCache.of(context)[encodedParameters] = layout;
 
-  final List<List<Product>> result = _generateLayout(products: products, layout: layout);
+  final List<List<Product>> result = _generateLayout(
+    products: products,
+    layout: layout,
+  );
 
   return result;
 }

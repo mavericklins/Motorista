@@ -14,8 +14,12 @@ typedef DeferredWidgetBuilder = Widget Function();
 /// state as long as closure to create widget stays the same.
 ///
 class DeferredWidget extends StatefulWidget {
-  DeferredWidget(this.libraryLoader, this.createWidget, {super.key, Widget? placeholder})
-    : placeholder = placeholder ?? Container();
+  DeferredWidget(
+    this.libraryLoader,
+    this.createWidget, {
+    super.key,
+    Widget? placeholder,
+  }) : placeholder = placeholder ?? Container();
 
   final LibraryLoader libraryLoader;
   final DeferredWidgetBuilder createWidget;
@@ -49,7 +53,8 @@ class _DeferredWidgetState extends State<DeferredWidget> {
     if (DeferredWidget._loadedModules.contains(widget.libraryLoader)) {
       _onLibraryLoaded();
     } else {
-      DeferredWidget.preload(widget.libraryLoader).then((dynamic _) => _onLibraryLoaded());
+      DeferredWidget.preload(widget.libraryLoader)
+          .then((dynamic _) => _onLibraryLoaded());
     }
     super.initState();
   }
@@ -76,7 +81,10 @@ class _DeferredWidgetState extends State<DeferredWidget> {
 /// Displays a progress indicator and text description explaining that
 /// the widget is a deferred component and is currently being installed.
 class DeferredLoadingPlaceholder extends StatelessWidget {
-  const DeferredLoadingPlaceholder({super.key, this.name = 'This widget'});
+  const DeferredLoadingPlaceholder({
+    super.key,
+    this.name = 'This widget',
+  });
 
   final String name;
 
@@ -85,21 +93,23 @@ class DeferredLoadingPlaceholder extends StatelessWidget {
     return Center(
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey[700],
-          border: Border.all(width: 20, color: Colors.grey[700]!),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-        ),
+            color: Colors.grey[700],
+            border: Border.all(
+              width: 20,
+              color: Colors.grey[700]!,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
         width: 250,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('$name is installing.', style: Theme.of(context).textTheme.headlineMedium),
+            Text('$name is installing.',
+                style: Theme.of(context).textTheme.headlineMedium),
             Container(height: 10),
             Text(
-              '$name is a deferred component which are downloaded and installed at runtime.',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+                '$name is a deferred component which are downloaded and installed at runtime.',
+                style: Theme.of(context).textTheme.bodyLarge),
             Container(height: 20),
             const Center(child: CircularProgressIndicator()),
           ],

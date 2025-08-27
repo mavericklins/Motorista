@@ -9,9 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 // This file is for tests for WidgetsBinding that require a `LiveTestWidgetsFlutterBinding`.
 void main() {
   LiveTestWidgetsFlutterBinding();
-  testWidgets('ReportTiming callback records the sendFramesToEngine when it was scheduled', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('ReportTiming callback records the sendFramesToEngine when it was scheduled', (WidgetTester tester) async {
     // Addresses https://github.com/flutter/flutter/issues/144261
     // This test needs LiveTestWidgetsFlutterBinding for multiple reasons.
     //
@@ -58,7 +56,9 @@ class DummyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Directionality(
       textDirection: TextDirection.ltr,
-      child: Center(child: Text('First frame')),
+      child: Center(
+        child: Text('First frame'),
+      ),
     );
   }
 }

@@ -11,9 +11,7 @@ void main() {
   group('FloatingActionButton', () {
     const BoxConstraints defaultFABConstraints = BoxConstraints.tightFor(width: 56.0, height: 56.0);
     const ShapeBorder defaultFABShape = CircleBorder();
-    const ShapeBorder defaultFABShapeM3 = RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(16.0)),
-    );
+    const ShapeBorder defaultFABShapeM3 = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0)));
     const EdgeInsets defaultFABPadding = EdgeInsets.zero;
 
     testWidgets('Material2 - theme: ThemeData.light(), enabled: true', (WidgetTester tester) async {
@@ -22,17 +20,15 @@ void main() {
         MaterialApp(
           theme: theme,
           home: Center(
-            child: FloatingActionButton(
-              onPressed: () {}, // button.enabled == true
-              child: const Icon(Icons.add),
-            ),
+              child: FloatingActionButton(
+                onPressed: () { }, // button.enabled == true
+                child: const Icon(Icons.add),
+              ),
           ),
         ),
       );
 
-      final RawMaterialButton raw = tester.widget<RawMaterialButton>(
-        find.byType(RawMaterialButton),
-      );
+      final RawMaterialButton raw = tester.widget<RawMaterialButton>(find.byType(RawMaterialButton));
       expect(raw.enabled, true);
       expect(raw.textStyle!.color, const Color(0xffffffff));
       expect(raw.fillColor, const Color(0xff2196f3));
@@ -47,22 +43,20 @@ void main() {
     });
 
     testWidgets('Material3 - theme: ThemeData.light(), enabled: true', (WidgetTester tester) async {
-      final ThemeData theme = ThemeData.light();
+      final ThemeData theme = ThemeData.light(useMaterial3: true);
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
           home: Center(
             child: FloatingActionButton(
-              onPressed: () {}, // button.enabled == true
+              onPressed: () { }, // button.enabled == true
               child: const Icon(Icons.add),
             ),
           ),
         ),
       );
 
-      final RawMaterialButton raw = tester.widget<RawMaterialButton>(
-        find.byType(RawMaterialButton),
-      );
+      final RawMaterialButton raw = tester.widget<RawMaterialButton>(find.byType(RawMaterialButton));
       expect(raw.enabled, true);
       expect(raw.textStyle!.color, theme.colorScheme.onPrimaryContainer);
       expect(raw.fillColor, theme.colorScheme.primaryContainer);
@@ -76,25 +70,21 @@ void main() {
       expect(raw.materialTapTargetSize, MaterialTapTargetSize.padded);
     });
 
-    testWidgets('Material2 - theme: ThemeData.light(), enabled: false', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Material2 - theme: ThemeData.light(), enabled: false', (WidgetTester tester) async {
       final ThemeData theme = ThemeData.light(useMaterial3: false);
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
           home: const Center(
-            child: FloatingActionButton(
-              onPressed: null, // button.enabled == false
-              child: Icon(Icons.add),
-            ),
+              child: FloatingActionButton(
+                onPressed: null, // button.enabled == false
+                child: Icon(Icons.add),
+              ),
           ),
         ),
       );
 
-      final RawMaterialButton raw = tester.widget<RawMaterialButton>(
-        find.byType(RawMaterialButton),
-      );
+      final RawMaterialButton raw = tester.widget<RawMaterialButton>(find.byType(RawMaterialButton));
       expect(raw.enabled, false);
       expect(raw.textStyle!.color, const Color(0xffffffff));
       expect(raw.fillColor, const Color(0xff2196f3));
@@ -110,10 +100,8 @@ void main() {
       expect(raw.materialTapTargetSize, MaterialTapTargetSize.padded);
     });
 
-    testWidgets('Material3 - theme: ThemeData.light(), enabled: false', (
-      WidgetTester tester,
-    ) async {
-      final ThemeData theme = ThemeData.light();
+    testWidgets('Material3 - theme: ThemeData.light(), enabled: false', (WidgetTester tester) async {
+      final ThemeData theme = ThemeData.light(useMaterial3: true);
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
@@ -126,9 +114,7 @@ void main() {
         ),
       );
 
-      final RawMaterialButton raw = tester.widget<RawMaterialButton>(
-        find.byType(RawMaterialButton),
-      );
+      final RawMaterialButton raw = tester.widget<RawMaterialButton>(find.byType(RawMaterialButton));
       expect(raw.enabled, false);
       expect(raw.textStyle!.color, theme.colorScheme.onPrimaryContainer);
       expect(raw.fillColor, theme.colorScheme.primaryContainer);

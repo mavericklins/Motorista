@@ -6,35 +6,34 @@ import '../../foo/fake_render_box.dart';
 
 mixin ARenderBoxMixin on RenderBox {
   @override
-  void computeMaxIntrinsicWidth() {}
+  void computeMaxIntrinsicWidth() {  }
 
   @override
-  void computeMinIntrinsicWidth() => computeMaxIntrinsicWidth(); // ERROR: computeMaxIntrinsicWidth(). Consider calling getMaxIntrinsicWidth instead.
+  void computeMinIntrinsicWidth() => computeMaxIntrinsicWidth(); // BAD
 
   @override
   void computeMinIntrinsicHeight() {
-    final void Function() f =
-        computeMaxIntrinsicWidth; // ERROR: f = computeMaxIntrinsicWidth. Consider calling getMaxIntrinsicWidth instead.
+    final void Function() f = computeMaxIntrinsicWidth; // BAD
     f();
   }
 }
 
 extension ARenderBoxExtension on RenderBox {
   void test() {
-    computeDryBaseline(); // ERROR: computeDryBaseline(). Consider calling getDryBaseline instead.
-    computeDryLayout(); // ERROR: computeDryLayout(). Consider calling getDryLayout instead.
+    computeDryBaseline(); // BAD
+    computeDryLayout(); // BAD
   }
 }
 
 class RenderBoxSubclass1 extends RenderBox {
   @override
   void computeDryLayout() {
-    computeDistanceToActualBaseline(); // ERROR: computeDistanceToActualBaseline(). Consider calling getDistanceToBaseline, or getDistanceToActualBaseline instead.
+    computeDistanceToActualBaseline(); // BAD
   }
 
   @override
   void computeDistanceToActualBaseline() {
-    computeMaxIntrinsicHeight(); // ERROR: computeMaxIntrinsicHeight(). Consider calling getMaxIntrinsicHeight instead.
+    computeMaxIntrinsicHeight(); // BAD
   }
 }
 
@@ -42,7 +41,7 @@ class RenderBoxSubclass2 extends RenderBox with ARenderBoxMixin {
   @override
   void computeMaxIntrinsicWidth() {
     super.computeMinIntrinsicHeight(); // OK
-    super.computeMaxIntrinsicWidth(); // OK
+    super.computeMaxIntrinsicWidth();  // OK
     final void Function() f = super.computeDryBaseline; // OK
     f();
   }

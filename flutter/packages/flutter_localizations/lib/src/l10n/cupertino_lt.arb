@@ -37,7 +37,5 @@
   "lookUpButtonLabel": "Ieškoti",
   "searchWebButtonLabel": "Ieškoti žiniatinklyje",
   "shareButtonLabel": "Bendrinti...",
-  "clearButtonLabel": "Išvalyti",
-  "cancelButtonLabel": "Atšaukti",
-  "backButtonLabel": "Atgal"
+  "clearButtonLabel": "Clear"
 }

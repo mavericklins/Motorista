@@ -2,18 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/cupertino.dart';
-/// @docImport 'package:flutter/scheduler.dart';
-///
-/// @docImport 'color_scheme.dart';
-/// @docImport 'constants.dart';
-/// @docImport 'ink_well.dart';
-/// @docImport 'material.dart';
-/// @docImport 'radio_list_tile.dart';
-/// @docImport 'scaffold.dart';
-/// @docImport 'switch_list_tile.dart';
-library;
-
 import 'package:flutter/widgets.dart';
 
 import 'checkbox.dart';
@@ -193,11 +181,11 @@ class CheckboxListTile extends StatelessWidget {
     this.tileColor,
     this.title,
     this.subtitle,
-    this.isThreeLine,
+    this.isThreeLine = false,
     this.dense,
     this.secondary,
     this.selected = false,
-    this.controlAffinity,
+    this.controlAffinity = ListTileControlAffinity.platform,
     this.contentPadding,
     this.tristate = false,
     this.checkboxShape,
@@ -205,12 +193,9 @@ class CheckboxListTile extends StatelessWidget {
     this.onFocusChange,
     this.enableFeedback,
     this.checkboxSemanticLabel,
-    this.checkboxScaleFactor = 1.0,
-    this.titleAlignment,
-    this.internalAddSemanticForOnTap = false,
   }) : _checkboxType = _CheckboxType.material,
        assert(tristate || value != null),
-       assert(isThreeLine != true || subtitle != null);
+       assert(!isThreeLine || subtitle != null);
 
   /// Creates a combination of a list tile and a platform adaptive checkbox.
   ///
@@ -240,11 +225,11 @@ class CheckboxListTile extends StatelessWidget {
     this.tileColor,
     this.title,
     this.subtitle,
-    this.isThreeLine,
+    this.isThreeLine = false,
     this.dense,
     this.secondary,
     this.selected = false,
-    this.controlAffinity,
+    this.controlAffinity = ListTileControlAffinity.platform,
     this.contentPadding,
     this.tristate = false,
     this.checkboxShape,
@@ -252,12 +237,9 @@ class CheckboxListTile extends StatelessWidget {
     this.onFocusChange,
     this.enableFeedback,
     this.checkboxSemanticLabel,
-    this.checkboxScaleFactor = 1.0,
-    this.titleAlignment,
-    this.internalAddSemanticForOnTap = false,
   }) : _checkboxType = _CheckboxType.adaptive,
        assert(tristate || value != null),
-       assert(isThreeLine != true || subtitle != null);
+       assert(!isThreeLine || subtitle != null);
 
   /// Whether this checkbox is checked.
   final bool? value;
@@ -293,15 +275,15 @@ class CheckboxListTile extends StatelessWidget {
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
-  /// If [mouseCursor] is a [WidgetStateMouseCursor],
-  /// [WidgetStateProperty.resolve] is used for the following [WidgetState]s:
+  /// If [mouseCursor] is a [MaterialStateProperty<MouseCursor>],
+  /// [MaterialStateProperty.resolve] is used for the following [MaterialState]s:
   ///
-  ///  * [WidgetState.selected].
-  ///  * [WidgetState.hovered].
-  ///  * [WidgetState.disabled].
+  ///  * [MaterialState.selected].
+  ///  * [MaterialState.hovered].
+  ///  * [MaterialState.disabled].
   ///
   /// If null, then the value of [CheckboxThemeData.mouseCursor] is used. If
-  /// that is also null, then [WidgetStateMouseCursor.clickable] is used.
+  /// that is also null, then [MaterialStateMouseCursor.clickable] is used.
   final MouseCursor? mouseCursor;
 
   /// The color to use when this checkbox is checked.
@@ -312,9 +294,9 @@ class CheckboxListTile extends StatelessWidget {
   /// The color that fills the checkbox.
   ///
   /// Resolves in the following states:
-  ///  * [WidgetState.selected].
-  ///  * [WidgetState.hovered].
-  ///  * [WidgetState.disabled].
+  ///  * [MaterialState.selected].
+  ///  * [MaterialState.hovered].
+  ///  * [MaterialState.disabled].
   ///
   /// If null, then the value of [activeColor] is used in the selected
   /// state. If that is also null, the value of [CheckboxThemeData.fillColor]
@@ -332,9 +314,9 @@ class CheckboxListTile extends StatelessWidget {
   /// The color for the checkbox's [Material].
   ///
   /// Resolves in the following states:
-  ///  * [WidgetState.pressed].
-  ///  * [WidgetState.selected].
-  ///  * [WidgetState.hovered].
+  ///  * [MaterialState.pressed].
+  ///  * [MaterialState.selected].
+  ///  * [MaterialState.hovered].
   ///
   /// If null, then the value of [activeColor] with alpha [kRadialReactionAlpha]
   /// and [hoverColor] is used in the pressed and hovered state. If that is also null,
@@ -357,6 +339,7 @@ class CheckboxListTile extends StatelessWidget {
   ///
   /// {@macro flutter.material.themedata.visualDensity}
   final VisualDensity? visualDensity;
+
 
   /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
@@ -401,10 +384,9 @@ class CheckboxListTile extends StatelessWidget {
 
   /// Whether this list tile is intended to display three lines of text.
   ///
-  /// If null, the value from [ListTileThemeData.isThreeLine] is used.
-  /// If that is also null, the value from [ThemeData.listTileTheme] is used.
-  /// If still null, the default value is `false`.
-  final bool? isThreeLine;
+  /// If false, the list tile is treated as having one line if the subtitle is
+  /// null and treated as having two lines if the subtitle is non-null.
+  final bool isThreeLine;
 
   /// Whether this list tile is part of a vertically dense list.
   ///
@@ -421,7 +403,7 @@ class CheckboxListTile extends StatelessWidget {
   final bool selected;
 
   /// Where to place the control relative to the text.
-  final ListTileControlAffinity? controlAffinity;
+  final ListTileControlAffinity controlAffinity;
 
   /// Defines insets surrounding the tile's contents.
   ///
@@ -470,32 +452,6 @@ class CheckboxListTile extends StatelessWidget {
   /// inoperative.
   final bool? enabled;
 
-  /// Defines how [ListTile.leading] and [ListTile.trailing] are
-  /// vertically aligned relative to the [ListTile]'s titles
-  /// ([ListTile.title] and [ListTile.subtitle]).
-  ///
-  /// If this property is null then [ListTileThemeData.titleAlignment]
-  /// is used. If that is also null then [ListTileTitleAlignment.threeLine]
-  /// is used.
-  ///
-  /// See also:
-  ///
-  /// * [ListTileTheme.of], which returns the nearest [ListTileTheme]'s
-  ///   [ListTileThemeData].
-  final ListTileTitleAlignment? titleAlignment;
-
-  /// Whether to add button:true to the semantics if onTap is provided.
-  /// This is a temporary flag to help changing the behavior of ListTile onTap semantics.
-  ///
-  // TODO(hangyujin): Remove this flag after fixing related g3 tests and flipping
-  // the default value to true.
-  final bool internalAddSemanticForOnTap;
-
-  /// Controls the scaling factor applied to the [Checkbox] within the [CheckboxListTile].
-  ///
-  /// Defaults to 1.0.
-  final double checkboxScaleFactor;
-
   /// {@macro flutter.material.checkbox.semanticLabel}
   final String? checkboxSemanticLabel;
 
@@ -515,7 +471,7 @@ class CheckboxListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget control;
+    final Widget control;
 
     switch (_checkboxType) {
       case _CheckboxType.material:
@@ -561,23 +517,19 @@ class CheckboxListTile extends StatelessWidget {
           ),
         );
     }
-    if (checkboxScaleFactor != 1.0) {
-      control = Transform.scale(scale: checkboxScaleFactor, child: control);
-    }
 
-    final ListTileThemeData listTileTheme = ListTileTheme.of(context);
-    final ListTileControlAffinity effectiveControlAffinity =
-        controlAffinity ?? listTileTheme.controlAffinity ?? ListTileControlAffinity.platform;
-    final (Widget? leading, Widget? trailing) = switch (effectiveControlAffinity) {
+    final (Widget? leading, Widget? trailing) = switch (controlAffinity) {
       ListTileControlAffinity.leading => (control, secondary),
       ListTileControlAffinity.trailing || ListTileControlAffinity.platform => (secondary, control),
     };
-
     final ThemeData theme = Theme.of(context);
     final CheckboxThemeData checkboxTheme = CheckboxTheme.of(context);
-    final Set<MaterialState> states = <MaterialState>{if (selected) MaterialState.selected};
-    final Color effectiveActiveColor =
-        activeColor ?? checkboxTheme.fillColor?.resolve(states) ?? theme.colorScheme.secondary;
+    final Set<MaterialState> states = <MaterialState>{
+      if (selected) MaterialState.selected,
+    };
+    final Color effectiveActiveColor = activeColor
+      ?? checkboxTheme.fillColor?.resolve(states)
+      ?? theme.colorScheme.secondary;
     return MergeSemantics(
       child: ListTile(
         selectedColor: effectiveActiveColor,
@@ -599,8 +551,6 @@ class CheckboxListTile extends StatelessWidget {
         focusNode: focusNode,
         onFocusChange: onFocusChange,
         enableFeedback: enableFeedback,
-        titleAlignment: titleAlignment,
-        internalAddSemanticForOnTap: internalAddSemanticForOnTap,
       ),
     );
   }

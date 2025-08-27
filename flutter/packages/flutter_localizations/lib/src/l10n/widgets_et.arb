@@ -4,12 +4,5 @@
   "reorderItemUp": "Teisalda üles",
   "reorderItemDown": "Teisalda alla",
   "reorderItemLeft": "Teisalda vasakule",
-  "reorderItemRight": "Teisalda paremale",
-  "copyButtonLabel": "Kopeeri",
-  "cutButtonLabel": "Lõika",
-  "lookUpButtonLabel": "Look Up",
-  "searchWebButtonLabel": "Otsi veebist",
-  "shareButtonLabel": "Jagamine",
-  "pasteButtonLabel": "Kleebi",
-  "selectAllButtonLabel": "Vali kõik"
+  "reorderItemRight": "Teisalda paremale"
 }

@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/services.dart';
-library;
-
 import 'framework.dart';
 import 'inherited_theme.dart';
 import 'navigator.dart';
@@ -29,7 +26,9 @@ import 'overlay.dart';
 ///     be disabled and Flutter-rendered context menus to appear.
 class ContextMenuController {
   /// Creates a context menu that can be shown with [show].
-  ContextMenuController({this.onRemove});
+  ContextMenuController({
+    this.onRemove,
+  });
 
   /// Called when this menu is removed.
   final VoidCallback? onRemove;
@@ -96,7 +95,7 @@ class ContextMenuController {
   /// Cause the underlying [OverlayEntry] to rebuild during the next pipeline
   /// flush.
   ///
-  /// It's necessary to call this function if the output of `contextMenuBuilder`
+  /// It's necessary to call this function if the output of [contextMenuBuilder]
   /// has changed.
   ///
   /// Errors if the context menu is not currently shown.

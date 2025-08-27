@@ -13,7 +13,9 @@ class SettingsIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: _SettingsIconPainter(time: time, context: context));
+    return CustomPaint(
+      painter: _SettingsIconPainter(time: time, context: context),
+    );
   }
 }
 
@@ -33,11 +35,11 @@ class _SettingsIconPainter extends CustomPainter {
   /// The icon is aligned to the bottom-start corner.
   void _computeCenterAndScaling(Size size) {
     _scaling = min(size.width / unitWidth, size.height / unitHeight);
-    final double dx = switch (Directionality.of(context)) {
-      TextDirection.rtl => size.width - unitWidth * _scaling / 2,
-      TextDirection.ltr => unitWidth * _scaling / 2,
-    };
-    _center = Offset(dx, size.height - unitHeight * _scaling / 2);
+    _center = Directionality.of(context) == TextDirection.ltr
+        ? Offset(
+            unitWidth * _scaling / 2, size.height - unitHeight * _scaling / 2)
+        : Offset(size.width - unitWidth * _scaling / 2,
+            size.height - unitHeight * _scaling / 2);
   }
 
   /// Transforms an offset in relative units into an offset in logical pixels.
@@ -60,14 +62,19 @@ class _SettingsIconPainter extends CustomPainter {
   /// Black or white paint, depending on brightness.
   Paint get _monoPaint {
     final Color monoColor =
-        Theme.of(context).colorScheme.brightness == Brightness.light ? Colors.black : Colors.white;
+        Theme.of(context).colorScheme.brightness == Brightness.light
+            ? Colors.black
+            : Colors.white;
     return Paint()..color = monoColor;
   }
 
   /// Pink paint with horizontal gradient.
   Paint get _pinkPaint {
     const LinearGradient shader = LinearGradient(colors: <Color>[pinkLeft, pinkRight]);
-    final Rect shaderRect = _fixedRect.translate(_size(-(stickLength - colorLength(time)) / 2), 0);
+    final Rect shaderRect = _fixedRect.translate(
+      _size(-(stickLength - colorLength(time)) / 2),
+      0,
+    );
 
     return Paint()..shader = shader.createShader(shaderRect);
   }
@@ -75,7 +82,10 @@ class _SettingsIconPainter extends CustomPainter {
   /// Teal paint with horizontal gradient.
   Paint get _tealPaint {
     const LinearGradient shader = LinearGradient(colors: <Color>[tealLeft, tealRight]);
-    final Rect shaderRect = _fixedRect.translate(_size((stickLength - colorLength(time)) / 2), 0);
+    final Rect shaderRect = _fixedRect.translate(
+      _size((stickLength - colorLength(time)) / 2),
+      0,
+    );
 
     return Paint()..shader = shader.createShader(shaderRect);
   }
@@ -103,9 +113,15 @@ class _SettingsIconPainter extends CustomPainter {
     _canvas.translate(center.dx, center.dy);
     _canvas.rotate(angle);
 
-    final Rect leftOval = Rect.fromCircle(center: Offset(-stretch + radius, 0), radius: radius);
+    final Rect leftOval = Rect.fromCircle(
+      center: Offset(-stretch + radius, 0),
+      radius: radius,
+    );
 
-    final Rect rightOval = Rect.fromCircle(center: Offset(stretch - radius, 0), radius: radius);
+    final Rect rightOval = Rect.fromCircle(
+      center: Offset(stretch - radius, 0),
+      radius: radius,
+    );
 
     _canvas.drawPath(
       Path()

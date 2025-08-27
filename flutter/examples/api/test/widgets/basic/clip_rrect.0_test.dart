@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('ClipRRect adds rounded corners to containers', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.ClipRRectApp());
+    await tester.pumpWidget(
+      const example.ClipRRectApp(),
+    );
 
     final Finder clipRRectFinder = find.byType(ClipRRect);
     final Finder containerFinder = find.byType(Container);

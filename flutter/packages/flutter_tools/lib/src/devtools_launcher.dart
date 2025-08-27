@@ -23,29 +23,27 @@ class DevtoolsServerLauncher extends DevtoolsLauncher {
     required Logger logger,
     required BotDetector botDetector,
     required Artifacts artifacts,
-  }) : _processManager = processManager,
-       _logger = logger,
-       _botDetector = botDetector,
-       _artifacts = artifacts;
+  })  : _processManager = processManager,
+        _logger = logger,
+        _botDetector = botDetector,
+        _artifacts = artifacts;
 
   final ProcessManager _processManager;
   final Artifacts _artifacts;
   late final String _dartExecutable = _artifacts.getArtifactPath(Artifact.engineDartBinary);
   final Logger _logger;
   final BotDetector _botDetector;
-  final _processStartCompleter = Completer<void>();
+  final Completer<void> _processStartCompleter = Completer<void>();
 
   io.Process? _devToolsProcess;
-  var _devToolsProcessKilled = false;
+  bool _devToolsProcessKilled = false;
   @visibleForTesting
   Future<void>? devToolsProcessExit;
 
-  static final _serveDevToolsPattern = RegExp(
-    r'Serving DevTools at ((http|//)[a-zA-Z0-9:/=_\-\.\[\]]+?)\.?$',
-  );
-  static final _serveDtdPattern = RegExp(
-    r'Serving the Dart Tooling Daemon at (ws:\/\/[a-zA-Z0-9:/=_\-\.\[\]]+?)\.?$',
-  );
+  static final RegExp _serveDevToolsPattern =
+      RegExp(r'Serving DevTools at ((http|//)[a-zA-Z0-9:/=_\-\.\[\]]+?)\.?$');
+  static final RegExp _serveDtdPattern =
+      RegExp(r'Serving the Dart Tooling Daemon at (ws:\/\/[a-zA-Z0-9:/=_\-\.\[\]]+?)\.?$');
 
   @override
   Future<void> get processStart => _processStartCompleter.future;
@@ -65,10 +63,11 @@ class DevtoolsServerLauncher extends DevtoolsLauncher {
       ]);
       _processStartCompleter.complete();
 
-      final devToolsCompleter = Completer<Uri>();
-      _devToolsProcess!.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen((
-        String line,
-      ) {
+      final Completer<Uri> devToolsCompleter = Completer<Uri>();
+      _devToolsProcess!.stdout
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen((String line) {
         final Match? dtdMatch = _serveDtdPattern.firstMatch(line);
         if (dtdMatch != null) {
           final String uri = dtdMatch[1]!;
@@ -86,11 +85,13 @@ class DevtoolsServerLauncher extends DevtoolsLauncher {
           .listen(_logger.printError);
 
       final bool runningOnBot = await _botDetector.isRunningOnBot;
-      devToolsProcessExit = _devToolsProcess!.exitCode.then((int exitCode) {
-        if (!_devToolsProcessKilled && runningOnBot) {
-          throwToolExit('DevTools process failed: exitCode=$exitCode');
+      devToolsProcessExit = _devToolsProcess!.exitCode.then(
+        (int exitCode) {
+          if (!_devToolsProcessKilled && runningOnBot) {
+            throwToolExit('DevTools process failed: exitCode=$exitCode');
+          }
         }
-      });
+      );
 
       // We do not need to wait for a [Completer] holding the DTD URI because
       // the DTD URI will be output to stdout before the DevTools URI. Awaiting

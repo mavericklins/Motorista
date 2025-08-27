@@ -4,6 +4,7 @@
 
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -14,7 +15,7 @@ Future<void> main() async {
     debugCaptureShaderWarmUpImage = expectAsync1((ui.Image image) => true);
     WidgetsFlutterBinding.ensureInitialized();
     expect(shaderWarmUp.ranWarmUp, true);
-  });
+  }, skip: kIsWeb && !isCanvasKit); // [intended] Testing only for canvasKit
 }
 
 class FakeShaderWarmUp extends ShaderWarmUp {

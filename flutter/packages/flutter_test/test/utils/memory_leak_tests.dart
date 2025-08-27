@@ -17,27 +17,31 @@ final List<InstrumentedDisposable> _retainer = <InstrumentedDisposable>[];
 final List<LeakTestCase> memoryLeakTests = <LeakTestCase>[
   LeakTestCase(
     name: 'no leaks',
-    body: (PumpWidgetsCallback? pumpWidgets, RunAsyncCallback<dynamic>? runAsync) async {
+    body: (PumpWidgetsCallback? pumpWidgets,
+        RunAsyncCallback<dynamic>? runAsync) async {
       await pumpWidgets!(Container());
     },
   ),
   LeakTestCase(
     name: 'not disposed disposable',
-    body: (PumpWidgetsCallback? pumpWidgets, RunAsyncCallback<dynamic>? runAsync) async {
+    body: (PumpWidgetsCallback? pumpWidgets,
+        RunAsyncCallback<dynamic>? runAsync) async {
       InstrumentedDisposable();
     },
     notDisposedTotal: 1,
   ),
   LeakTestCase(
     name: 'not GCed disposable',
-    body: (PumpWidgetsCallback? pumpWidgets, RunAsyncCallback<dynamic>? runAsync) async {
+    body: (PumpWidgetsCallback? pumpWidgets,
+        RunAsyncCallback<dynamic>? runAsync) async {
       _retainer.add(InstrumentedDisposable()..dispose());
     },
     notGCedTotal: 1,
   ),
   LeakTestCase(
     name: 'leaking widget',
-    body: (PumpWidgetsCallback? pumpWidgets, RunAsyncCallback<dynamic>? runAsync) async {
+    body: (PumpWidgetsCallback? pumpWidgets,
+        RunAsyncCallback<dynamic>? runAsync) async {
       StatelessLeakingWidget();
     },
     notDisposedTotal: 1,
@@ -45,14 +49,16 @@ final List<LeakTestCase> memoryLeakTests = <LeakTestCase>[
   ),
   LeakTestCase(
     name: 'dispose in tear down',
-    body: (PumpWidgetsCallback? pumpWidgets, RunAsyncCallback<dynamic>? runAsync) async {
+    body: (PumpWidgetsCallback? pumpWidgets,
+        RunAsyncCallback<dynamic>? runAsync) async {
       final InstrumentedDisposable myClass = InstrumentedDisposable();
       addTearDown(myClass.dispose);
     },
   ),
   LeakTestCase(
     name: 'pumped leaking widget',
-    body: (PumpWidgetsCallback? pumpWidgets, RunAsyncCallback<dynamic>? runAsync) async {
+    body: (PumpWidgetsCallback? pumpWidgets,
+        RunAsyncCallback<dynamic>? runAsync) async {
       await pumpWidgets!(StatelessLeakingWidget());
     },
     notDisposedTotal: 1,
@@ -60,7 +66,8 @@ final List<LeakTestCase> memoryLeakTests = <LeakTestCase>[
   ),
   LeakTestCase(
     name: 'leaking widget in runAsync',
-    body: (PumpWidgetsCallback? pumpWidgets, RunAsyncCallback<dynamic>? runAsync) async {
+    body: (PumpWidgetsCallback? pumpWidgets,
+        RunAsyncCallback<dynamic>? runAsync) async {
       await runAsync!(() async {
         StatelessLeakingWidget();
       });
@@ -70,7 +77,8 @@ final List<LeakTestCase> memoryLeakTests = <LeakTestCase>[
   ),
   LeakTestCase(
     name: 'pumped in runAsync',
-    body: (PumpWidgetsCallback? pumpWidgets, RunAsyncCallback<dynamic>? runAsync) async {
+    body: (PumpWidgetsCallback? pumpWidgets,
+        RunAsyncCallback<dynamic>? runAsync) async {
       await runAsync!(() async {
         await pumpWidgets!(StatelessLeakingWidget());
       });
@@ -81,5 +89,7 @@ final List<LeakTestCase> memoryLeakTests = <LeakTestCase>[
 ];
 
 String memoryLeakTestsFilePath() {
-  return RegExp(r'(\/[^\/]*.dart):').firstMatch(StackTrace.current.toString())!.group(1).toString();
+  return RegExp(r'(\/[^\/]*.dart):')
+        .firstMatch(StackTrace.current.toString())!
+        .group(1).toString();
 }

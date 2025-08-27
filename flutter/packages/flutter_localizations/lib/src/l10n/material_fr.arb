@@ -145,7 +145,7 @@
   "menuDismissLabel": "Fermer le menu",
   "lookUpButtonLabel": "Recherche visuelle",
   "searchWebButtonLabel": "Rechercher sur le Web",
-  "shareButtonLabel": "Partager",
-  "clearButtonTooltip": "Effacer le texte",
-  "selectedDateLabel": "Sélectionnée"
+  "shareButtonLabel": "Partager…",
+  "clearButtonTooltip": "Clear text",
+  "selectedDateLabel": "Selected"
 }

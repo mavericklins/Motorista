@@ -16,7 +16,9 @@ class MouseRegionApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('MouseRegion Sample')),
-        body: const Center(child: MouseRegionExample()),
+        body: const Center(
+          child: MouseRegionExample(),
+        ),
       ),
     );
   }
@@ -72,7 +74,9 @@ class _MouseRegionExampleState extends State<MouseRegionExample> {
                 '$_enterCounter Entries\n$_exitCounter Exits',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
-              Text('The cursor is here: (${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)})'),
+              Text(
+                'The cursor is here: (${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)})',
+              ),
             ],
           ),
         ),

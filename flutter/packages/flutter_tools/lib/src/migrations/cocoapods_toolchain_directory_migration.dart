@@ -19,18 +19,16 @@ class CocoaPodsToolchainDirectoryMigration extends ProjectMigrator {
     XcodeBasedProject project,
     XcodeProjectInterpreter xcodeProjectInterpreter,
     super.logger,
-  ) : _podRunnerTargetSupportFiles = project.podRunnerTargetSupportFiles,
-      _xcodeProjectInterpreter = xcodeProjectInterpreter;
+  )   : _podRunnerTargetSupportFiles = project.podRunnerTargetSupportFiles,
+        _xcodeProjectInterpreter = xcodeProjectInterpreter;
 
   final Directory _podRunnerTargetSupportFiles;
   final XcodeProjectInterpreter _xcodeProjectInterpreter;
 
   @override
-  Future<void> migrate() async {
+  void migrate() {
     if (!_podRunnerTargetSupportFiles.existsSync()) {
-      logger.printTrace(
-        'CocoaPods Pods-Runner Target Support Files not found, skipping TOOLCHAIN_DIR workaround.',
-      );
+      logger.printTrace('CocoaPods Pods-Runner Target Support Files not found, skipping TOOLCHAIN_DIR workaround.');
       return;
     }
 
@@ -38,14 +36,12 @@ class CocoaPodsToolchainDirectoryMigration extends ProjectMigrator {
 
     // If Xcode not installed or less than 15, skip this migration.
     if (version == null || version < Version(15, 0, 0)) {
-      logger.printTrace(
-        'Detected Xcode version is $version, below 15.0, skipping TOOLCHAIN_DIR workaround.',
-      );
+      logger.printTrace('Detected Xcode version is $version, below 15.0, skipping TOOLCHAIN_DIR workaround.');
       return;
     }
 
     final List<FileSystemEntity> files = _podRunnerTargetSupportFiles.listSync();
-    for (final file in files) {
+    for (final FileSystemEntity file in files) {
       if (file.basename.endsWith('xcconfig') && file is File) {
         processFileLines(file);
       }
@@ -55,10 +51,9 @@ class CocoaPodsToolchainDirectoryMigration extends ProjectMigrator {
   @override
   String? migrateLine(String line) {
     final String trimmedString = line.trim();
-    if (trimmedString.startsWith('LD_RUNPATH_SEARCH_PATHS') ||
-        trimmedString.startsWith('LIBRARY_SEARCH_PATHS')) {
-      const originalReadLinkLine = r'{DT_TOOLCHAIN_DIR}';
-      const replacementReadLinkLine = r'{TOOLCHAIN_DIR}';
+    if (trimmedString.startsWith('LD_RUNPATH_SEARCH_PATHS') || trimmedString.startsWith('LIBRARY_SEARCH_PATHS')) {
+      const String originalReadLinkLine = r'{DT_TOOLCHAIN_DIR}';
+      const String replacementReadLinkLine = r'{TOOLCHAIN_DIR}';
 
       return line.replaceAll(originalReadLinkLine, replacementReadLinkLine);
     }

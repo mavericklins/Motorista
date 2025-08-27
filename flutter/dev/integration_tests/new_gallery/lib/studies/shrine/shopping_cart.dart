@@ -49,15 +49,14 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
         child: ScopedModelDescendant<AppStateModel>(
           builder: (BuildContext context, Widget? child, AppStateModel model) {
             final GalleryLocalizations localizations = GalleryLocalizations.of(context)!;
-            final ExpandingBottomSheetState? expandingBottomSheet = ExpandingBottomSheet.of(
-              context,
-            );
+            final ExpandingBottomSheetState? expandingBottomSheet = ExpandingBottomSheet.of(context);
             return Stack(
               children: <Widget>[
                 ListView(
                   children: <Widget>[
                     Semantics(
-                      sortKey: const OrdinalSortKey(0, name: _ordinalSortKeyName),
+                      sortKey:
+                          const OrdinalSortKey(0, name: _ordinalSortKeyName),
                       child: Row(
                         children: <Widget>[
                           SizedBox(
@@ -70,22 +69,29 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
                           ),
                           Text(
                             localizations.shrineCartPageCaption,
-                            style: localTheme.textTheme.titleMedium!.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: localTheme.textTheme.titleMedium!
+                                .copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(width: 16),
-                          Text(localizations.shrineCartItemCount(model.totalCartQuantity)),
+                          Text(
+                            localizations.shrineCartItemCount(
+                              model.totalCartQuantity,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
                     Semantics(
-                      sortKey: const OrdinalSortKey(1, name: _ordinalSortKeyName),
-                      child: Column(children: _createShoppingCartRows(model)),
+                      sortKey:
+                          const OrdinalSortKey(1, name: _ordinalSortKeyName),
+                      child: Column(
+                        children: _createShoppingCartRows(model),
+                      ),
                     ),
                     Semantics(
-                      sortKey: const OrdinalSortKey(2, name: _ordinalSortKeyName),
+                      sortKey:
+                          const OrdinalSortKey(2, name: _ordinalSortKeyName),
                       child: ShoppingCartSummary(model: model),
                     ),
                     const SizedBox(height: 100),
@@ -112,7 +118,9 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         child: Text(
                           localizations.shrineCartClearButtonCaption,
-                          style: TextStyle(letterSpacing: letterSpacingOrNone(largeLetterSpacing)),
+                          style: TextStyle(
+                              letterSpacing:
+                                  letterSpacingOrNone(largeLetterSpacing)),
                         ),
                       ),
                     ),
@@ -128,18 +136,21 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
 }
 
 class ShoppingCartSummary extends StatelessWidget {
-  const ShoppingCartSummary({super.key, required this.model});
+  const ShoppingCartSummary({
+    super.key,
+    required this.model,
+  });
 
   final AppStateModel model;
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle smallAmountStyle = Theme.of(
-      context,
-    ).textTheme.bodyMedium!.copyWith(color: shrineBrown600);
-    final TextStyle largeAmountStyle = Theme.of(
-      context,
-    ).textTheme.headlineMedium!.copyWith(letterSpacing: letterSpacingOrNone(mediumLetterSpacing));
+    final TextStyle smallAmountStyle =
+        Theme.of(context).textTheme.bodyMedium!.copyWith(color: shrineBrown600);
+    final TextStyle largeAmountStyle = Theme.of(context)
+        .textTheme
+        .headlineMedium!
+        .copyWith(letterSpacing: letterSpacingOrNone(mediumLetterSpacing));
     final NumberFormat formatter = NumberFormat.simpleCurrency(
       decimalDigits: 2,
       locale: Localizations.localeOf(context).toString(),
@@ -157,7 +168,9 @@ class ShoppingCartSummary extends StatelessWidget {
                 MergeSemantics(
                   child: Row(
                     children: <Widget>[
-                      SelectableText(localizations.shrineCartTotalCaption),
+                      SelectableText(
+                        localizations.shrineCartTotalCaption,
+                      ),
                       Expanded(
                         child: SelectableText(
                           formatter.format(model.totalCost),
@@ -172,7 +185,9 @@ class ShoppingCartSummary extends StatelessWidget {
                 MergeSemantics(
                   child: Row(
                     children: <Widget>[
-                      SelectableText(localizations.shrineCartSubtotalCaption),
+                      SelectableText(
+                        localizations.shrineCartSubtotalCaption,
+                      ),
                       Expanded(
                         child: SelectableText(
                           formatter.format(model.subtotalCost),
@@ -187,7 +202,9 @@ class ShoppingCartSummary extends StatelessWidget {
                 MergeSemantics(
                   child: Row(
                     children: <Widget>[
-                      SelectableText(localizations.shrineCartShippingCaption),
+                      SelectableText(
+                        localizations.shrineCartShippingCaption,
+                      ),
                       Expanded(
                         child: SelectableText(
                           formatter.format(model.shippingCost),
@@ -202,7 +219,9 @@ class ShoppingCartSummary extends StatelessWidget {
                 MergeSemantics(
                   child: Row(
                     children: <Widget>[
-                      SelectableText(localizations.shrineCartTaxCaption),
+                      SelectableText(
+                        localizations.shrineCartTaxCaption,
+                      ),
                       Expanded(
                         child: SelectableText(
                           formatter.format(model.tax),
@@ -223,7 +242,12 @@ class ShoppingCartSummary extends StatelessWidget {
 }
 
 class ShoppingCartRow extends StatelessWidget {
-  const ShoppingCartRow({super.key, required this.product, required this.quantity, this.onPressed});
+  const ShoppingCartRow({
+    super.key,
+    required this.product,
+    required this.quantity,
+    this.onPressed,
+  });
 
   final Product product;
   final int? quantity;
@@ -247,7 +271,8 @@ class ShoppingCartRow extends StatelessWidget {
         children: <Widget>[
           Semantics(
             container: true,
-            label: localizations.shrineScreenReaderRemoveProductButton(product.name(context)),
+            label: localizations
+                .shrineScreenReaderRemoveProductButton(product.name(context)),
             button: true,
             enabled: true,
             child: ExcludeSemantics(
@@ -288,7 +313,8 @@ class ShoppingCartRow extends StatelessWidget {
                                   children: <Widget>[
                                     Expanded(
                                       child: SelectableText(
-                                        localizations.shrineProductQuantity(quantity!),
+                                        localizations
+                                            .shrineProductQuantity(quantity!),
                                       ),
                                     ),
                                     SelectableText(
@@ -301,9 +327,8 @@ class ShoppingCartRow extends StatelessWidget {
                               ),
                               SelectableText(
                                 product.name(context),
-                                style: localTheme.textTheme.titleMedium!.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: localTheme.textTheme.titleMedium!
+                                    .copyWith(fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
@@ -312,7 +337,10 @@ class ShoppingCartRow extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const Divider(color: shrineBrown900, height: 10),
+                  const Divider(
+                    color: shrineBrown900,
+                    height: 10,
+                  ),
                 ],
               ),
             ),

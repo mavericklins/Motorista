@@ -2,15 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'dart:ui';
-///
-/// @docImport 'package:flutter/rendering.dart';
-/// @docImport 'package:flutter/widgets.dart';
-library;
-
-import 'dart:ui'
-    as ui
-    show Locale, LocaleStringAttribute, ParagraphBuilder, SpellOutStringAttribute, StringAttribute;
+import 'dart:ui' as ui show Locale, LocaleStringAttribute, ParagraphBuilder, SpellOutStringAttribute, StringAttribute;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -85,11 +77,10 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
     this.onEnter,
     this.onExit,
     this.semanticsLabel,
-    this.semanticsIdentifier,
     this.locale,
     this.spellOut,
-  }) : mouseCursor =
-           mouseCursor ?? (recognizer == null ? MouseCursor.defer : SystemMouseCursors.click),
+  }) : mouseCursor = mouseCursor ??
+         (recognizer == null ? MouseCursor.defer : SystemMouseCursors.click),
        assert(!(text == null && semanticsLabel != null));
 
   /// The text contained in this span.
@@ -231,14 +222,6 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
   /// ```
   final String? semanticsLabel;
 
-  /// A unique identifier for the semantics node for this [TextSpan].
-  ///
-  /// This is useful for cases where the text content of the [TextSpan] needs
-  /// to be uniquely identified through the automation tools without having
-  /// a dependency on the actual content of the text that can possibly be
-  /// dynamic in nature.
-  final String? semanticsIdentifier;
-
   /// The language of the text in this span and its span children.
   ///
   /// Setting the locale of this text span affects the way that assistive
@@ -297,15 +280,13 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
       try {
         builder.addText(text!);
       } on ArgumentError catch (exception, stack) {
-        FlutterError.reportError(
-          FlutterErrorDetails(
-            exception: exception,
-            stack: stack,
-            library: 'painting library',
-            context: ErrorDescription('while building a TextSpan'),
-            silent: true,
-          ),
-        );
+        FlutterError.reportError(FlutterErrorDetails(
+          exception: exception,
+          stack: stack,
+          library: 'painting library',
+          context: ErrorDescription('while building a TextSpan'),
+          silent: true,
+        ));
         // Use a Unicode replacement character as a substitute for invalid text.
         builder.addText('\uFFFD');
       }
@@ -313,7 +294,11 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
     final List<InlineSpan>? children = this.children;
     if (children != null) {
       for (final InlineSpan child in children) {
-        child.build(builder, textScaler: textScaler, dimensions: dimensions);
+        child.build(
+          builder,
+          textScaler: textScaler,
+          dimensions: dimensions,
+        );
       }
     }
     if (hasStyle) {
@@ -389,8 +374,7 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
     }
     if (children != null) {
       for (final InlineSpan child in children!) {
-        child.computeToPlainText(
-          buffer,
+        child.computeToPlainText(buffer,
           includeSemanticsLabels: includeSemanticsLabels,
           includePlaceholders: includePlaceholders,
         );
@@ -410,23 +394,17 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
 
     if (text != null) {
       final int textLength = semanticsLabel?.length ?? text!.length;
-      collector.add(
-        InlineSpanSemanticsInformation(
-          text!,
-          stringAttributes: <ui.StringAttribute>[
-            if (effectiveSpellOut && textLength > 0)
-              ui.SpellOutStringAttribute(range: TextRange(start: 0, end: textLength)),
-            if (effectiveLocale != null && textLength > 0)
-              ui.LocaleStringAttribute(
-                locale: effectiveLocale,
-                range: TextRange(start: 0, end: textLength),
-              ),
-          ],
-          semanticsLabel: semanticsLabel,
-          semanticsIdentifier: semanticsIdentifier,
-          recognizer: recognizer,
-        ),
-      );
+      collector.add(InlineSpanSemanticsInformation(
+        text!,
+        stringAttributes: <ui.StringAttribute>[
+          if (effectiveSpellOut && textLength > 0)
+            ui.SpellOutStringAttribute(range: TextRange(start: 0, end: textLength)),
+          if (effectiveLocale != null && textLength > 0)
+            ui.LocaleStringAttribute(locale: effectiveLocale, range: TextRange(start: 0, end: textLength)),
+        ],
+        semanticsLabel: semanticsLabel,
+        recognizer: recognizer,
+      ));
     }
     final List<InlineSpan>? children = this.children;
     if (children != null) {
@@ -491,9 +469,9 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
         (style == null) != (textSpan.style == null)) {
       return RenderComparison.layout;
     }
-    RenderComparison result = recognizer == textSpan.recognizer
-        ? RenderComparison.identical
-        : RenderComparison.metadata;
+    RenderComparison result = recognizer == textSpan.recognizer ?
+      RenderComparison.identical :
+      RenderComparison.metadata;
     if (style != null) {
       final RenderComparison candidate = style!.compareTo(textSpan.style!);
       if (candidate.index > result.index) {
@@ -528,15 +506,14 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
     if (super != other) {
       return false;
     }
-    return other is TextSpan &&
-        other.text == text &&
-        other.recognizer == recognizer &&
-        other.semanticsLabel == semanticsLabel &&
-        other.semanticsIdentifier == semanticsIdentifier &&
-        onEnter == other.onEnter &&
-        onExit == other.onExit &&
-        mouseCursor == other.mouseCursor &&
-        listEquals<InlineSpan>(other.children, children);
+    return other is TextSpan
+        && other.text == text
+        && other.recognizer == recognizer
+        && other.semanticsLabel == semanticsLabel
+        && onEnter == other.onEnter
+        && onExit == other.onExit
+        && mouseCursor == other.mouseCursor
+        && listEquals<InlineSpan>(other.children, children);
   }
 
   @override
@@ -545,7 +522,6 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
     text,
     recognizer,
     semanticsLabel,
-    semanticsIdentifier,
     onEnter,
     onExit,
     mouseCursor,
@@ -559,41 +535,42 @@ class TextSpan extends InlineSpan implements HitTestTarget, MouseTrackerAnnotati
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
 
-    properties.add(StringProperty('text', text, showName: false, defaultValue: null));
+    properties.add(
+      StringProperty(
+        'text',
+        text,
+        showName: false,
+        defaultValue: null,
+      ),
+    );
     if (style == null && text == null && children == null) {
       properties.add(DiagnosticsNode.message('(empty)'));
     }
 
-    properties.add(
-      DiagnosticsProperty<GestureRecognizer>(
-        'recognizer',
-        recognizer,
-        description: recognizer?.runtimeType.toString(),
-        defaultValue: null,
-      ),
-    );
+    properties.add(DiagnosticsProperty<GestureRecognizer>(
+      'recognizer', recognizer,
+      description: recognizer?.runtimeType.toString(),
+      defaultValue: null,
+    ));
 
-    properties.add(
-      FlagsSummary<Function?>('callbacks', <String, Function?>{'enter': onEnter, 'exit': onExit}),
-    );
-    properties.add(
-      DiagnosticsProperty<MouseCursor>('mouseCursor', cursor, defaultValue: MouseCursor.defer),
-    );
+    properties.add(FlagsSummary<Function?>(
+      'callbacks',
+      <String, Function?> {
+        'enter': onEnter,
+        'exit': onExit,
+      },
+    ));
+    properties.add(DiagnosticsProperty<MouseCursor>('mouseCursor', cursor, defaultValue: MouseCursor.defer));
 
     if (semanticsLabel != null) {
       properties.add(StringProperty('semanticsLabel', semanticsLabel));
-    }
-
-    if (semanticsIdentifier != null) {
-      properties.add(StringProperty('semanticsIdentifier', semanticsIdentifier));
     }
   }
 
   @override
   List<DiagnosticsNode> debugDescribeChildren() {
     return children?.map<DiagnosticsNode>((InlineSpan child) {
-          return child.toDiagnosticsNode();
-        }).toList() ??
-        const <DiagnosticsNode>[];
+      return child.toDiagnosticsNode();
+    }).toList() ?? const <DiagnosticsNode>[];
   }
 }

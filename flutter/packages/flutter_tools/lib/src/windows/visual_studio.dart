@@ -36,12 +36,12 @@ class VisualStudio {
   final OperatingSystemUtils _osUtils;
 
   /// Matches the description property from the vswhere.exe JSON output.
-  final _vswhereDescriptionProperty = RegExp(r'\s*"description"\s*:\s*".*"\s*,?');
+  final RegExp _vswhereDescriptionProperty = RegExp(r'\s*"description"\s*:\s*".*"\s*,?');
 
   /// True if Visual Studio installation was found.
   ///
   /// Versions older than 2017 Update 2 won't be detected, so error messages to
-  /// users should take into account that `false` may mean that the user may
+  /// users should take into account that [false] may mean that the user may
   /// have an old version rather than no installation at all.
   bool get isInstalled => _bestVisualStudioDetails != null;
 
@@ -116,9 +116,7 @@ class VisualStudio {
     if (sdkLocation == null) {
       return null;
     }
-    final Directory sdkIncludeDirectory = _fileSystem
-        .directory(sdkLocation)
-        .childDirectory('Include');
+    final Directory sdkIncludeDirectory = _fileSystem.directory(sdkLocation).childDirectory('Include');
     if (!sdkIncludeDirectory.existsSync()) {
       return null;
     }
@@ -181,10 +179,13 @@ class VisualStudio {
   /// version.
   String? get cmakeGenerator {
     // From https://cmake.org/cmake/help/v3.22/manual/cmake-generators.7.html#visual-studio-generators
-    return switch (_majorVersion) {
-      17 => 'Visual Studio 17 2022',
-      _ => 'Visual Studio 16 2019',
-    };
+    switch (_majorVersion) {
+      case 17:
+        return 'Visual Studio 17 2022';
+      case 16:
+      default:
+        return 'Visual Studio 16 2019';
+    }
   }
 
   /// The path to cl.exe, or null if no Visual Studio installation has
@@ -207,14 +208,11 @@ class VisualStudio {
 
   String? _getMsvcBinPath(String executable) {
     final VswhereDetails? details = _bestVisualStudioDetails;
-    if (details == null ||
-        !details.isUsable ||
-        details.installationPath == null ||
-        details.msvcVersion == null) {
+    if (details == null || !details.isUsable || details.installationPath == null || details.msvcVersion == null) {
       return null;
     }
 
-    final arch = _osUtils.hostPlatform == HostPlatform.windows_arm64 ? 'arm64' : 'x64';
+    final String arch = _osUtils.hostPlatform == HostPlatform.windows_arm64 ? 'arm64': 'x64';
 
     return _fileSystem.path.joinAll(<String>[
       details.installationPath!,
@@ -237,7 +235,7 @@ class VisualStudio {
       return null;
     }
 
-    final arch = _osUtils.hostPlatform == HostPlatform.windows_arm64 ? 'arm64' : '64';
+    final String arch = _osUtils.hostPlatform == HostPlatform.windows_arm64 ? 'arm64': '64';
 
     return _fileSystem.path.joinAll(<String>[
       details.installationPath!,
@@ -258,7 +256,7 @@ class VisualStudio {
   /// not user-controllable, unlike the install location of Visual Studio
   /// itself.
   String get _vswherePath {
-    const programFilesEnv = 'PROGRAMFILES(X86)';
+    const String programFilesEnv = 'PROGRAMFILES(X86)';
     if (!_platform.environment.containsKey(programFilesEnv)) {
       throwToolExit('%$programFilesEnv% environment variable not found.');
     }
@@ -274,7 +272,7 @@ class VisualStudio {
   ///
   /// Workload ID is different between Visual Studio IDE and Build Tools.
   /// See https://docs.microsoft.com/en-us/visualstudio/install/workload-and-component-ids
-  static const _requiredWorkloads = <String>[
+  static const List<String> _requiredWorkloads = <String>[
     'Microsoft.VisualStudio.Workload.NativeDesktop',
     'Microsoft.VisualStudio.Workload.VCTools',
   ];
@@ -301,8 +299,7 @@ class VisualStudio {
     // Visual Studio. Since it changes over time, listing a precise version would become
     // wrong after each VC++ toolchain update, so just instruct people to install the
     // latest version.
-    cppToolchainDescription +=
-        '\n   - If there are multiple build tool versions available, install the latest';
+    cppToolchainDescription += '\n   - If there are multiple build tool versions available, install the latest';
     // Things which are required by the workload (e.g., MSBuild) don't need to
     // be included here.
     return <String, String>{
@@ -314,39 +311,46 @@ class VisualStudio {
   }
 
   /// The minimum supported major version.
-  static const _minimumSupportedVersion = 16; // '16' is VS 2019.
+  static const int _minimumSupportedVersion = 16;  // '16' is VS 2019.
 
   /// vswhere argument to specify the minimum version.
-  static const _vswhereMinVersionArgument = '-version';
+  static const String _vswhereMinVersionArgument = '-version';
 
   /// vswhere argument to allow prerelease versions.
-  static const _vswherePrereleaseArgument = '-prerelease';
+  static const String _vswherePrereleaseArgument = '-prerelease';
 
   /// The registry path for Windows 10 SDK installation details.
-  static const _windows10SdkRegistryPath =
-      r'HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0';
+  static const String _windows10SdkRegistryPath = r'HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0';
 
   /// The registry key in _windows10SdkRegistryPath for the folder where the
   /// SDKs are installed.
-  static const _windows10SdkRegistryKey = 'InstallationFolder';
+  static const String _windows10SdkRegistryKey = 'InstallationFolder';
 
   /// Returns the details of the newest version of Visual Studio.
   ///
   /// If [validateRequirements] is set, the search will be limited to versions
   /// that have all of the required workloads and components.
   VswhereDetails? _visualStudioDetails({
-    bool validateRequirements = false,
-    List<String>? additionalArguments,
-    String? requiredWorkload,
-  }) {
-    final requirementArguments = validateRequirements
+      bool validateRequirements = false,
+      List<String>? additionalArguments,
+      String? requiredWorkload
+    }) {
+    final List<String> requirementArguments = validateRequirements
         ? <String>[
-            if (requiredWorkload != null) ...<String>['-requires', requiredWorkload],
+            if (requiredWorkload != null) ...<String>[
+              '-requires',
+              requiredWorkload,
+            ],
             ..._requiredComponents(_minimumSupportedVersion).keys,
           ]
         : <String>[];
     try {
-      final defaultArguments = <String>['-format', 'json', '-products', '*', '-utf8', '-latest'];
+      final List<String> defaultArguments = <String>[
+        '-format', 'json',
+        '-products', '*',
+        '-utf8',
+        '-latest',
+      ];
       // Ignore replacement characters as vswhere.exe is known to output them.
       // See: https://github.com/flutter/flutter/issues/102451
       const Encoding encoding = Utf8Codec(reportErrors: false);
@@ -360,7 +364,11 @@ class VisualStudio {
         final List<Map<String, dynamic>>? installations = _tryDecodeVswhereJson(whereResult.stdout);
         if (installations != null && installations.isNotEmpty) {
           final String? msvcVersion = _findMsvcVersion(installations);
-          return VswhereDetails.fromJson(validateRequirements, installations[0], msvcVersion);
+          return VswhereDetails.fromJson(
+            validateRequirements,
+            installations[0],
+            msvcVersion,
+          );
         }
       }
     } on ArgumentError {
@@ -372,7 +380,7 @@ class VisualStudio {
   }
 
   String? _findMsvcVersion(List<Map<String, dynamic>> installations) {
-    final installationPath = installations[0]['installationPath'] as String?;
+    final String? installationPath = installations[0]['installationPath'] as String?;
     String? msvcVersion;
     if (installationPath != null) {
       final Directory installationDir = _fileSystem.directory(installationPath);
@@ -385,7 +393,9 @@ class VisualStudio {
         if (msvcVersionDirs.isEmpty) {
           return null;
         }
-        msvcVersion = msvcVersionDirs.last.uri.pathSegments.where((String e) => e.isNotEmpty).last;
+        msvcVersion = msvcVersionDirs.last.uri.pathSegments
+            .where((String e) => e.isNotEmpty)
+            .last;
       }
     }
     return msvcVersion;
@@ -405,10 +415,8 @@ class VisualStudio {
         // See: https://github.com/flutter/flutter/issues/106601
         vswhereJson = vswhereJson.replaceFirst(_vswhereDescriptionProperty, '');
 
-        _logger.printTrace(
-          'Failed to decode vswhere.exe JSON output. $error'
-          'Retrying after removing the unused description property:\n$vswhereJson',
-        );
+        _logger.printTrace('Failed to decode vswhere.exe JSON output. $error'
+          'Retrying after removing the unused description property:\n$vswhereJson');
 
         originalError = error;
         result = json.decode(vswhereJson) as List<dynamic>;
@@ -416,10 +424,8 @@ class VisualStudio {
     } on FormatException {
       // Removing the description property didn't help.
       // Report the original decoding error on the unprocessed JSON.
-      _logger.printWarning(
-        'Warning: Unexpected vswhere.exe JSON output. $originalError'
-        'To see the full JSON, run flutter doctor -vv.',
-      );
+      _logger.printWarning('Warning: Unexpected vswhere.exe JSON output. $originalError'
+        'To see the full JSON, run flutter doctor -vv.');
       return null;
     }
 
@@ -431,33 +437,33 @@ class VisualStudio {
   /// If there's a version that has all the required components, that
   /// will be returned, otherwise returns the latest installed version regardless
   /// of components and version, or null if no such installation is found.
-  late final VswhereDetails? _bestVisualStudioDetails = () {
+  late final VswhereDetails?  _bestVisualStudioDetails = () {
     // First, attempt to find the latest version of Visual Studio that satisfies
     // both the minimum supported version and the required workloads.
     // Check in the order of stable VS, stable BT, pre-release VS, pre-release BT.
-    final minimumVersionArguments = <String>[
+    final List<String> minimumVersionArguments = <String>[
       _vswhereMinVersionArgument,
       _minimumSupportedVersion.toString(),
     ];
-    for (final checkForPrerelease in <bool>[false, true]) {
+    for (final bool checkForPrerelease in <bool>[false, true]) {
       for (final String requiredWorkload in _requiredWorkloads) {
         final VswhereDetails? result = _visualStudioDetails(
           validateRequirements: true,
           additionalArguments: checkForPrerelease
               ? <String>[...minimumVersionArguments, _vswherePrereleaseArgument]
               : minimumVersionArguments,
-          requiredWorkload: requiredWorkload,
-        );
+          requiredWorkload: requiredWorkload);
 
-        if (result != null) {
-          return result;
-        }
+          if (result != null) {
+            return result;
+          }
       }
     }
 
     // An installation that satisfies requirements could not be found.
     // Fallback to the latest Visual Studio installation.
-    return _visualStudioDetails(additionalArguments: <String>[_vswherePrereleaseArgument, '-all']);
+    return _visualStudioDetails(
+        additionalArguments: <String>[_vswherePrereleaseArgument, '-all']);
   }();
 
   /// Returns the installation location of the Windows 10 SDKs, or null if the
@@ -472,7 +478,7 @@ class VisualStudio {
         _windows10SdkRegistryKey,
       ]);
       if (result.exitCode == 0) {
-        final pattern = RegExp(r'InstallationFolder\s+REG_SZ\s+(.+)');
+        final RegExp pattern = RegExp(r'InstallationFolder\s+REG_SZ\s+(.+)');
         final RegExpMatch? match = pattern.firstMatch(result.stdout);
         if (match != null) {
           return match.group(1)!.trim();
@@ -535,7 +541,7 @@ class VswhereDetails {
     Map<String, dynamic> details,
     String? msvcVersion,
   ) {
-    final catalog = details['catalog'] as Map<String, dynamic>?;
+    final Map<String, dynamic>? catalog = details['catalog'] as Map<String, dynamic>?;
 
     return VswhereDetails(
       meetsRequirements: meetsRequirements,
@@ -569,8 +575,7 @@ class VswhereDetails {
         'Bad UTF-8 encoding (U+FFFD; REPLACEMENT CHARACTER) found in string: $value. '
         'The Flutter team would greatly appreciate if you could file a bug explaining '
         'exactly what you were doing when this happened:\n'
-        'https://github.com/flutter/flutter/issues/new/choose\n',
-      );
+        'https://github.com/flutter/flutter/issues/new/choose\n');
     }
 
     return value;

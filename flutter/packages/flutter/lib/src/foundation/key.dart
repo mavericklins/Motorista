@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/semantics.dart';
-/// @docImport 'package:flutter/widgets.dart';
-library;
-
 import 'package:meta/meta.dart';
 
 import 'diagnostics.dart';
@@ -25,7 +21,6 @@ import 'diagnostics.dart';
 ///
 ///  * [Widget.key], which discusses how widgets use keys.
 @immutable
-@pragma('flutter:keep-to-string-in-subtypes')
 abstract class Key {
   /// Construct a [ValueKey<String>] with the given [String].
   ///
@@ -97,7 +92,8 @@ class ValueKey<T> extends LocalKey {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ValueKey<T> && other.value == value;
+    return other is ValueKey<T>
+        && other.value == value;
   }
 
   @override

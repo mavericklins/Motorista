@@ -21,18 +21,9 @@ class _MyRadioMenuState extends State<MyRadioMenu> {
   Color _backgroundColor = Colors.red;
   late ShortcutRegistryEntry _entry;
 
-  static const SingleActivator _redShortcut = SingleActivator(
-    LogicalKeyboardKey.keyR,
-    control: true,
-  );
-  static const SingleActivator _greenShortcut = SingleActivator(
-    LogicalKeyboardKey.keyG,
-    control: true,
-  );
-  static const SingleActivator _blueShortcut = SingleActivator(
-    LogicalKeyboardKey.keyB,
-    control: true,
-  );
+  static const SingleActivator _redShortcut = SingleActivator(LogicalKeyboardKey.keyR, control: true);
+  static const SingleActivator _greenShortcut = SingleActivator(LogicalKeyboardKey.keyG, control: true);
+  static const SingleActivator _blueShortcut = SingleActivator(LogicalKeyboardKey.keyB, control: true);
 
   @override
   void didChangeDependencies() {
@@ -101,7 +92,11 @@ class _MyRadioMenuState extends State<MyRadioMenu> {
             );
           },
         ),
-        Expanded(child: Container(color: _backgroundColor)),
+        Expanded(
+          child: Container(
+            color: _backgroundColor,
+          ),
+        ),
       ],
     );
   }
@@ -112,8 +107,9 @@ class MenuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: SafeArea(child: MyRadioMenu())),
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const Scaffold(body: SafeArea(child: MyRadioMenu())),
     );
   }
 }

@@ -6,6 +6,7 @@ changelog:
     labels:
       - passed first triage
       - passed secondary triage
+      - team-release
       - "team: flakes"
       - revert
   categories:

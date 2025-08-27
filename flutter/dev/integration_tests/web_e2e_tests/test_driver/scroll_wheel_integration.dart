@@ -21,6 +21,9 @@ void main() {
     await tester.tap(finder);
     await tester.pumpAndSettle();
 
-    await expectLater(find.byType(app.MyApp), matchesGoldenFile('scroll_wheel_by_line'));
+    await expectLater(
+      find.byType(app.MyApp),
+      matchesGoldenFile('scroll_wheel_by_line'),
+    );
   });
 }

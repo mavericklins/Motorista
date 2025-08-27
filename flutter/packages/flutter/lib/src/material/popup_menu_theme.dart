@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'popup_menu.dart';
-library;
-
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/foundation.dart';
@@ -20,7 +17,6 @@ import 'theme.dart';
 enum PopupMenuPosition {
   /// Menu is positioned over the anchor.
   over,
-
   /// Menu is positioned under the anchor.
   under,
 }
@@ -29,8 +25,9 @@ enum PopupMenuPosition {
 /// as well as [PopupMenuItem] and [PopupMenuDivider] widgets.
 ///
 /// Descendant widgets obtain the current [PopupMenuThemeData] object
-/// using [PopupMenuTheme.of]. Instances of [PopupMenuThemeData] can be
-/// customized with [PopupMenuThemeData.copyWith].
+/// using `PopupMenuTheme.of(context)`. Instances of
+/// [PopupMenuThemeData] can be customized with
+/// [PopupMenuThemeData.copyWith].
 ///
 /// Typically, a [PopupMenuThemeData] is specified as part of the
 /// overall [Theme] with [ThemeData.popupMenuTheme]. Otherwise,
@@ -50,7 +47,6 @@ class PopupMenuThemeData with Diagnosticable {
   const PopupMenuThemeData({
     this.color,
     this.shape,
-    this.menuPadding,
     this.elevation,
     this.shadowColor,
     this.surfaceTintColor,
@@ -68,11 +64,6 @@ class PopupMenuThemeData with Diagnosticable {
 
   /// The shape of the popup menu.
   final ShapeBorder? shape;
-
-  /// If specified, the padding of the popup menu.
-  ///
-  /// If [PopupMenuButton.menuPadding] is provided, [menuPadding] is ignored.
-  final EdgeInsetsGeometry? menuPadding;
 
   /// The elevation of the popup menu.
   final double? elevation;
@@ -117,7 +108,6 @@ class PopupMenuThemeData with Diagnosticable {
   PopupMenuThemeData copyWith({
     Color? color,
     ShapeBorder? shape,
-    EdgeInsetsGeometry? menuPadding,
     double? elevation,
     Color? shadowColor,
     Color? surfaceTintColor,
@@ -132,7 +122,6 @@ class PopupMenuThemeData with Diagnosticable {
     return PopupMenuThemeData(
       color: color ?? this.color,
       shape: shape ?? this.shape,
-      menuPadding: menuPadding ?? this.menuPadding,
       elevation: elevation ?? this.elevation,
       shadowColor: shadowColor ?? this.shadowColor,
       surfaceTintColor: surfaceTintColor ?? this.surfaceTintColor,
@@ -158,17 +147,11 @@ class PopupMenuThemeData with Diagnosticable {
     return PopupMenuThemeData(
       color: Color.lerp(a?.color, b?.color, t),
       shape: ShapeBorder.lerp(a?.shape, b?.shape, t),
-      menuPadding: EdgeInsetsGeometry.lerp(a?.menuPadding, b?.menuPadding, t),
       elevation: lerpDouble(a?.elevation, b?.elevation, t),
       shadowColor: Color.lerp(a?.shadowColor, b?.shadowColor, t),
       surfaceTintColor: Color.lerp(a?.surfaceTintColor, b?.surfaceTintColor, t),
       textStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
-      labelTextStyle: MaterialStateProperty.lerp<TextStyle?>(
-        a?.labelTextStyle,
-        b?.labelTextStyle,
-        t,
-        TextStyle.lerp,
-      ),
+      labelTextStyle: MaterialStateProperty.lerp<TextStyle?>(a?.labelTextStyle, b?.labelTextStyle, t, TextStyle.lerp),
       enableFeedback: t < 0.5 ? a?.enableFeedback : b?.enableFeedback,
       mouseCursor: t < 0.5 ? a?.mouseCursor : b?.mouseCursor,
       position: t < 0.5 ? a?.position : b?.position,
@@ -181,7 +164,6 @@ class PopupMenuThemeData with Diagnosticable {
   int get hashCode => Object.hash(
     color,
     shape,
-    menuPadding,
     elevation,
     shadowColor,
     surfaceTintColor,
@@ -202,20 +184,19 @@ class PopupMenuThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is PopupMenuThemeData &&
-        other.color == color &&
-        other.shape == shape &&
-        other.menuPadding == menuPadding &&
-        other.elevation == elevation &&
-        other.shadowColor == shadowColor &&
-        other.surfaceTintColor == surfaceTintColor &&
-        other.textStyle == textStyle &&
-        other.labelTextStyle == labelTextStyle &&
-        other.enableFeedback == enableFeedback &&
-        other.mouseCursor == mouseCursor &&
-        other.position == position &&
-        other.iconColor == iconColor &&
-        other.iconSize == iconSize;
+    return other is PopupMenuThemeData
+        && other.color == color
+        && other.shape == shape
+        && other.elevation == elevation
+        && other.shadowColor == shadowColor
+        && other.surfaceTintColor == surfaceTintColor
+        && other.textStyle == textStyle
+        && other.labelTextStyle == labelTextStyle
+        && other.enableFeedback == enableFeedback
+        && other.mouseCursor == mouseCursor
+        && other.position == position
+        && other.iconColor == iconColor
+        && other.iconSize == iconSize;
   }
 
   @override
@@ -223,28 +204,13 @@ class PopupMenuThemeData with Diagnosticable {
     super.debugFillProperties(properties);
     properties.add(ColorProperty('color', color, defaultValue: null));
     properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape, defaultValue: null));
-    properties.add(
-      DiagnosticsProperty<EdgeInsetsGeometry>('menuPadding', menuPadding, defaultValue: null),
-    );
     properties.add(DoubleProperty('elevation', elevation, defaultValue: null));
     properties.add(ColorProperty('shadowColor', shadowColor, defaultValue: null));
     properties.add(ColorProperty('surfaceTintColor', surfaceTintColor, defaultValue: null));
     properties.add(DiagnosticsProperty<TextStyle>('text style', textStyle, defaultValue: null));
-    properties.add(
-      DiagnosticsProperty<MaterialStateProperty<TextStyle?>>(
-        'labelTextStyle',
-        labelTextStyle,
-        defaultValue: null,
-      ),
-    );
+    properties.add(DiagnosticsProperty<MaterialStateProperty<TextStyle?>>('labelTextStyle', labelTextStyle, defaultValue: null));
     properties.add(DiagnosticsProperty<bool>('enableFeedback', enableFeedback, defaultValue: null));
-    properties.add(
-      DiagnosticsProperty<MaterialStateProperty<MouseCursor?>>(
-        'mouseCursor',
-        mouseCursor,
-        defaultValue: null,
-      ),
-    );
+    properties.add(DiagnosticsProperty<MaterialStateProperty<MouseCursor?>>('mouseCursor', mouseCursor, defaultValue: null));
     properties.add(EnumProperty<PopupMenuPosition?>('position', position, defaultValue: null));
     properties.add(ColorProperty('iconColor', iconColor, defaultValue: null));
     properties.add(DoubleProperty('iconSize', iconSize, defaultValue: null));
@@ -259,7 +225,11 @@ class PopupMenuThemeData with Diagnosticable {
 class PopupMenuTheme extends InheritedTheme {
   /// Creates a popup menu theme that controls the configurations for
   /// popup menus in its widget subtree.
-  const PopupMenuTheme({super.key, required this.data, required super.child});
+  const PopupMenuTheme({
+    super.key,
+    required this.data,
+    required super.child,
+  });
 
   /// The properties for descendant popup menu widgets.
   final PopupMenuThemeData data;
@@ -274,8 +244,7 @@ class PopupMenuTheme extends InheritedTheme {
   /// PopupMenuThemeData theme = PopupMenuTheme.of(context);
   /// ```
   static PopupMenuThemeData of(BuildContext context) {
-    final PopupMenuTheme? popupMenuTheme = context
-        .dependOnInheritedWidgetOfExactType<PopupMenuTheme>();
+    final PopupMenuTheme? popupMenuTheme = context.dependOnInheritedWidgetOfExactType<PopupMenuTheme>();
     return popupMenuTheme?.data ?? Theme.of(context).popupMenuTheme;
   }
 

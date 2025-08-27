@@ -27,7 +27,5 @@
   "lookUpButtonLabel": "Tumingin sa Itaas",
   "searchWebButtonLabel": "Maghanap sa Web",
   "shareButtonLabel": "Ibahagi...",
-  "clearButtonLabel": "I-clear",
-  "cancelButtonLabel": "Kanselahin",
-  "backButtonLabel": "Bumalik"
+  "clearButtonLabel": "Clear"
 }

@@ -5,11 +5,7 @@
 import 'template.dart';
 
 class IconButtonTemplate extends TokenTemplate {
-  const IconButtonTemplate(
-    this.tokenGroup,
-    super.blockName,
-    super.fileName,
-    super.tokens, {
+  const IconButtonTemplate(this.tokenGroup, super.blockName, super.fileName, super.tokens, {
     super.colorSchemePrefix = '_colors.',
   });
 
@@ -189,8 +185,7 @@ class IconButtonTemplate extends TokenTemplate {
   }
 
   String _minimumSize() {
-    if (tokenAvailable('$tokenGroup.container.height') &&
-        tokenAvailable('$tokenGroup.container.width')) {
+    if (tokenAvailable('$tokenGroup.container.height') && tokenAvailable('$tokenGroup.container.width')) {
       return '''
 
     const MaterialStatePropertyAll<Size>(Size(${getToken('$tokenGroup.container.width')}, ${getToken('$tokenGroup.container.height')}))''';
@@ -240,8 +235,7 @@ class IconButtonTemplate extends TokenTemplate {
   }
 
   @override
-  String generate() =>
-      '''
+  String generate() => '''
 class _${blockName}DefaultsM3 extends ButtonStyle {
   _${blockName}DefaultsM3(this.context, this.toggleable)
     : super(
@@ -319,4 +313,5 @@ class _${blockName}DefaultsM3 extends ButtonStyle {
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
 }
 ''';
+
 }

@@ -8,8 +8,7 @@ import 'framework.dart';
 import 'layout_builder.dart';
 
 /// The signature of the [SliverLayoutBuilder] builder function.
-typedef SliverLayoutWidgetBuilder =
-    Widget Function(BuildContext context, SliverConstraints constraints);
+typedef SliverLayoutWidgetBuilder = Widget Function(BuildContext context, SliverConstraints constraints);
 
 /// Builds a sliver widget tree that can depend on its own [SliverConstraints].
 ///
@@ -26,19 +25,16 @@ typedef SliverLayoutWidgetBuilder =
 ///  * [LayoutBuilder], the non-sliver version of this widget.
 class SliverLayoutBuilder extends ConstrainedLayoutBuilder<SliverConstraints> {
   /// Creates a sliver widget that defers its building until layout.
-  const SliverLayoutBuilder({super.key, required super.builder});
+  const SliverLayoutBuilder({
+    super.key,
+    required super.builder,
+  });
 
   @override
-  RenderConstrainedLayoutBuilder<SliverConstraints, RenderSliver> createRenderObject(
-    BuildContext context,
-  ) => _RenderSliverLayoutBuilder();
+  RenderObject createRenderObject(BuildContext context) => _RenderSliverLayoutBuilder();
 }
 
-class _RenderSliverLayoutBuilder extends RenderSliver
-    with
-        RenderObjectWithChildMixin<RenderSliver>,
-        RenderObjectWithLayoutCallbackMixin,
-        RenderConstrainedLayoutBuilder<SliverConstraints, RenderSliver> {
+class _RenderSliverLayoutBuilder extends RenderSliver with RenderObjectWithChildMixin<RenderSliver>, RenderConstrainedLayoutBuilder<SliverConstraints, RenderSliver> {
   @override
   double childMainAxisPosition(RenderObject child) {
     assert(child == this.child);
@@ -47,7 +43,7 @@ class _RenderSliverLayoutBuilder extends RenderSliver
 
   @override
   void performLayout() {
-    runLayoutCallback();
+    rebuildIfNecessary();
     child?.layout(constraints, parentUsesSize: true);
     geometry = child?.geometry ?? SliverGeometry.zero;
   }
@@ -67,17 +63,9 @@ class _RenderSliverLayoutBuilder extends RenderSliver
   }
 
   @override
-  bool hitTestChildren(
-    SliverHitTestResult result, {
-    required double mainAxisPosition,
-    required double crossAxisPosition,
-  }) {
-    return child != null &&
-        child!.geometry!.hitTestExtent > 0 &&
-        child!.hitTest(
-          result,
-          mainAxisPosition: mainAxisPosition,
-          crossAxisPosition: crossAxisPosition,
-        );
+  bool hitTestChildren(SliverHitTestResult result, {required double mainAxisPosition, required double crossAxisPosition}) {
+    return child != null
+        && child!.geometry!.hitTestExtent > 0
+        && child!.hitTest(result, mainAxisPosition: mainAxisPosition, crossAxisPosition: crossAxisPosition);
   }
 }

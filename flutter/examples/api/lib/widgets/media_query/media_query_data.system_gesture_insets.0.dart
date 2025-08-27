@@ -13,7 +13,9 @@ class SystemGestureInsetsExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: SystemGestureInsetsExample());
+    return const MaterialApp(
+      home: SystemGestureInsetsExample(),
+    );
   }
 }
 

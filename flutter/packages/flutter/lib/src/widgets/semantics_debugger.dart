@@ -25,7 +25,11 @@ class SemanticsDebugger extends StatefulWidget {
   const SemanticsDebugger({
     super.key,
     required this.child,
-    this.labelStyle = const TextStyle(color: Color(0xFF000000), fontSize: 10.0, height: 0.8),
+    this.labelStyle = const TextStyle(
+      color: Color(0xFF000000),
+      fontSize: 10.0,
+      height: 0.8,
+    ),
   });
 
   /// The widget below this widget in the tree.
@@ -41,33 +45,31 @@ class SemanticsDebugger extends StatefulWidget {
 }
 
 class _SemanticsDebuggerState extends State<SemanticsDebugger> with WidgetsBindingObserver {
+  _SemanticsClient? _client;
   PipelineOwner? _pipelineOwner;
-  SemanticsHandle? _semanticsHandle;
-  int _generation = 0;
 
   @override
   void initState() {
     super.initState();
-    _semanticsHandle = SemanticsBinding.instance.ensureSemantics();
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final PipelineOwner newOwner = View.pipelineOwnerOf(context);
-    assert(newOwner.semanticsOwner != null);
     if (newOwner != _pipelineOwner) {
-      _pipelineOwner?.semanticsOwner?.removeListener(_update);
-      newOwner.semanticsOwner!.addListener(_update);
+      _client?.dispose();
+      _client = _SemanticsClient(newOwner)
+        ..addListener(_update);
       _pipelineOwner = newOwner;
     }
   }
 
   @override
   void dispose() {
-    _pipelineOwner?.semanticsOwner?.removeListener(_update);
-    _semanticsHandle?.dispose();
+    _client?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -80,7 +82,6 @@ class _SemanticsDebuggerState extends State<SemanticsDebugger> with WidgetsBindi
   }
 
   void _update() {
-    _generation++;
     SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
       // Semantic information are only available at the end of a frame and our
       // only chance to paint them on the screen is the next frame. To achieve
@@ -156,7 +157,7 @@ class _SemanticsDebuggerState extends State<SemanticsDebugger> with WidgetsBindi
     return CustomPaint(
       foregroundPainter: _SemanticsDebuggerPainter(
         _pipelineOwner!,
-        _generation,
+        _client!.generation,
         _lastPointerDownLocation, // in physical pixels
         View.of(context).devicePixelRatio,
         widget.labelStyle,
@@ -166,26 +167,57 @@ class _SemanticsDebuggerState extends State<SemanticsDebugger> with WidgetsBindi
         onTap: _handleTap,
         onLongPress: _handleLongPress,
         onPanEnd: _handlePanEnd,
-        excludeFromSemantics:
-            true, // otherwise if you don't hit anything, we end up receiving it, which causes an infinite loop...
+        excludeFromSemantics: true, // otherwise if you don't hit anything, we end up receiving it, which causes an infinite loop...
         child: Listener(
           onPointerDown: _handlePointerDown,
           behavior: HitTestBehavior.opaque,
-          child: _IgnorePointerWithSemantics(child: widget.child),
+          child: _IgnorePointerWithSemantics(
+            child: widget.child,
+          ),
         ),
       ),
     );
   }
 }
 
+class _SemanticsClient extends ChangeNotifier {
+  _SemanticsClient(PipelineOwner pipelineOwner) {
+    // TODO(polina-c): stop duplicating code across disposables
+    // https://github.com/flutter/flutter/issues/137435
+    if (kFlutterMemoryAllocationsEnabled) {
+      FlutterMemoryAllocations.instance.dispatchObjectCreated(
+        library: 'package:flutter/widgets.dart',
+        className: '$_SemanticsClient',
+        object: this,
+      );
+    }
+    _semanticsHandle = pipelineOwner.ensureSemantics(
+      listener: _didUpdateSemantics,
+    );
+  }
+
+  SemanticsHandle? _semanticsHandle;
+
+  @override
+  void dispose() {
+    if (kFlutterMemoryAllocationsEnabled) {
+      FlutterMemoryAllocations.instance.dispatchObjectDisposed(object: this);
+    }
+    _semanticsHandle!.dispose();
+    _semanticsHandle = null;
+    super.dispose();
+  }
+
+  int generation = 0;
+
+  void _didUpdateSemantics() {
+    generation += 1;
+    notifyListeners();
+  }
+}
+
 class _SemanticsDebuggerPainter extends CustomPainter {
-  const _SemanticsDebuggerPainter(
-    this.owner,
-    this.generation,
-    this.pointerPosition,
-    this.devicePixelRatio,
-    this.labelStyle,
-  );
+  const _SemanticsDebuggerPainter(this.owner, this.generation, this.pointerPosition, this.devicePixelRatio, this.labelStyle);
 
   final PipelineOwner owner;
   final int generation;
@@ -203,7 +235,7 @@ class _SemanticsDebuggerPainter extends CustomPainter {
     canvas.save();
     canvas.scale(1.0 / devicePixelRatio, 1.0 / devicePixelRatio);
     if (rootNode != null) {
-      _paint(canvas, rootNode, _findDepth(rootNode), 0, 0);
+      _paint(canvas, rootNode, _findDepth(rootNode));
     }
     if (pointerPosition != null) {
       final Paint paint = Paint();
@@ -215,9 +247,9 @@ class _SemanticsDebuggerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_SemanticsDebuggerPainter oldDelegate) {
-    return owner != oldDelegate.owner ||
-        generation != oldDelegate.generation ||
-        pointerPosition != oldDelegate.pointerPosition;
+    return owner != oldDelegate.owner
+        || generation != oldDelegate.generation
+        || pointerPosition != oldDelegate.pointerPosition;
   }
 
   @visibleForTesting
@@ -226,11 +258,11 @@ class _SemanticsDebuggerPainter extends CustomPainter {
     final List<String> annotations = <String>[];
 
     bool wantsTap = false;
-    if (data.flagsCollection.hasCheckedState) {
-      annotations.add(data.flagsCollection.isChecked ? 'checked' : 'unchecked');
+    if (data.hasFlag(SemanticsFlag.hasCheckedState)) {
+      annotations.add(data.hasFlag(SemanticsFlag.isChecked) ? 'checked' : 'unchecked');
       wantsTap = true;
     }
-    if (data.flagsCollection.isTextField) {
+    if (data.hasFlag(SemanticsFlag.isTextField)) {
       annotations.add('textfield');
       wantsTap = true;
     }
@@ -249,14 +281,13 @@ class _SemanticsDebuggerPainter extends CustomPainter {
       annotations.add('long-pressable');
     }
 
-    final bool isScrollable =
-        data.hasAction(SemanticsAction.scrollLeft) ||
-        data.hasAction(SemanticsAction.scrollRight) ||
-        data.hasAction(SemanticsAction.scrollUp) ||
-        data.hasAction(SemanticsAction.scrollDown);
+    final bool isScrollable = data.hasAction(SemanticsAction.scrollLeft)
+        || data.hasAction(SemanticsAction.scrollRight)
+        || data.hasAction(SemanticsAction.scrollUp)
+        || data.hasAction(SemanticsAction.scrollDown);
 
-    final bool isAdjustable =
-        data.hasAction(SemanticsAction.increase) || data.hasAction(SemanticsAction.decrease);
+    final bool isAdjustable = data.hasAction(SemanticsAction.increase)
+        || data.hasAction(SemanticsAction.decrease);
 
     if (isScrollable) {
       annotations.add('scrollable');
@@ -270,31 +301,30 @@ class _SemanticsDebuggerPainter extends CustomPainter {
     // Android will avoid pronouncing duplicating tooltip and label.
     // Therefore, having two identical strings is the same as having a single
     // string.
-    final bool shouldIgnoreDuplicatedLabel =
-        defaultTargetPlatform == TargetPlatform.android &&
-        data.attributedLabel.string == data.tooltip;
+    final bool shouldIgnoreDuplicatedLabel = defaultTargetPlatform == TargetPlatform.android && data.attributedLabel.string == data.tooltip;
     final String tooltipAndLabel = <String>[
-      if (data.tooltip.isNotEmpty) data.tooltip,
+      if (data.tooltip.isNotEmpty)
+        data.tooltip,
       if (data.attributedLabel.string.isNotEmpty && !shouldIgnoreDuplicatedLabel)
         data.attributedLabel.string,
     ].join('\n');
     if (tooltipAndLabel.isEmpty) {
       message = annotations.join('; ');
     } else {
-      final String effectiveLabel;
+      final String effectivelabel;
       if (data.textDirection == null) {
-        effectiveLabel = '${Unicode.FSI}$tooltipAndLabel${Unicode.PDI}';
+        effectivelabel = '${Unicode.FSI}$tooltipAndLabel${Unicode.PDI}';
         annotations.insert(0, 'MISSING TEXT DIRECTION');
       } else {
-        effectiveLabel = switch (data.textDirection!) {
+        effectivelabel = switch (data.textDirection!) {
           TextDirection.rtl => '${Unicode.RLI}$tooltipAndLabel${Unicode.PDI}',
           TextDirection.ltr => tooltipAndLabel,
         };
       }
       if (annotations.isEmpty) {
-        message = effectiveLabel;
+        message = effectivelabel;
       } else {
-        message = '$effectiveLabel (${annotations.join('; ')})';
+        message = '$effectivelabel (${annotations.join('; ')})';
       }
     }
 
@@ -310,9 +340,11 @@ class _SemanticsDebuggerPainter extends CustomPainter {
     canvas.save();
     canvas.clipRect(rect);
     final TextPainter textPainter = TextPainter()
-      ..text = TextSpan(style: labelStyle, text: message)
-      ..textDirection = TextDirection
-          .ltr // _getMessage always returns LTR text, even if node.label is RTL
+      ..text = TextSpan(
+        style: labelStyle,
+        text: message,
+      )
+      ..textDirection = TextDirection.ltr // _getMessage always returns LTR text, even if node.label is RTL
       ..textAlign = TextAlign.center
       ..layout(maxWidth: rect.width);
 
@@ -333,14 +365,14 @@ class _SemanticsDebuggerPainter extends CustomPainter {
     return childrenDepth + 1;
   }
 
-  void _paint(Canvas canvas, SemanticsNode node, int rank, int indexInParent, int level) {
+  void _paint(Canvas canvas, SemanticsNode node, int rank) {
     canvas.save();
     if (node.transform != null) {
       canvas.transform(node.transform!.storage);
     }
     final Rect rect = node.rect;
     if (!rect.isEmpty) {
-      final Color lineColor = _colorForNode(indexInParent, level);
+      final Color lineColor = Color(0xFF000000 + math.Random(node.id).nextInt(0xFFFFFF));
       final Rect innerRect = rect.deflate(rank * 1.0);
       if (innerRect.isEmpty) {
         final Paint fill = Paint()
@@ -362,36 +394,20 @@ class _SemanticsDebuggerPainter extends CustomPainter {
     }
     if (!node.mergeAllDescendantsIntoThisNode) {
       final int childRank = rank - 1;
-      final int childLevel = level + 1;
-      int childIndex = 0;
       node.visitChildren((SemanticsNode child) {
-        _paint(canvas, child, childRank, childIndex, childLevel);
-        childIndex += 1;
+        _paint(canvas, child, childRank);
         return true;
       });
     }
     canvas.restore();
   }
-
-  static Color _colorForNode(int index, int level) {
-    return HSLColor.fromAHSL(
-      1.0,
-      // Use custom hash to ensure stable value regardless of Dart changes
-      360.0 * math.Random(_getColorSeed(index, level)).nextDouble(),
-      1.0,
-      0.7,
-    ).toColor();
-  }
-
-  static int _getColorSeed(int level, int index) {
-    // Should be no collision as long as children number < 10000.
-    return level * 10000 + index;
-  }
 }
 
 /// A widget ignores pointer event but still keeps semantics actions.
 class _IgnorePointerWithSemantics extends SingleChildRenderObjectWidget {
-  const _IgnorePointerWithSemantics({super.child});
+  const _IgnorePointerWithSemantics({
+    super.child,
+  });
 
   @override
   _RenderIgnorePointerWithSemantics createRenderObject(BuildContext context) {
@@ -403,5 +419,5 @@ class _RenderIgnorePointerWithSemantics extends RenderProxyBox {
   _RenderIgnorePointerWithSemantics();
 
   @override
-  bool hitTest(BoxHitTestResult result, {required Offset position}) => false;
+  bool hitTest(BoxHitTestResult result, { required Offset position }) => false;
 }

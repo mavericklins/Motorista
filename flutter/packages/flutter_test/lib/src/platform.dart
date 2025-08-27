@@ -2,17 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/foundation.dart';
-library;
-
 import 'dart:io';
 
-/// Whether the test is running in a web browser compiled to JavaScript or WebAssembly.
+/// Whether the test is running in a web browser compiled to JavaScript.
 ///
 /// See also:
 ///
 ///  * [kIsWeb], the equivalent constant in the `foundation` library.
-const bool isBrowser = bool.fromEnvironment('dart.library.js_interop');
+const bool isBrowser = identical(0, 0.0);
 
 /// Whether the test is running on the Windows operating system.
 ///

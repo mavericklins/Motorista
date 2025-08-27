@@ -16,9 +16,7 @@ void main() {
     expect(padding, hasOneLineDescription);
   });
 
-  testWidgets('AnimatedPadding padding visual-to-directional animation', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('AnimatedPadding padding visual-to-directional animation', (WidgetTester tester) async {
     final Key target = UniqueKey();
 
     await tester.pumpWidget(
@@ -60,9 +58,7 @@ void main() {
     expect(tester.getTopRight(find.byKey(target)), const Offset(700.0, 0.0));
   });
 
-  testWidgets('AnimatedPadding animated padding clamped to positive values', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('AnimatedPadding animated padding clamped to positive values', (WidgetTester tester) async {
     final Key target = UniqueKey();
 
     await tester.pumpWidget(
@@ -100,4 +96,5 @@ void main() {
     expect(tester.getSize(find.byKey(target)), const Size(800.0, 600.0));
     expect(tester.getTopRight(find.byKey(target)), const Offset(800.0, 0.0));
   });
+
 }

@@ -4,12 +4,5 @@
   "reorderItemUp": "Przenieś w górę",
   "reorderItemDown": "Przenieś w dół",
   "reorderItemLeft": "Przenieś w lewo",
-  "reorderItemRight": "Przenieś w prawo",
-  "copyButtonLabel": "Kopiuj",
-  "cutButtonLabel": "Wytnij",
-  "lookUpButtonLabel": "Sprawdź",
-  "searchWebButtonLabel": "Szukaj w internecie",
-  "shareButtonLabel": "Udostępnij",
-  "pasteButtonLabel": "Wklej",
-  "selectAllButtonLabel": "Zaznacz wszystko"
+  "reorderItemRight": "Przenieś w prawo"
 }

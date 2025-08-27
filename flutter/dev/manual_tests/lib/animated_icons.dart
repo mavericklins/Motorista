@@ -11,7 +11,9 @@ class AnimatedIconsTestApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Animated Icons Test',
-      home: Scaffold(body: IconsList()),
+      home: Scaffold(
+        body: IconsList(),
+      ),
     );
   }
 }
@@ -37,26 +39,23 @@ class IconSampleRow extends StatefulWidget {
 }
 
 class IconSampleRowState extends State<IconSampleRow> with SingleTickerProviderStateMixin {
-  late final AnimationController progress = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 300),
-  );
+  late final AnimationController progress = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: InkWell(
-        onTap: () {
-          progress.forward(from: 0.0);
-        },
-        child: AnimatedIcon(icon: widget.sample.icon, progress: progress, color: Colors.lightBlue),
+        onTap: () { progress.forward(from: 0.0); },
+        child: AnimatedIcon(
+          icon: widget.sample.icon,
+          progress: progress,
+          color: Colors.lightBlue,
+        ),
       ),
       title: Text(widget.sample.description),
       subtitle: Slider(
         value: progress.value,
-        onChanged: (double v) {
-          progress.animateTo(v, duration: Duration.zero);
-        },
+        onChanged: (double v) { progress.animateTo(v, duration: Duration.zero); },
       ),
     );
   }
@@ -78,7 +77,7 @@ class IconSampleRowState extends State<IconSampleRow> with SingleTickerProviderS
   }
 }
 
-const List<IconSample> samples = <IconSample>[
+const List<IconSample> samples = <IconSample> [
   IconSample(AnimatedIcons.arrow_menu, 'arrow_menu'),
   IconSample(AnimatedIcons.menu_arrow, 'menu_arrow'),
 

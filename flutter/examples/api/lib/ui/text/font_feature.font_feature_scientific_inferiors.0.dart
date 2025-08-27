@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
-/// Flutter code sample for [FontFeature.scientificInferiors].
+/// Flutter code sample for [FontFeature.FontFeature.scientificInferiors].
 
 void main() => runApp(const ExampleApp());
 
@@ -31,7 +31,9 @@ class ExampleWidget extends StatelessWidget {
       'C8H10N4O2',
       style: TextStyle(
         fontFamily: 'Piazzolla',
-        fontFeatures: <FontFeature>[FontFeature.scientificInferiors()],
+        fontFeatures: <FontFeature>[
+          FontFeature.scientificInferiors(),
+        ],
       ),
     );
   }

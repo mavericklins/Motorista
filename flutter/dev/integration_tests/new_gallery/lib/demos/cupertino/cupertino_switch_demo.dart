@@ -14,7 +14,8 @@ class CupertinoSwitchDemo extends StatefulWidget {
   State<CupertinoSwitchDemo> createState() => _CupertinoSwitchDemoState();
 }
 
-class _CupertinoSwitchDemoState extends State<CupertinoSwitchDemo> with RestorationMixin {
+class _CupertinoSwitchDemoState extends State<CupertinoSwitchDemo>
+    with RestorationMixin {
   final RestorableBool _switchValueA = RestorableBool(false);
   final RestorableBool _switchValueB = RestorableBool(true);
 
@@ -33,7 +34,9 @@ class _CupertinoSwitchDemoState extends State<CupertinoSwitchDemo> with Restorat
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         automaticallyImplyLeading: false,
-        middle: Text(localizations.demoSelectionControlsSwitchTitle),
+        middle: Text(
+          localizations.demoSelectionControlsSwitchTitle,
+        ),
       ),
       child: Center(
         child: Semantics(
@@ -67,8 +70,14 @@ class _CupertinoSwitchDemoState extends State<CupertinoSwitchDemo> with Restorat
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  CupertinoSwitch(value: _switchValueA.value, onChanged: null),
-                  CupertinoSwitch(value: _switchValueB.value, onChanged: null),
+                  CupertinoSwitch(
+                    value: _switchValueA.value,
+                    onChanged: null,
+                  ),
+                  CupertinoSwitch(
+                    value: _switchValueB.value,
+                    onChanged: null,
+                  ),
                 ],
               ),
             ],

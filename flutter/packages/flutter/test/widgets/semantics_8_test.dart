@@ -21,8 +21,13 @@ void main() {
             child: Stack(
               textDirection: TextDirection.ltr,
               children: <Widget>[
-                Semantics(checked: true),
-                Semantics(label: 'label', textDirection: TextDirection.ltr),
+                Semantics(
+                  checked: true,
+                ),
+                Semantics(
+                  label: 'label',
+                  textDirection: TextDirection.ltr,
+                ),
               ],
             ),
           ),
@@ -30,22 +35,19 @@ void main() {
       ),
     );
 
-    expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(
-              id: 1,
-              flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
-              label: 'label',
-              textDirection: TextDirection.ltr,
-              rect: TestSemantics.fullScreen,
-            ),
-          ],
-        ),
+    expect(semantics, hasSemantics(
+      TestSemantics.root(
+        children: <TestSemantics>[
+          TestSemantics.rootChild(
+            id: 1,
+            flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
+            label: 'label',
+            textDirection: TextDirection.ltr,
+            rect: TestSemantics.fullScreen,
+          ),
+        ],
       ),
-    );
+    ));
 
     // switch the order of the inner Semantics node to trigger a reset
     await tester.pumpWidget(
@@ -57,8 +59,13 @@ void main() {
             child: Stack(
               textDirection: TextDirection.ltr,
               children: <Widget>[
-                Semantics(label: 'label', textDirection: TextDirection.ltr),
-                Semantics(checked: true),
+                Semantics(
+                  label: 'label',
+                  textDirection: TextDirection.ltr,
+                ),
+                Semantics(
+                  checked: true,
+                ),
               ],
             ),
           ),
@@ -66,22 +73,19 @@ void main() {
       ),
     );
 
-    expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(
-              id: 1,
-              flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
-              label: 'label',
-              textDirection: TextDirection.ltr,
-              rect: TestSemantics.fullScreen,
-            ),
-          ],
-        ),
+    expect(semantics, hasSemantics(
+      TestSemantics.root(
+        children: <TestSemantics>[
+          TestSemantics.rootChild(
+            id: 1,
+            flags: SemanticsFlag.hasCheckedState.index | SemanticsFlag.isChecked.index,
+            label: 'label',
+            textDirection: TextDirection.ltr,
+            rect: TestSemantics.fullScreen,
+          ),
+        ],
       ),
-    );
+    ));
 
     semantics.dispose();
   });

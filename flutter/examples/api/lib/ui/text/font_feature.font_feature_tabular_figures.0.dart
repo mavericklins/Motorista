@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
-/// Flutter code sample for [FontFeature.tabularFigures].
+/// Flutter code sample for [dart]:ui FontFeature.FontFeature.tabularFigures.
 
 void main() => runApp(const ExampleApp());
 
@@ -31,7 +31,9 @@ class ExampleWidget extends StatelessWidget {
       'Call 311-555-2368 now!',
       style: TextStyle(
         fontFamily: 'Piazzolla',
-        fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
+        fontFeatures: <FontFeature>[
+          FontFeature.tabularFigures(),
+        ],
       ),
     );
   }

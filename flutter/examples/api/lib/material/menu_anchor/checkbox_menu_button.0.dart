@@ -20,10 +20,7 @@ class MyCheckboxMenu extends StatefulWidget {
 
 class _MyCheckboxMenuState extends State<MyCheckboxMenu> {
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
-  static const SingleActivator _showShortcut = SingleActivator(
-    LogicalKeyboardKey.keyS,
-    control: true,
-  );
+  static const SingleActivator _showShortcut = SingleActivator(LogicalKeyboardKey.keyS, control: true);
   bool _showingMessage = false;
 
   @override
@@ -104,10 +101,9 @@ class MenuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: SafeArea(child: MyCheckboxMenu(message: kMessage)),
-      ),
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const Scaffold(body: SafeArea(child: MyCheckboxMenu(message: kMessage))),
     );
   }
 }

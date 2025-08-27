@@ -4,12 +4,5 @@
   "reorderItemUp": "Nach oben verschieben",
   "reorderItemDown": "Nach unten verschieben",
   "reorderItemLeft": "Nach links verschieben",
-  "reorderItemRight": "Nach rechts verschieben",
-  "copyButtonLabel": "Kopieren",
-  "cutButtonLabel": "Ausschneiden",
-  "lookUpButtonLabel": "Nachschlagen",
-  "searchWebButtonLabel": "Im Web suchen",
-  "shareButtonLabel": "Teilen",
-  "pasteButtonLabel": "Einsetzen",
-  "selectAllButtonLabel": "Alle auswählen"
+  "reorderItemRight": "Nach rechts verschieben"
 }

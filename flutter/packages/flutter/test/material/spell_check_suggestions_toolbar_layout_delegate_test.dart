@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('positions itself at anchorAbove if it fits and shifts up when not', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('positions itself at anchorAbove if it fits and shifts up when not', (WidgetTester tester) async {
     late StateSetter setState;
     const double toolbarOverlap = 100;
     const double height = 500;
@@ -23,8 +21,14 @@ void main() {
             builder: (BuildContext context, StateSetter setter) {
               setState = setter;
               return CustomSingleChildLayout(
-                delegate: SpellCheckSuggestionsToolbarLayoutDelegate(anchor: Offset(50.0, anchorY)),
-                child: Container(width: 200.0, height: height, color: const Color(0xffff0000)),
+                delegate: SpellCheckSuggestionsToolbarLayoutDelegate(
+                  anchor: Offset(50.0, anchorY),
+                ),
+                child: Container(
+                  width: 200.0,
+                  height: height,
+                  color: const Color(0xffff0000),
+                ),
               );
             },
           ),

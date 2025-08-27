@@ -20,17 +20,18 @@ void main() {
           onScaleUpdate: (ScaleUpdateDetails details) {
             updateDetails.add(details);
           },
-          child: Container(key: redContainer, width: 100, height: 100, color: Colors.red),
+          child: Container(
+            key: redContainer,
+            width: 100,
+            height: 100,
+            color: Colors.red,
+          ),
         ),
       ),
     );
 
-    final TestGesture gesture = await tester.startGesture(
-      tester.getCenter(find.byKey(redContainer)) - const Offset(20, 20),
-    );
-    final TestGesture pointer2 = await tester.startGesture(
-      tester.getCenter(find.byKey(redContainer)) + const Offset(30, 30),
-    );
+    final TestGesture gesture = await tester.startGesture(tester.getCenter(find.byKey(redContainer)) - const Offset(20, 20));
+    final TestGesture pointer2 = await tester.startGesture(tester.getCenter(find.byKey(redContainer)) + const Offset(30, 30));
     await pointer2.moveTo(tester.getCenter(find.byKey(redContainer)) + const Offset(20, 20));
 
     expect(updateDetails.single.localFocalPoint, const Offset(50, 50));
@@ -46,5 +47,6 @@ void main() {
     await gesture.up();
     await pointer2.up();
     await tester.pumpAndSettle();
+
   });
 }

@@ -7,10 +7,10 @@ import 'project.dart';
 
 class HotReloadProject extends Project {
   @override
-  final pubspec = '''
+  final String pubspec = '''
   name: test
   environment:
-    sdk: ^3.7.0-0
+    sdk: '>=3.2.0-0 <4.0.0'
 
   dependencies:
     flutter:
@@ -68,7 +68,7 @@ class HotReloadProject extends Project {
   }
 
   /// Whether the template is currently stateful.
-  var stateful = false;
+  bool stateful = false;
 
   void toggleState() {
     stateful = !stateful;

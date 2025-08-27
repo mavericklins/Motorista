@@ -17,10 +17,7 @@ class MaterialStateMouseCursorExampleApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('MaterialStateMouseCursor Sample')),
         body: const Center(
-          child: MaterialStateMouseCursorExample(
-            // TRY THIS: Switch to get a different mouse cursor while hovering ListTile.
-            enabled: false,
-          ),
+          child: MaterialStateMouseCursorExample(),
         ),
       ),
     );
@@ -43,17 +40,14 @@ class ListTileCursor extends MaterialStateMouseCursor {
 }
 
 class MaterialStateMouseCursorExample extends StatelessWidget {
-  const MaterialStateMouseCursorExample({required this.enabled, super.key});
-
-  final bool enabled;
+  const MaterialStateMouseCursorExample({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: const Text('ListTile'),
-      enabled: enabled,
-      onTap: () {},
-      mouseCursor: const ListTileCursor(),
+    return const ListTile(
+      title: Text('Disabled ListTile'),
+      enabled: false,
+      mouseCursor: ListTileCursor(),
     );
   }
 }

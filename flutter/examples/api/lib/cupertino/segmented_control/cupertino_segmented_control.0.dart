@@ -37,9 +37,6 @@ class SegmentedControlExample extends StatefulWidget {
 
 class _SegmentedControlExampleState extends State<SegmentedControlExample> {
   Sky _selectedSegment = Sky.midnight;
-  bool _toggleOne = false;
-  bool _toggleAll = true;
-  Set<Sky> _disabledChildren = <Sky>{};
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +45,6 @@ class _SegmentedControlExampleState extends State<SegmentedControlExample> {
       navigationBar: CupertinoNavigationBar(
         // This Cupertino segmented control has the enum "Sky" as the type.
         middle: CupertinoSegmentedControl<Sky>(
-          disabledChildren: _disabledChildren,
           selectedColor: skyColors[_selectedSegment],
           // Provide horizontal padding around the children.
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -77,56 +73,9 @@ class _SegmentedControlExampleState extends State<SegmentedControlExample> {
         ),
       ),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Selected Segment: ${_selectedSegment.name}',
-              style: const TextStyle(color: CupertinoColors.white),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const Text('Disable one segment', style: TextStyle(color: CupertinoColors.white)),
-                CupertinoSwitch(
-                  value: _toggleOne,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _toggleOne = value;
-                      if (value) {
-                        _toggleAll = false;
-                        _disabledChildren = <Sky>{Sky.midnight};
-                      } else {
-                        _toggleAll = true;
-                        _disabledChildren = <Sky>{};
-                      }
-                    });
-                  },
-                ),
-              ],
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const Text('Toggle all segments', style: TextStyle(color: CupertinoColors.white)),
-                CupertinoSwitch(
-                  value: _toggleAll,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _toggleAll = value;
-                      if (value) {
-                        _toggleOne = false;
-                        _disabledChildren = <Sky>{};
-                      } else {
-                        _disabledChildren = <Sky>{Sky.midnight, Sky.viridian, Sky.cerulean};
-                      }
-                    });
-                  },
-                ),
-              ],
-            ),
-          ],
+        child: Text(
+          'Selected Segment: ${_selectedSegment.name}',
+          style: const TextStyle(color: CupertinoColors.white),
         ),
       ),
     );

@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+
 import 'goldens_io.dart' if (dart.library.js_interop) 'goldens_web.dart' as flutter_goldens;
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) {

@@ -24,23 +24,23 @@ class LinuxDevice extends DesktopDevice {
     required Logger logger,
     required FileSystem fileSystem,
     required OperatingSystemUtils operatingSystemUtils,
-  }) : _operatingSystemUtils = operatingSystemUtils,
-       _logger = logger,
-       super(
-         'linux',
-         platformType: PlatformType.linux,
-         ephemeral: false,
-         logger: logger,
-         processManager: processManager,
-         fileSystem: fileSystem,
-         operatingSystemUtils: operatingSystemUtils,
-       );
+  })  : _operatingSystemUtils = operatingSystemUtils,
+        _logger = logger,
+        super(
+          'linux',
+          platformType: PlatformType.linux,
+          ephemeral: false,
+          logger: logger,
+          processManager: processManager,
+          fileSystem: fileSystem,
+          operatingSystemUtils: operatingSystemUtils,
+        );
 
   final OperatingSystemUtils _operatingSystemUtils;
   final Logger _logger;
 
   @override
-  Future<bool> isSupported() async => true;
+  bool isSupported() => true;
 
   @override
   String get name => 'Linux';
@@ -62,7 +62,6 @@ class LinuxDevice extends DesktopDevice {
   Future<void> buildForDevice({
     String? mainPath,
     required BuildInfo buildInfo,
-    bool usingCISystem = false,
   }) async {
     await buildLinux(
       FlutterProject.current().linux,
@@ -88,7 +87,10 @@ class LinuxDevices extends PollingDeviceDiscovery {
     required ProcessManager processManager,
     required Logger logger,
   }) : _platform = platform,
-       _linuxWorkflow = LinuxWorkflow(platform: platform, featureFlags: featureFlags),
+       _linuxWorkflow = LinuxWorkflow(
+          platform: platform,
+          featureFlags: featureFlags,
+       ),
        _fileSystem = fileSystem,
        _logger = logger,
        _processManager = processManager,
@@ -109,7 +111,7 @@ class LinuxDevices extends PollingDeviceDiscovery {
   bool get canListAnything => _linuxWorkflow.canListDevices;
 
   @override
-  Future<List<Device>> pollingGetDevices({Duration? timeout}) async {
+  Future<List<Device>> pollingGetDevices({ Duration? timeout }) async {
     if (!canListAnything) {
       return const <Device>[];
     }

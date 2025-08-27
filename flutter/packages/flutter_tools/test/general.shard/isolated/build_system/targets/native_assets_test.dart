@@ -10,15 +10,16 @@ import 'package:flutter_tools/src/base/logger.dart';
 import 'package:flutter_tools/src/build_info.dart';
 import 'package:flutter_tools/src/build_system/build_system.dart';
 import 'package:flutter_tools/src/build_system/exceptions.dart';
-import 'package:flutter_tools/src/build_system/targets/common.dart';
 import 'package:flutter_tools/src/build_system/targets/native_assets.dart';
 import 'package:flutter_tools/src/features.dart';
 import 'package:flutter_tools/src/isolated/native_assets/native_assets.dart';
+import 'package:native_assets_cli/native_assets_cli_internal.dart'
+    as native_assets_cli;
+import 'package:package_config/package_config.dart' show Package;
 
 import '../../../../src/common.dart';
 import '../../../../src/context.dart';
 import '../../../../src/fakes.dart';
-import '../../../../src/package_config.dart';
 import '../../fake_native_assets_build_runner.dart';
 
 void main() {
@@ -65,72 +66,54 @@ void main() {
     androidEnvironment.buildDir.createSync(recursive: true);
   });
 
-  testWithoutContext('no dependency on KernelSnapshot', () async {
-    const target = DartBuildForNative();
-    expect(target.dependencies, isNot(isA<KernelSnapshot>()));
-  });
-
   testWithoutContext('NativeAssets throws error if missing target platform', () async {
     iosEnvironment.defines.remove(kTargetPlatform);
-    expect(
-      const DartBuildForNative().build(iosEnvironment),
-      throwsA(isA<MissingDefineException>()),
-    );
+    expect(const NativeAssets().build(iosEnvironment), throwsA(isA<MissingDefineException>()));
   });
 
   testUsingContext('NativeAssets defaults to ios archs if missing', () async {
-    writePackageConfigFiles(directory: iosEnvironment.projectDir, mainLibName: 'my_app');
+    await createPackageConfig(iosEnvironment);
 
     iosEnvironment.defines.remove(kIosArchs);
 
-    final FlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner();
-    await DartBuildForNative(buildRunner: buildRunner).build(iosEnvironment);
-    await const InstallCodeAssets().build(iosEnvironment);
+    final NativeAssetsBuildRunner buildRunner = FakeNativeAssetsBuildRunner();
+    await NativeAssets(buildRunner: buildRunner).build(iosEnvironment);
 
-    expect(iosEnvironment.buildDir.childFile(DartBuild.depFilename), exists);
-    expect(iosEnvironment.buildDir.childFile(InstallCodeAssets.depFilename), exists);
-    expect(iosEnvironment.buildDir.childFile(InstallCodeAssets.nativeAssetsFilename), exists);
+    final File nativeAssetsYaml =
+        iosEnvironment.buildDir.childFile('native_assets.yaml');
+    final File depsFile = iosEnvironment.buildDir.childFile('native_assets.d');
+    expect(depsFile, exists);
+    expect(nativeAssetsYaml, exists);
   });
 
-  testUsingContext(
-    'NativeAssets throws error if missing sdk root',
-    overrides: <Type, Generator>{FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: true)},
-    () async {
-      writePackageConfigFiles(directory: iosEnvironment.projectDir, mainLibName: 'my_app');
+  testUsingContext('NativeAssets throws error if missing sdk root', () async {
+    await createPackageConfig(iosEnvironment);
 
-      final FlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner(
-        packagesWithNativeAssetsResult: <String>['foo'],
-      );
-
-      iosEnvironment.defines.remove(kSdkRoot);
-      expect(
-        DartBuildForNative(buildRunner: buildRunner).build(iosEnvironment),
-        throwsA(isA<MissingDefineException>()),
-      );
-    },
-  );
+    iosEnvironment.defines.remove(kSdkRoot);
+    expect(const NativeAssets().build(iosEnvironment), throwsA(isA<MissingDefineException>()));
+  });
 
   // The NativeAssets Target should _always_ be creating a yaml an d file.
   // The caching logic depends on this.
-  for (final isNativeAssetsEnabled in <bool>[true, false]) {
-    final postFix = isNativeAssetsEnabled ? 'enabled' : 'disabled';
+  for (final bool isNativeAssetsEnabled in <bool>[true, false]) {
+    final String postFix = isNativeAssetsEnabled ? 'enabled' : 'disabled';
     testUsingContext(
-      'Successful native_assets.json and native_assets.d creation with feature $postFix',
+      'Successful native_assets.yaml and native_assets.d creation with feature $postFix',
       overrides: <Type, Generator>{
         FileSystem: () => fileSystem,
         ProcessManager: () => processManager,
-        FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: isNativeAssetsEnabled),
+        FeatureFlags: () => TestFeatureFlags(
+          isNativeAssetsEnabled: isNativeAssetsEnabled,
+        ),
       },
       () async {
-        writePackageConfigFiles(directory: iosEnvironment.projectDir, mainLibName: 'my_app');
+        await createPackageConfig(iosEnvironment);
 
-        final FlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner();
-        await DartBuildForNative(buildRunner: buildRunner).build(iosEnvironment);
-        await const InstallCodeAssets().build(iosEnvironment);
+        final NativeAssetsBuildRunner buildRunner = FakeNativeAssetsBuildRunner();
+        await NativeAssets(buildRunner: buildRunner).build(iosEnvironment);
 
-        expect(iosEnvironment.buildDir.childFile(DartBuild.depFilename), exists);
-        expect(iosEnvironment.buildDir.childFile(InstallCodeAssets.depFilename), exists);
-        expect(iosEnvironment.buildDir.childFile(InstallCodeAssets.nativeAssetsFilename), exists);
+        expect(iosEnvironment.buildDir.childFile('native_assets.d'), exists);
+        expect(iosEnvironment.buildDir.childFile('native_assets.yaml'), exists);
       },
     );
   }
@@ -139,140 +122,107 @@ void main() {
     'NativeAssets with an asset',
     overrides: <Type, Generator>{
       FileSystem: () => fileSystem,
-      ProcessManager: () => FakeProcessManager.list(<FakeCommand>[
-        // Create the framework dylib.
-        const FakeCommand(
-          command: <Pattern>[
-            'lipo',
-            '-create',
-            '-output',
-            '/build/native_assets/ios/foo.framework/foo',
-            'foo.framework/foo',
-          ],
-        ),
-        // Lookup the original install names of the dylib.
-        // There can be different install names for different architectures.
-        FakeCommand(
-          command: const <Pattern>['otool', '-D', '/build/native_assets/ios/foo.framework/foo'],
-          stdout: <String>[
-            '/build/native_assets/ios/foo.framework/foo (architecture x86_64):',
-            '@rpath/libfoo.dylib',
-            '/build/native_assets/ios/foo.framework/foo (architecture arm64):',
-            '@rpath/libfoo.dylib',
-          ].join('\n'),
-        ),
-        // Change the install name of the binary itself and of its dependencies.
-        // We pass the old to new install name mappings of all native assets dylibs,
-        // even for the dylib that is being updated, since the `-change` option
-        // is ignored if the dylib does not depend on the target dylib.
-        const FakeCommand(
-          command: <Pattern>[
-            'install_name_tool',
-            '-id',
-            '@rpath/foo.framework/foo',
-            '-change',
-            '@rpath/libfoo.dylib',
-            '@rpath/foo.framework/foo',
-            '/build/native_assets/ios/foo.framework/foo',
-          ],
-        ),
-        // Only after all changes to the dylib have been made do we sign it.
-        const FakeCommand(
-          command: <Pattern>[
-            'codesign',
-            '--force',
-            '--sign',
-            '-',
-            '--timestamp=none',
-            '/build/native_assets/ios/foo.framework',
-          ],
-        ),
-      ]),
+      ProcessManager: () => FakeProcessManager.any(),
+      FeatureFlags: () => TestFeatureFlags(isNativeAssetsEnabled: true),
     },
     () async {
-      writePackageConfigFiles(directory: iosEnvironment.projectDir, mainLibName: 'my_app');
+      await createPackageConfig(iosEnvironment);
 
-      final codeAssets = <CodeAsset>[
-        CodeAsset(
-          package: 'foo',
-          name: 'foo.dart',
-          linkMode: DynamicLoadingBundled(),
-          file: Uri.file('foo.framework/foo'),
+      final NativeAssetsBuildRunner buildRunner = FakeNativeAssetsBuildRunner(
+        packagesWithNativeAssetsResult: <Package>[Package('foo', iosEnvironment.buildDir.uri)],
+        buildResult: FakeNativeAssetsBuilderResult(
+          assets: <native_assets_cli.AssetImpl>[
+            native_assets_cli.NativeCodeAssetImpl(
+              id: 'package:foo/foo.dart',
+              linkMode: native_assets_cli.DynamicLoadingBundledImpl(),
+              os: native_assets_cli.OSImpl.iOS,
+              architecture: native_assets_cli.ArchitectureImpl.arm64,
+              file: Uri.file('foo.framework/foo'),
+            ),
+          ],
+          dependencies: <Uri>[
+            Uri.file('src/foo.c'),
+          ],
         ),
-      ];
-      final FlutterNativeAssetsBuildRunner buildRunner = FakeFlutterNativeAssetsBuildRunner(
-        packagesWithNativeAssetsResult: <String>['foo'],
-        buildResult: FakeFlutterNativeAssetsBuilderResult.fromAssets(
-          dependencies: <Uri>[Uri.file('src/foo.c')],
-        ),
-        linkResult: FakeFlutterNativeAssetsBuilderResult.fromAssets(codeAssets: codeAssets),
       );
-      await DartBuildForNative(buildRunner: buildRunner).build(iosEnvironment);
-      await const InstallCodeAssets().build(iosEnvironment);
+      await NativeAssets(buildRunner: buildRunner).build(iosEnvironment);
 
-      // We don't care about the specific format, but
-      //  * dart build output should depend on C source
-      //  * installation output should depend on shared library from dart build
-
-      final File dartBuildResult = iosEnvironment.buildDir.childFile(
-        DartBuild.dartBuildResultFilename,
-      );
-      final File buildDepsFile = iosEnvironment.buildDir.childFile(DartBuild.depFilename);
-      expect(buildDepsFile, exists);
+      final File nativeAssetsYaml = iosEnvironment.buildDir.childFile('native_assets.yaml');
+      final File depsFile = iosEnvironment.buildDir.childFile('native_assets.d');
+      expect(depsFile, exists);
+      // We don't care about the specific format, but it should contain the
+      // yaml as the file depending on the source files that went in to the
+      // build.
       expect(
-        buildDepsFile.readAsStringSync(),
-        stringContainsInOrder(<String>[dartBuildResult.path, ':', 'src/foo.c']),
-      );
-
-      final File nativeAssetsYaml = iosEnvironment.buildDir.childFile(
-        InstallCodeAssets.nativeAssetsFilename,
-      );
-      final File installDepsFile = iosEnvironment.buildDir.childFile(InstallCodeAssets.depFilename);
-      expect(installDepsFile, exists);
-      expect(
-        installDepsFile.readAsStringSync(),
-        stringContainsInOrder(<String>[nativeAssetsYaml.path, ':', 'foo.framework/foo']),
+        depsFile.readAsStringSync(),
+        stringContainsInOrder(<String>[
+          nativeAssetsYaml.path,
+          ':',
+          'src/foo.c',
+        ]),
       );
       expect(nativeAssetsYaml, exists);
       // We don't care about the specific format, but it should contain the
       // asset id and the path to the dylib.
       expect(
         nativeAssetsYaml.readAsStringSync(),
-        stringContainsInOrder(<String>['package:foo/foo.dart', 'foo.framework']),
+        stringContainsInOrder(<String>[
+          'package:foo/foo.dart',
+          'foo.framework',
+        ]),
       );
     },
   );
 
-  for (final hasAssets in <bool>[true, false]) {
-    final withOrWithout = hasAssets ? 'with' : 'without';
+  for (final bool hasAssets in <bool>[true, false]) {
+    final String withOrWithout = hasAssets ? 'with' : 'without';
     testUsingContext(
       'flutter build $withOrWithout native assets',
       overrides: <Type, Generator>{
         FileSystem: () => fileSystem,
         ProcessManager: () => processManager,
+        FeatureFlags: () => TestFeatureFlags(
+              isNativeAssetsEnabled: true,
+            ),
       },
       () async {
-        writePackageConfigFiles(directory: androidEnvironment.projectDir, mainLibName: 'my_app');
+        await createPackageConfig(androidEnvironment);
         await fileSystem.file('libfoo.so').create();
 
-        final codeAssets = <CodeAsset>[
-          if (hasAssets)
-            CodeAsset(
-              package: 'foo',
-              name: 'foo.dart',
-              linkMode: DynamicLoadingBundled(),
-              file: Uri.file('libfoo.so'),
-            ),
-        ];
-        final buildRunner = FakeFlutterNativeAssetsBuildRunner(
-          packagesWithNativeAssetsResult: <String>['foo'],
-          buildResult: FakeFlutterNativeAssetsBuilderResult.fromAssets(
-            dependencies: <Uri>[Uri.file('src/foo.c')],
+        final FakeNativeAssetsBuildRunner buildRunner = FakeNativeAssetsBuildRunner(
+          packagesWithNativeAssetsResult: <Package>[
+            Package('foo', androidEnvironment.buildDir.uri)
+          ],
+          buildResult: FakeNativeAssetsBuilderResult(
+            assets: <native_assets_cli.AssetImpl>[
+              if (hasAssets)
+                native_assets_cli.NativeCodeAssetImpl(
+                  id: 'package:foo/foo.dart',
+                  linkMode: native_assets_cli.DynamicLoadingBundledImpl(),
+                  os: native_assets_cli.OSImpl.android,
+                  architecture: native_assets_cli.ArchitectureImpl.arm64,
+                  file: Uri.file('libfoo.so'),
+                ),
+            ],
+            dependencies: <Uri>[
+              Uri.file('src/foo.c'),
+            ],
           ),
-          linkResult: FakeFlutterNativeAssetsBuilderResult.fromAssets(codeAssets: codeAssets),
         );
-        await DartBuildForNative(buildRunner: buildRunner).build(androidEnvironment);
+        await NativeAssets(buildRunner: buildRunner).build(androidEnvironment);
+        expect(
+          buildRunner.lastBuildMode,
+          native_assets_cli.BuildModeImpl.release,
+        );
       },
     );
   }
+}
+
+Future<void> createPackageConfig(Environment iosEnvironment) async {
+  final File packageConfig = iosEnvironment.projectDir
+      .childDirectory('.dart_tool')
+      .childFile('package_config.json');
+  await packageConfig.parent.create();
+  await packageConfig.create();
 }

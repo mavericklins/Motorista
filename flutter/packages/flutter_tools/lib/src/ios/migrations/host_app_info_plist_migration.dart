@@ -6,18 +6,20 @@ import '../../base/file_system.dart';
 import '../../base/project_migrator.dart';
 import '../../xcode_project.dart';
 
-const _kDisableMinimumFrameDurationKey = 'CADisableMinimumFrameDurationOnPhone';
-const _kIndirectInputEventsKey = 'UIApplicationSupportsIndirectInputEvents';
+const String _kDisableMinimumFrameDurationKey = 'CADisableMinimumFrameDurationOnPhone';
+const String _kIndirectInputEventsKey = 'UIApplicationSupportsIndirectInputEvents';
 
 /// Update Info.plist.
 class HostAppInfoPlistMigration extends ProjectMigrator {
-  HostAppInfoPlistMigration(IosProject project, super.logger)
-    : _infoPlist = project.defaultHostInfoPlist;
+  HostAppInfoPlistMigration(
+    IosProject project,
+    super.logger,
+  ) : _infoPlist = project.defaultHostInfoPlist;
 
   final File _infoPlist;
 
   @override
-  Future<void> migrate() async {
+  void migrate() {
     if (!_infoPlist.existsSync()) {
       logger.printTrace('Info.plist not found, skipping host app Info.plist migration.');
       return;
@@ -28,15 +30,14 @@ class HostAppInfoPlistMigration extends ProjectMigrator {
 
   @override
   String migrateFileContents(String fileContents) {
-    var newContents = fileContents;
+    String newContents = fileContents;
     if (!newContents.contains(_kDisableMinimumFrameDurationKey)) {
       logger.printTrace('Adding $_kDisableMinimumFrameDurationKey to Info.plist');
-      const plistEnd = '''
+      const String plistEnd = '''
 </dict>
 </plist>
 ''';
-      const plistWithKey =
-          '''
+      const String plistWithKey = '''
 	<key>$_kDisableMinimumFrameDurationKey</key>
 	<true/>
 </dict>
@@ -47,12 +48,11 @@ class HostAppInfoPlistMigration extends ProjectMigrator {
 
     if (!newContents.contains(_kIndirectInputEventsKey)) {
       logger.printTrace('Adding $_kIndirectInputEventsKey to Info.plist');
-      const plistEnd = '''
+      const String plistEnd = '''
 </dict>
 </plist>
 ''';
-      const plistWithKey =
-          '''
+      const String plistWithKey = '''
 	<key>$_kIndirectInputEventsKey</key>
 	<true/>
 </dict>

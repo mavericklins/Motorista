@@ -7,11 +7,11 @@ import '../base/logger.dart';
 
 /// The name of the test configuration file that will be discovered by the
 /// test harness if it exists in the project directory hierarchy.
-const _kTestConfigFileName = 'flutter_test_config.dart';
+const String _kTestConfigFileName = 'flutter_test_config.dart';
 
 /// The name of the file that signals the root of the project and that will
 /// cause the test harness to stop scanning for configuration files.
-const _kProjectRootSentinel = 'pubspec.yaml';
+const String _kProjectRootSentinel = 'pubspec.yaml';
 
 /// Find the `flutter_test_config.dart` file for a specific test file.
 File? findTestConfigFile(File testFile, Logger logger) {
@@ -25,10 +25,8 @@ File? findTestConfigFile(File testFile, Logger logger) {
       break;
     }
     if (directory.childFile(_kProjectRootSentinel).existsSync()) {
-      logger.printTrace(
-        'Stopping scan for $_kTestConfigFileName; '
-        'found project root at ${directory.path}',
-      );
+      logger.printTrace('Stopping scan for $_kTestConfigFileName; '
+          'found project root at ${directory.path}');
       break;
     }
     directory = directory.parent;

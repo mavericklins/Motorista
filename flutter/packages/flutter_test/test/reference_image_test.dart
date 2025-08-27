@@ -72,9 +72,7 @@ void main() {
         ),
       );
 
-      final ui.Image referenceImage =
-          (tester.renderObject(find.byKey(repaintBoundaryKey)) as RenderRepaintBoundary)
-              .toImageSync();
+      final ui.Image referenceImage = (tester.renderObject(find.byKey(repaintBoundaryKey)) as RenderRepaintBoundary).toImageSync();
       addTearDown(referenceImage.dispose);
 
       await expectLater(find.byKey(repaintBoundaryKey), matchesReferenceImage(referenceImage));
@@ -129,9 +127,7 @@ void main() {
         ),
       );
 
-      final ui.Image referenceImage =
-          (tester.renderObject(find.byKey(repaintBoundaryKey)) as RenderRepaintBoundary)
-              .toImageSync();
+      final ui.Image referenceImage = (tester.renderObject(find.byKey(repaintBoundaryKey)) as RenderRepaintBoundary).toImageSync();
       addTearDown(referenceImage.dispose);
 
       await tester.pumpWidget(
@@ -142,7 +138,9 @@ void main() {
       );
 
       expect(
-        await matchesReferenceImage(referenceImage).matchAsync(find.byKey(repaintBoundaryKey)),
+        await matchesReferenceImage(referenceImage).matchAsync(
+          find.byKey(repaintBoundaryKey),
+        ),
         equals('does not match on 100 pixels'),
       );
     });

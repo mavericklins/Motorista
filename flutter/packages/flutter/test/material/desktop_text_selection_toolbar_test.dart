@@ -18,13 +18,19 @@ void main() {
           child: DesktopTextSelectionToolbar(
             anchor: anchor,
             children: <Widget>[
-              DesktopTextSelectionToolbarButton(child: const Text('Tap me'), onPressed: () {}),
+              DesktopTextSelectionToolbarButton(
+                child: const Text('Tap me'),
+                onPressed: () {},
+              ),
             ],
           ),
         ),
       ),
     );
 
-    expect(tester.getTopLeft(find.byType(DesktopTextSelectionToolbarButton)), anchor);
+    expect(
+      tester.getTopLeft(find.byType(DesktopTextSelectionToolbarButton)),
+      anchor,
+    );
   });
 }

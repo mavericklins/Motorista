@@ -5,10 +5,7 @@
 import 'template.dart';
 
 class ListTileTemplate extends TokenTemplate {
-  const ListTileTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
+  const ListTileTemplate(super.blockName, super.fileName, super.tokens, {
     super.colorSchemePrefix = '_colors.',
     super.textThemePrefix = '_textTheme.',
   });
@@ -16,8 +13,7 @@ class ListTileTemplate extends TokenTemplate {
   static const String tokenGroup = 'md.comp.list.list-item';
 
   @override
-  String generate() =>
-      '''
+  String generate() => '''
 class _${blockName}DefaultsM3 extends ListTileThemeData {
   _${blockName}DefaultsM3(this.context)
     : super(

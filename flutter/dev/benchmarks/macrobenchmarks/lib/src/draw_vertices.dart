@@ -7,14 +7,13 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 Future<ui.Image> loadImage(String asset) async {
-  final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromAsset(asset);
+  final ui.ImmutableBuffer buffer =  await ui.ImmutableBuffer.fromAsset(asset);
   final ui.Codec codec = await PaintingBinding.instance.instantiateImageCodecWithSize(buffer);
   final ui.FrameInfo frameInfo = await codec.getNextFrame();
-  codec.dispose();
   return frameInfo.image;
 }
 
-class DrawVerticesPage extends StatefulWidget {
+class DrawVerticesPage extends StatefulWidget  {
   const DrawVerticesPage({super.key});
 
   @override
@@ -29,9 +28,7 @@ class _DrawVerticesPageState extends State<DrawVerticesPage> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    loadImage('packages/flutter_gallery_assets/food/butternut_squash_soup.png').then((
-      ui.Image pending,
-    ) {
+    loadImage('packages/flutter_gallery_assets/food/butternut_squash_soup.png').then((ui.Image pending) {
       setState(() {
         image = pending;
       });
@@ -50,6 +47,7 @@ class _DrawVerticesPageState extends State<DrawVerticesPage> with SingleTickerPr
     controller.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +79,7 @@ class VerticesPainter extends CustomPainter {
         Offset(250, 0),
         Offset(0, 250),
         Offset(250, 0),
-        Offset(250, 250),
+        Offset(250, 250)
       ],
       textureCoordinates: <Offset>[
         Offset.zero,
@@ -89,37 +87,24 @@ class VerticesPainter extends CustomPainter {
         Offset(image.width.toDouble(), 0),
         Offset(0, image.height.toDouble()),
         Offset(image.width.toDouble(), 0),
-        Offset(image.width.toDouble(), image.height.toDouble()),
+        Offset(image.width.toDouble(),  image.height.toDouble())
       ],
-      colors: <Color>[Colors.red, Colors.blue, Colors.green, Colors.red, Colors.blue, Colors.green],
+      colors: <Color>[
+        Colors.red,
+        Colors.blue,
+        Colors.green,
+        Colors.red,
+        Colors.blue,
+        Colors.green,
+      ]
     );
-    canvas.drawVertices(
-      vertices,
-      BlendMode.plus,
-      Paint()
-        ..shader = ImageShader(image, TileMode.clamp, TileMode.clamp, Matrix4.identity().storage),
-    );
+    canvas.drawVertices(vertices, BlendMode.plus, Paint()..shader = ImageShader(image, TileMode.clamp, TileMode.clamp, Matrix4.identity().storage));
     canvas.translate(250, 0);
-    canvas.drawVertices(
-      vertices,
-      BlendMode.plus,
-      Paint()
-        ..shader = ImageShader(image, TileMode.clamp, TileMode.clamp, Matrix4.identity().storage),
-    );
+    canvas.drawVertices(vertices, BlendMode.plus, Paint()..shader = ImageShader(image, TileMode.clamp, TileMode.clamp, Matrix4.identity().storage));
     canvas.translate(0, 250);
-    canvas.drawVertices(
-      vertices,
-      BlendMode.plus,
-      Paint()
-        ..shader = ImageShader(image, TileMode.clamp, TileMode.clamp, Matrix4.identity().storage),
-    );
+    canvas.drawVertices(vertices, BlendMode.plus, Paint()..shader = ImageShader(image, TileMode.clamp, TileMode.clamp, Matrix4.identity().storage));
     canvas.translate(-250, 0);
-    canvas.drawVertices(
-      vertices,
-      BlendMode.plus,
-      Paint()
-        ..shader = ImageShader(image, TileMode.clamp, TileMode.clamp, Matrix4.identity().storage),
-    );
+    canvas.drawVertices(vertices, BlendMode.plus, Paint()..shader = ImageShader(image, TileMode.clamp, TileMode.clamp, Matrix4.identity().storage));
   }
 
   @override

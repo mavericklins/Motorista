@@ -4,12 +4,5 @@
   "reorderItemUp": "Жоғарыға жылжыту",
   "reorderItemDown": "Төменге жылжыту",
   "reorderItemLeft": "Солға жылжыту",
-  "reorderItemRight": "Оңға жылжыту",
-  "copyButtonLabel": "Көшіру",
-  "cutButtonLabel": "Қию",
-  "lookUpButtonLabel": "Іздеу",
-  "searchWebButtonLabel": "Интернеттен іздеу",
-  "shareButtonLabel": "Бөлісу",
-  "pasteButtonLabel": "Қою",
-  "selectAllButtonLabel": "Барлығын таңдау"
+  "reorderItemRight": "Оңға жылжыту"
 }

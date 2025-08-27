@@ -32,15 +32,10 @@ void main() {
 
     expect(BorderSide.lerp(side1, side2, 0.0), equals(side1));
     expect(BorderSide.lerp(side1, side2, 1.0), equals(side2));
-    expect(
-      BorderSide.lerp(side1, side2, 0.5),
-      equals(
-        BorderSide(
-          color: Color.lerp(const Color(0xFF000000), const Color(0xFF00FFFF), 0.5)!,
-          width: 1.5,
-        ),
-      ),
-    );
+    expect(BorderSide.lerp(side1, side2, 0.5), equals(BorderSide(
+      color: Color.lerp(const Color(0xFF000000), const Color(0xFF00FFFF), 0.5)!,
+      width: 1.5,
+    )));
 
     final BorderSide side3 = side2.copyWith(style: BorderStyle.none);
     BorderSide interpolated = BorderSide.lerp(side2, side3, 0.2);
@@ -61,7 +56,7 @@ void main() {
     );
 
     expect(side1.toString(), equals('BorderSide'));
-    expect(side2.toString(), equals('BorderSide(color: ${const Color(0xff00ffff)}, width: 2.0)'));
+    expect(side2.toString(), equals('BorderSide(color: Color(0xff00ffff), width: 2.0)'));
   });
 
   test('Border control test', () {
@@ -80,7 +75,10 @@ void main() {
   });
 
   test('Border toString test', () {
-    expect(Border.all(width: 4.0).toString(), equals('Border.all(BorderSide(width: 4.0))'));
+    expect(
+      Border.all(width: 4.0).toString(),
+      equals('Border.all(BorderSide(width: 4.0))'),
+    );
     expect(
       const Border(
         top: BorderSide(width: 3.0),
@@ -107,11 +105,7 @@ void main() {
     final BoxShadow shadow4 = BoxShadow.lerp(shadow2, shadow3, 0.5)!;
     expect(shadow4.blurRadius, equals(2.0));
 
-    List<BoxShadow> shadowList = BoxShadow.lerpList(
-      <BoxShadow>[shadow2, shadow1],
-      <BoxShadow>[shadow3],
-      0.5,
-    )!;
+    List<BoxShadow> shadowList = BoxShadow.lerpList(<BoxShadow>[shadow2, shadow1], <BoxShadow>[shadow3], 0.5)!;
     expect(shadowList, equals(<BoxShadow>[shadow4, shadow1.scale(0.5)]));
     shadowList = BoxShadow.lerpList(<BoxShadow>[shadow2], <BoxShadow>[shadow3, shadow1], 0.5)!;
     expect(shadowList, equals(<BoxShadow>[shadow4, shadow1.scale(0.5)]));
@@ -135,11 +129,7 @@ void main() {
     final BoxShadow shadow3 = BoxShadow.lerp(shadow1, null, 0.25)!;
     final BoxShadow shadow4 = BoxShadow.lerp(null, shadow1, 0.25)!;
     final BoxShadow shadow5 = BoxShadow.lerp(shadow1, shadow2, 0.25)!;
-    final BoxShadow shadow6 = BoxShadow.lerp(
-      const BoxShadow(blurStyle: BlurStyle.solid),
-      shadow2,
-      0.25,
-    )!;
+    final BoxShadow shadow6 = BoxShadow.lerp(const BoxShadow(blurStyle: BlurStyle.solid), shadow2, 0.25)!;
 
     expect(shadow1.blurStyle, equals(BlurStyle.normal));
     expect(shadow2.blurStyle, equals(BlurStyle.outer));
@@ -148,11 +138,7 @@ void main() {
     expect(shadow5.blurStyle, equals(BlurStyle.outer));
     expect(shadow6.blurStyle, equals(BlurStyle.solid));
 
-    List<BoxShadow> shadowList = BoxShadow.lerpList(
-      <BoxShadow>[shadow2, shadow1],
-      <BoxShadow>[shadow3],
-      0.5,
-    )!;
+    List<BoxShadow> shadowList = BoxShadow.lerpList(<BoxShadow>[shadow2, shadow1], <BoxShadow>[shadow3], 0.5)!;
     expect(shadowList[0].blurStyle, equals(BlurStyle.outer));
     expect(shadowList[1].blurStyle, equals(BlurStyle.normal));
 
@@ -170,14 +156,8 @@ void main() {
   });
 
   test('BoxShadow toString test', () {
-    expect(
-      const BoxShadow(blurRadius: 4.0).toString(),
-      equals('BoxShadow(${const Color(0xff000000)}, Offset(0.0, 0.0), 4.0, 0.0, BlurStyle.normal)'),
-    );
-    expect(
-      const BoxShadow(blurRadius: 4.0, blurStyle: BlurStyle.solid).toString(),
-      equals('BoxShadow(${const Color(0xff000000)}, Offset(0.0, 0.0), 4.0, 0.0, BlurStyle.solid)'),
-    );
+    expect(const BoxShadow(blurRadius: 4.0).toString(), equals('BoxShadow(Color(0xff000000), Offset(0.0, 0.0), 4.0, 0.0, BlurStyle.normal)'));
+    expect(const BoxShadow(blurRadius: 4.0, blurStyle: BlurStyle.solid).toString(), equals('BoxShadow(Color(0xff000000), Offset(0.0, 0.0), 4.0, 0.0, BlurStyle.solid)'));
   });
 
   testWidgets('BoxShadow BoxStyle.solid', (WidgetTester tester) async {
@@ -205,7 +185,10 @@ void main() {
       ),
     );
 
-    await expectLater(find.byKey(key), matchesGoldenFile('boxShadow.boxStyle.solid.0.0.png'));
+    await expectLater(
+      find.byKey(key),
+      matchesGoldenFile('boxShadow.boxStyle.solid.0.0.png'),
+    );
     debugDisableShadows = true;
   });
 
@@ -234,7 +217,10 @@ void main() {
       ),
     );
 
-    await expectLater(find.byKey(key), matchesGoldenFile('boxShadow.boxStyle.outer.0.0.png'));
+    await expectLater(
+      find.byKey(key),
+      matchesGoldenFile('boxShadow.boxStyle.outer.0.0.png'),
+    );
     debugDisableShadows = true;
   });
 
@@ -263,7 +249,10 @@ void main() {
       ),
     );
 
-    await expectLater(find.byKey(key), matchesGoldenFile('boxShadow.boxStyle.inner.0.0.png'));
+    await expectLater(
+      find.byKey(key),
+      matchesGoldenFile('boxShadow.boxStyle.inner.0.0.png'),
+    );
     debugDisableShadows = true;
   });
 
@@ -280,7 +269,9 @@ void main() {
             height: 50,
             child: Center(
               child: Container(
-                decoration: const BoxDecoration(boxShadow: <BoxShadow>[BoxShadow(blurRadius: 4.0)]),
+                decoration: const BoxDecoration(
+                  boxShadow: <BoxShadow>[BoxShadow(blurRadius: 4.0)],
+                ),
                 width: 20,
                 height: 20,
               ),
@@ -290,7 +281,10 @@ void main() {
       ),
     );
 
-    await expectLater(find.byKey(key), matchesGoldenFile('boxShadow.boxStyle.normal.0.0.png'));
+    await expectLater(
+      find.byKey(key),
+      matchesGoldenFile('boxShadow.boxStyle.normal.0.0.png'),
+    );
     debugDisableShadows = true;
   });
 
@@ -309,14 +303,7 @@ void main() {
               child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.black,
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      blurRadius: 16.0,
-                      offset: Offset(4, 4),
-                      color: Colors.green,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  boxShadow: <BoxShadow>[BoxShadow(blurRadius: 16.0, offset: Offset(4, 4), color: Colors.green, spreadRadius: 2)],
                 ),
                 width: 64,
                 height: 64,
@@ -349,15 +336,7 @@ void main() {
               child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.black,
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      blurRadius: 16.0,
-                      offset: Offset(4, 4),
-                      blurStyle: BlurStyle.outer,
-                      color: Colors.red,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  boxShadow: <BoxShadow>[BoxShadow(blurRadius: 16.0, offset: Offset(4, 4), blurStyle: BlurStyle.outer, color: Colors.red, spreadRadius: 2)],
                 ),
                 width: 64,
                 height: 64,
@@ -390,15 +369,7 @@ void main() {
               child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.black,
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      blurRadius: 16.0,
-                      offset: Offset(4, 4),
-                      blurStyle: BlurStyle.solid,
-                      color: Colors.purple,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  boxShadow: <BoxShadow>[BoxShadow(blurRadius: 16.0, offset: Offset(4, 4), blurStyle: BlurStyle.solid, color: Colors.purple, spreadRadius: 2)],
                 ),
                 width: 64,
                 height: 64,
@@ -430,15 +401,7 @@ void main() {
               child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.black,
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      blurRadius: 16.0,
-                      offset: Offset(4, 4),
-                      blurStyle: BlurStyle.inner,
-                      color: Colors.amber,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  boxShadow: <BoxShadow>[BoxShadow(blurRadius: 16.0, offset: Offset(4, 4), blurStyle: BlurStyle.inner, color: Colors.amber, spreadRadius: 2)],
                 ),
                 width: 64,
                 height: 64,

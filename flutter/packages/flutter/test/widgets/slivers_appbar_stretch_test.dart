@@ -15,9 +15,21 @@ void main() {
           home: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
-              const SliverAppBar(stretch: true, expandedHeight: 100.0),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              const SliverAppBar(
+                stretch: true,
+                expandedHeight: 100.0,
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -31,18 +43,29 @@ void main() {
       expect(header.child!.size.height, equals(200.0));
     });
 
-    testWidgets('fills overscroll after reverse direction input - scrolling header', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('fills overscroll after reverse direction input - scrolling header', (WidgetTester tester) async {
       const Key anchor = Key('drag');
       await tester.pumpWidget(
         MaterialApp(
           home: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
-              const SliverAppBar(title: Text('Test'), stretch: true, expandedHeight: 100.0),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              const SliverAppBar(
+                title: Text('Test'),
+                stretch: true,
+                expandedHeight: 100.0,
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -69,9 +92,7 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('fills overscroll after reverse direction input - floating header', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('fills overscroll after reverse direction input - floating header', (WidgetTester tester) async {
       const Key anchor = Key('drag');
       await tester.pumpWidget(
         MaterialApp(
@@ -84,8 +105,17 @@ void main() {
                 floating: true,
                 expandedHeight: 100.0,
               ),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -119,9 +149,21 @@ void main() {
           home: CustomScrollView(
             physics: const ClampingScrollPhysics(),
             slivers: <Widget>[
-              const SliverAppBar(stretch: true, expandedHeight: 100.0),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              const SliverAppBar(
+                stretch: true,
+                expandedHeight: 100.0,
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -150,8 +192,17 @@ void main() {
                   didTrigger = true;
                 },
               ),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -180,8 +231,17 @@ void main() {
                   didTrigger = true;
                 },
               ),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -194,9 +254,7 @@ void main() {
       expect(didTrigger, isTrue);
     });
 
-    testWidgets('stretch callback not triggered without overscroll physics', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('stretch callback not triggered without overscroll physics', (WidgetTester tester) async {
       bool didTrigger = false;
       const Key anchor = Key('drag');
       await tester.pumpWidget(
@@ -212,8 +270,17 @@ void main() {
                   didTrigger = true;
                 },
               ),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -227,18 +294,33 @@ void main() {
     });
 
     testWidgets('asserts reasonable trigger offset', (WidgetTester tester) async {
-      expect(() {
-        return MaterialApp(
-          home: CustomScrollView(
-            physics: const ClampingScrollPhysics(),
-            slivers: <Widget>[
-              SliverAppBar(stretch: true, expandedHeight: 100.0, stretchTriggerOffset: -150.0),
-              SliverToBoxAdapter(child: Container(height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
-            ],
-          ),
-        );
-      }, throwsAssertionError);
+      expect(
+        () {
+          return MaterialApp(
+            home: CustomScrollView(
+              physics: const ClampingScrollPhysics(),
+              slivers: <Widget>[
+                SliverAppBar(
+                  stretch: true,
+                  expandedHeight: 100.0,
+                  stretchTriggerOffset: -150.0,
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    height: 800,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    height: 800,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        throwsAssertionError,
+      );
     });
   });
 
@@ -250,9 +332,22 @@ void main() {
           home: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
-              const SliverAppBar(pinned: true, stretch: true, expandedHeight: 100.0),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              const SliverAppBar(
+                pinned: true,
+                stretch: true,
+                expandedHeight: 100.0,
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -272,9 +367,22 @@ void main() {
           home: CustomScrollView(
             physics: const ClampingScrollPhysics(),
             slivers: <Widget>[
-              const SliverAppBar(pinned: true, stretch: true, expandedHeight: 100.0),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              const SliverAppBar(
+                pinned: true,
+                stretch: true,
+                expandedHeight: 100.0,
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -296,9 +404,22 @@ void main() {
           home: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: <Widget>[
-              const SliverAppBar(floating: true, stretch: true, expandedHeight: 100.0),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              const SliverAppBar(
+                floating: true,
+                stretch: true,
+                expandedHeight: 100.0,
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -318,9 +439,22 @@ void main() {
           home: CustomScrollView(
             physics: const ClampingScrollPhysics(),
             slivers: <Widget>[
-              const SliverAppBar(floating: true, stretch: true, expandedHeight: 100.0),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              const SliverAppBar(
+                floating: true,
+                stretch: true,
+                expandedHeight: 100.0,
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -348,8 +482,17 @@ void main() {
                 stretch: true,
                 expandedHeight: 100.0,
               ),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),
@@ -375,8 +518,17 @@ void main() {
                 stretch: true,
                 expandedHeight: 100.0,
               ),
-              SliverToBoxAdapter(child: Container(key: anchor, height: 800)),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              SliverToBoxAdapter(
+                child: Container(
+                  key: anchor,
+                  height: 800,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 800,
+                ),
+              ),
             ],
           ),
         ),

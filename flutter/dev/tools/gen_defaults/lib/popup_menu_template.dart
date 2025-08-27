@@ -5,17 +5,13 @@
 import 'template.dart';
 
 class PopupMenuTemplate extends TokenTemplate {
-  const PopupMenuTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
+  const PopupMenuTemplate(super.blockName, super.fileName, super.tokens, {
     super.colorSchemePrefix = '_colors.',
     super.textThemePrefix = '_textTheme.',
   });
 
   @override
-  String generate() =>
-      '''
+  String generate() => '''
 class _${blockName}DefaultsM3 extends PopupMenuThemeData {
   _${blockName}DefaultsM3(this.context)
     : super(elevation: ${elevation('md.comp.menu.container')});
@@ -27,7 +23,6 @@ class _${blockName}DefaultsM3 extends PopupMenuThemeData {
 
   @override MaterialStateProperty<TextStyle?>? get labelTextStyle {
     return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-    // TODO(quncheng): Update this hard-coded value to use the latest tokens.
     final TextStyle style = _textTheme.labelLarge!;
       if (states.contains(MaterialState.disabled)) {
         return style.apply(color: ${componentColor('md.comp.list.list-item.disabled.label-text')});
@@ -48,13 +43,8 @@ class _${blockName}DefaultsM3 extends PopupMenuThemeData {
   @override
   ShapeBorder? get shape => ${shape("md.comp.menu.container")};
 
-  // TODO(bleroux): This is taken from https://m3.material.io/components/menus/specs
-  // Update this when the token is available.
-  @override
-  EdgeInsets? get menuPadding => const EdgeInsets.symmetric(vertical: 8.0);
-
   // TODO(tahatesser): This is taken from https://m3.material.io/components/menus/specs
   // Update this when the token is available.
-  static EdgeInsets menuItemPadding  = const EdgeInsets.symmetric(horizontal: 12.0);
+  static EdgeInsets menuHorizontalPadding  = const EdgeInsets.symmetric(horizontal: 12.0);
 }''';
 }

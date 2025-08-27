@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter_test/flutter_test.dart';
-///
-/// @docImport 'card.dart';
-library;
-
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/gestures.dart';
@@ -98,17 +93,15 @@ class ReorderableListView extends StatefulWidget {
     this.anchor = 0.0,
     this.cacheExtent,
     this.dragStartBehavior = DragStartBehavior.start,
-    this.keyboardDismissBehavior,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     this.autoScrollerVelocityScalar,
-    this.dragBoundaryProvider,
-    this.mouseCursor,
   }) : assert(
-         (itemExtent == null && prototypeItem == null) ||
-             (itemExtent == null && itemExtentBuilder == null) ||
-             (prototypeItem == null && itemExtentBuilder == null),
-         'You can only pass one of itemExtent, prototypeItem and itemExtentBuilder.',
+        (itemExtent == null && prototypeItem == null) ||
+        (itemExtent == null && itemExtentBuilder == null) ||
+        (prototypeItem == null && itemExtentBuilder == null),
+        'You can only pass one of itemExtent, prototypeItem and itemExtentBuilder.',
        ),
        assert(
          children.every((Widget w) => w.key != null),
@@ -169,17 +162,15 @@ class ReorderableListView extends StatefulWidget {
     this.anchor = 0.0,
     this.cacheExtent,
     this.dragStartBehavior = DragStartBehavior.start,
-    this.keyboardDismissBehavior,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     this.autoScrollerVelocityScalar,
-    this.dragBoundaryProvider,
-    this.mouseCursor,
   }) : assert(itemCount >= 0),
        assert(
          (itemExtent == null && prototypeItem == null) ||
-             (itemExtent == null && itemExtentBuilder == null) ||
-             (prototypeItem == null && itemExtentBuilder == null),
+         (itemExtent == null && itemExtentBuilder == null) ||
+         (prototypeItem == null && itemExtentBuilder == null),
          'You can only pass one of itemExtent, prototypeItem and itemExtentBuilder.',
        );
 
@@ -223,7 +214,7 @@ class ReorderableListView extends StatefulWidget {
   ///
   ///
   /// ** See code in examples/api/lib/material/reorderable_list/reorderable_list_view.build_default_drag_handles.0.dart **
-  /// {@end-tool}
+  ///{@end-tool}
   final bool buildDefaultDragHandles;
 
   /// {@macro flutter.widgets.reorderable_list.padding}
@@ -271,9 +262,8 @@ class ReorderableListView extends StatefulWidget {
 
   /// {@macro flutter.widgets.scroll_view.keyboardDismissBehavior}
   ///
-  /// If [keyboardDismissBehavior] is null then it will fallback to the inherited
-  /// [ScrollBehavior.getKeyboardDismissBehavior].
-  final ScrollViewKeyboardDismissBehavior? keyboardDismissBehavior;
+  /// The default is [ScrollViewKeyboardDismissBehavior.manual]
+  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
 
   /// {@macro flutter.widgets.scrollable.restorationId}
   final String? restorationId;
@@ -297,33 +287,18 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.SliverReorderableList.autoScrollerVelocityScalar.default}
   final double? autoScrollerVelocityScalar;
 
-  /// {@macro flutter.widgets.reorderable_list.dragBoundaryProvider}
-  final ReorderDragBoundaryProvider? dragBoundaryProvider;
-
-  /// The cursor for a mouse pointer when it enters or is hovering over the drag
-  /// handle.
-  ///
-  /// If [mouseCursor] is a [WidgetStateMouseCursor],
-  /// [WidgetStateProperty.resolve] is used for the following [WidgetState]s:
-  ///
-  ///  * [WidgetState.dragged].
-  ///
-  /// If this property is null, [SystemMouseCursors.grab] will be used when
-  ///  hovering, and [SystemMouseCursors.grabbing] when dragging.
-  final MouseCursor? mouseCursor;
-
   @override
   State<ReorderableListView> createState() => _ReorderableListViewState();
 }
 
 class _ReorderableListViewState extends State<ReorderableListView> {
-  final ValueNotifier<bool> _dragging = ValueNotifier<bool>(false);
-
   Widget _itemBuilder(BuildContext context, int index) {
     final Widget item = widget.itemBuilder(context, index);
     assert(() {
       if (item.key == null) {
-        throw FlutterError('Every item of ReorderableListView must have a key.');
+        throw FlutterError(
+          'Every item of ReorderableListView must have a key.',
+        );
       }
       return true;
     }());
@@ -335,21 +310,6 @@ class _ReorderableListViewState extends State<ReorderableListView> {
         case TargetPlatform.linux:
         case TargetPlatform.windows:
         case TargetPlatform.macOS:
-          final ListenableBuilder dragHandle = ListenableBuilder(
-            listenable: _dragging,
-            builder: (BuildContext context, Widget? child) {
-              final MouseCursor effectiveMouseCursor = WidgetStateProperty.resolveAs<MouseCursor>(
-                widget.mouseCursor ??
-                    const WidgetStateMouseCursor.fromMap(<WidgetStatesConstraint, MouseCursor>{
-                      WidgetState.dragged: SystemMouseCursors.grabbing,
-                      WidgetState.any: SystemMouseCursors.grab,
-                    }),
-                <WidgetState>{if (_dragging.value) WidgetState.dragged},
-              );
-              return MouseRegion(cursor: effectiveMouseCursor, child: child);
-            },
-            child: const Icon(Icons.drag_handle),
-          );
           switch (widget.scrollDirection) {
             case Axis.horizontal:
               return Stack(
@@ -363,7 +323,10 @@ class _ReorderableListViewState extends State<ReorderableListView> {
                     bottom: 8,
                     child: Align(
                       alignment: AlignmentDirectional.bottomCenter,
-                      child: ReorderableDragStartListener(index: index, child: dragHandle),
+                      child: ReorderableDragStartListener(
+                        index: index,
+                        child: const Icon(Icons.drag_handle),
+                      ),
                     ),
                   ),
                 ],
@@ -380,7 +343,10 @@ class _ReorderableListViewState extends State<ReorderableListView> {
                     end: 8,
                     child: Align(
                       alignment: AlignmentDirectional.centerEnd,
-                      child: ReorderableDragStartListener(index: index, child: dragHandle),
+                      child: ReorderableDragStartListener(
+                        index: index,
+                        child: const Icon(Icons.drag_handle),
+                      ),
                     ),
                   ),
                 ],
@@ -390,11 +356,18 @@ class _ReorderableListViewState extends State<ReorderableListView> {
         case TargetPlatform.iOS:
         case TargetPlatform.android:
         case TargetPlatform.fuchsia:
-          return ReorderableDelayedDragStartListener(key: itemGlobalKey, index: index, child: item);
+          return ReorderableDelayedDragStartListener(
+            key: itemGlobalKey,
+            index: index,
+            child: item,
+          );
       }
     }
 
-    return KeyedSubtree(key: itemGlobalKey, child: item);
+    return KeyedSubtree(
+      key: itemGlobalKey,
+      child: item,
+    );
   }
 
   Widget _proxyDecorator(Widget child, int index, Animation<double> animation) {
@@ -403,16 +376,13 @@ class _ReorderableListViewState extends State<ReorderableListView> {
       builder: (BuildContext context, Widget? child) {
         final double animValue = Curves.easeInOut.transform(animation.value);
         final double elevation = lerpDouble(0, 6, animValue)!;
-        return Material(elevation: elevation, child: child);
+        return Material(
+          elevation: elevation,
+          child: child,
+        );
       },
       child: child,
     );
-  }
-
-  @override
-  void dispose() {
-    _dragging.dispose();
-    super.dispose();
   }
 
   @override
@@ -431,18 +401,9 @@ class _ReorderableListViewState extends State<ReorderableListView> {
 
     final EdgeInsets startPadding, endPadding, listPadding;
     (startPadding, endPadding, listPadding) = switch (widget.scrollDirection) {
-      Axis.horizontal ||
-      Axis.vertical when (start ?? end) == null => (EdgeInsets.zero, EdgeInsets.zero, padding),
-      Axis.horizontal => (
-        padding.copyWith(left: 0),
-        padding.copyWith(right: 0),
-        padding.copyWith(left: start, right: end),
-      ),
-      Axis.vertical => (
-        padding.copyWith(top: 0),
-        padding.copyWith(bottom: 0),
-        padding.copyWith(top: start, bottom: end),
-      ),
+      Axis.horizontal || Axis.vertical when (start ?? end) == null => (EdgeInsets.zero, EdgeInsets.zero, padding),
+      Axis.horizontal => (padding.copyWith(left: 0), padding.copyWith(right: 0), padding.copyWith(left: start, right: end)),
+      Axis.vertical   => (padding.copyWith(top: 0), padding.copyWith(bottom: 0), padding.copyWith(top: start, bottom: end)),
     };
     final (EdgeInsets headerPadding, EdgeInsets footerPadding) = widget.reverse
         ? (startPadding, endPadding)
@@ -476,17 +437,10 @@ class _ReorderableListViewState extends State<ReorderableListView> {
             prototypeItem: widget.prototypeItem,
             itemCount: widget.itemCount,
             onReorder: widget.onReorder,
-            onReorderStart: (int index) {
-              _dragging.value = true;
-              widget.onReorderStart?.call(index);
-            },
-            onReorderEnd: (int index) {
-              _dragging.value = false;
-              widget.onReorderEnd?.call(index);
-            },
+            onReorderStart: widget.onReorderStart,
+            onReorderEnd: widget.onReorderEnd,
             proxyDecorator: widget.proxyDecorator ?? _proxyDecorator,
             autoScrollerVelocityScalar: widget.autoScrollerVelocityScalar,
-            dragBoundaryProvider: widget.dragBoundaryProvider,
           ),
         ),
         if (widget.footer != null)
@@ -516,9 +470,9 @@ class _ReorderableListViewChildGlobalKey extends GlobalObjectKey {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is _ReorderableListViewChildGlobalKey &&
-        other.subKey == subKey &&
-        other.state == state;
+    return other is _ReorderableListViewChildGlobalKey
+        && other.subKey == subKey
+        && other.state == state;
   }
 
   @override

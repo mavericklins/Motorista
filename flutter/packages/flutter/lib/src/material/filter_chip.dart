@@ -2,15 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'action_chip.dart';
-/// @docImport 'checkbox.dart';
-/// @docImport 'choice_chip.dart';
-/// @docImport 'circle_avatar.dart';
-/// @docImport 'input_chip.dart';
-/// @docImport 'material.dart';
-/// @docImport 'switch.dart';
-library;
-
 import 'package:flutter/foundation.dart' show clampDouble;
 import 'package:flutter/widgets.dart';
 
@@ -112,8 +103,6 @@ class FilterChip extends StatelessWidget
     this.avatarBorder = const CircleBorder(),
     this.avatarBoxConstraints,
     this.deleteIconBoxConstraints,
-    this.chipAnimationStyle,
-    this.mouseCursor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.flat;
@@ -160,8 +149,6 @@ class FilterChip extends StatelessWidget
     this.avatarBorder = const CircleBorder(),
     this.avatarBoxConstraints,
     this.deleteIconBoxConstraints,
-    this.chipAnimationStyle,
-    this.mouseCursor,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.elevated;
@@ -234,10 +221,6 @@ class FilterChip extends StatelessWidget
   final BoxConstraints? avatarBoxConstraints;
   @override
   final BoxConstraints? deleteIconBoxConstraints;
-  @override
-  final ChipAnimationStyle? chipAnimationStyle;
-  @override
-  final MouseCursor? mouseCursor;
 
   @override
   bool get isEnabled => onSelected != null;
@@ -248,10 +231,10 @@ class FilterChip extends StatelessWidget
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
     final ChipThemeData? defaults = Theme.of(context).useMaterial3
-        ? _FilterChipDefaultsM3(context, isEnabled, selected, _chipVariant)
-        : null;
-    final Widget? resolvedDeleteIcon =
-        deleteIcon ?? (Theme.of(context).useMaterial3 ? const Icon(Icons.clear, size: 18) : null);
+      ? _FilterChipDefaultsM3(context, isEnabled, selected, _chipVariant)
+      : null;
+    final Widget? resolvedDeleteIcon = deleteIcon
+      ?? (Theme.of(context).useMaterial3 ? const Icon(Icons.clear, size: 18) : null);
     return RawChip(
       defaultProperties: defaults,
       avatar: avatar,
@@ -289,8 +272,6 @@ class FilterChip extends StatelessWidget
       iconTheme: iconTheme,
       avatarBoxConstraints: avatarBoxConstraints,
       deleteIconBoxConstraints: deleteIconBoxConstraints,
-      chipAnimationStyle: chipAnimationStyle,
-      mouseCursor: mouseCursor,
     );
   }
 }
@@ -302,7 +283,6 @@ class FilterChip extends StatelessWidget
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
-// dart format off
 class _FilterChipDefaultsM3 extends ChipThemeData {
   _FilterChipDefaultsM3(
     this.context,
@@ -386,7 +366,7 @@ class _FilterChipDefaultsM3 extends ChipThemeData {
   @override
   BorderSide? get side => _chipVariant == _ChipVariant.flat && !isSelected
     ? isEnabled
-      ? BorderSide(color: _colors.outlineVariant)
+      ? BorderSide(color: _colors.outline)
       : BorderSide(color: _colors.onSurface.withOpacity(0.12))
     : const BorderSide(color: Colors.transparent);
 
@@ -422,6 +402,5 @@ class _FilterChipDefaultsM3 extends ChipThemeData {
     )!;
   }
 }
-// dart format on
 
 // END GENERATED TOKEN PROPERTIES - FilterChip

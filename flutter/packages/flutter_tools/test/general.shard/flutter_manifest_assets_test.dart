@@ -10,9 +10,9 @@ import '../src/common.dart';
 void main() {
   group('parsing of assets section in flutter manifests', () {
     testWithoutContext('ignores empty list of assets', () {
-      final logger = BufferLogger.test();
+      final BufferLogger logger = BufferLogger.test();
 
-      const manifest = '''
+      const String manifest = '''
 name: test
 dependencies:
   flutter:
@@ -31,8 +31,8 @@ flutter:
     });
 
     testWithoutContext('parses two simple asset declarations', () async {
-      final logger = BufferLogger.test();
-      const manifest = '''
+      final BufferLogger logger = BufferLogger.test();
+      const String manifest = '''
 name: test
 dependencies:
   flutter:
@@ -56,8 +56,8 @@ flutter:
     });
 
     testWithoutContext('does not crash on empty entry', () {
-      final logger = BufferLogger.test();
-      const manifest = '''
+      final BufferLogger logger = BufferLogger.test();
+      const String manifest = '''
 name: test
 dependencies:
   flutter:
@@ -69,15 +69,18 @@ flutter:
     -
 ''';
 
-      FlutterManifest.createFromString(manifest, logger: logger);
+      FlutterManifest.createFromString(
+        manifest,
+        logger: logger,
+      );
 
       expect(logger.errorText, contains('Asset manifest contains a null or empty uri.'));
     });
 
     testWithoutContext('handles special characters in asset URIs', () {
-      final logger = BufferLogger.test();
+      final BufferLogger logger = BufferLogger.test();
 
-      const manifest = '''
+      const String manifest = '''
 name: test
 dependencies:
   flutter:
@@ -104,8 +107,8 @@ flutter:
     });
 
     testWithoutContext('parses an asset with flavors', () async {
-      final logger = BufferLogger.test();
-      const manifest = '''
+      final BufferLogger logger = BufferLogger.test();
+      const String manifest = '''
 name: test
 dependencies:
   flutter:
@@ -125,14 +128,17 @@ flutter:
       )!;
 
       expect(flutterManifest.assets, <AssetsEntry>[
-        AssetsEntry(uri: Uri.parse('a/foo'), flavors: const <String>{'apple', 'strawberry'}),
+        AssetsEntry(
+          uri: Uri.parse('a/foo'),
+          flavors: const <String>{'apple', 'strawberry'},
+        ),
       ]);
     });
 
     testWithoutContext("prints an error when an asset entry's flavor is not a string", () async {
-      final logger = BufferLogger.test();
+      final BufferLogger logger = BufferLogger.test();
 
-      const manifest = '''
+      const String manifest = '''
 name: test
 dependencies:
   flutter:
@@ -147,14 +153,11 @@ flutter:
           key2: value2
 ''';
       FlutterManifest.createFromString(manifest, logger: logger);
-      expect(
-        logger.errorText,
-        contains(
-          'Unable to parse assets section.\n'
-          'In flavors section of asset "assets/vanilla/": Expected flavors '
-          'to be a list of String, but element at index 0 was a YamlMap.\n',
-        ),
-      );
+      expect(logger.errorText, contains(
+        'Unable to parse assets section.\n'
+        'In flavors section of asset "assets/vanilla/": Expected flavors '
+        'to be a list of String, but element at index 0 was a YamlMap.\n'
+      ));
     });
   });
 }

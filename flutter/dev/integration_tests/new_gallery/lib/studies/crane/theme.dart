@@ -15,7 +15,7 @@ IconThemeData _customIconTheme(IconThemeData original, Color color) {
 }
 
 ThemeData _buildCraneTheme() {
-  final ThemeData base = ThemeData();
+  final ThemeData base = ThemeData.light();
 
   return base.copyWith(
     colorScheme: const ColorScheme.light().copyWith(
@@ -29,7 +29,9 @@ ThemeData _buildCraneTheme() {
     cardColor: cranePrimaryWhite,
     highlightColor: Colors.transparent,
     textTheme: _buildCraneTextTheme(base.textTheme),
-    textSelectionTheme: const TextSelectionThemeData(selectionColor: cranePurple700),
+    textSelectionTheme: const TextSelectionThemeData(
+      selectionColor: cranePurple700,
+    ),
     primaryTextTheme: _buildCraneTextTheme(base.primaryTextTheme),
     iconTheme: _customIconTheme(base.iconTheme, craneWhite60),
     primaryIconTheme: _customIconTheme(base.iconTheme, cranePrimaryWhite),
@@ -39,12 +41,30 @@ ThemeData _buildCraneTheme() {
 TextTheme _buildCraneTextTheme(TextTheme base) {
   return GoogleFonts.ralewayTextTheme(
     base.copyWith(
-      displayLarge: base.displayLarge!.copyWith(fontWeight: FontWeight.w300, fontSize: 96),
-      displayMedium: base.displayMedium!.copyWith(fontWeight: FontWeight.w400, fontSize: 60),
-      displaySmall: base.displaySmall!.copyWith(fontWeight: FontWeight.w600, fontSize: 48),
-      headlineMedium: base.headlineMedium!.copyWith(fontWeight: FontWeight.w600, fontSize: 34),
-      headlineSmall: base.headlineSmall!.copyWith(fontWeight: FontWeight.w600, fontSize: 24),
-      titleLarge: base.titleLarge!.copyWith(fontWeight: FontWeight.w600, fontSize: 20),
+      displayLarge: base.displayLarge!.copyWith(
+        fontWeight: FontWeight.w300,
+        fontSize: 96,
+      ),
+      displayMedium: base.displayMedium!.copyWith(
+        fontWeight: FontWeight.w400,
+        fontSize: 60,
+      ),
+      displaySmall: base.displaySmall!.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 48,
+      ),
+      headlineMedium: base.headlineMedium!.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 34,
+      ),
+      headlineSmall: base.headlineSmall!.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 24,
+      ),
+      titleLarge: base.titleLarge!.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 20,
+      ),
       titleMedium: base.titleMedium!.copyWith(
         fontWeight: FontWeight.w500,
         fontSize: 16,
@@ -55,8 +75,14 @@ TextTheme _buildCraneTextTheme(TextTheme base) {
         fontSize: 12,
         color: craneGrey,
       ),
-      bodyLarge: base.bodyLarge!.copyWith(fontWeight: FontWeight.w500, fontSize: 16),
-      bodyMedium: base.bodyMedium!.copyWith(fontWeight: FontWeight.w400, fontSize: 14),
+      bodyLarge: base.bodyLarge!.copyWith(
+        fontWeight: FontWeight.w500,
+        fontSize: 16,
+      ),
+      bodyMedium: base.bodyMedium!.copyWith(
+        fontWeight: FontWeight.w400,
+        fontSize: 14,
+      ),
       labelLarge: base.labelLarge!.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 13,
@@ -67,7 +93,10 @@ TextTheme _buildCraneTextTheme(TextTheme base) {
         fontSize: 12,
         color: craneGrey,
       ),
-      labelSmall: base.labelSmall!.copyWith(fontWeight: FontWeight.w600, fontSize: 12),
+      labelSmall: base.labelSmall!.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 12,
+      ),
     ),
   );
 }

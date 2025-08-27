@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/material.dart';
-library;
-
 import 'package:flutter/foundation.dart';
 
 import 'curves.dart';
@@ -28,10 +25,15 @@ import 'tween.dart';
 @immutable
 class AnimationStyle with Diagnosticable {
   /// Creates an instance of Animation Style class.
-  const AnimationStyle({this.curve, this.duration, this.reverseCurve, this.reverseDuration});
+  AnimationStyle({
+    this.curve,
+    this.duration,
+    this.reverseCurve,
+    this.reverseDuration,
+  });
 
   /// Creates an instance of Animation Style class with no animation.
-  static const AnimationStyle noAnimation = AnimationStyle(
+  static AnimationStyle noAnimation = AnimationStyle(
     duration: Duration.zero,
     reverseDuration: Duration.zero,
   );
@@ -85,15 +87,20 @@ class AnimationStyle with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is AnimationStyle &&
-        other.curve == curve &&
-        other.duration == duration &&
-        other.reverseCurve == reverseCurve &&
-        other.reverseDuration == reverseDuration;
+    return other is AnimationStyle
+      && other.curve == curve
+      && other.duration == duration
+      && other.reverseCurve == reverseCurve
+      && other.reverseDuration == reverseDuration;
   }
 
   @override
-  int get hashCode => Object.hash(curve, duration, reverseCurve, reverseDuration);
+  int get hashCode => Object.hash(
+    curve,
+    duration,
+    reverseCurve,
+    reverseDuration,
+  );
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -101,8 +108,6 @@ class AnimationStyle with Diagnosticable {
     properties.add(DiagnosticsProperty<Curve>('curve', curve, defaultValue: null));
     properties.add(DiagnosticsProperty<Duration>('duration', duration, defaultValue: null));
     properties.add(DiagnosticsProperty<Curve>('reverseCurve', reverseCurve, defaultValue: null));
-    properties.add(
-      DiagnosticsProperty<Duration>('reverseDuration', reverseDuration, defaultValue: null),
-    );
+    properties.add(DiagnosticsProperty<Duration>('reverseDuration', reverseDuration, defaultValue: null));
   }
 }

@@ -14,7 +14,6 @@ import '../base/platform.dart';
 import '../base/terminal.dart';
 import '../base/utils.dart';
 import '../convert.dart';
-import '../globals.dart' as globals;
 
 /// An interface to the Dart analysis server.
 class AnalysisServer {
@@ -46,11 +45,13 @@ class AnalysisServer {
   final bool suppressAnalytics;
 
   Process? _process;
-  final _analyzingController = StreamController<bool>.broadcast();
-  final _errorsController = StreamController<FileAnalysisErrors>.broadcast();
-  var _didServerErrorOccur = false;
+  final StreamController<bool> _analyzingController =
+      StreamController<bool>.broadcast();
+  final StreamController<FileAnalysisErrors> _errorsController =
+      StreamController<FileAnalysisErrors>.broadcast();
+  bool _didServerErrorOccur = false;
 
-  var _id = 0;
+  int _id = 0;
 
   Future<void> start() async {
     final String snapshot = _fileSystem.path.join(
@@ -59,15 +60,17 @@ class AnalysisServer {
       'snapshots',
       'analysis_server.dart.snapshot',
     );
-    final command = <String>[
+    final List<String> command = <String>[
       _fileSystem.path.join(sdkPath, 'bin', 'dart'),
+      '--disable-dart-dev',
       snapshot,
       '--disable-server-feature-completion',
       '--disable-server-feature-search',
       '--sdk',
       sdkPath,
       if (suppressAnalytics) '--suppress-analytics',
-      if (_protocolTrafficLog != null) '--protocol-traffic-log=$_protocolTrafficLog',
+      if (_protocolTrafficLog != null)
+        '--protocol-traffic-log=$_protocolTrafficLog',
     ];
 
     _logger.printTrace('dart ${command.skip(1).join(' ')}');
@@ -89,13 +92,11 @@ class AnalysisServer {
       'subscriptions': <String>['STATUS'],
     });
 
-    _sendCommand('analysis.setAnalysisRoots', <String, dynamic>{
-      'included': directories,
-      'excluded': <String>[],
-    });
+    _sendCommand('analysis.setAnalysisRoots',
+        <String, dynamic>{'included': directories, 'excluded': <String>[]});
   }
 
-  final _logs = <String>[];
+  final List<String> _logs = <String>[];
 
   /// Aggregated STDOUT and STDERR logs from the server.
   ///
@@ -138,15 +139,12 @@ class AnalysisServer {
   void _handleServerResponse(String line) {
     _logs.add('[stdout] $line');
     _logger.printTrace('<== $line');
-    if (line.startsWith(globals.kVMServiceMessageRegExp)) {
-      return;
-    }
 
     final dynamic response = json.decode(line);
 
     if (response is Map<String, dynamic>) {
       if (response['event'] != null) {
-        final event = response['event'] as String;
+        final String event = response['event'] as String;
         final dynamic params = response['params'];
         Map<String, dynamic>? paramsMap;
         if (params is Map<String, dynamic>) {
@@ -166,7 +164,8 @@ class AnalysisServer {
       } else if (response['error'] != null) {
         // Fields are 'code', 'message', and 'stackTrace'.
         final Map<String, dynamic> error = castStringKeyedMap(response['error'])!;
-        _logger.printError('Error response from the server: ${error['code']} ${error['message']}');
+        _logger.printError(
+            'Error response from the server: ${error['code']} ${error['message']}');
         if (error['stackTrace'] != null) {
           _logger.printError(error['stackTrace'] as String);
         }
@@ -177,7 +176,7 @@ class AnalysisServer {
   void _handleStatus(Map<String, dynamic> statusInfo) {
     // {"event":"server.status","params":{"analysis":{"isAnalyzing":true}}}
     if (statusInfo['analysis'] != null && !_analyzingController.isClosed) {
-      final isAnalyzing = (statusInfo['analysis'] as Map<String, dynamic>)['isAnalyzing'] as bool;
+      final bool isAnalyzing = (statusInfo['analysis'] as Map<String, dynamic>)['isAnalyzing'] as bool;
       _analyzingController.add(isAnalyzing);
     }
   }
@@ -193,13 +192,12 @@ class AnalysisServer {
 
   void _handleAnalysisIssues(Map<String, dynamic> issueInfo) {
     // {"event":"analysis.errors","params":{"file":"/Users/.../lib/main.dart","errors":[]}}
-    final file = issueInfo['file'] as String;
-    final errorsList = issueInfo['errors'] as List<dynamic>;
+    final String file = issueInfo['file'] as String;
+    final List<dynamic> errorsList = issueInfo['errors'] as List<dynamic>;
     final List<AnalysisError> errors = errorsList
         .map<Map<String, dynamic>>((dynamic e) => castStringKeyedMap(e) ?? <String, dynamic>{})
         .map<AnalysisError>((Map<String, dynamic> json) {
-          return AnalysisError(
-            WrittenError.fromJson(json),
+          return AnalysisError(WrittenError.fromJson(json),
             fileSystem: _fileSystem,
             platform: _platform,
             terminal: _terminal,
@@ -218,7 +216,12 @@ class AnalysisServer {
   }
 }
 
-enum AnalysisSeverity { error, warning, info, none }
+enum AnalysisSeverity {
+  error,
+  warning,
+  info,
+  none,
+}
 
 /// [AnalysisError] with command line style.
 class AnalysisError implements Comparable<AnalysisError> {
@@ -238,11 +241,17 @@ class AnalysisError implements Comparable<AnalysisError> {
 
   String get _separator => _platform.isWindows ? '-' : '•';
 
-  String get colorSeverity => switch (writtenError.severityLevel) {
-    AnalysisSeverity.error => _terminal.color(writtenError.severity, TerminalColor.red),
-    AnalysisSeverity.warning => _terminal.color(writtenError.severity, TerminalColor.yellow),
-    AnalysisSeverity.info || AnalysisSeverity.none => writtenError.severity,
-  };
+  String get colorSeverity {
+    switch (writtenError.severityLevel) {
+      case AnalysisSeverity.error:
+        return _terminal.color(writtenError.severity, TerminalColor.red);
+      case AnalysisSeverity.warning:
+        return _terminal.color(writtenError.severity, TerminalColor.yellow);
+      case AnalysisSeverity.info:
+      case AnalysisSeverity.none:
+        return writtenError.severity;
+    }
+  }
 
   String get type => writtenError.type;
   String get code => writtenError.code;
@@ -258,7 +267,8 @@ class AnalysisError implements Comparable<AnalysisError> {
       return writtenError.offset - other.writtenError.offset;
     }
 
-    final int diff = other.writtenError.severityLevel.index - writtenError.severityLevel.index;
+    final int diff = other.writtenError.severityLevel.index -
+        writtenError.severityLevel.index;
     if (diff != 0) {
       return diff;
     }
@@ -309,7 +319,7 @@ class WrittenError {
   ///      "hasFix":false
   ///  }
   static WrittenError fromJson(Map<String, dynamic> json) {
-    final location = json['location'] as Map<String, dynamic>;
+    final Map<String, dynamic> location = json['location'] as Map<String, dynamic>;
     return WrittenError._(
       severity: json['severity'] as String,
       type: json['type'] as String,
@@ -332,13 +342,14 @@ class WrittenError {
   final int startColumn;
   final int offset;
 
-  static final _severityMap = <String, AnalysisSeverity>{
+  static final Map<String, AnalysisSeverity> _severityMap = <String, AnalysisSeverity>{
     'INFO': AnalysisSeverity.info,
     'WARNING': AnalysisSeverity.warning,
     'ERROR': AnalysisSeverity.error,
   };
 
-  AnalysisSeverity get severityLevel => _severityMap[severity] ?? AnalysisSeverity.none;
+  AnalysisSeverity get severityLevel =>
+      _severityMap[severity] ?? AnalysisSeverity.none;
 
   String get messageSentenceFragment {
     if (message.endsWith('.')) {

@@ -11,26 +11,19 @@ void main() => runApp(const AnimatedAlignExampleApp());
 class AnimatedAlignExampleApp extends StatelessWidget {
   const AnimatedAlignExampleApp({super.key});
 
-  static const Duration duration = Duration(seconds: 1);
-  static const Curve curve = Curves.fastOutSlowIn;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('AnimatedAlign Sample')),
-        body: const AnimatedAlignExample(duration: duration, curve: curve),
+        body: const AnimatedAlignExample(),
       ),
     );
   }
 }
 
 class AnimatedAlignExample extends StatefulWidget {
-  const AnimatedAlignExample({required this.duration, required this.curve, super.key});
-
-  final Duration duration;
-
-  final Curve curve;
+  const AnimatedAlignExample({super.key});
 
   @override
   State<AnimatedAlignExample> createState() => _AnimatedAlignExampleState();
@@ -54,8 +47,8 @@ class _AnimatedAlignExampleState extends State<AnimatedAlignExample> {
           color: Colors.red,
           child: AnimatedAlign(
             alignment: selected ? Alignment.topRight : Alignment.bottomLeft,
-            duration: widget.duration,
-            curve: widget.curve,
+            duration: const Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
             child: const FlutterLogo(size: 50.0),
           ),
         ),

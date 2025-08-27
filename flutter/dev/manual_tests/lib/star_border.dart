@@ -7,14 +7,23 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
 
-enum LerpTarget { circle, roundedRect, rect, stadium, polygon, star }
+enum LerpTarget {
+  circle,
+  roundedRect,
+  rect,
+  stadium,
+  polygon,
+  star,
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: MyHomePage());
+    return const MaterialApp(
+      home: MyHomePage(),
+    );
   }
 }
 
@@ -51,7 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return SafeArea(
       child: Scaffold(
         key: scaffoldKey,
-        appBar: AppBar(title: const Text('Star Border'), backgroundColor: const Color(0xff323232)),
+        appBar: AppBar(
+          title: const Text('Star Border'),
+          backgroundColor: const Color(0xff323232),
+        ),
         body: Column(
           children: <Widget>[
             ColoredBox(color: Colors.grey.shade200, child: Options(_model)),
@@ -67,10 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.blue.shade100,
                       shape: lerpBorder(
                         StarBorder.polygon(
-                          side: const BorderSide(
-                            strokeAlign: BorderSide.strokeAlignCenter,
-                            width: 2,
-                          ),
+                          side: const BorderSide(strokeAlign: BorderSide.strokeAlignCenter, width: 2),
                           sides: _model.points,
                           pointRounding: _model.pointRounding,
                           rotation: _model.rotation,
@@ -91,10 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.blue.shade100,
                       shape: lerpBorder(
                         StarBorder(
-                          side: const BorderSide(
-                            strokeAlign: BorderSide.strokeAlignCenter,
-                            width: 2,
-                          ),
+                          side: const BorderSide(strokeAlign: BorderSide.strokeAlignCenter, width: 2),
                           points: _model.points,
                           innerRadiusRatio: _model.innerRadiusRatio,
                           pointRounding: _model.pointRounding,
@@ -328,11 +334,10 @@ class _OptionsState extends State<Options> {
                       ),
                     ),
                     OutlinedButton(
-                      child: const Text('Nearest'),
-                      onPressed: () {
-                        widget.model.points = widget.model.points.roundToDouble();
-                      },
-                    ),
+                        child: const Text('Nearest'),
+                        onPressed: () {
+                          widget.model.points = widget.model.points.roundToDouble();
+                        }),
                   ],
                 ),
               ),
@@ -367,30 +372,24 @@ class _OptionsState extends State<Options> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Radio<bool>(
+                    Row(children: <Widget>[
+                      Radio<bool>(
                           value: true,
                           groupValue: widget.model.lerpTo,
                           onChanged: (bool? value) {
                             widget.model.lerpTo = value!;
-                          },
-                        ),
-                        const Text('To'),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Radio<bool>(
+                          }),
+                      const Text('To'),
+                    ]),
+                    Row(children: <Widget>[
+                      Radio<bool>(
                           value: false,
                           groupValue: widget.model.lerpTo,
                           onChanged: (bool? value) {
                             widget.model.lerpTo = value!;
-                          },
-                        ),
-                        const Text('From'),
-                      ],
-                    ),
+                          }),
+                      const Text('From'),
+                    ])
                   ],
                 ),
               ),
@@ -399,13 +398,8 @@ class _OptionsState extends State<Options> {
                   children: <Widget>[
                     Expanded(
                       child: DropdownButton<LerpTarget>(
-                        items: LerpTarget.values.map<DropdownMenuItem<LerpTarget>>((
-                          LerpTarget target,
-                        ) {
-                          return DropdownMenuItem<LerpTarget>(
-                            value: target,
-                            child: Text(target.name),
-                          );
+                        items: LerpTarget.values.map<DropdownMenuItem<LerpTarget>>((LerpTarget target) {
+                          return DropdownMenuItem<LerpTarget>(value: target, child: Text(target.name));
                         }).toList(),
                         value: widget.model.lerpTarget,
                         onChanged: (LerpTarget? value) {
@@ -467,7 +461,9 @@ class ControlSlider extends StatelessWidget {
               value: value,
             ),
           ),
-          Text(value.toStringAsFixed(3)),
+          Text(
+            value.toStringAsFixed(3),
+          ),
         ],
       ),
     );
@@ -479,15 +475,12 @@ const BorderSide lerpToBorder = BorderSide(width: 5, color: lerpToColor);
 
 ShapeBorder? lerpBorder(StarBorder border, LerpTarget target, double t, {bool to = true}) {
   final OutlinedBorder targetBorder = switch (target) {
-    LerpTarget.circle => const CircleBorder(side: lerpToBorder, eccentricity: 0.5),
-    LerpTarget.rect => const RoundedRectangleBorder(side: lerpToBorder),
-    LerpTarget.stadium => const StadiumBorder(side: lerpToBorder),
-    LerpTarget.polygon => const StarBorder.polygon(side: lerpToBorder, sides: 4),
-    LerpTarget.star => const StarBorder(side: lerpToBorder, innerRadiusRatio: 0.5),
-    LerpTarget.roundedRect => RoundedRectangleBorder(
-      side: lerpToBorder,
-      borderRadius: BorderRadius.circular(10),
-    ),
+    LerpTarget.circle      => const CircleBorder(side: lerpToBorder, eccentricity: 0.5),
+    LerpTarget.rect        => const RoundedRectangleBorder(side: lerpToBorder),
+    LerpTarget.stadium     => const StadiumBorder(side: lerpToBorder),
+    LerpTarget.polygon     => const StarBorder.polygon(side: lerpToBorder, sides: 4),
+    LerpTarget.star        => const StarBorder(side: lerpToBorder, innerRadiusRatio: 0.5),
+    LerpTarget.roundedRect => RoundedRectangleBorder(side: lerpToBorder, borderRadius: BorderRadius.circular(10)),
   };
   return to ? border.lerpTo(targetBorder, t) : border.lerpFrom(targetBorder, t);
 }

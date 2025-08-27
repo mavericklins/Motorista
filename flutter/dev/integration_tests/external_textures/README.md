@@ -28,7 +28,7 @@ subtle translation issues.
 
 To run the test cases locally, use `flutter drive`[^2]:
 
-```sh
+```shell
 flutter drive lib/frame_rate_main.dart --driver test_driver/frame_rate_test.dart
 ```
 

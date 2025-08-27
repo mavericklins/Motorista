@@ -85,14 +85,19 @@ class RenderAnimatedSize extends RenderAligningShiftedBox {
     VoidCallback? onEnd,
   }) : _vsync = vsync,
        _clipBehavior = clipBehavior {
-    _controller =
-        AnimationController(vsync: vsync, duration: duration, reverseDuration: reverseDuration)
-          ..addListener(() {
-            if (_controller.value != _lastValue) {
-              markNeedsLayout();
-            }
-          });
-    _animation = CurvedAnimation(parent: _controller, curve: curve);
+    _controller = AnimationController(
+      vsync: vsync,
+      duration: duration,
+      reverseDuration: reverseDuration,
+    )..addListener(() {
+      if (_controller.value != _lastValue) {
+        markNeedsLayout();
+      }
+    });
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: curve,
+    );
     _onEnd = onEnd;
   }
 
@@ -240,8 +245,6 @@ class RenderAnimatedSize extends RenderAligningShiftedBox {
     return _sizeTween.evaluate(_animation);
   }
 
-  late Size _currentSize;
-
   @override
   void performLayout() {
     _lastValue = _controller.value;
@@ -249,7 +252,7 @@ class RenderAnimatedSize extends RenderAligningShiftedBox {
     final BoxConstraints constraints = this.constraints;
     if (child == null || constraints.isTight) {
       _controller.stop();
-      size = _currentSize = _sizeTween.begin = _sizeTween.end = constraints.smallest;
+      size = _sizeTween.begin = _sizeTween.end = constraints.smallest;
       _state = RenderAnimatedSizeState.start;
       child?.layout(constraints);
       return;
@@ -268,10 +271,11 @@ class RenderAnimatedSize extends RenderAligningShiftedBox {
         _layoutUnstable();
     }
 
-    size = _currentSize = constraints.constrain(_animatedSize!);
+    size = constraints.constrain(_animatedSize!);
     alignChild();
 
-    if (size.width < _sizeTween.end!.width || size.height < _sizeTween.end!.height) {
+    if (size.width < _sizeTween.end!.width ||
+        size.height < _sizeTween.end!.height) {
       _hasVisualOverflow = true;
     }
   }
@@ -292,7 +296,7 @@ class RenderAnimatedSize extends RenderAligningShiftedBox {
         return constraints.constrain(childSize);
       case RenderAnimatedSizeState.stable:
         if (_sizeTween.end != childSize) {
-          return constraints.constrain(_currentSize);
+          return constraints.constrain(size);
         } else if (_controller.value == _controller.upperBound) {
           return constraints.constrain(childSize);
         }
@@ -377,8 +381,12 @@ class RenderAnimatedSize extends RenderAligningShiftedBox {
   }
 
   void _animationStatusListener(AnimationStatus status) {
-    if (status.isCompleted) {
-      _onEnd?.call();
+    switch (status) {
+      case AnimationStatus.completed:
+        _onEnd?.call();
+      case AnimationStatus.dismissed:
+      case AnimationStatus.forward:
+      case AnimationStatus.reverse:
     }
   }
 

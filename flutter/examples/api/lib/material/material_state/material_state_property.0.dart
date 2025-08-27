@@ -16,7 +16,9 @@ class MaterialStatePropertyExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('MaterialStateProperty Sample')),
-        body: const Center(child: MaterialStatePropertyExample()),
+        body: const Center(
+          child: MaterialStatePropertyExample(),
+        ),
       ),
     );
   }
@@ -40,7 +42,9 @@ class MaterialStatePropertyExample extends StatelessWidget {
     }
 
     return TextButton(
-      style: ButtonStyle(foregroundColor: MaterialStateProperty.resolveWith(getColor)),
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.resolveWith(getColor),
+      ),
       onPressed: () {},
       child: const Text('TextButton'),
     );

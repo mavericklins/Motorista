@@ -23,26 +23,35 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Row(
           children: <Widget>[
-            Semantics(container: true, child: const Text('test1')),
-            Semantics(container: true, child: const Text('test2')),
+            Semantics(
+              container: true,
+              child: const Text('test1'),
+            ),
+            Semantics(
+              container: true,
+              child: const Text('test2'),
+            ),
           ],
         ),
       ),
     );
 
-    expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(id: 1, label: 'test1'),
-            TestSemantics.rootChild(id: 2, label: 'test2'),
-          ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+    expect(semantics, hasSemantics(
+      TestSemantics.root(
+        children: <TestSemantics>[
+          TestSemantics.rootChild(
+            id: 1,
+            label: 'test1',
+          ),
+          TestSemantics.rootChild(
+            id: 2,
+            label: 'test2',
+          ),
+        ],
       ),
-    );
+      ignoreRect: true,
+      ignoreTransform: true,
+    ));
 
     // merged
     await tester.pumpWidget(
@@ -51,24 +60,32 @@ void main() {
         child: MergeSemantics(
           child: Row(
             children: <Widget>[
-              Semantics(container: true, child: const Text('test1')),
-              Semantics(container: true, child: const Text('test2')),
+              Semantics(
+                container: true,
+                child: const Text('test1'),
+              ),
+              Semantics(
+                container: true,
+                child: const Text('test2'),
+              ),
             ],
           ),
         ),
       ),
     );
 
-    expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[TestSemantics.rootChild(id: 3, label: 'test1\ntest2')],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+    expect(semantics, hasSemantics(
+      TestSemantics.root(
+        children: <TestSemantics>[
+          TestSemantics.rootChild(
+            id: 3,
+            label: 'test1\ntest2',
+          ),
+        ],
       ),
-    );
+      ignoreRect: true,
+      ignoreTransform: true,
+    ));
 
     // not merged
     await tester.pumpWidget(
@@ -76,33 +93,34 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Row(
           children: <Widget>[
-            Semantics(container: true, child: const Text('test1')),
-            Semantics(container: true, child: const Text('test2')),
+            Semantics(
+              container: true,
+              child: const Text('test1'),
+            ),
+            Semantics(
+              container: true,
+              child: const Text('test2'),
+            ),
           ],
         ),
       ),
     );
 
-    expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics.rootChild(id: 6, label: 'test1'),
-            TestSemantics.rootChild(id: 7, label: 'test2'),
-          ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
+    expect(semantics, hasSemantics(
+      TestSemantics.root(
+        children: <TestSemantics>[
+          TestSemantics.rootChild(id: 6, label: 'test1'),
+          TestSemantics.rootChild(id: 7, label: 'test2'),
+        ],
       ),
-    );
+      ignoreRect: true,
+      ignoreTransform: true,
+    ));
 
     semantics.dispose();
   });
 
-  testWidgets('MergeSemantics works if other nodes are implicitly merged into its node', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('MergeSemantics works if other nodes are implicitly merged into its node', (WidgetTester tester) async {
     final SemanticsTester semantics = SemanticsTester(tester);
 
     await tester.pumpWidget(
@@ -113,8 +131,14 @@ void main() {
             selected: true, // this is implicitly merged into the MergeSemantics node
             child: Row(
               children: <Widget>[
-                Semantics(container: true, child: const Text('test1')),
-                Semantics(container: true, child: const Text('test2')),
+                Semantics(
+                  container: true,
+                  child: const Text('test1'),
+                ),
+                Semantics(
+                  container: true,
+                  child: const Text('test2'),
+                ),
               ],
             ),
           ),
@@ -122,22 +146,21 @@ void main() {
       ),
     );
 
-    expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
+    expect(semantics, hasSemantics(
+      TestSemantics.root(
           children: <TestSemantics>[
             TestSemantics.rootChild(
               id: 1,
-              flags: <SemanticsFlag>[SemanticsFlag.hasSelectedState, SemanticsFlag.isSelected],
+              flags: <SemanticsFlag>[
+                SemanticsFlag.isSelected,
+              ],
               label: 'test1\ntest2',
             ),
           ],
-        ),
-        ignoreRect: true,
-        ignoreTransform: true,
       ),
-    );
+      ignoreRect: true,
+      ignoreTransform: true,
+    ));
 
     semantics.dispose();
   });

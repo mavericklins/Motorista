@@ -28,7 +28,7 @@
   "cutButtonLabel": "Выразаць",
   "copyButtonLabel": "Капіраваць",
   "pasteButtonLabel": "Уставіць",
-  "clearButtonLabel": "Ачысціць",
+  "clearButtonLabel": "Clear",
   "selectAllButtonLabel": "Выбраць усе",
   "tabSemanticsLabel": "Укладка $tabIndex з $tabCount",
   "modalBarrierDismissLabel": "Адхіліць",
@@ -37,7 +37,5 @@
   "menuDismissLabel": "Закрыць меню",
   "lookUpButtonLabel": "Знайсці",
   "searchWebButtonLabel": "Пошук у сетцы",
-  "shareButtonLabel": "Абагуліць...",
-  "cancelButtonLabel": "Скасаваць",
-  "backButtonLabel": "Назад"
+  "shareButtonLabel": "Абагуліць..."
 }

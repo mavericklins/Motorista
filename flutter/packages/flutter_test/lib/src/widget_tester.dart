@@ -2,12 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:fake_async/fake_async.dart';
-/// @docImport 'package:flutter/material.dart';
-/// @docImport 'package:matcher/matcher.dart';
-/// @docImport 'package:test_api/hooks.dart';
-library;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -128,8 +122,8 @@ E? _lastWhereOrNull<E>(Iterable<E> list, bool Function(E) test) {
 /// When [experimentalLeakTesting] is set, it is used to leak track objects created
 /// during test execution.
 /// Otherwise [LeakTesting.settings] is used.
-/// Adjust [LeakTesting.settings] in `flutter_test_config.dart`
-/// (see https://flutter.dev/to/flutter-test-docs)
+/// Adjust [LeakTesting.settings] in flutter_test_config.dart
+/// (see https://api.flutter.dev/flutter/flutter_test/flutter_test-library.html)
 /// for the entire package or folder, or in the test's main for a test file
 /// (don't use [setUp] or [setUpAll]).
 /// To turn off leak tracking just for one test, set [experimentalLeakTesting] to
@@ -156,10 +150,7 @@ void testWidgets(
   int? retry,
   LeakTesting? experimentalLeakTesting,
 }) {
-  assert(
-    variant.values.isNotEmpty,
-    'There must be at least one value to test in the testing variant.',
-  );
+  assert(variant.values.isNotEmpty, 'There must be at least one value to test in the testing variant.');
   final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
   final WidgetTester tester = WidgetTester._(binding);
   for (final dynamic value in variant.values) {
@@ -183,11 +174,11 @@ void testWidgets(
         test_package.addTearDown(binding.postTest);
         return binding.runTest(
           () async {
+            binding.reset(); // TODO(ianh): the binding should just do this itself in _runTest
             debugResetSemanticsIdCounter();
             Object? memento;
             try {
               memento = await variant.setUp(value);
-              binding.reset(); // TODO(ianh): the binding should just do this itself in _runTest
               maybeSetupLeakTrackingForTest(experimentalLeakTesting, combinedDescription);
               await callback(tester);
             } finally {
@@ -278,18 +269,25 @@ class TargetPlatformVariant extends TestVariant<TargetPlatform> {
   /// Creates a [TargetPlatformVariant] that tests all values from
   /// the [TargetPlatform] enum. If [excluding] is provided, will test all platforms
   /// except those in [excluding].
-  TargetPlatformVariant.all({Set<TargetPlatform> excluding = const <TargetPlatform>{}})
-    : values = TargetPlatform.values.toSet()..removeAll(excluding);
+  TargetPlatformVariant.all({
+    Set<TargetPlatform> excluding = const <TargetPlatform>{},
+  }) : values = TargetPlatform.values.toSet()..removeAll(excluding);
 
   /// Creates a [TargetPlatformVariant] that includes platforms that are
   /// considered desktop platforms.
-  TargetPlatformVariant.desktop()
-    : values = <TargetPlatform>{TargetPlatform.linux, TargetPlatform.macOS, TargetPlatform.windows};
+  TargetPlatformVariant.desktop() : values = <TargetPlatform>{
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+    TargetPlatform.windows,
+  };
 
   /// Creates a [TargetPlatformVariant] that includes platforms that are
   /// considered mobile platforms.
-  TargetPlatformVariant.mobile()
-    : values = <TargetPlatform>{TargetPlatform.android, TargetPlatform.iOS, TargetPlatform.fuchsia};
+  TargetPlatformVariant.mobile() : values = <TargetPlatform>{
+    TargetPlatform.android,
+    TargetPlatform.iOS,
+    TargetPlatform.fuchsia,
+  };
 
   /// Creates a [TargetPlatformVariant] that tests only the given value of
   /// [TargetPlatform].
@@ -448,10 +446,13 @@ Future<void> benchmarkWidgets(
     semanticsHandle = tester.ensureSemantics();
   }
   tester._recordNumberOfSemanticsHandles();
-  return binding.runTest(() async {
-    await callback(tester);
-    semanticsHandle?.dispose();
-  }, tester._endOfTestVerifications);
+  return binding.runTest(
+    () async {
+      await callback(tester);
+      semanticsHandle?.dispose();
+    },
+    tester._endOfTestVerifications,
+  );
 }
 
 /// Assert that `actual` matches `matcher`.
@@ -482,7 +483,11 @@ void expect(
 ///
 /// Generally, it is better to use [expect], which does include checks to ensure
 /// that asynchronous APIs are not being called.
-void expectSync(dynamic actual, dynamic matcher, {String? reason}) {
+void expectSync(
+  dynamic actual,
+  dynamic matcher, {
+  String? reason,
+}) {
   matcher_expect.expect(actual, matcher, reason: reason);
 }
 
@@ -503,9 +508,8 @@ Future<void> expectLater(
   // We can't wrap the delegate in a guard, or we'll hit async barriers in
   // [TestWidgetsFlutterBinding] while we're waiting for the matcher to complete
   TestAsyncUtils.guardSync();
-  return matcher_expect
-      .expectLater(actual, matcher, reason: reason, skip: skip)
-      .then<void>((dynamic value) => null);
+  return matcher_expect.expectLater(actual, matcher, reason: reason, skip: skip)
+           .then<void>((dynamic value) => null);
 }
 
 /// Class that programmatically interacts with widgets and the test environment.
@@ -619,7 +623,9 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
         } else {
           await binding.pump();
           await binding.delayed(timeDiff);
-          handleTimeStampDiff.add(binding.clock.now().difference(startTime) - record.timeDelay);
+          handleTimeStampDiff.add(
+            binding.clock.now().difference(startTime) - record.timeDelay,
+          );
           for (final PointerEvent event in record.events) {
             binding.handlePointerEventForSource(event, source: TestBindingEventSource.test);
           }
@@ -648,7 +654,10 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
   /// See also [LiveTestWidgetsFlutterBindingFramePolicy], which affects how
   /// this method works when the test is run with `flutter run`.
   @override
-  Future<void> pump([Duration? duration, EnginePhase phase = EnginePhase.sendSemanticsUpdate]) {
+  Future<void> pump([
+    Duration? duration,
+    EnginePhase phase = EnginePhase.sendSemanticsUpdate,
+  ]) {
     return TestAsyncUtils.guard<void>(() => binding.pump(duration, phase));
   }
 
@@ -664,27 +673,19 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
     assert(() {
       final TestWidgetsFlutterBinding widgetsBinding = binding;
       return widgetsBinding is LiveTestWidgetsFlutterBinding &&
-          widgetsBinding.framePolicy == LiveTestWidgetsFlutterBindingFramePolicy.benchmark;
+             widgetsBinding.framePolicy == LiveTestWidgetsFlutterBindingFramePolicy.benchmark;
     }());
 
     dynamic caughtException;
-    StackTrace? stackTrace;
-    void handleError(dynamic error, StackTrace trace) {
-      caughtException ??= error;
-      stackTrace ??= trace;
-    }
+    void handleError(dynamic error, StackTrace stackTrace) => caughtException ??= error;
 
-    await Future<void>.microtask(() {
-      binding.handleBeginFrame(duration);
-    }).catchError(handleError);
+    await Future<void>.microtask(() { binding.handleBeginFrame(duration); }).catchError(handleError);
     await idle();
-    await Future<void>.microtask(() {
-      binding.handleDrawFrame();
-    }).catchError(handleError);
+    await Future<void>.microtask(() { binding.handleDrawFrame(); }).catchError(handleError);
     await idle();
 
     if (caughtException != null) {
-      Error.throwWithStackTrace(caughtException as Object, stackTrace!);
+      throw caughtException as Object; // ignore: only_throw_errors, rethrowing caught exception.
     }
   }
 
@@ -832,7 +833,7 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
     Future<T> Function() callback, {
     @Deprecated(
       'This is no longer supported and has no effect. '
-      'This feature was deprecated after v3.12.0-1.1.pre.',
+      'This feature was deprecated after v3.12.0-1.1.pre.'
     )
     Duration additionalTime = const Duration(milliseconds: 1000),
   }) => binding.runAsync<T?>(callback);
@@ -856,9 +857,7 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
   @override
   HitTestResult hitTestOnBinding(Offset location, {int? viewId}) {
     viewId ??= view.viewId;
-    final RenderView renderView = binding.renderViews.firstWhere(
-      (RenderView r) => r.flutterView.viewId == viewId,
-    );
+    final RenderView renderView = binding.renderViews.firstWhere((RenderView r) => r.flutterView.viewId == viewId);
     location = binding.localToGlobal(location, renderView);
     return super.hitTestOnBinding(location, viewId: viewId);
   }
@@ -879,9 +878,9 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
   void dispatchEvent(PointerEvent event, HitTestResult result) {
     if (event is PointerDownEvent) {
       final RenderObject innerTarget = result.path
-          .map((HitTestEntry candidate) => candidate.target)
-          .whereType<RenderObject>()
-          .first;
+        .map((HitTestEntry candidate) => candidate.target)
+        .whereType<RenderObject>()
+        .first;
       final Element? innerTargetElement = binding.renderViews.contains(innerTarget)
           ? null
           : _lastWhereOrNull(
@@ -933,11 +932,14 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
 
         final Key? key = widget.key;
         if (key is ValueKey<dynamic>) {
-          final String? keyLabel = switch (key.value) {
-            int() || double() || bool() => 'const ${key.runtimeType}(${key.value})',
-            final String value => "const Key('$value')",
-            _ => null,
-          };
+          String? keyLabel;
+          if (key is ValueKey<int> ||
+              key is ValueKey<double> ||
+              key is ValueKey<bool>) {
+            keyLabel = 'const ${key.runtimeType}(${key.value})';
+          } else if (key is ValueKey<String>) {
+            keyLabel = "const Key('${key.value}')";
+          }
           if (keyLabel != null) {
             final Iterable<Element> matches = find.byKey(key).evaluate();
             if (matches.length == 1) {
@@ -958,9 +960,7 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
           }
 
           if (descendantText != null && numberOfWithTexts < 5) {
-            final Iterable<Element> matches = find
-                .widgetWithText(widget.runtimeType, descendantText)
-                .evaluate();
+            final Iterable<Element> matches = find.widgetWithText(widget.runtimeType, descendantText).evaluate();
             if (matches.length == 1) {
               printToConsole("  find.widgetWithText(${widget.runtimeType}, '$descendantText')");
               numberOfWithTexts += 1;
@@ -1039,7 +1039,7 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
   /// An argument can be specified to provide a string that will be used in the
   /// error message. It should be an adverbial phrase describing the current
   /// situation, such as "at the end of the test".
-  void verifyTickersWereDisposed([String when = 'when none should have been']) {
+  void verifyTickersWereDisposed([ String when = 'when none should have been' ]) {
     if (_tickers != null) {
       for (final Ticker ticker in _tickers!) {
         if (ticker.isActive) {
@@ -1049,7 +1049,7 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
             ErrorHint(
               'Tickers used by AnimationControllers '
               'should be disposed by calling dispose() on the AnimationController itself. '
-              'Otherwise, the ticker will leak.',
+              'Otherwise, the ticker will leak.'
             ),
             ticker.describeForError('The offending ticker was'),
           ]);
@@ -1066,16 +1066,14 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
   void _verifySemanticsHandlesWereDisposed() {
     assert(_lastRecordedSemanticsHandles != null);
     // TODO(goderbauer): Fix known leak in web engine when running integration tests and remove this "correction", https://github.com/flutter/flutter/issues/121640.
-    final int knownWebEngineLeakForLiveTestsCorrection =
-        kIsWeb && binding is LiveTestWidgetsFlutterBinding ? 1 : 0;
+    final int knownWebEngineLeakForLiveTestsCorrection = kIsWeb && binding is LiveTestWidgetsFlutterBinding ? 1 : 0;
 
-    if (_currentSemanticsHandles - knownWebEngineLeakForLiveTestsCorrection >
-        _lastRecordedSemanticsHandles!) {
+    if (_currentSemanticsHandles - knownWebEngineLeakForLiveTestsCorrection > _lastRecordedSemanticsHandles!) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary('A SemanticsHandle was active at the end of the test.'),
         ErrorDescription(
           'All SemanticsHandle instances must be disposed by calling dispose() on '
-          'the SemanticsHandle.',
+          'the SemanticsHandle.'
         ),
       ]);
     }
@@ -1085,9 +1083,7 @@ class WidgetTester extends WidgetController implements HitTestDispatcher, Ticker
   int? _lastRecordedSemanticsHandles;
 
   // TODO(goderbauer): Only use binding.debugOutstandingSemanticsHandles when deprecated binding.pipelineOwner is removed.
-  int get _currentSemanticsHandles =>
-      binding.debugOutstandingSemanticsHandles +
-      binding.pipelineOwner.debugOutstandingSemanticsHandles;
+  int get _currentSemanticsHandles => binding.debugOutstandingSemanticsHandles + binding.pipelineOwner.debugOutstandingSemanticsHandles;
 
   void _recordNumberOfSemanticsHandles() {
     _lastRecordedSemanticsHandles = _currentSemanticsHandles;

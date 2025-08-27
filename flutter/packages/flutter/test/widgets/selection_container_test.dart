@@ -7,13 +7,20 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+
   Future<void> pumpContainer(WidgetTester tester, Widget child) async {
-    await tester.pumpWidget(MaterialApp(home: child));
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: DefaultSelectionStyle(
+          selectionColor: Colors.red,
+          child: child,
+        ),
+      ),
+    );
   }
 
-  testWidgets('updates its registrar and delegate based on the number of selectables', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('updates its registrar and delegate based on the number of selectables', (WidgetTester tester) async {
     final TestSelectionRegistrar registrar = TestSelectionRegistrar();
     final TestContainerDelegate delegate = TestContainerDelegate();
     addTearDown(delegate.dispose);
@@ -82,7 +89,7 @@ void main() {
               child: const Text('dummy'),
             );
           },
-        ),
+        )
       ),
     );
     await tester.pumpAndSettle();
@@ -105,7 +112,7 @@ void main() {
               child: const Text('dummy'),
             );
           },
-        ),
+        )
       ),
     );
     await tester.pumpAndSettle();
@@ -124,17 +131,17 @@ void main() {
     await pumpContainer(
       tester,
       SelectionContainer(
-        registrar: registrar,
-        delegate: delegate,
-        child: Builder(
-          builder: (BuildContext context) {
-            return SelectionContainer(
-              registrar: SelectionContainer.maybeOf(context),
-              delegate: childDelegate,
-              child: const Text('dummy'), // The [Text] widget has an internal [SelectionContainer].
-            );
-          },
-        ),
+          registrar: registrar,
+          delegate: delegate,
+          child: Builder(
+            builder: (BuildContext context) {
+              return SelectionContainer(
+                registrar: SelectionContainer.maybeOf(context),
+                delegate: childDelegate,
+                child: const Text('dummy'),
+              );
+            },
+          )
       ),
     );
     await tester.pump();
@@ -144,16 +151,19 @@ void main() {
     expect(delegate.value.hasContent, isTrue);
   });
 
-  testWidgets('selection container registers itself if there is a selectable child', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('selection container registers itself if there is a selectable child', (WidgetTester tester) async {
     final TestSelectionRegistrar registrar = TestSelectionRegistrar();
     final TestContainerDelegate delegate = TestContainerDelegate();
     addTearDown(delegate.dispose);
 
     await pumpContainer(
       tester,
-      SelectionContainer(registrar: registrar, delegate: delegate, child: const Column()),
+      SelectionContainer(
+        registrar: registrar,
+        delegate: delegate,
+        child: const Column(
+        ),
+      ),
     );
     expect(registrar.selectables.length, 0);
 
@@ -162,7 +172,11 @@ void main() {
       SelectionContainer(
         registrar: registrar,
         delegate: delegate,
-        child: const Column(children: <Widget>[Text('column1', textDirection: TextDirection.ltr)]),
+        child: const Column(
+          children: <Widget>[
+            Text('column1', textDirection: TextDirection.ltr),
+          ],
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -170,15 +184,18 @@ void main() {
 
     await pumpContainer(
       tester,
-      SelectionContainer(registrar: registrar, delegate: delegate, child: const Column()),
+      SelectionContainer(
+        registrar: registrar,
+        delegate: delegate,
+        child: const Column(
+        ),
+      ),
     );
     await tester.pumpAndSettle();
     expect(registrar.selectables.length, 0);
   });
 
-  testWidgets('selection container gets registrar from context if not provided', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('selection container gets registrar from context if not provided', (WidgetTester tester) async {
     final TestSelectionRegistrar registrar = TestSelectionRegistrar();
     final TestContainerDelegate delegate = TestContainerDelegate();
     addTearDown(delegate.dispose);
@@ -190,7 +207,9 @@ void main() {
         child: SelectionContainer(
           delegate: delegate,
           child: const Column(
-            children: <Widget>[Text('column1', textDirection: TextDirection.ltr)],
+            children: <Widget>[
+              Text('column1', textDirection: TextDirection.ltr),
+            ],
           ),
         ),
       ),

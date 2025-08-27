@@ -21,7 +21,9 @@ class CupertinoPickerDemo extends StatefulWidget {
 }
 
 class _BottomPicker extends StatelessWidget {
-  const _BottomPicker({required this.child});
+  const _BottomPicker({
+    required this.child,
+  });
 
   final Widget child;
 
@@ -32,11 +34,17 @@ class _BottomPicker extends StatelessWidget {
       padding: const EdgeInsets.only(top: 6.0),
       color: CupertinoColors.systemBackground.resolveFrom(context),
       child: DefaultTextStyle(
-        style: TextStyle(color: CupertinoColors.label.resolveFrom(context), fontSize: 22.0),
+        style: TextStyle(
+          color: CupertinoColors.label.resolveFrom(context),
+          fontSize: 22.0,
+        ),
         child: GestureDetector(
           // Blocks taps from propagating to the modal sheet and popping.
-          onTap: () {},
-          child: SafeArea(top: false, child: child),
+          onTap: () { },
+          child: SafeArea(
+            top: false,
+            child: child,
+          ),
         ),
       ),
     );
@@ -44,7 +52,9 @@ class _BottomPicker extends StatelessWidget {
 }
 
 class _Menu extends StatelessWidget {
-  const _Menu({required this.children});
+  const _Menu({
+    required this.children,
+  });
 
   final List<Widget> children;
 
@@ -64,7 +74,10 @@ class _Menu extends StatelessWidget {
         child: SafeArea(
           top: false,
           bottom: false,
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: children),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: children,
+          ),
         ),
       ),
     );
@@ -86,9 +99,8 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
   DateTime dateTime = DateTime.now();
 
   Widget _buildColorPicker(BuildContext context) {
-    final FixedExtentScrollController scrollController = FixedExtentScrollController(
-      initialItem: _selectedColorIndex,
-    );
+    final FixedExtentScrollController scrollController =
+        FixedExtentScrollController(initialItem: _selectedColorIndex);
 
     return GestureDetector(
       onTap: () async {
@@ -105,7 +117,9 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
                   setState(() => _selectedColorIndex = index);
                 },
                 children: List<Widget>.generate(coolColorNames.length, (int index) {
-                  return Center(child: Text(coolColorNames[index]));
+                  return Center(
+                    child: Text(coolColorNames[index]),
+                  );
                 }),
               ),
             );
@@ -117,9 +131,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
           const Text('Favorite Color'),
           Text(
             coolColorNames[_selectedColorIndex],
-            style: TextStyle(
-              color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context),
-            ),
+            style: TextStyle(color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context)),
           ),
         ],
       ),
@@ -150,11 +162,9 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
           const Text('Countdown Timer'),
           Text(
             '${timer.inHours}:'
-            '${(timer.inMinutes % 60).toString().padLeft(2, '0')}:'
-            '${(timer.inSeconds % 60).toString().padLeft(2, '0')}',
-            style: TextStyle(
-              color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context),
-            ),
+                '${(timer.inMinutes % 60).toString().padLeft(2,'0')}:'
+                '${(timer.inSeconds % 60).toString().padLeft(2,'0')}',
+            style: TextStyle(color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context)),
           ),
         ],
       ),
@@ -186,11 +196,9 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
           const Text('Date'),
           Text(
             DateFormat.yMMMMd().format(date),
-            style: TextStyle(
-              color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context),
-            ),
+            style: TextStyle(color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context)),
           ),
-        ],
+        ]
       ),
     );
   }
@@ -220,9 +228,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
           const Text('Time'),
           Text(
             DateFormat.jm().format(time),
-            style: TextStyle(
-              color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context),
-            ),
+            style: TextStyle(color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context)),
           ),
         ],
       ),
@@ -253,9 +259,7 @@ class _CupertinoPickerDemoState extends State<CupertinoPickerDemo> {
           const Text('Date and Time'),
           Text(
             DateFormat.yMMMd().add_jm().format(dateTime),
-            style: TextStyle(
-              color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context),
-            ),
+            style: TextStyle(color: CupertinoDynamicColor.resolve(CupertinoColors.inactiveGray, context)),
           ),
         ],
       ),

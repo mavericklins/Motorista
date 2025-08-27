@@ -7,16 +7,15 @@ import 'package:flutter/material.dart';
 /// Flutter code sample for [PaginatedDataTable].
 
 class MyDataSource extends DataTableSource {
-  static const List<int> _displayIndexToRawIndex = <int>[0, 3, 4, 5, 6];
+  static const List<int> _displayIndexToRawIndex = <int>[ 0, 3, 4, 5, 6 ];
 
   late List<List<Comparable<Object>>> sortedData;
   void setData(List<List<Comparable<Object>>> rawData, int sortColumn, bool sortAscending) {
-    sortedData = rawData.toList()
-      ..sort((List<Comparable<Object>> a, List<Comparable<Object>> b) {
-        final Comparable<Object> cellA = a[_displayIndexToRawIndex[sortColumn]];
-        final Comparable<Object> cellB = b[_displayIndexToRawIndex[sortColumn]];
-        return cellA.compareTo(cellB) * (sortAscending ? 1 : -1);
-      });
+    sortedData = rawData.toList()..sort((List<Comparable<Object>> a, List<Comparable<Object>> b) {
+      final Comparable<Object> cellA = a[_displayIndexToRawIndex[sortColumn]];
+      final Comparable<Object> cellB = b[_displayIndexToRawIndex[sortColumn]];
+      return cellA.compareTo(cellB) * (sortAscending ? 1 : -1);
+    });
     notifyListeners();
   }
 
@@ -26,8 +25,7 @@ class MyDataSource extends DataTableSource {
   static DataCell cellFor(Object data) {
     String value;
     if (data is DateTime) {
-      value =
-          '${data.year}-${data.month.toString().padLeft(2, '0')}-${data.day.toString().padLeft(2, '0')}';
+      value = '${data.year}-${data.month.toString().padLeft(2, '0')}-${data.day.toString().padLeft(2, '0')}';
     } else {
       value = data.toString();
     }
@@ -63,7 +61,10 @@ class DataTableExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: SingleChildScrollView(padding: EdgeInsets.all(12.0), child: DataTableExample()),
+      home: SingleChildScrollView(
+        padding: EdgeInsets.all(12.0),
+        child: DataTableExample(),
+      ),
     );
   }
 }
@@ -76,7 +77,8 @@ class DataTableExample extends StatefulWidget {
 }
 
 class _DataTableExampleState extends State<DataTableExample> {
-  final MyDataSource dataSource = MyDataSource()..setData(episodes, 0, true);
+  final MyDataSource dataSource = MyDataSource()
+    ..setData(episodes, 0, true);
 
   int _columnIndex = 0;
   bool _columnAscending = true;
@@ -95,11 +97,26 @@ class _DataTableExampleState extends State<DataTableExample> {
       sortColumnIndex: _columnIndex,
       sortAscending: _columnAscending,
       columns: <DataColumn>[
-        DataColumn(label: const Text('Episode'), onSort: _sort),
-        DataColumn(label: const Text('Title'), onSort: _sort),
-        DataColumn(label: const Text('Director'), onSort: _sort),
-        DataColumn(label: const Text('Writer(s)'), onSort: _sort),
-        DataColumn(label: const Text('Air Date'), onSort: _sort),
+        DataColumn(
+          label: const Text('Episode'),
+          onSort: _sort,
+        ),
+        DataColumn(
+          label: const Text('Title'),
+          onSort: _sort,
+        ),
+        DataColumn(
+          label: const Text('Director'),
+          onSort: _sort,
+        ),
+        DataColumn(
+          label: const Text('Writer(s)'),
+          onSort: _sort,
+        ),
+        DataColumn(
+          label: const Text('Air Date'),
+          onSort: _sort,
+        ),
       ],
       source: dataSource,
     );
@@ -260,7 +277,15 @@ final List<List<Comparable<Object>>> episodes = <List<Comparable<Object>>>[
     'Kathryn Lyn, Bill Wolkoff',
     DateTime(2023, 7, 22),
   ],
-  <Comparable<Object>>[18, 2, 8, 'Under the Cloak of War', '', 'Davy Perez', DateTime(2023, 7, 27)],
+  <Comparable<Object>>[
+    18,
+    2,
+    8,
+    'Under the Cloak of War',
+    '',
+    'Davy Perez',
+    DateTime(2023, 7, 27),
+  ],
   <Comparable<Object>>[
     19,
     2,
@@ -270,5 +295,13 @@ final List<List<Comparable<Object>>> episodes = <List<Comparable<Object>>>[
     'Dana Horgan, Bill Wolkoff',
     DateTime(2023, 8, 3),
   ],
-  <Comparable<Object>>[20, 2, 10, 'Hegemony', '', 'Henry Alonso Myers', DateTime(2023, 8, 10)],
+  <Comparable<Object>>[
+    20,
+    2,
+    10,
+    'Hegemony',
+    '',
+    'Henry Alonso Myers',
+    DateTime(2023, 8, 10),
+  ],
 ];

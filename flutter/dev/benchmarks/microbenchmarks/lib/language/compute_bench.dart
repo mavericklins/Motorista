@@ -19,10 +19,11 @@ class Data {
 }
 
 List<Data> test(int length) {
-  return List<Data>.generate(length, (int index) => Data(index * index));
+  return List<Data>.generate(length,
+      (int index) => Data(index * index));
 }
 
-Future<void> execute() async {
+Future<void> main() async {
   assert(false, "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
 
   // Warm up lap

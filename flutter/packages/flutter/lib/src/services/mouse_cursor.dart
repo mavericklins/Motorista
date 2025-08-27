@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/material.dart';
-/// @docImport 'package:flutter/rendering.dart';
-library;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 
@@ -23,7 +19,8 @@ class MouseCursorManager {
   ///
   /// The `fallbackMouseCursor` must not be [MouseCursor.defer] (typically
   /// [SystemMouseCursors.basic]).
-  MouseCursorManager(this.fallbackMouseCursor) : assert(fallbackMouseCursor != MouseCursor.defer);
+  MouseCursorManager(this.fallbackMouseCursor)
+    : assert(fallbackMouseCursor != MouseCursor.defer);
 
   /// The mouse cursor to use if all cursor candidates choose to defer.
   ///
@@ -69,8 +66,8 @@ class MouseCursorManager {
     }
 
     final MouseCursorSession? lastSession = _lastSession[device];
-    final MouseCursor nextCursor =
-        _DeferringMouseCursor.firstNonDeferred(cursorCandidates) ?? fallbackMouseCursor;
+    final MouseCursor nextCursor = _DeferringMouseCursor.firstNonDeferred(cursorCandidates)
+      ?? fallbackMouseCursor;
     assert(nextCursor is! _DeferringMouseCursor);
     if (lastSession?.cursor == nextCursor) {
       return;
@@ -273,24 +270,20 @@ class _NoopMouseCursorSession extends MouseCursorSession {
   _NoopMouseCursorSession(_NoopMouseCursor super.cursor, super.device);
 
   @override
-  Future<void> activate() async {
-    /* Nothing */
-  }
+  Future<void> activate() async { /* Nothing */ }
 
   @override
-  void dispose() {
-    /* Nothing */
-  }
+  void dispose() { /* Nothing */ }
 }
 
 /// A mouse cursor that doesn't change the cursor when activated.
 ///
-/// Although setting a region's cursor to [_NoopMouseCursor] doesn't change the
+/// Although setting a region's cursor to [NoopMouseCursor] doesn't change the
 /// cursor, it blocks regions behind it from changing the cursor, in contrast to
 /// setting the cursor to null. More information about the usage of this class
-/// can be found at [MouseCursor.uncontrolled].
+/// can be found at [MouseCursors.uncontrolled].
 ///
-/// To use this class, use [MouseCursor.uncontrolled]. Directly
+/// To use this class, use [MouseCursors.uncontrolled]. Directly
 /// instantiating this class is not allowed.
 class _NoopMouseCursor extends MouseCursor {
   // Application code shouldn't directly instantiate this class, since its only
@@ -313,16 +306,17 @@ class _SystemMouseCursorSession extends MouseCursorSession {
 
   @override
   Future<void> activate() {
-    return SystemChannels.mouseCursor.invokeMethod<void>('activateSystemCursor', <String, dynamic>{
-      'device': device,
-      'kind': cursor.kind,
-    });
+    return SystemChannels.mouseCursor.invokeMethod<void>(
+      'activateSystemCursor',
+      <String, dynamic>{
+        'device': device,
+        'kind': cursor.kind,
+      },
+    );
   }
 
   @override
-  void dispose() {
-    /* Nothing */
-  }
+  void dispose() { /* Nothing */ }
 }
 
 /// A mouse cursor that is natively supported on the platform that the
@@ -357,7 +351,9 @@ class _SystemMouseCursorSession extends MouseCursorSession {
 class SystemMouseCursor extends MouseCursor {
   // Application code shouldn't directly instantiate system mouse cursors, since
   // the supported system cursors are enumerated in [SystemMouseCursors].
-  const SystemMouseCursor._({required this.kind});
+  const SystemMouseCursor._({
+    required this.kind,
+  });
 
   /// A string that identifies the kind of the cursor.
   ///
@@ -376,7 +372,8 @@ class SystemMouseCursor extends MouseCursor {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is SystemMouseCursor && other.kind == kind;
+    return other is SystemMouseCursor
+        && other.kind == kind;
   }
 
   @override
@@ -408,15 +405,18 @@ abstract final class SystemMouseCursors {
   //
   // * Android: shell/platform/android/io/flutter/plugin/mouse/MouseCursorPlugin.java
   // * Web: lib/web_ui/lib/src/engine/mouse_cursor.dart
-  // * Windows: shell/platform/windows/flutter_windows_engine.cc
+  // * Windows: shell/platform/windows/win32_flutter_window_win32.cc
+  // * Windows UWP: shell/platform/windows/win32_flutter_window_winuwp.cc
   // * Linux: shell/platform/linux/fl_mouse_cursor_plugin.cc
   // * macOS: shell/platform/darwin/macos/framework/Source/FlutterMouseCursorPlugin.mm
+
 
   /// Hide the cursor.
   ///
   /// Any cursor other than [none] or [MouseCursor.uncontrolled] unhides the
   /// cursor.
   static const SystemMouseCursor none = SystemMouseCursor._(kind: 'none');
+
 
   // STATUS
 
@@ -533,6 +533,7 @@ abstract final class SystemMouseCursors {
   ///  * Linux: help
   static const SystemMouseCursor help = SystemMouseCursor._(kind: 'help');
 
+
   // SELECTION
 
   /// A cursor indicating selectable text.
@@ -587,6 +588,7 @@ abstract final class SystemMouseCursors {
   ///  * Linux: crosshair
   ///  * macOS: crosshairCursor
   static const SystemMouseCursor precise = SystemMouseCursor._(kind: 'precise');
+
 
   // DRAG-AND-DROP
 
@@ -681,6 +683,7 @@ abstract final class SystemMouseCursors {
   ///  * macOS: disappearingItemCursor
   static const SystemMouseCursor disappearing = SystemMouseCursor._(kind: 'disappearing');
 
+
   // RESIZING AND SCROLLING
 
   /// A cursor indicating scrolling in any direction.
@@ -742,9 +745,7 @@ abstract final class SystemMouseCursors {
   ///  * Windows: IDC_SIZENWSE
   ///  * Windows UWP: CoreCursorType::SizeNorthwestSoutheast
   ///  * Linux: nwse-resize
-  static const SystemMouseCursor resizeUpLeftDownRight = SystemMouseCursor._(
-    kind: 'resizeUpLeftDownRight',
-  );
+  static const SystemMouseCursor resizeUpLeftDownRight = SystemMouseCursor._(kind: 'resizeUpLeftDownRight');
 
   /// A cursor indicating resizing an object bidirectionally from its top right or
   /// bottom left corner.
@@ -758,9 +759,7 @@ abstract final class SystemMouseCursors {
   ///  * Windows UWP: CoreCursorType::SizeNortheastSouthwest
   ///  * Web: nesw-resize
   ///  * Linux: nesw-resize
-  static const SystemMouseCursor resizeUpRightDownLeft = SystemMouseCursor._(
-    kind: 'resizeUpRightDownLeft',
-  );
+  static const SystemMouseCursor resizeUpRightDownLeft = SystemMouseCursor._(kind: 'resizeUpRightDownLeft');
 
   /// A cursor indicating resizing an object from its top edge.
   ///
@@ -899,6 +898,7 @@ abstract final class SystemMouseCursors {
   ///  * Linux: row-resize
   ///  * macOS: resizeUpDownCursor
   static const SystemMouseCursor resizeRow = SystemMouseCursor._(kind: 'resizeRow');
+
 
   // OTHER OPERATIONS
 

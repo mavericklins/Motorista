@@ -13,7 +13,9 @@ class ScaleTransitionExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: ScaleTransitionExample());
+    return const MaterialApp(
+      home: ScaleTransitionExample(),
+    );
   }
 }
 
@@ -26,8 +28,7 @@ class ScaleTransitionExample extends StatefulWidget {
 
 /// [AnimationController]s can be created with `vsync: this` because of
 /// [TickerProviderStateMixin].
-class _ScaleTransitionExampleState extends State<ScaleTransitionExample>
-    with TickerProviderStateMixin {
+class _ScaleTransitionExampleState extends State<ScaleTransitionExample> with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 2),
     vsync: this,
@@ -49,7 +50,10 @@ class _ScaleTransitionExampleState extends State<ScaleTransitionExample>
       body: Center(
         child: ScaleTransition(
           scale: _animation,
-          child: const Padding(padding: EdgeInsets.all(8.0), child: FlutterLogo(size: 150.0)),
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: FlutterLogo(size: 150.0),
+          ),
         ),
       ),
     );

@@ -54,11 +54,10 @@ class _AnimatedPaddingExampleState extends State<AnimatedPaddingExample> {
         ),
         Text('Padding: $padValue'),
         ElevatedButton(
-          child: const Text('Change padding'),
-          onPressed: () {
-            _updatePadding(padValue == 0.0 ? 100.0 : 0.0);
-          },
-        ),
+            child: const Text('Change padding'),
+            onPressed: () {
+              _updatePadding(padValue == 0.0 ? 100.0 : 0.0);
+            }),
       ],
     );
   }

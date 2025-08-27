@@ -21,7 +21,9 @@ void main() {
             'tdur': 245,
             'ts': 456,
             'tts': 567,
-            'args': <String, dynamic>{'arg1': true},
+            'args': <String, dynamic>{
+              'arg1': true,
+            },
           },
           // Tests that we don't choke on missing data
           <String, dynamic>{},
@@ -58,8 +60,14 @@ void main() {
     test('sorts JSON', () {
       final Timeline timeline = Timeline.fromJson(<String, dynamic>{
         'traceEvents': <Map<String, dynamic>>[
-          <String, dynamic>{'name': 'test event 1', 'ts': 457},
-          <String, dynamic>{'name': 'test event 2', 'ts': 456},
+          <String, dynamic>{
+            'name': 'test event 1',
+            'ts': 457,
+          },
+          <String, dynamic>{
+            'name': 'test event 2',
+            'ts': 456,
+          },
         ],
       });
 
@@ -73,10 +81,22 @@ void main() {
     test('sorts JSON nulls first', () {
       final Timeline timeline = Timeline.fromJson(<String, dynamic>{
         'traceEvents': <Map<String, dynamic>>[
-          <String, dynamic>{'name': 'test event 0', 'ts': null},
-          <String, dynamic>{'name': 'test event 1', 'ts': 457},
-          <String, dynamic>{'name': 'test event 2', 'ts': 456},
-          <String, dynamic>{'name': 'test event 3', 'ts': null},
+          <String, dynamic>{
+            'name': 'test event 0',
+            'ts': null,
+          },
+          <String, dynamic>{
+            'name': 'test event 1',
+            'ts': 457,
+          },
+          <String, dynamic>{
+            'name': 'test event 2',
+            'ts': 456,
+          },
+          <String, dynamic>{
+            'name': 'test event 3',
+            'ts': null,
+          },
         ],
       });
 

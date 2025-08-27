@@ -8,9 +8,11 @@ import '../features.dart';
 
 /// The macOS-specific implementation of a [Workflow].
 class MacOSWorkflow implements Workflow {
-  const MacOSWorkflow({required Platform platform, required FeatureFlags featureFlags})
-    : _platform = platform,
-      _featureFlags = featureFlags;
+  const MacOSWorkflow({
+    required Platform platform,
+    required FeatureFlags featureFlags,
+  }) : _platform = platform,
+       _featureFlags = featureFlags;
 
   final Platform _platform;
   final FeatureFlags _featureFlags;

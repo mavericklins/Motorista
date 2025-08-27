@@ -14,10 +14,10 @@ void main(List<String> args) {
     return;
   }
   final List<String> lines = File(args.single).readAsLinesSync();
-  final coverages = <Coverage>[];
+  final List<Coverage> coverages = <Coverage>[];
   Coverage? currentCoverage;
 
-  for (final line in lines) {
+  for (final String line in lines) {
     if (line.startsWith('SF:')) {
       final String library = line.split('SF:')[1];
       currentCoverage = Coverage()..library = library;
@@ -41,20 +41,17 @@ void main(List<String> args) {
   double overallNumerator = 0;
   double overallDenominator = 0;
   print('% | tested | total');
-  for (final coverage in coverages) {
+  for (final Coverage coverage in coverages) {
     overallNumerator += coverage.testedLines;
     overallDenominator += coverage.totalLines;
-    final String coveragePercent = (coverage.testedLines / coverage.totalLines * 100)
-        .toStringAsFixed(2);
-    print(
-      '${coverage.library}: $coveragePercent% | ${coverage.testedLines} | ${coverage.totalLines}',
-    );
+    final String coveragePercent = (coverage.testedLines / coverage.totalLines * 100).toStringAsFixed(2);
+    print('${coverage.library}: $coveragePercent% | ${coverage.testedLines} | ${coverage.totalLines}');
   }
-  print('OVERALL: ${overallNumerator / overallDenominator}');
+  print('OVERALL: ${overallNumerator/overallDenominator}');
 }
 
 class Coverage {
   String? library;
-  var totalLines = 0;
-  var testedLines = 0;
+  int totalLines = 0;
+  int testedLines = 0;
 }

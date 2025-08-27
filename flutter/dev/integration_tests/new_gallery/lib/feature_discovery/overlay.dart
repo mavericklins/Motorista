@@ -16,6 +16,7 @@ const double gutterHeight = 88.0;
 
 /// Background of the overlay.
 class Background extends StatelessWidget {
+
   const Background({
     super.key,
     required this.animations,
@@ -25,7 +26,6 @@ class Background extends StatelessWidget {
     required this.status,
     required this.textDirection,
   });
-
   /// Animations.
   final Animations animations;
 
@@ -63,14 +63,20 @@ class Background extends StatelessWidget {
       // [Content] from the [center].
       double endY;
       if (_isOnTopHalfOfScreen(center, deviceSize)) {
-        endY = center.dy - tapTargetRadius - tapTargetToContentDistance - contentHeight;
+        endY = center.dy -
+            tapTargetRadius -
+            tapTargetToContentDistance -
+            contentHeight;
         if (endY < 0.0) {
           endY = center.dy + tapTargetRadius + tapTargetToContentDistance;
         }
       } else {
         endY = center.dy + tapTargetRadius + tapTargetToContentDistance;
         if (endY + contentHeight > deviceSize.height) {
-          endY = center.dy - tapTargetRadius - tapTargetToContentDistance - contentHeight;
+          endY = center.dy -
+              tapTargetRadius -
+              tapTargetToContentDistance -
+              contentHeight;
         }
       }
 
@@ -80,7 +86,9 @@ class Background extends StatelessWidget {
       if (_isOnLeftHalfOfScreen(center, deviceSize)) {
         shift = horizontalShift;
       } else if (center.dx == deviceSize.width / 2) {
-        shift = textDirection == TextDirection.ltr ? -horizontalShift : horizontalShift;
+        shift = textDirection == TextDirection.ltr
+            ? -horizontalShift
+            : horizontalShift;
       } else {
         shift = -horizontalShift;
       }
@@ -117,20 +125,22 @@ class Background extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: centerPosition.dx,
-      top: centerPosition.dy,
-      child: FractionalTranslation(
-        translation: const Offset(-0.5, -0.5),
-        child: Opacity(
-          opacity: opacity,
-          child: Container(
-            height: radius * 2,
-            width: radius * 2,
-            decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+        left: centerPosition.dx,
+        top: centerPosition.dy,
+        child: FractionalTranslation(
+          translation: const Offset(-0.5, -0.5),
+          child: Opacity(
+            opacity: opacity,
+            child: Container(
+              height: radius * 2,
+              width: radius * 2,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: color,
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   /// Compute the maximum distance from [point] to the four corners of [bounds].
@@ -149,6 +159,7 @@ class Background extends StatelessWidget {
 
 /// Widget that represents the text to show in the overlay.
 class Content extends StatelessWidget {
+
   const Content({
     super.key,
     required this.animations,
@@ -159,7 +170,6 @@ class Content extends StatelessWidget {
     required this.title,
     required this.textTheme,
   });
-
   /// Animations.
   final Animations animations;
 
@@ -227,8 +237,13 @@ class Content extends StatelessWidget {
 
 /// Widget that represents the ripple effect of [TapTarget].
 class Ripple extends StatelessWidget {
-  const Ripple({super.key, required this.animations, required this.center, required this.status});
 
+  const Ripple({
+    super.key,
+    required this.animations,
+    required this.center,
+    required this.status,
+  });
   /// Animations.
   final Animations animations;
 
@@ -253,7 +268,10 @@ class Ripple extends StatelessWidget {
           child: Container(
             height: radius * 2,
             width: radius * 2,
-            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
           ),
         ),
       ),
@@ -263,6 +281,7 @@ class Ripple extends StatelessWidget {
 
 /// Wrapper widget around [child] representing the anchor of the overlay.
 class TapTarget extends StatelessWidget {
+
   const TapTarget({
     super.key,
     required this.animations,
@@ -271,7 +290,6 @@ class TapTarget extends StatelessWidget {
     required this.onTap,
     required this.child,
   });
-
   /// Animations.
   final Animations animations;
 
@@ -306,8 +324,9 @@ class TapTarget extends StatelessWidget {
               height: radius * 2,
               width: radius * 2,
               decoration: BoxDecoration(
-                color:
-                    theme.brightness == Brightness.dark ? theme.colorScheme.primary : Colors.white,
+                color: theme.brightness == Brightness.dark
+                    ? theme.colorScheme.primary
+                    : Colors.white,
                 shape: BoxShape.circle,
               ),
               child: child,
@@ -326,24 +345,32 @@ class TapTarget extends StatelessWidget {
 Rect _getContentBounds(Size deviceSize, Offset overlayCenter) {
   double top;
   if (_isOnTopHalfOfScreen(overlayCenter, deviceSize)) {
-    top = overlayCenter.dy - tapTargetRadius - tapTargetToContentDistance - contentHeight;
+    top = overlayCenter.dy -
+        tapTargetRadius -
+        tapTargetToContentDistance -
+        contentHeight;
     if (top < 0) {
       top = overlayCenter.dy + tapTargetRadius + tapTargetToContentDistance;
     }
   } else {
     top = overlayCenter.dy + tapTargetRadius + tapTargetToContentDistance;
     if (top + contentHeight > deviceSize.height) {
-      top = overlayCenter.dy - tapTargetRadius - tapTargetToContentDistance - contentHeight;
+      top = overlayCenter.dy -
+          tapTargetRadius -
+          tapTargetToContentDistance -
+          contentHeight;
     }
   }
 
   final double left = max(contentHorizontalPadding, overlayCenter.dx - contentWidth);
-  final double right = min(deviceSize.width - contentHorizontalPadding, left + contentWidth);
+  final double right =
+      min(deviceSize.width - contentHorizontalPadding, left + contentWidth);
   return Rect.fromLTRB(left, top, right, top + contentHeight);
 }
 
 bool _isNearTopOrBottomEdges(Offset position, Size deviceSize) {
-  return position.dy <= gutterHeight || (deviceSize.height - position.dy) <= gutterHeight;
+  return position.dy <= gutterHeight ||
+      (deviceSize.height - position.dy) <= gutterHeight;
 }
 
 bool _isOnTopHalfOfScreen(Offset position, Size deviceSize) {

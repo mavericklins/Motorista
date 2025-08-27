@@ -10,7 +10,7 @@ const int _kNumIterations = 65536;
 const int _kNumWarmUp = 100;
 const int _kScale = 1000;
 
-Future<void> execute() async {
+void main() {
   assert(false, "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
 
   // In the following benchmarks, we won't remove the listeners when we don't
@@ -79,15 +79,25 @@ Future<void> execute() async {
 
   void runRemoveListenerBenchmark(int iteration, {bool addResult = true}) {
     const String name = 'remove';
-    final List<VoidCallback> listeners = <VoidCallback>[() {}, () {}, () {}, () {}, () {}];
+    final List<VoidCallback> listeners = <VoidCallback>[
+      () {},
+      () {},
+      () {},
+      () {},
+      () {},
+    ];
     for (int listenerCount = 1; listenerCount <= 5; listenerCount += 1) {
-      final List<_Notifier> notifiers = List<_Notifier>.generate(iteration, (_) {
-        final _Notifier notifier = _Notifier();
-        for (int l = 0; l < listenerCount; l += 1) {
-          notifier.addListener(listeners[l]);
-        }
-        return notifier;
-      }, growable: false);
+      final List<_Notifier> notifiers = List<_Notifier>.generate(
+        iteration,
+        (_) {
+          final _Notifier notifier = _Notifier();
+          for (int l = 0; l < listenerCount; l += 1) {
+            notifier.addListener(listeners[l]);
+          }
+          return notifier;
+        },
+        growable: false,
+      );
 
       final Stopwatch watch = Stopwatch();
       watch.start();
@@ -110,25 +120,36 @@ Future<void> execute() async {
     }
   }
 
-  void runRemoveListenerWhileNotifyingBenchmark(int iteration, {bool addResult = true}) {
+  void runRemoveListenerWhileNotifyingBenchmark(int iteration,
+      {bool addResult = true}) {
     const String name = 'removeWhileNotify';
 
-    final List<VoidCallback> listeners = <VoidCallback>[() {}, () {}, () {}, () {}, () {}];
+    final List<VoidCallback> listeners = <VoidCallback>[
+      () {},
+      () {},
+      () {},
+      () {},
+      () {},
+    ];
     for (int listenerCount = 1; listenerCount <= 5; listenerCount += 1) {
-      final List<_Notifier> notifiers = List<_Notifier>.generate(iteration, (_) {
-        final _Notifier notifier = _Notifier();
-        notifier.addListener(() {
-          // This listener will remove all other listeners. So that only this
-          // one is called and measured.
+      final List<_Notifier> notifiers = List<_Notifier>.generate(
+        iteration,
+        (_) {
+          final _Notifier notifier = _Notifier();
+          notifier.addListener(() {
+            // This listener will remove all other listeners. So that only this
+            // one is called and measured.
+            for (int l = 0; l < listenerCount; l += 1) {
+              notifier.removeListener(listeners[l]);
+            }
+          });
           for (int l = 0; l < listenerCount; l += 1) {
-            notifier.removeListener(listeners[l]);
+            notifier.addListener(listeners[l]);
           }
-        });
-        for (int l = 0; l < listenerCount; l += 1) {
-          notifier.addListener(listeners[l]);
-        }
-        return notifier;
-      }, growable: false);
+          return notifier;
+        },
+        growable: false,
+      );
 
       final Stopwatch watch = Stopwatch();
       watch.start();

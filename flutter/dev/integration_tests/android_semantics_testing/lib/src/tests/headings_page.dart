@@ -21,7 +21,9 @@ class HeadingsPage extends StatelessWidget {
         leading: const BackButton(key: ValueKey<String>('back')),
         title: const Text('Heading', key: _appBarTitleKey),
       ),
-      body: const Center(child: Text('Body text', key: _bodyTextKey)),
+      body: const Center(
+        child: Text('Body text', key: _bodyTextKey),
+      ),
     );
   }
 }

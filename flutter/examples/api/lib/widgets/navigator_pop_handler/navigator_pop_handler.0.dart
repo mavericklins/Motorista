@@ -16,29 +16,10 @@ class NavigatorPopHandlerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      restorationScopeId: 'root',
       initialRoute: '/',
-      onGenerateRoute: (RouteSettings settings) {
-        return switch (settings.name) {
-          '/' => MaterialPageRoute<void>(
-            settings: const RouteSettings(name: '/'),
-            builder: (BuildContext context) {
-              return _HomePage();
-            },
-          ),
-          '/nested_navigators' => MaterialPageRoute<void>(
-            settings: const RouteSettings(name: '/nested_navigators'),
-            builder: (BuildContext context) {
-              return const _NestedNavigatorsPage();
-            },
-          ),
-          _ => MaterialPageRoute<void>(
-            settings: const RouteSettings(name: 'unknown_page'),
-            builder: (BuildContext context) {
-              return const _UnknownPage();
-            },
-          ),
-        };
+      routes: <String, WidgetBuilder>{
+        '/': (BuildContext context) => _HomePage(),
+        '/nested_navigators': (BuildContext context) => const NestedNavigatorsPage(),
       },
     );
   }
@@ -48,7 +29,9 @@ class _HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nested Navigators Example')),
+      appBar: AppBar(
+        title: const Text('Nested Navigators Example'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -58,11 +41,9 @@ class _HomePage extends StatelessWidget {
             const SizedBox(height: 20.0),
             ListTile(
               title: const Text('Nested Navigator route'),
-              subtitle: const Text(
-                'This route has another Navigator widget in addition to the one inside MaterialApp above.',
-              ),
+              subtitle: const Text('This route has another Navigator widget in addition to the one inside MaterialApp above.'),
               onTap: () {
-                Navigator.of(context).restorablePushNamed('/nested_navigators');
+                Navigator.of(context).pushNamed('/nested_navigators');
               },
             ),
           ],
@@ -72,14 +53,14 @@ class _HomePage extends StatelessWidget {
   }
 }
 
-class _NestedNavigatorsPage extends StatefulWidget {
-  const _NestedNavigatorsPage();
+class NestedNavigatorsPage extends StatefulWidget {
+  const NestedNavigatorsPage({super.key});
 
   @override
-  State<_NestedNavigatorsPage> createState() => _NestedNavigatorsPageState();
+  State<NestedNavigatorsPage> createState() => _NestedNavigatorsPageState();
 }
 
-class _NestedNavigatorsPageState extends State<_NestedNavigatorsPage> {
+class _NestedNavigatorsPageState extends State<NestedNavigatorsPage> {
   final GlobalKey<NavigatorState> _nestedNavigatorKey = GlobalKey<NavigatorState>();
 
   @override
@@ -90,38 +71,37 @@ class _NestedNavigatorsPageState extends State<_NestedNavigatorsPage> {
       },
       child: Navigator(
         key: _nestedNavigatorKey,
-        restorationScopeId: 'nested-navigator',
         initialRoute: 'nested_navigators/one',
         onGenerateRoute: (RouteSettings settings) {
-          final BuildContext rootContext = context;
-          return switch (settings.name) {
-            'nested_navigators/one' => MaterialPageRoute<void>(
-              settings: const RouteSettings(name: 'nested_navigators/one'),
-              builder: (BuildContext context) => _NestedNavigatorsPageOne(
-                onBack: () {
-                  Navigator.of(rootContext).pop();
-                },
-              ),
-            ),
-            'nested_navigators/one/another_one' => MaterialPageRoute<void>(
-              settings: const RouteSettings(name: 'nested_navigators/one'),
-              builder: (BuildContext context) => const _NestedNavigatorsPageTwo(),
-            ),
-            _ => MaterialPageRoute<void>(
-              settings: const RouteSettings(name: 'unknown_page'),
-              builder: (BuildContext context) {
-                return const _UnknownPage();
-              },
-            ),
-          };
+          switch (settings.name) {
+            case 'nested_navigators/one':
+              final BuildContext rootContext = context;
+              return MaterialPageRoute<void>(
+                builder: (BuildContext context) => NestedNavigatorsPageOne(
+                  onBack: () {
+                    Navigator.of(rootContext).pop();
+                  },
+                ),
+              );
+            case 'nested_navigators/one/another_one':
+              return MaterialPageRoute<void>(
+                builder: (BuildContext context) => const NestedNavigatorsPageTwo(
+                ),
+              );
+            default:
+              throw Exception('Invalid route: ${settings.name}');
+          }
         },
       ),
     );
   }
 }
 
-class _NestedNavigatorsPageOne extends StatelessWidget {
-  const _NestedNavigatorsPageOne({required this.onBack});
+class NestedNavigatorsPageOne extends StatelessWidget {
+  const NestedNavigatorsPageOne({
+    required this.onBack,
+    super.key,
+  });
 
   final VoidCallback onBack;
 
@@ -137,7 +117,7 @@ class _NestedNavigatorsPageOne extends StatelessWidget {
             const Text('A system back here returns to the home page.'),
             TextButton(
               onPressed: () {
-                Navigator.of(context).restorablePushNamed('nested_navigators/one/another_one');
+                Navigator.of(context).pushNamed('nested_navigators/one/another_one');
               },
               child: const Text('Go to another route in this nested Navigator'),
             ),
@@ -155,8 +135,10 @@ class _NestedNavigatorsPageOne extends StatelessWidget {
   }
 }
 
-class _NestedNavigatorsPageTwo extends StatelessWidget {
-  const _NestedNavigatorsPageTwo();
+class NestedNavigatorsPageTwo extends StatelessWidget {
+  const NestedNavigatorsPageTwo({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -176,20 +158,6 @@ class _NestedNavigatorsPageTwo extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _UnknownPage extends StatelessWidget {
-  const _UnknownPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.withBlue(180),
-      body: const Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Text('404')]),
       ),
     );
   }

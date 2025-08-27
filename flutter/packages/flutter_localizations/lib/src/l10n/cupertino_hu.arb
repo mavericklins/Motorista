@@ -27,7 +27,5 @@
   "lookUpButtonLabel": "Felfelé nézés",
   "searchWebButtonLabel": "Keresés az interneten",
   "shareButtonLabel": "Megosztás…",
-  "clearButtonLabel": "Törlés",
-  "cancelButtonLabel": "Mégse",
-  "backButtonLabel": "Vissza"
+  "clearButtonLabel": "Clear"
 }

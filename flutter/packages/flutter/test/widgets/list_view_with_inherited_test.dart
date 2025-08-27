@@ -5,7 +5,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-List<String> items = <String>['one', 'two', 'three', 'four', 'five'];
+List<String> items = <String>[
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+];
 
 Widget buildCard(BuildContext context, int index) {
   // We still want to populate the list with items beyond the list
@@ -27,7 +33,9 @@ Widget buildCard(BuildContext context, int index) {
 Widget buildFrame() {
   return Directionality(
     textDirection: TextDirection.ltr,
-    child: ListView.builder(itemBuilder: buildCard),
+    child: ListView.builder(
+      itemBuilder: buildCard,
+    ),
   );
 }
 

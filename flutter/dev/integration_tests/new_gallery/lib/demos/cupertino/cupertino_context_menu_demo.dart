@@ -17,7 +17,9 @@ class CupertinoContextMenuDemo extends StatelessWidget {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         automaticallyImplyLeading: false,
-        middle: Text(galleryLocalizations.demoCupertinoContextMenuTitle),
+        middle: Text(
+          galleryLocalizations.demoCupertinoContextMenuTitle,
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -32,13 +34,17 @@ class CupertinoContextMenuDemo extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text(galleryLocalizations.demoCupertinoContextMenuActionOne),
+                    child: Text(
+                      galleryLocalizations.demoCupertinoContextMenuActionOne,
+                    ),
                   ),
                   CupertinoContextMenuAction(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text(galleryLocalizations.demoCupertinoContextMenuActionTwo),
+                    child: Text(
+                      galleryLocalizations.demoCupertinoContextMenuActionTwo,
+                    ),
                   ),
                 ],
                 child: const FlutterLogo(size: 250),
@@ -51,7 +57,9 @@ class CupertinoContextMenuDemo extends StatelessWidget {
             child: Text(
               galleryLocalizations.demoCupertinoContextMenuActionText,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(
+                color: Colors.black,
+              ),
             ),
           ),
         ],

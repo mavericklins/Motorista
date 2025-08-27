@@ -14,6 +14,7 @@ class RadioListTileApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(title: const Text('RadioListTile.toggleable Sample')),
         body: const RadioListTileExample(),
@@ -42,23 +43,21 @@ class _RadioListTileExampleState extends State<RadioListTileExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RadioGroup<int>(
-        groupValue: groupValue,
-        onChanged: (int? value) {
-          setState(() {
-            groupValue = value;
-          });
+      body: ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return RadioListTile<int>(
+            value: index,
+            groupValue: groupValue,
+            toggleable: true,
+            title: Text(selections[index]),
+            onChanged: (int? value) {
+              setState(() {
+                groupValue = value;
+              });
+            },
+          );
         },
-        child: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return RadioListTile<int>(
-              value: index,
-              toggleable: true,
-              title: Text(selections[index]),
-            );
-          },
-          itemCount: selections.length,
-        ),
+        itemCount: selections.length,
       ),
     );
   }

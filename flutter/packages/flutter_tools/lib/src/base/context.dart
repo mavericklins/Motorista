@@ -63,12 +63,12 @@ class AppContext {
   final AppContext? _parent;
   final Map<Type, Generator> _overrides;
   final Map<Type, Generator> _fallbacks;
-  final _values = <Type, dynamic>{};
+  final Map<Type, dynamic> _values = <Type, dynamic>{};
 
   List<Type>? _reentrantChecks;
 
   /// Bootstrap context.
-  static final _root = AppContext._(null, 'ROOT');
+  static final AppContext _root = AppContext._(null, 'ROOT');
 
   dynamic _boxNull(dynamic value) => value ?? _BoxedNull.instance;
 
@@ -99,8 +99,7 @@ class AppContext {
       if (index >= 0) {
         // We're already in the process of trying to generate this type.
         throw ContextDependencyCycleException._(
-          UnmodifiableListView<Type>(_reentrantChecks!.sublist(index)),
-        );
+            UnmodifiableListView<Type>(_reentrantChecks!.sublist(index)));
       }
 
       _reentrantChecks!.add(type);
@@ -115,7 +114,7 @@ class AppContext {
     });
   }
 
-  /// Gets the value associated with the specified [T], or `null` if no
+  /// Gets the value associated with the specified [type], or `null` if no
   /// such value has been associated.
   T? get<T>() {
     dynamic value = _generateIfNecessary(T, _overrides);
@@ -144,7 +143,7 @@ class AppContext {
     Map<Type, Generator>? fallbacks,
     ZoneSpecification? zoneSpecification,
   }) async {
-    final child = AppContext._(
+    final AppContext child = AppContext._(
       this,
       name,
       Map<Type, Generator>.unmodifiable(overrides ?? const <Type, Generator>{}),
@@ -159,8 +158,8 @@ class AppContext {
 
   @override
   String toString() {
-    final buf = StringBuffer();
-    var indent = '';
+    final StringBuffer buf = StringBuffer();
+    String indent = '';
     AppContext? ctx = this;
     while (ctx != null) {
       buf.write('AppContext');
@@ -187,7 +186,7 @@ class AppContext {
 class _Key {
   const _Key();
 
-  static const key = _Key();
+  static const _Key key = _Key();
 
   @override
   String toString() => 'context';
@@ -197,5 +196,5 @@ class _Key {
 class _BoxedNull {
   const _BoxedNull();
 
-  static const instance = _BoxedNull();
+  static const _BoxedNull instance = _BoxedNull();
 }

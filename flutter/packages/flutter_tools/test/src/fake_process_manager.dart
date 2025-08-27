@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:fake_async/fake_async.dart';
-library;
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io show Process, ProcessResult, ProcessSignal, ProcessStartMode, systemEncoding;
@@ -121,9 +118,7 @@ class FakeCommand {
     Encoding? encoding,
     io.ProcessStartMode? mode,
   ) {
-    final List<dynamic> matchers = this.command
-        .map((Pattern x) => x is String ? x : matches(x))
-        .toList();
+    final List<dynamic> matchers = this.command.map((Pattern x) => x is String ? x : matches(x)).toList();
     expect(command, matchers);
     if (processStartMode != null) {
       expect(mode, processStartMode);
@@ -141,15 +136,14 @@ class FakeCommand {
 }
 
 /// A fake process for use with [FakeProcessManager].
+///
+/// The process delays exit until both [duration] (if specified) has elapsed
+/// and [completer] (if specified) has completed.
+///
+/// When [outputFollowsExit] is specified, bytes are streamed to [stderr] and
+/// [stdout] after the process exits.
 @visibleForTesting
 class FakeProcess implements io.Process {
-  /// Creates a fake process for use with [FakeProcessManager].
-  ///
-  /// The process delays exit until both [duration] (if specified) has elapsed
-  /// and [completer] (if specified) has completed.
-  ///
-  /// When [outputFollowsExit] is specified, bytes are streamed to [stderr] and
-  /// [stdout] after the process exits.
   FakeProcess({
     int exitCode = 0,
     Duration duration = Duration.zero,
@@ -166,27 +160,20 @@ class FakeProcess implements io.Process {
          }
          return exitCode;
        }),
-       _stderr = stderr,
-       stdin =
-           stdin ??
-           IOSink(
-             StreamController<List<int>>()
-               ..stream.listen((_) {})
-               ..sink,
-           ),
-       _stdout = stdout,
-       _completer = completer {
+      _stderr = stderr,
+      stdin = stdin ?? IOSink(StreamController<List<int>>().sink),
+      _stdout = stdout,
+      _completer = completer
+  {
     if (_stderr.isEmpty) {
       this.stderr = const Stream<List<int>>.empty();
     } else if (outputFollowsExit) {
       // Wait for the process to exit before emitting stderr.
-      this.stderr = Stream<List<int>>.fromFuture(
-        this.exitCode.then((_) {
-          // Return a Future so stderr isn't immediately available to those who
-          // await exitCode, but is available asynchronously later.
-          return Future<List<int>>(() => _stderr);
-        }),
-      );
+      this.stderr = Stream<List<int>>.fromFuture(this.exitCode.then((_) {
+        // Return a Future so stderr isn't immediately available to those who
+        // await exitCode, but is available asynchronously later.
+        return Future<List<int>>(() => _stderr);
+      }));
     } else {
       this.stderr = Stream<List<int>>.value(_stderr);
     }
@@ -195,13 +182,11 @@ class FakeProcess implements io.Process {
       this.stdout = const Stream<List<int>>.empty();
     } else if (outputFollowsExit) {
       // Wait for the process to exit before emitting stdout.
-      this.stdout = Stream<List<int>>.fromFuture(
-        this.exitCode.then((_) {
-          // Return a Future so stdout isn't immediately available to those who
-          // await exitCode, but is available asynchronously later.
-          return Future<List<int>>(() => _stdout);
-        }),
-      );
+      this.stdout = Stream<List<int>>.fromFuture(this.exitCode.then((_) {
+        // Return a Future so stdout isn't immediately available to those who
+        // await exitCode, but is available asynchronously later.
+        return Future<List<int>>(() => _stdout);
+      }));
     } else {
       this.stdout = Stream<List<int>>.value(_stdout);
     }
@@ -237,7 +222,7 @@ class FakeProcess implements io.Process {
   /// The list of [kill] signals this process received so far.
   @visibleForTesting
   List<io.ProcessSignal> get signals => _signals;
-  final _signals = <io.ProcessSignal>[];
+  final List<io.ProcessSignal> _signals = <io.ProcessSignal>[];
 
   @override
   bool kill([io.ProcessSignal signal = io.ProcessSignal.sigterm]) {
@@ -286,7 +271,7 @@ abstract class FakeProcessManager implements ProcessManager {
     commands.forEach(addCommand);
   }
 
-  final _fakeRunningProcesses = <int, FakeProcess>{};
+  final Map<int, FakeProcess> _fakeRunningProcesses = <int, FakeProcess>{};
 
   /// Whether this fake has more [FakeCommand]s that are expected to run.
   ///
@@ -305,7 +290,7 @@ abstract class FakeProcessManager implements ProcessManager {
     io.ProcessStartMode? mode,
   );
 
-  var _pid = 9999;
+  int _pid = 9999;
 
   FakeProcess _runCommand(
     List<String> command, {
@@ -417,10 +402,9 @@ abstract class FakeProcessManager implements ProcessManager {
 
   /// Returns false if executable in [excludedExecutables].
   @override
-  bool canRun(dynamic executable, {String? workingDirectory}) =>
-      !excludedExecutables.contains(executable);
+  bool canRun(dynamic executable, {String? workingDirectory}) => !excludedExecutables.contains(executable);
 
-  var excludedExecutables = <String>{};
+  Set<String> excludedExecutables = <String>{};
 
   @override
   bool killPid(int pid, [io.ProcessSignal signal = io.ProcessSignal.sigterm]) {
@@ -458,7 +442,7 @@ class _FakeAnyProcessManager extends FakeProcessManager {
   }
 
   @override
-  void addCommand(FakeCommand command) {}
+  void addCommand(FakeCommand command) { }
 
   @override
   bool get hasRemainingExpectations => true;
@@ -480,12 +464,9 @@ class _SequenceProcessManager extends FakeProcessManager {
     Encoding? encoding,
     io.ProcessStartMode? mode,
   ) {
-    expect(
-      _commands,
-      isNotEmpty,
-      reason:
-          'ProcessManager was told to execute $command (in $workingDirectory) '
-          'but the FakeProcessManager.list expected no more processes.',
+    expect(_commands, isNotEmpty,
+      reason: 'ProcessManager was told to execute $command (in $workingDirectory) '
+              'but the FakeProcessManager.list expected no more processes.'
     );
     _commands.first._matches(command, workingDirectory, environment, encoding, mode);
     return _commands.removeAt(0);
@@ -504,7 +485,7 @@ class _SequenceProcessManager extends FakeProcessManager {
 }
 
 /// Matcher that successfully matches against a [FakeProcessManager] with
-/// no remaining expectations ([FakeProcessManager.hasRemainingExpectations] returns `false`).
+/// no remaining expectations ([item.hasRemainingExpectations] returns false).
 const Matcher hasNoRemainingExpectations = _HasNoRemainingExpectations();
 
 class _HasNoRemainingExpectations extends Matcher {
@@ -520,14 +501,13 @@ class _HasNoRemainingExpectations extends Matcher {
 
   @override
   Description describeMismatch(
-    dynamic item,
-    Description description,
-    Map<dynamic, dynamic> matchState,
-    bool verbose,
-  ) {
-    final fakeProcessManager = item as FakeProcessManager;
+      dynamic item,
+      Description description,
+      Map<dynamic, dynamic> matchState,
+      bool verbose,
+      ) {
+    final FakeProcessManager fakeProcessManager = item as FakeProcessManager;
     return description.add(
-      'has remaining expectations:\n${fakeProcessManager._remainingExpectations.map((FakeCommand command) => command.command).join('\n')}',
-    );
+        'has remaining expectations:\n${fakeProcessManager._remainingExpectations.map((FakeCommand command) => command.command).join('\n')}');
   }
 }

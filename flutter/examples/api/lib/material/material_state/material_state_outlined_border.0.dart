@@ -13,7 +13,9 @@ class MaterialStateOutlinedBorderExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: MaterialStateOutlinedBorderExample());
+    return const MaterialApp(
+      home: MaterialStateOutlinedBorderExample(),
+    );
   }
 }
 
@@ -33,8 +35,7 @@ class MaterialStateOutlinedBorderExample extends StatefulWidget {
   const MaterialStateOutlinedBorderExample({super.key});
 
   @override
-  State<MaterialStateOutlinedBorderExample> createState() =>
-      _MaterialStateOutlinedBorderExampleState();
+  State<MaterialStateOutlinedBorderExample> createState() => _MaterialStateOutlinedBorderExampleState();
 }
 
 class _MaterialStateOutlinedBorderExampleState extends State<MaterialStateOutlinedBorderExample> {

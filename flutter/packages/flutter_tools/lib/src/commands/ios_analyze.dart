@@ -25,6 +25,8 @@ enum IOSAnalyzeOption {
 }
 
 /// Analyze the iOS Xcode sub-project of a Flutter project.
+///
+/// The [userPath] must be point to a flutter project.
 class IOSAnalyze {
   IOSAnalyze({
     required this.project,
@@ -32,9 +34,8 @@ class IOSAnalyze {
     this.configuration,
     this.target,
     required this.logger,
-  }) : assert(
-         option == IOSAnalyzeOption.listBuildOptions || (configuration != null && target != null),
-       );
+  }) : assert(option == IOSAnalyzeOption.listBuildOptions ||
+              (configuration != null && target != null));
 
   final FlutterProject project;
   final IOSAnalyzeOption option;

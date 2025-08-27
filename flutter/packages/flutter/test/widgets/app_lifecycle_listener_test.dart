@@ -14,22 +14,14 @@ void main() {
 
   Future<void> setAppLifeCycleState(AppLifecycleState state) async {
     final ByteData? message = const StringCodec().encodeMessage(state.toString());
-    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
-      'flutter/lifecycle',
-      message,
-      (_) {},
-    );
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .handlePlatformMessage('flutter/lifecycle', message, (_) {});
   }
 
   Future<void> sendAppExitRequest() async {
-    final ByteData message = const JSONMethodCodec().encodeMethodCall(
-      const MethodCall('System.requestAppExit'),
-    );
-    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
-      'flutter/platform',
-      message,
-      (_) {},
-    );
+    final ByteData message = const JSONMethodCodec().encodeMethodCall(const MethodCall('System.requestAppExit'));
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .handlePlatformMessage('flutter/platform', message, (_) {});
   }
 
   setUp(() async {
@@ -53,20 +45,14 @@ void main() {
     final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
     binding.resetInternalState();
     binding.platformDispatcher.resetInitialLifecycleState();
-    assert(
-      TestAppLifecycleListener.registerCount == 0,
-      'There were ${TestAppLifecycleListener.registerCount} listeners that were not disposed of in tests.',
-    );
+    assert(TestAppLifecycleListener.registerCount == 0,
+        'There were ${TestAppLifecycleListener.registerCount} listeners that were not disposed of in tests.');
   });
 
   testWidgets('Default Diagnostics', (WidgetTester tester) async {
     listener = TestAppLifecycleListener(binding: tester.binding);
-    expect(
-      listener.toString(),
-      equalsIgnoringHashCodes(
-        'TestAppLifecycleListener#00000(binding: <AutomatedTestWidgetsFlutterBinding>)',
-      ),
-    );
+    expect(listener.toString(),
+        equalsIgnoringHashCodes('TestAppLifecycleListener#00000(binding: <AutomatedTestWidgetsFlutterBinding>)'));
   });
 
   testWidgets('Diagnostics', (WidgetTester tester) async {
@@ -80,11 +66,9 @@ void main() {
       onStateChange: (AppLifecycleState _) {},
     );
     expect(
-      listener.toString(),
-      equalsIgnoringHashCodes(
-        'TestAppLifecycleListener#00000(binding: <AutomatedTestWidgetsFlutterBinding>, onStateChange, onExitRequested)',
-      ),
-    );
+        listener.toString(),
+        equalsIgnoringHashCodes(
+            'TestAppLifecycleListener#00000(binding: <AutomatedTestWidgetsFlutterBinding>, onStateChange, onExitRequested)'));
   });
 
   testWidgets('listens to AppLifecycleState', (WidgetTester tester) async {
@@ -100,24 +84,17 @@ void main() {
     expect(states, equals(<AppLifecycleState>[AppLifecycleState.detached]));
     await setAppLifeCycleState(AppLifecycleState.inactive);
     // "resumed" is generated.
-    expect(
-      states,
-      equals(<AppLifecycleState>[
-        AppLifecycleState.detached,
-        AppLifecycleState.resumed,
-        AppLifecycleState.inactive,
-      ]),
-    );
+    expect(states,
+        equals(<AppLifecycleState>[AppLifecycleState.detached, AppLifecycleState.resumed, AppLifecycleState.inactive]));
     await setAppLifeCycleState(AppLifecycleState.resumed);
     expect(
-      states,
-      equals(<AppLifecycleState>[
-        AppLifecycleState.detached,
-        AppLifecycleState.resumed,
-        AppLifecycleState.inactive,
-        AppLifecycleState.resumed,
-      ]),
-    );
+        states,
+        equals(<AppLifecycleState>[
+          AppLifecycleState.detached,
+          AppLifecycleState.resumed,
+          AppLifecycleState.inactive,
+          AppLifecycleState.resumed
+        ]));
   });
 
   testWidgets('Triggers correct state transition callbacks', (WidgetTester tester) async {
@@ -163,19 +140,7 @@ void main() {
     await setAppLifeCycleState(AppLifecycleState.resumed);
     expect(transitions, equals(<String>['inactive', 'hide', 'pause', 'detach', 'resume']));
     await setAppLifeCycleState(AppLifecycleState.paused);
-    expect(
-      transitions,
-      equals(<String>[
-        'inactive',
-        'hide',
-        'pause',
-        'detach',
-        'resume',
-        'inactive',
-        'hide',
-        'pause',
-      ]),
-    );
+    expect(transitions, equals(<String>['inactive', 'hide', 'pause', 'detach', 'resume', 'inactive', 'hide', 'pause']));
 
     // Generates intermediate states from higher to lower lifecycle states.
     transitions.clear();

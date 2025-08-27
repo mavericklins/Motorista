@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'animated_cross_fade.dart';
-/// @docImport 'implicit_animations.dart';
-library;
-
 import 'package:flutter/foundation.dart';
 
 import 'basic.dart';
@@ -50,8 +46,7 @@ class _ChildEntry {
 ///
 /// The function should return a widget which wraps the given `child`. It may
 /// also use the `animation` to inform its transition. It must not return null.
-typedef AnimatedSwitcherTransitionBuilder =
-    Widget Function(Widget child, Animation<double> animation);
+typedef AnimatedSwitcherTransitionBuilder = Widget Function(Widget child, Animation<double> animation);
 
 /// Signature for builders used to generate custom layouts for
 /// [AnimatedSwitcher].
@@ -63,8 +58,7 @@ typedef AnimatedSwitcherTransitionBuilder =
 /// The `previousChildren` list is an unmodifiable list, sorted with the oldest
 /// at the beginning and the newest at the end. It does not include the
 /// `currentChild`.
-typedef AnimatedSwitcherLayoutBuilder =
-    Widget Function(Widget? currentChild, List<Widget> previousChildren);
+typedef AnimatedSwitcherLayoutBuilder = Widget Function(Widget? currentChild, List<Widget> previousChildren);
 
 /// A widget that by default does a cross-fade between a new widget and the
 /// widget previously set on the [AnimatedSwitcher] as a child.
@@ -218,7 +212,11 @@ class AnimatedSwitcher extends StatefulWidget {
   ///
   /// This is an [AnimatedSwitcherTransitionBuilder] function.
   static Widget defaultTransitionBuilder(Widget child, Animation<double> animation) {
-    return FadeTransition(key: ValueKey<Key?>(child.key), opacity: animation, child: child);
+    return FadeTransition(
+      key: ValueKey<Key?>(child.key),
+      opacity: animation,
+      child: child,
+    );
   }
 
   /// The layout builder used as the default value of [layoutBuilder].
@@ -231,7 +229,10 @@ class AnimatedSwitcher extends StatefulWidget {
   static Widget defaultLayoutBuilder(Widget? currentChild, List<Widget> previousChildren) {
     return Stack(
       alignment: Alignment.center,
-      children: <Widget>[...previousChildren, if (currentChild != null) currentChild],
+      children: <Widget>[
+        ...previousChildren,
+        if (currentChild != null) currentChild,
+      ],
     );
   }
 
@@ -239,14 +240,7 @@ class AnimatedSwitcher extends StatefulWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(IntProperty('duration', duration.inMilliseconds, unit: 'ms'));
-    properties.add(
-      IntProperty(
-        'reverseDuration',
-        reverseDuration?.inMilliseconds,
-        unit: 'ms',
-        defaultValue: null,
-      ),
-    );
+    properties.add(IntProperty('reverseDuration', reverseDuration?.inMilliseconds, unit: 'ms', defaultValue: null));
   }
 }
 
@@ -296,7 +290,7 @@ class _AnimatedSwitcherState extends State<AnimatedSwitcher> with TickerProvider
     }
   }
 
-  void _addEntryForNewChild({required bool animate}) {
+  void _addEntryForNewChild({ required bool animate }) {
     assert(animate || _currentEntry == null);
     if (_currentEntry != null) {
       assert(animate);
@@ -346,7 +340,7 @@ class _AnimatedSwitcherState extends State<AnimatedSwitcher> with TickerProvider
       controller: controller,
     );
     animation.addStatusListener((AnimationStatus status) {
-      if (status.isDismissed) {
+      if (status == AnimationStatus.dismissed) {
         setState(() {
           assert(mounted);
           assert(_outgoingEntries.contains(entry));
@@ -381,8 +375,10 @@ class _AnimatedSwitcherState extends State<AnimatedSwitcher> with TickerProvider
 
   @override
   void dispose() {
-    _currentEntry?.controller.dispose();
-    _currentEntry?.animation.dispose();
+    if (_currentEntry != null) {
+      _currentEntry!.controller.dispose();
+      _currentEntry!.animation.dispose();
+    }
     for (final _ChildEntry entry in _outgoingEntries) {
       entry.controller.dispose();
       entry.animation.dispose();
@@ -393,12 +389,6 @@ class _AnimatedSwitcherState extends State<AnimatedSwitcher> with TickerProvider
   @override
   Widget build(BuildContext context) {
     _rebuildOutgoingWidgetsIfNeeded();
-    return widget.layoutBuilder(
-      _currentEntry?.transition,
-      _outgoingWidgets!
-          .where((Widget outgoing) => outgoing.key != _currentEntry?.transition.key)
-          .toSet()
-          .toList(),
-    );
+    return widget.layoutBuilder(_currentEntry?.transition, _outgoingWidgets!.where((Widget outgoing) => outgoing.key != _currentEntry?.transition.key).toSet().toList());
   }
 }

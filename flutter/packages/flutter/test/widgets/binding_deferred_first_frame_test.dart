@@ -13,21 +13,20 @@ const String _actualContent = 'Actual Content';
 const String _loading = 'Loading...';
 
 void main() {
-  testWidgets('deferFirstFrame/allowFirstFrame stops sending frames to engine', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('deferFirstFrame/allowFirstFrame stops sending frames to engine', (WidgetTester tester) async {
     expect(RendererBinding.instance.sendFramesToEngine, isTrue);
 
     final Completer<void> completer = Completer<void>();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: _DeferringWidget(key: UniqueKey(), loader: completer.future),
+        child: _DeferringWidget(
+          key: UniqueKey(),
+          loader: completer.future,
+        ),
       ),
     );
-    final _DeferringWidgetState state = tester.state<_DeferringWidgetState>(
-      find.byType(_DeferringWidget),
-    );
+    final _DeferringWidgetState state = tester.state<_DeferringWidgetState>(find.byType(_DeferringWidget));
 
     expect(find.text(_loading), findsOneWidget);
     expect(find.text(_actualContent), findsNothing);
@@ -61,8 +60,14 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Row(
           children: <Widget>[
-            _DeferringWidget(key: UniqueKey(), loader: completer1.future),
-            _DeferringWidget(key: UniqueKey(), loader: completer2.future),
+            _DeferringWidget(
+              key: UniqueKey(),
+              loader: completer1.future,
+            ),
+            _DeferringWidget(
+              key: UniqueKey(),
+              loader: completer2.future,
+            ),
           ],
         ),
       ),
@@ -83,7 +88,7 @@ void main() {
 }
 
 class _DeferringWidget extends StatefulWidget {
-  const _DeferringWidget({required Key super.key, required this.loader});
+  const _DeferringWidget({required Key key, required this.loader}) : super(key: key);
 
   final Future<void> loader;
 
@@ -108,6 +113,8 @@ class _DeferringWidgetState extends State<_DeferringWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return doneLoading ? const Text(_actualContent) : const Text(_loading);
+    return doneLoading
+        ? const Text(_actualContent)
+        : const Text(_loading);
   }
 }

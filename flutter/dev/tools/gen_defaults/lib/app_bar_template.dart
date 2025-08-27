@@ -6,12 +6,14 @@ import 'template.dart';
 
 class AppBarTemplate extends TokenTemplate {
   const AppBarTemplate(super.blockName, super.fileName, super.tokens)
-    : super(colorSchemePrefix: '_colors.', textThemePrefix: '_textTheme.');
+    : super(
+      colorSchemePrefix: '_colors.',
+      textThemePrefix: '_textTheme.',
+    );
 
   @override
-  String generate() =>
-      '''
-class _${blockName}DefaultsM3 extends AppBarThemeData {
+  String generate() => '''
+class _${blockName}DefaultsM3 extends AppBarTheme {
   _${blockName}DefaultsM3(this.context)
     : super(
       elevation: ${elevation('md.comp.top-app-bar.small.container')},
@@ -54,12 +56,6 @@ class _${blockName}DefaultsM3 extends AppBarThemeData {
 
   @override
   TextStyle? get titleTextStyle => ${textStyle('md.comp.top-app-bar.small.headline')};
-
-  // TODO(Craftplacer): Consider using EdgeInsets.only(right: 8.0) instead of
-  // EdgeInsets.zero for Material 3 in the future,
-  // https://github.com/flutter/flutter/issues/155747
-  @override
-  EdgeInsets? get actionsPadding => EdgeInsets.zero;
 }
 
 // Variant configuration

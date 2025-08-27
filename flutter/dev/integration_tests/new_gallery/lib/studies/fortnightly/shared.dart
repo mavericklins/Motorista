@@ -28,7 +28,11 @@ class ArticleData {
 }
 
 class HorizontalArticlePreview extends StatelessWidget {
-  const HorizontalArticlePreview({super.key, required this.data, this.minutes});
+  const HorizontalArticlePreview({
+    super.key,
+    required this.data,
+    this.minutes,
+  });
 
   final ArticleData data;
   final int? minutes;
@@ -44,9 +48,15 @@ class HorizontalArticlePreview extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SelectableText(data.category, style: textTheme.titleMedium),
+              SelectableText(
+                data.category,
+                style: textTheme.titleMedium,
+              ),
               const SizedBox(height: 12),
-              SelectableText(data.title, style: textTheme.headlineSmall!.copyWith(fontSize: 16)),
+              SelectableText(
+                data.title,
+                style: textTheme.headlineSmall!.copyWith(fontSize: 16),
+              ),
             ],
           ),
         ),
@@ -98,28 +108,38 @@ class VerticalArticlePreview extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: FadeInImagePlaceholder(
-              image: AssetImage(data.imageUrl, package: 'flutter_gallery_assets'),
-              placeholder: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return Container(
-                    color: Colors.black.withOpacity(0.1),
-                    width: constraints.maxWidth,
-                    height: constraints.maxWidth / data.imageAspectRatio,
-                  );
-                },
+              image: AssetImage(
+                data.imageUrl,
+                package: 'flutter_gallery_assets',
               ),
+              placeholder: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+                return Container(
+                  color: Colors.black.withOpacity(0.1),
+                  width: constraints.maxWidth,
+                  height: constraints.maxWidth / data.imageAspectRatio,
+                );
+              }),
               fit: BoxFit.fitWidth,
               width: double.infinity,
               excludeFromSemantics: true,
             ),
           ),
           const SizedBox(height: 12),
-          SelectableText(data.category, style: textTheme.titleMedium),
+          SelectableText(
+            data.category,
+            style: textTheme.titleMedium,
+          ),
           const SizedBox(height: 12),
-          SelectableText(data.title, style: headlineTextStyle ?? textTheme.headlineSmall),
+          SelectableText(
+            data.title,
+            style: headlineTextStyle ?? textTheme.headlineSmall,
+          ),
           if (showSnippet) ...<Widget>[
             const SizedBox(height: 4),
-            SelectableText(data.snippet!, style: textTheme.bodyMedium),
+            SelectableText(
+              data.snippet!,
+              style: textTheme.bodyMedium,
+            ),
           ],
         ],
       ),
@@ -170,7 +190,10 @@ List<Widget> buildArticlePreviewItems(BuildContext context) {
       ),
     ),
     sectionDivider,
-    SelectableText(localizations.fortnightlyLatestUpdates, style: textTheme.titleLarge),
+    SelectableText(
+      localizations.fortnightlyLatestUpdates,
+      style: textTheme.titleLarge,
+    ),
     articleDivider,
     HorizontalArticlePreview(
       data: ArticleData(
@@ -282,7 +305,6 @@ class NavigationMenu extends StatelessWidget {
           Row(
             children: <Widget>[
               IconButton(
-                key: StandardComponentType.closeButton.key,
                 icon: const Icon(Icons.close),
                 tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 onPressed: () => Navigator.pop(context),
@@ -295,7 +317,10 @@ class NavigationMenu extends StatelessWidget {
             ],
           ),
         const SizedBox(height: 32),
-        MenuItem(localizations.fortnightlyMenuFrontPage, header: true),
+        MenuItem(
+          localizations.fortnightlyMenuFrontPage,
+          header: true,
+        ),
         MenuItem(localizations.fortnightlyMenuWorld),
         MenuItem(localizations.fortnightlyMenuUS),
         MenuItem(localizations.fortnightlyMenuPolitics),
@@ -331,9 +356,9 @@ class MenuItem extends StatelessWidget {
             child: SelectableText(
               title,
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                fontWeight: header ? FontWeight.w700 : FontWeight.w600,
-                fontSize: 16,
-              ),
+                    fontWeight: header ? FontWeight.w700 : FontWeight.w600,
+                    fontSize: 16,
+                  ),
             ),
           ),
         ],
@@ -343,7 +368,12 @@ class MenuItem extends StatelessWidget {
 }
 
 class StockItem extends StatelessWidget {
-  const StockItem({super.key, required this.ticker, required this.price, required this.percent});
+  const StockItem({
+    super.key,
+    required this.ticker,
+    required this.price,
+    required this.percent,
+  });
 
   final String ticker;
   final String price;
@@ -376,7 +406,9 @@ class StockItem extends StatelessWidget {
               percent > 0 ? '+' : '-',
               style: textTheme.titleSmall!.copyWith(
                 fontSize: 12,
-                color: percent > 0 ? const Color(0xff20CF63) : const Color(0xff661FFF),
+                color: percent > 0
+                    ? const Color(0xff20CF63)
+                    : const Color(0xff661FFF),
               ),
             ),
             const SizedBox(width: 4),
@@ -388,7 +420,7 @@ class StockItem extends StatelessWidget {
               ),
             ),
           ],
-        ),
+        )
       ],
     );
   }
@@ -410,36 +442,58 @@ List<Widget> buildStockItems(BuildContext context) {
           'fortnightly/fortnightly_chart.png',
           package: 'flutter_gallery_assets',
         ),
-        placeholder: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return Container(
-              color: Colors.black.withOpacity(0.1),
-              width: constraints.maxWidth,
-              height: constraints.maxWidth / imageAspectRatio,
-            );
-          },
-        ),
+        placeholder: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            color: Colors.black.withOpacity(0.1),
+            width: constraints.maxWidth,
+            height: constraints.maxWidth / imageAspectRatio,
+          );
+        }),
         width: double.infinity,
         fit: BoxFit.contain,
         excludeFromSemantics: true,
       ),
     ),
     articleDivider,
-    const StockItem(ticker: 'DIJA', price: '7,031.21', percent: -0.48),
+    const StockItem(
+      ticker: 'DIJA',
+      price: '7,031.21',
+      percent: -0.48,
+    ),
     articleDivider,
-    const StockItem(ticker: 'SP', price: '1,967.84', percent: -0.23),
+    const StockItem(
+      ticker: 'SP',
+      price: '1,967.84',
+      percent: -0.23,
+    ),
     articleDivider,
-    const StockItem(ticker: 'Nasdaq', price: '6,211.46', percent: 0.52),
+    const StockItem(
+      ticker: 'Nasdaq',
+      price: '6,211.46',
+      percent: 0.52,
+    ),
     articleDivider,
-    const StockItem(ticker: 'Nikkei', price: '5,891', percent: 1.16),
+    const StockItem(
+      ticker: 'Nikkei',
+      price: '5,891',
+      percent: 1.16,
+    ),
     articleDivider,
-    const StockItem(ticker: 'DJ Total', price: '89.02', percent: 0.80),
+    const StockItem(
+      ticker: 'DJ Total',
+      price: '89.02',
+      percent: 0.80,
+    ),
     articleDivider,
   ];
 }
 
 class VideoPreview extends StatelessWidget {
-  const VideoPreview({super.key, required this.data, required this.time});
+  const VideoPreview({
+    super.key,
+    required this.data,
+    required this.time,
+  });
 
   final ArticleData data;
   final String time;
@@ -454,16 +508,17 @@ class VideoPreview extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: FadeInImagePlaceholder(
-            image: AssetImage(data.imageUrl, package: 'flutter_gallery_assets'),
-            placeholder: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return Container(
-                  color: Colors.black.withOpacity(0.1),
-                  width: constraints.maxWidth,
-                  height: constraints.maxWidth / data.imageAspectRatio,
-                );
-              },
+            image: AssetImage(
+              data.imageUrl,
+              package: 'flutter_gallery_assets',
             ),
+            placeholder: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+              return Container(
+                color: Colors.black.withOpacity(0.1),
+                width: constraints.maxWidth,
+                height: constraints.maxWidth / data.imageAspectRatio,
+              );
+            }),
             fit: BoxFit.contain,
             width: double.infinity,
             excludeFromSemantics: true,
@@ -472,12 +527,18 @@ class VideoPreview extends StatelessWidget {
         const SizedBox(height: 4),
         Row(
           children: <Widget>[
-            Expanded(child: SelectableText(data.category, style: textTheme.titleMedium)),
-            SelectableText(time, style: textTheme.bodyLarge),
+            Expanded(
+              child: SelectableText(
+                data.category,
+                style: textTheme.titleMedium,
+              ),
+            ),
+            SelectableText(time, style: textTheme.bodyLarge)
           ],
         ),
         const SizedBox(height: 4),
-        SelectableText(data.title, style: textTheme.headlineSmall!.copyWith(fontSize: 16)),
+        SelectableText(data.title,
+            style: textTheme.headlineSmall!.copyWith(fontSize: 16)),
       ],
     );
   }
@@ -509,7 +570,7 @@ List<Widget> buildVideoPreviewItems(BuildContext context) {
 }
 
 ThemeData buildTheme(BuildContext context) {
-  final TextTheme lightTextTheme = ThemeData().textTheme;
+  final TextTheme lightTextTheme = ThemeData.light().textTheme;
   return ThemeData(
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: AppBarTheme(
@@ -539,7 +600,10 @@ ThemeData buildTheme(BuildContext context) {
         textStyle: lightTextTheme.headlineSmall,
       ),
       // (caption 2), preview category, stock ticker
-      titleMedium: GoogleFonts.robotoCondensed(fontWeight: FontWeight.w700, fontSize: 16),
+      titleMedium: GoogleFonts.robotoCondensed(
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
+      ),
       titleSmall: GoogleFonts.libreFranklin(
         fontWeight: FontWeight.w400,
         fontSize: 14,

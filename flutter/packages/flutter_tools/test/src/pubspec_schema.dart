@@ -19,15 +19,12 @@ void validatePubspecForPlugin({
   String? webFileName,
 }) {
   assert(pluginClass != null || ffiPlugin);
-  final FlutterManifest manifest = FlutterManifest.createFromPath(
-    '$projectDir/pubspec.yaml',
-    fileSystem: globals.fs,
-    logger: globals.logger,
-  )!;
-  final platformMaps = YamlMap.wrap(manifest.supportedPlatforms!);
-  for (final platform in expectedPlatforms) {
+  final FlutterManifest manifest =
+      FlutterManifest.createFromPath('$projectDir/pubspec.yaml', fileSystem: globals.fs, logger: globals.logger)!;
+  final YamlMap platformMaps = YamlMap.wrap(manifest.supportedPlatforms!);
+  for (final String platform in expectedPlatforms) {
     expect(platformMaps[platform], isNotNull);
-    final platformMap = platformMaps[platform]! as YamlMap;
+    final YamlMap platformMap = platformMaps[platform]! as YamlMap;
     if (pluginClass != null) {
       expect(platformMap['pluginClass'], pluginClass);
     }
@@ -38,7 +35,7 @@ void validatePubspecForPlugin({
       expect(platformMap['fileName'], webFileName);
     }
   }
-  for (final platform in unexpectedPlatforms) {
+  for (final String platform in unexpectedPlatforms) {
     expect(platformMaps[platform], isNull);
   }
 }

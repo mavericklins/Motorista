@@ -19,9 +19,12 @@ void main() {
   });
 
   Future<void> testCompileShader(String source) async {
-    final Directory tmpDir = globals.fs.systemTempDirectory.createTempSync('shader_compiler_test.');
-    final File file = tmpDir.childFile('test_shader.frag')..writeAsStringSync(source);
-    final shaderCompiler = ShaderCompiler(
+    final Directory tmpDir = globals.fs.systemTempDirectory.createTempSync(
+      'shader_compiler_test.',
+    );
+    final File file = tmpDir.childFile('test_shader.frag')
+      ..writeAsStringSync(source);
+    final ShaderCompiler shaderCompiler = ShaderCompiler(
       processManager: globals.processManager,
       logger: logger,
       fileSystem: globals.fs,
@@ -40,20 +43,17 @@ void main() {
     }
 
     final String flutterRoot = getFlutterRoot();
-    final String inkSparklePath = globals.fs.path.join(
-      flutterRoot,
-      'packages',
-      'flutter',
-      'lib',
-      'src',
-      'material',
-      'shaders',
-      'ink_sparkle.frag',
+    final String inkSparklePath = globals.fs.path.join(flutterRoot,
+      'packages', 'flutter', 'lib', 'src', 'material', 'shaders',
+      'ink_sparkle.frag');
+    final Directory tmpDir = globals.fs.systemTempDirectory.createTempSync(
+      'shader_compiler_test.',
     );
-    final Directory tmpDir = globals.fs.systemTempDirectory.createTempSync('shader_compiler_test.');
-    final String inkSparkleOutputPath = globals.fs.path.join(tmpDir.path, 'ink_sparkle.frag');
+    final String inkSparkleOutputPath = globals.fs.path.join(
+      tmpDir.path, 'ink_sparkle.frag',
+    );
 
-    final shaderCompiler = ShaderCompiler(
+    final ShaderCompiler shaderCompiler = ShaderCompiler(
       processManager: globals.processManager,
       logger: logger,
       fileSystem: globals.fs,
@@ -66,6 +66,7 @@ void main() {
     );
     final File resultFile = globals.fs.file(inkSparkleOutputPath);
 
+
     expect(compileResult, true);
     expect(resultFile.existsSync(), true);
 
@@ -74,7 +75,7 @@ void main() {
   });
 
   testUsingContext('Compilation error with in storage', () async {
-    const kShaderWithInput = '''
+    const String kShaderWithInput = '''
 in float foo;
 
 out vec4 fragColor;
@@ -84,20 +85,17 @@ void main() {
 }
 ''';
 
-    expect(
-      () => testCompileShader(kShaderWithInput),
-      throwsA(
-        isA<ShaderCompilerException>().having(
-          (ShaderCompilerException exception) => exception.message,
-          'message',
-          contains('SkSL does not support inputs'),
-        ),
+    expect(() => testCompileShader(kShaderWithInput), throwsA(isA<ShaderCompilerException>()
+      .having(
+        (ShaderCompilerException exception) => exception.message,
+        'message',
+        contains('SkSL does not support inputs'),
       ),
-    );
+    ));
   });
 
   testUsingContext('Compilation error with UBO', () async {
-    const kShaderWithInput = '''
+    const String kShaderWithInput = '''
 uniform Data {
   vec4 foo;
 } data;
@@ -109,22 +107,17 @@ void main() {
 }
 ''';
 
-    expect(
-      () => testCompileShader(kShaderWithInput),
-      throwsA(
-        isA<ShaderCompilerException>().having(
-          (ShaderCompilerException exception) => exception.message,
-          'message',
-          contains('SkSL does not support UBOs or SSBOs'),
-        ),
+    expect(() => testCompileShader(kShaderWithInput), throwsA(isA<ShaderCompilerException>()
+      .having(
+        (ShaderCompilerException exception) => exception.message,
+        'message',
+        contains('SkSL does not support UBOs or SSBOs'),
       ),
-    );
+    ));
   });
 
-  testUsingContext(
-    'Compilation error with texture arguments besides position or sampler',
-    () async {
-      const kShaderWithInput = '''
+  testUsingContext('Compilation error with texture arguments besides position or sampler', () async {
+    const String kShaderWithInput = '''
 uniform sampler2D tex;
 
 out vec4 fragColor;
@@ -134,21 +127,17 @@ void main() {
 }
 ''';
 
-      expect(
-        () => testCompileShader(kShaderWithInput),
-        throwsA(
-          isA<ShaderCompilerException>().having(
-            (ShaderCompilerException exception) => exception.message,
-            'message',
-            contains('Only sampler and position arguments are supported in texture() calls'),
-          ),
-        ),
-      );
-    },
-  );
+    expect(() => testCompileShader(kShaderWithInput), throwsA(isA<ShaderCompilerException>()
+      .having(
+        (ShaderCompilerException exception) => exception.message,
+        'message',
+        contains('Only sampler and position arguments are supported in texture() calls'),
+      ),
+    ));
+  });
 
   testUsingContext('Compilation error with uint8 uniforms', () async {
-    const kShaderWithInput = '''
+    const String kShaderWithInput = '''
 #version 310 es
 
 layout(location = 0) uniform uint foo;
@@ -157,15 +146,12 @@ layout(location = 0) out vec4 fragColor;
 void main() {}
 ''';
 
-    expect(
-      () => testCompileShader(kShaderWithInput),
-      throwsA(
-        isA<ShaderCompilerException>().having(
-          (ShaderCompilerException exception) => exception.message,
-          'message',
-          contains('SkSL does not support unsigned integers'),
-        ),
+    expect(() => testCompileShader(kShaderWithInput), throwsA(isA<ShaderCompilerException>()
+      .having(
+        (ShaderCompilerException exception) => exception.message,
+        'message',
+        contains('SkSL does not support unsigned integers'),
       ),
-    );
+    ));
   });
 }

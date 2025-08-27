@@ -30,11 +30,11 @@ void main() {
   });
 
   testWithoutContext('FlutterTesterApp can be created from the current directory', () async {
-    const projectPath = '/home/my/projects/my_project';
+    const String projectPath = '/home/my/projects/my_project';
     await fileSystem.directory(projectPath).create(recursive: true);
     fileSystem.currentDirectory = projectPath;
 
-    final app = FlutterTesterApp.fromCurrentDirectory(fileSystem);
+    final FlutterTesterApp app = FlutterTesterApp.fromCurrentDirectory(fileSystem);
 
     expect(app.name, 'my_project');
   });
@@ -68,9 +68,7 @@ void main() {
       final FlutterTesterDevices discoverer = setUpFlutterTesterDevices();
 
       // Timeout ignored.
-      final List<Device> devices = await discoverer.discoverDevices(
-        timeout: const Duration(seconds: 10),
-      );
+      final List<Device> devices = await discoverer.discoverDevices(timeout: const Duration(seconds: 10));
       expect(devices, hasLength(1));
     });
   });
@@ -83,7 +81,7 @@ void main() {
     late FakeProcessManager fakeProcessManager;
     late TestBuildSystem buildSystem;
 
-    final startOverrides = <Type, Generator>{
+    final Map<Type, Generator> startOverrides = <Type, Generator>{
       Platform: () => FakePlatform(),
       FileSystem: () => fileSystem,
       ProcessManager: () => fakeProcessManager,
@@ -94,8 +92,7 @@ void main() {
     setUp(() {
       buildSystem = TestBuildSystem.all(BuildResult(success: true));
       fakeProcessManager = FakeProcessManager.empty();
-      device = FlutterTesterDevice(
-        'flutter-tester',
+      device = FlutterTesterDevice('flutter-tester',
         fileSystem: fileSystem,
         processManager: fakeProcessManager,
         artifacts: Artifacts.test(),
@@ -118,22 +115,19 @@ void main() {
       expect(await device.isLatestBuildInstalled(FakeApplicationPackage()), isFalse);
       expect(await device.uninstallApp(FakeApplicationPackage()), isTrue);
 
-      expect(await device.isSupported(), isTrue);
+      expect(device.isSupported(), isTrue);
     });
 
     testWithoutContext('does not accept profile, release, or jit-release builds', () async {
-      final LaunchResult releaseResult = await device.startApp(
-        FakeApplicationPackage(),
+      final LaunchResult releaseResult = await device.startApp(FakeApplicationPackage(),
         mainPath: mainPath,
         debuggingOptions: DebuggingOptions.disabled(BuildInfo.release),
       );
-      final LaunchResult profileResult = await device.startApp(
-        FakeApplicationPackage(),
+      final LaunchResult profileResult = await device.startApp(FakeApplicationPackage(),
         mainPath: mainPath,
         debuggingOptions: DebuggingOptions.disabled(BuildInfo.profile),
       );
-      final LaunchResult jitReleaseResult = await device.startApp(
-        FakeApplicationPackage(),
+      final LaunchResult jitReleaseResult = await device.startApp(FakeApplicationPackage(),
         mainPath: mainPath,
         debuggingOptions: DebuggingOptions.disabled(BuildInfo.jitRelease),
       );
@@ -144,86 +138,70 @@ void main() {
     });
 
     testUsingContext('performs a build and starts in debug mode', () async {
-      final app = FlutterTesterApp.fromCurrentDirectory(fileSystem);
+      final FlutterTesterApp app = FlutterTesterApp.fromCurrentDirectory(fileSystem);
       final Uri vmServiceUri = Uri.parse('http://127.0.0.1:6666/');
-      final completer = Completer<void>();
-      fakeProcessManager.addCommand(
-        FakeCommand(
-          command: const <String>[
-            'Artifact.flutterTester',
-            '--run-forever',
-            '--non-interactive',
-            '--enable-dart-profiling',
-            '--packages=.dart_tool/package_config.json',
-            '--flutter-assets-dir=/.tmp_rand0/flutter_tester.rand0',
-            '/.tmp_rand0/flutter_tester.rand0/flutter-tester-app.dill',
-          ],
-          completer: completer,
-          stdout:
-              '''
+      final Completer<void> completer = Completer<void>();
+      fakeProcessManager.addCommand(FakeCommand(
+        command: const <String>[
+          'Artifact.flutterTester',
+          '--run-forever',
+          '--non-interactive',
+          '--enable-dart-profiling',
+          '--packages=.dart_tool/package_config.json',
+          '--flutter-assets-dir=/.tmp_rand0/flutter_tester.rand0',
+          '/.tmp_rand0/flutter_tester.rand0/flutter-tester-app.dill',
+        ],
+        completer: completer,
+        stdout:
+        '''
 The Dart VM service is listening on $vmServiceUri
 Hello!
 ''',
-        ),
+      ));
+
+      final LaunchResult result = await device.startApp(app,
+        mainPath: mainPath,
+        debuggingOptions: DebuggingOptions.enabled(const BuildInfo(BuildMode.debug, null, treeShakeIcons: false)),
       );
 
-      final LaunchResult result = await device.startApp(
-        app,
-        mainPath: mainPath,
-        debuggingOptions: DebuggingOptions.enabled(
-          const BuildInfo(
-            BuildMode.debug,
-            null,
-            treeShakeIcons: false,
-            packageConfigPath: '.dart_tool/package_config.json',
-          ),
-        ),
-      );
       expect(result.started, isTrue);
       expect(result.vmServiceUri, vmServiceUri);
       expect(logLines.last, 'Hello!');
       expect(fakeProcessManager, hasNoRemainingExpectations);
     }, overrides: startOverrides);
 
-    testUsingContext(
-      'performs a build and starts in debug mode with track-widget-creation',
-      () async {
-        final app = FlutterTesterApp.fromCurrentDirectory(fileSystem);
-        final Uri vmServiceUri = Uri.parse('http://127.0.0.1:6666/');
-        final completer = Completer<void>();
-        fakeProcessManager.addCommand(
-          FakeCommand(
-            command: const <String>[
-              'Artifact.flutterTester',
-              '--run-forever',
-              '--non-interactive',
-              '--enable-dart-profiling',
-              '--packages=.dart_tool/package_config.json',
-              '--flutter-assets-dir=/.tmp_rand0/flutter_tester.rand0',
-              '/.tmp_rand0/flutter_tester.rand0/flutter-tester-app.dill.track.dill',
-            ],
-            completer: completer,
-            stdout:
-                '''
+    testUsingContext('performs a build and starts in debug mode with track-widget-creation', () async {
+      final FlutterTesterApp app = FlutterTesterApp.fromCurrentDirectory(fileSystem);
+      final Uri vmServiceUri = Uri.parse('http://127.0.0.1:6666/');
+      final Completer<void> completer = Completer<void>();
+      fakeProcessManager.addCommand(FakeCommand(
+        command: const <String>[
+          'Artifact.flutterTester',
+          '--run-forever',
+          '--non-interactive',
+          '--enable-dart-profiling',
+          '--packages=.dart_tool/package_config.json',
+          '--flutter-assets-dir=/.tmp_rand0/flutter_tester.rand0',
+          '/.tmp_rand0/flutter_tester.rand0/flutter-tester-app.dill.track.dill',
+        ],
+        completer: completer,
+        stdout:
+        '''
 The Dart VM service is listening on $vmServiceUri
 Hello!
 ''',
-          ),
-        );
+      ));
 
-        final LaunchResult result = await device.startApp(
-          app,
-          mainPath: mainPath,
-          debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
-        );
+      final LaunchResult result = await device.startApp(app,
+        mainPath: mainPath,
+        debuggingOptions: DebuggingOptions.enabled(BuildInfo.debug),
+      );
 
-        expect(result.started, isTrue);
-        expect(result.vmServiceUri, vmServiceUri);
-        expect(logLines.last, 'Hello!');
-        expect(fakeProcessManager, hasNoRemainingExpectations);
-      },
-      overrides: startOverrides,
-    );
+      expect(result.started, isTrue);
+      expect(result.vmServiceUri, vmServiceUri);
+      expect(logLines.last, 'Hello!');
+      expect(fakeProcessManager, hasNoRemainingExpectations);
+    }, overrides: startOverrides);
   });
 }
 

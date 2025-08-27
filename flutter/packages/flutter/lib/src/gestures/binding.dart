@@ -2,13 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:fake_async/fake_async.dart';
-/// @docImport 'package:flutter/rendering.dart';
-/// @docImport 'package:flutter/widgets.dart';
-///
-/// @docImport 'recognizer.dart';
-library;
-
 import 'dart:async';
 import 'dart:collection';
 import 'dart:ui' as ui show PointerDataPacket;
@@ -301,21 +294,17 @@ mixin GestureBinding on BindingBase implements HitTestable, HitTestDispatcher, H
     // We convert pointer data to logical pixels so that e.g. the touch slop can be
     // defined in a device-independent manner.
     try {
-      _pendingPointerEvents.addAll(
-        PointerEventConverter.expand(packet.data, _devicePixelRatioForView),
-      );
+      _pendingPointerEvents.addAll(PointerEventConverter.expand(packet.data, _devicePixelRatioForView));
       if (!locked) {
         _flushPointerEventQueue();
       }
     } catch (error, stack) {
-      FlutterError.reportError(
-        FlutterErrorDetails(
-          exception: error,
-          stack: stack,
-          library: 'gestures library',
-          context: ErrorDescription('while handling a pointer data packet'),
-        ),
-      );
+      FlutterError.reportError(FlutterErrorDetails(
+        exception: error,
+        stack: stack,
+        library: 'gestures library',
+        context: ErrorDescription('while handling a pointer data packet'),
+      ));
     }
   }
 
@@ -396,14 +385,8 @@ mixin GestureBinding on BindingBase implements HitTestable, HitTestDispatcher, H
 
   void _handlePointerEventImmediately(PointerEvent event) {
     HitTestResult? hitTestResult;
-    if (event is PointerDownEvent ||
-        event is PointerSignalEvent ||
-        event is PointerHoverEvent ||
-        event is PointerPanZoomStartEvent) {
-      assert(
-        !_hitTests.containsKey(event.pointer),
-        'Pointer of ${event.toString(minLevel: DiagnosticLevel.debug)} unexpectedly has a HitTestResult associated with it.',
-      );
+    if (event is PointerDownEvent || event is PointerSignalEvent || event is PointerHoverEvent || event is PointerPanZoomStartEvent) {
+      assert(!_hitTests.containsKey(event.pointer), 'Pointer of ${event.toString(minLevel: DiagnosticLevel.debug)} unexpectedly has a HitTestResult associated with it.');
       hitTestResult = HitTestResult();
       hitTestInView(hitTestResult, event.position, event.viewId);
       if (event is PointerDownEvent || event is PointerPanZoomStartEvent) {
@@ -415,9 +398,7 @@ mixin GestureBinding on BindingBase implements HitTestable, HitTestDispatcher, H
         }
         return true;
       }());
-    } else if (event is PointerUpEvent ||
-        event is PointerCancelEvent ||
-        event is PointerPanZoomEndEvent) {
+    } else if (event is PointerUpEvent || event is PointerCancelEvent || event is PointerPanZoomEndEvent) {
       hitTestResult = _hitTests.remove(event.pointer);
     } else if (event.down || event is PointerPanZoomUpdateEvent) {
       // Because events that occur with the pointer down (like
@@ -433,7 +414,9 @@ mixin GestureBinding on BindingBase implements HitTestable, HitTestDispatcher, H
       }
       return true;
     }());
-    if (hitTestResult != null || event is PointerAddedEvent || event is PointerRemovedEvent) {
+    if (hitTestResult != null ||
+        event is PointerAddedEvent ||
+        event is PointerRemovedEvent) {
       dispatchEvent(event, hitTestResult);
     }
   }
@@ -474,22 +457,16 @@ mixin GestureBinding on BindingBase implements HitTestable, HitTestDispatcher, H
       try {
         pointerRouter.route(event);
       } catch (exception, stack) {
-        FlutterError.reportError(
-          FlutterErrorDetailsForPointerEventDispatcher(
-            exception: exception,
-            stack: stack,
-            library: 'gesture library',
-            context: ErrorDescription('while dispatching a non-hit-tested pointer event'),
-            event: event,
-            informationCollector: () => <DiagnosticsNode>[
-              DiagnosticsProperty<PointerEvent>(
-                'Event',
-                event,
-                style: DiagnosticsTreeStyle.errorProperty,
-              ),
-            ],
-          ),
-        );
+        FlutterError.reportError(FlutterErrorDetailsForPointerEventDispatcher(
+          exception: exception,
+          stack: stack,
+          library: 'gesture library',
+          context: ErrorDescription('while dispatching a non-hit-tested pointer event'),
+          event: event,
+          informationCollector: () => <DiagnosticsNode>[
+            DiagnosticsProperty<PointerEvent>('Event', event, style: DiagnosticsTreeStyle.errorProperty),
+          ],
+        ));
       }
       return;
     }
@@ -497,28 +474,18 @@ mixin GestureBinding on BindingBase implements HitTestable, HitTestDispatcher, H
       try {
         entry.target.handleEvent(event.transformed(entry.transform), entry);
       } catch (exception, stack) {
-        FlutterError.reportError(
-          FlutterErrorDetailsForPointerEventDispatcher(
-            exception: exception,
-            stack: stack,
-            library: 'gesture library',
-            context: ErrorDescription('while dispatching a pointer event'),
-            event: event,
-            hitTestEntry: entry,
-            informationCollector: () => <DiagnosticsNode>[
-              DiagnosticsProperty<PointerEvent>(
-                'Event',
-                event,
-                style: DiagnosticsTreeStyle.errorProperty,
-              ),
-              DiagnosticsProperty<HitTestTarget>(
-                'Target',
-                entry.target,
-                style: DiagnosticsTreeStyle.errorProperty,
-              ),
-            ],
-          ),
-        );
+        FlutterError.reportError(FlutterErrorDetailsForPointerEventDispatcher(
+          exception: exception,
+          stack: stack,
+          library: 'gesture library',
+          context: ErrorDescription('while dispatching a pointer event'),
+          event: event,
+          hitTestEntry: entry,
+          informationCollector: () => <DiagnosticsNode>[
+            DiagnosticsProperty<PointerEvent>('Event', event, style: DiagnosticsTreeStyle.errorProperty),
+            DiagnosticsProperty<HitTestTarget>('Target', entry.target, style: DiagnosticsTreeStyle.errorProperty),
+          ],
+        ));
       }
     }
   }
@@ -549,7 +516,8 @@ mixin GestureBinding on BindingBase implements HitTestable, HitTestDispatcher, H
     if (!locked) {
       if (resamplingEnabled) {
         _resampler.sample(samplingOffset, samplingClock);
-      } else {
+      }
+      else {
         _resampler.stop();
       }
     }

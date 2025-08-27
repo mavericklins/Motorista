@@ -23,26 +23,25 @@ import '../runner/flutter_command.dart';
 /// The DAP specification can be found at
 /// https://microsoft.github.io/debug-adapter-protocol/.
 class DebugAdapterCommand extends FlutterCommand {
-  DebugAdapterCommand({bool verboseHelp = false}) : hidden = !verboseHelp {
+  DebugAdapterCommand({ bool verboseHelp = false}) : hidden = !verboseHelp {
     usesIpv6Flag(verboseHelp: verboseHelp);
     addDdsOptions(verboseHelp: verboseHelp);
-    argParser.addFlag(
-      'test',
-      help:
-          'Whether to use the "flutter test" debug adapter to run tests'
-          ' and emit custom events for test progress/results.',
-    );
+    argParser
+      .addFlag(
+        'test',
+        help: 'Whether to use the "flutter test" debug adapter to run tests'
+            ' and emit custom events for test progress/results.',
+      );
   }
 
   @override
-  final name = 'debug-adapter';
+  final String name = 'debug-adapter';
 
   @override
   List<String> get aliases => const <String>['debug_adapter'];
 
   @override
-  final description =
-      'Run a Debug Adapter Protocol (DAP) server to communicate with the Flutter tool.';
+  final String description = 'Run a Debug Adapter Protocol (DAP) server to communicate with the Flutter tool.';
 
   @override
   final String category = FlutterCommandCategory.tools;
@@ -52,7 +51,7 @@ class DebugAdapterCommand extends FlutterCommand {
 
   @override
   Future<FlutterCommandResult> runCommand() async {
-    final server = DapServer(
+    final DapServer server = DapServer(
       globals.stdio.stdin,
       globals.stdio.stdout.nonBlocking,
       fileSystem: globals.fs,

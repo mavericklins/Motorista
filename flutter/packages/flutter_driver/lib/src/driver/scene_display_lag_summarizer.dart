@@ -10,7 +10,7 @@ const String kSceneDisplayLagEvent = 'SceneDisplayLag';
 
 const String _kVsyncTransitionsMissed = 'vsync_transitions_missed';
 
-/// Summarizes [TimelineEvent]s corresponding to [kSceneDisplayLagEvent] events.
+/// Summarizes [TimelineEvents]s corresponding to [kSceneDisplayLagEvent] events.
 ///
 /// A sample event (some fields have been omitted for brevity):
 /// ```json
@@ -59,7 +59,8 @@ class SceneDisplayLagSummarizer {
       return 0;
     }
 
-    final List<double> doubles = sceneDisplayLagEvents.map(_getVsyncTransitionsMissed).toList();
+    final List<double> doubles =
+        sceneDisplayLagEvents.map(_getVsyncTransitionsMissed).toList();
     return findPercentile(doubles, percentile);
   }
 

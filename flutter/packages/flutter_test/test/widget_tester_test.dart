@@ -14,7 +14,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:matcher/expect.dart' as matcher;
-import 'package:matcher/src/expect/async_matcher.dart';
+import 'package:matcher/src/expect/async_matcher.dart'; // ignore: implementation_imports
 
 import 'multi_view_testing.dart';
 
@@ -37,11 +37,7 @@ void main() {
 
     testWidgets('respects the skip flag', (WidgetTester tester) async {
       final Completer<void> completer = Completer<void>();
-      final Future<void> future = expectLater(
-        null,
-        FakeMatcher(completer),
-        skip: 'testing skip',
-      ); // [intended] API testing
+      final Future<void> future = expectLater(null, FakeMatcher(completer), skip: 'testing skip'); // [intended] API testing
       bool completed = false;
       future.then<void>((_) {
         completed = true;
@@ -57,9 +53,6 @@ void main() {
     group('the group with retry flag', () {
       testWidgets('the test inside it', (WidgetTester tester) async {
         addTearDown(() => retried = true);
-        if (!retried) {
-          debugPrint('DISREGARD NEXT FAILURE, IT IS EXPECTED');
-        }
         expect(retried, isTrue);
       });
     }, retry: 1);
@@ -69,9 +62,6 @@ void main() {
     bool retried = false;
     testWidgets('the test with retry flag', (WidgetTester tester) async {
       addTearDown(() => retried = true);
-      if (!retried) {
-        debugPrint('DISREGARD NEXT FAILURE, IT IS EXPECTED');
-      }
       expect(retried, isTrue);
     }, retry: 1);
   });
@@ -136,11 +126,7 @@ void main() {
       expect(logPaints, <int>[0, 16683, 33366, 50049]);
       logPaints.clear();
 
-      await tester.pumpFrames(
-        target,
-        const Duration(milliseconds: 30),
-        const Duration(milliseconds: 10),
-      );
+      await tester.pumpFrames(target, const Duration(milliseconds: 30), const Duration(milliseconds: 10));
 
       // Since `pumpFrames` was given a 10ms interval per pump, we expect the
       // results to continue from 50049 with 10000 microseconds per pump over
@@ -152,31 +138,33 @@ void main() {
     testWidgets('fails when there are no back buttons', (WidgetTester tester) async {
       await tester.pumpWidget(Container());
 
-      expect(expectAsync0(tester.pageBack), throwsA(isA<TestFailure>()));
+      expect(
+        expectAsync0(tester.pageBack),
+        throwsA(isA<TestFailure>()),
+      );
     });
 
     testWidgets('successfully taps material back buttons', (WidgetTester tester) async {
-      final TransitionDurationObserver observer = TransitionDurationObserver();
       await tester.pumpWidget(
         MaterialApp(
-          navigatorObservers: <NavigatorObserver>[observer],
           home: Center(
             child: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
                   child: const Text('Next'),
                   onPressed: () {
-                    Navigator.push<void>(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) {
-                          return Scaffold(appBar: AppBar(title: const Text('Page 2')));
-                        },
-                      ),
-                    );
+                    Navigator.push<void>(context, MaterialPageRoute<void>(
+                      builder: (BuildContext context) {
+                        return Scaffold(
+                          appBar: AppBar(
+                            title: const Text('Page 2'),
+                          ),
+                        );
+                      },
+                    ));
                   },
                 );
-              },
+              } ,
             ),
           ),
         ),
@@ -184,44 +172,38 @@ void main() {
 
       await tester.tap(find.text('Next'));
       await tester.pump();
-      await tester.pump(observer.transitionDuration + const Duration(milliseconds: 1));
-
-      expect(find.text('Next'), findsNothing);
-      expect(find.text('Page 2'), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 400));
 
       await tester.pageBack();
       await tester.pump();
-      await tester.pump(observer.transitionDuration + const Duration(milliseconds: 1));
+      await tester.pump(const Duration(milliseconds: 400));
 
       expect(find.text('Next'), findsOneWidget);
       expect(find.text('Page 2'), findsNothing);
     });
 
     testWidgets('successfully taps cupertino back buttons', (WidgetTester tester) async {
-      final TransitionDurationObserver observer = TransitionDurationObserver();
       await tester.pumpWidget(
         MaterialApp(
-          navigatorObservers: <NavigatorObserver>[observer],
           home: Center(
             child: Builder(
               builder: (BuildContext context) {
                 return CupertinoButton(
                   child: const Text('Next'),
                   onPressed: () {
-                    Navigator.push<void>(
-                      context,
-                      CupertinoPageRoute<void>(
-                        builder: (BuildContext context) {
-                          return CupertinoPageScaffold(
-                            navigationBar: const CupertinoNavigationBar(middle: Text('Page 2')),
-                            child: Container(),
-                          );
-                        },
-                      ),
-                    );
+                    Navigator.push<void>(context, CupertinoPageRoute<void>(
+                      builder: (BuildContext context) {
+                        return CupertinoPageScaffold(
+                          navigationBar: const CupertinoNavigationBar(
+                            middle: Text('Page 2'),
+                          ),
+                          child: Container(),
+                        );
+                      },
+                    ));
                   },
                 );
-              },
+              } ,
             ),
           ),
         ),
@@ -229,7 +211,7 @@ void main() {
 
       await tester.tap(find.text('Next'));
       await tester.pump();
-      await tester.pump(observer.transitionDuration);
+      await tester.pump(const Duration(milliseconds: 400));
 
       await tester.pageBack();
       await tester.pump();
@@ -273,71 +255,72 @@ void main() {
     expect(await tester.pumpAndSettle(), 1);
     controller.duration = const Duration(seconds: 1);
     controller.forward();
-    expect(
-      await tester.pumpAndSettle(const Duration(milliseconds: 300)),
-      5,
-    ); // 0, 300, 600, 900, 1200ms
+    expect(await tester.pumpAndSettle(const Duration(milliseconds: 300)), 5); // 0, 300, 600, 900, 1200ms
   });
 
   testWidgets('Input event array', (WidgetTester tester) async {
-    final List<String> logs = <String>[];
+      final List<String> logs = <String>[];
 
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: Listener(
-          onPointerDown: (PointerDownEvent event) => logs.add('down ${event.buttons}'),
-          onPointerMove: (PointerMoveEvent event) => logs.add('move ${event.buttons}'),
-          onPointerUp: (PointerUpEvent event) => logs.add('up ${event.buttons}'),
-          child: const Text('test'),
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Listener(
+            onPointerDown: (PointerDownEvent event) => logs.add('down ${event.buttons}'),
+            onPointerMove: (PointerMoveEvent event) => logs.add('move ${event.buttons}'),
+            onPointerUp: (PointerUpEvent event) => logs.add('up ${event.buttons}'),
+            child: const Text('test'),
+          ),
         ),
-      ),
-    );
+      );
 
-    final Offset location = tester.getCenter(find.text('test'));
-    final List<PointerEventRecord> records = <PointerEventRecord>[
-      PointerEventRecord(Duration.zero, <PointerEvent>[
-        // Typically PointerAddedEvent is not used in testers, but for records
-        // captured on a device it is usually what start a gesture.
-        PointerAddedEvent(position: location),
-        PointerDownEvent(position: location, buttons: kSecondaryMouseButton, pointer: 1),
-      ]),
-      ...<PointerEventRecord>[
-        for (
-          Duration t = const Duration(milliseconds: 5);
-          t < const Duration(milliseconds: 80);
-          t += const Duration(milliseconds: 16)
-        )
-          PointerEventRecord(t, <PointerEvent>[
-            PointerMoveEvent(
-              timeStamp: t - const Duration(milliseconds: 1),
-              position: location,
-              buttons: kSecondaryMouseButton,
-              pointer: 1,
-            ),
-          ]),
-      ],
-      PointerEventRecord(const Duration(milliseconds: 80), <PointerEvent>[
-        PointerUpEvent(
-          timeStamp: const Duration(milliseconds: 79),
-          position: location,
-          buttons: kSecondaryMouseButton,
-          pointer: 1,
-        ),
-      ]),
-    ];
-    final List<Duration> timeDiffs = await tester.handlePointerEventRecord(records);
-    expect(timeDiffs.length, records.length);
-    for (final Duration diff in timeDiffs) {
-      expect(diff, Duration.zero);
-    }
+      final Offset location = tester.getCenter(find.text('test'));
+      final List<PointerEventRecord> records = <PointerEventRecord>[
+        PointerEventRecord(Duration.zero, <PointerEvent>[
+          // Typically PointerAddedEvent is not used in testers, but for records
+          // captured on a device it is usually what start a gesture.
+          PointerAddedEvent(
+            position: location,
+          ),
+          PointerDownEvent(
+            position: location,
+            buttons: kSecondaryMouseButton,
+            pointer: 1,
+          ),
+        ]),
+        ...<PointerEventRecord>[
+          for (Duration t = const Duration(milliseconds: 5);
+               t < const Duration(milliseconds: 80);
+               t += const Duration(milliseconds: 16))
+            PointerEventRecord(t, <PointerEvent>[
+              PointerMoveEvent(
+                timeStamp: t - const Duration(milliseconds: 1),
+                position: location,
+                buttons: kSecondaryMouseButton,
+                pointer: 1,
+              ),
+            ]),
+        ],
+        PointerEventRecord(const Duration(milliseconds: 80), <PointerEvent>[
+          PointerUpEvent(
+            timeStamp: const Duration(milliseconds: 79),
+            position: location,
+            buttons: kSecondaryMouseButton,
+            pointer: 1,
+          ),
+        ]),
+      ];
+      final List<Duration> timeDiffs = await tester.handlePointerEventRecord(records);
+      expect(timeDiffs.length, records.length);
+      for (final Duration diff in timeDiffs) {
+        expect(diff, Duration.zero);
+      }
 
-    const String b = '$kSecondaryMouseButton';
-    expect(logs.first, 'down $b');
-    for (int i = 1; i < logs.length - 1; i++) {
-      expect(logs[i], 'move $b');
-    }
-    expect(logs.last, 'up $b');
+      const String b = '$kSecondaryMouseButton';
+      expect(logs.first, 'down $b');
+      for (int i = 1; i < logs.length - 1; i++) {
+        expect(logs[i], 'move $b');
+      }
+      expect(logs.last, 'up $b');
   });
 
   group('runAsync', () {
@@ -379,7 +362,7 @@ void main() {
     testWidgets('disallows re-entry', (WidgetTester tester) async {
       final Completer<void> completer = Completer<void>();
       tester.runAsync<void>(() => completer.future);
-      expect(() => tester.runAsync(() async {}), throwsA(isA<TestFailure>()));
+      expect(() => tester.runAsync(() async { }), throwsA(isA<TestFailure>()));
       completer.complete();
     });
 
@@ -390,7 +373,9 @@ void main() {
         return tester.runAsync<void>(() async {
           expect(Zone.current[key], 'abczed');
         });
-      }, zoneValues: <dynamic, dynamic>{key: 'abczed'});
+      }, zoneValues: <dynamic, dynamic>{
+        key: 'abczed',
+      });
     });
 
     testWidgets('control test (return value)', (WidgetTester tester) async {
@@ -399,95 +384,15 @@ void main() {
     });
 
     testWidgets('async throw', (WidgetTester tester) async {
-      final String? result = await tester.binding.runAsync<Never>(
-        () async => throw Exception('Lois Dilettente'),
-      );
+      final String? result = await tester.binding.runAsync<Never>(() async => throw Exception('Lois Dilettente'));
       expect(result, isNull);
       expect(tester.takeException(), isNotNull);
     });
 
     testWidgets('sync throw', (WidgetTester tester) async {
-      final String? result = await tester.binding.runAsync<Never>(
-        () => throw Exception('Butch Barton'),
-      );
+      final String? result = await tester.binding.runAsync<Never>(() => throw Exception('Butch Barton'));
       expect(result, isNull);
       expect(tester.takeException(), isNotNull);
-    });
-
-    testWidgets('runs in original zone', (WidgetTester tester) async {
-      final Zone testZone = Zone.current;
-      Zone? runAsyncZone;
-      Zone? timerZone;
-      Zone? periodicTimerZone;
-      Zone? microtaskZone;
-
-      Zone? innerZone;
-      Zone? innerTimerZone;
-      Zone? innerPeriodicTimerZone;
-      Zone? innerMicrotaskZone;
-
-      await tester.binding.runAsync<void>(() async {
-        final Zone currentZone = Zone.current;
-        runAsyncZone = currentZone;
-
-        // Complete a future when all callbacks have completed.
-        int pendingCallbacks = 6;
-        final Completer<void> callbacksDone = Completer<void>();
-        void onCallback() {
-          if (--pendingCallbacks == 0) {
-            testZone.run(() {
-              callbacksDone.complete(null);
-            });
-          }
-        }
-
-        // On the runAsync zone itself.
-        currentZone.createTimer(Duration.zero, () {
-          timerZone = Zone.current;
-          onCallback();
-        });
-        currentZone.createPeriodicTimer(Duration.zero, (Timer timer) {
-          timer.cancel();
-          periodicTimerZone = Zone.current;
-          onCallback();
-        });
-        currentZone.scheduleMicrotask(() {
-          microtaskZone = Zone.current;
-          onCallback();
-        });
-
-        // On a nested user-created zone.
-        final Zone inner = runZoned(() => Zone.current);
-        innerZone = inner;
-        inner.createTimer(Duration.zero, () {
-          innerTimerZone = Zone.current;
-          onCallback();
-        });
-        inner.createPeriodicTimer(Duration.zero, (Timer timer) {
-          timer.cancel();
-          innerPeriodicTimerZone = Zone.current;
-          onCallback();
-        });
-        inner.scheduleMicrotask(() {
-          innerMicrotaskZone = Zone.current;
-          onCallback();
-        });
-
-        await callbacksDone.future;
-      });
-      expect(runAsyncZone, isNotNull);
-      expect(timerZone, same(runAsyncZone));
-      expect(periodicTimerZone, same(runAsyncZone));
-      expect(microtaskZone, same(runAsyncZone));
-
-      expect(innerZone, isNotNull);
-      expect(innerTimerZone, same(innerZone));
-      expect(innerPeriodicTimerZone, same(innerZone));
-      expect(innerMicrotaskZone, same(innerZone));
-
-      expect(runAsyncZone, isNot(same(testZone)));
-      expect(runAsyncZone, isNot(same(innerZone)));
-      expect(innerZone, isNot(same(testZone)));
     });
   });
 
@@ -495,7 +400,11 @@ void main() {
     testWidgets('can be called twice', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(child: Center(child: TextFormField())),
+          home: Material(
+            child: Center(
+              child: TextFormField(),
+            ),
+          ),
         ),
       );
       await tester.showKeyboard(find.byType(TextField));
@@ -514,12 +423,15 @@ void main() {
       (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
-            home: Material(child: Offstage(child: TextFormField())),
+            home: Material(
+              child: Offstage(
+                child: TextFormField(),
+              ),
+            ),
           ),
         );
         await tester.showKeyboard(find.byType(TextField, skipOffstage: false));
-      },
-    );
+      });
   });
 
   testWidgets('verifyTickersWereDisposed control test', (WidgetTester tester) async {
@@ -542,19 +454,16 @@ void main() {
       );
       expect(error.diagnostics.last, isA<DiagnosticsProperty<Ticker>>());
       expect(error.diagnostics.last.value, ticker);
-      expect(
-        error.toStringDeep(),
-        startsWith(
-          'FlutterError\n'
-          '   A Ticker was active .\n'
-          '   All Tickers must be disposed.\n'
-          '   Tickers used by AnimationControllers should be disposed by\n'
-          '   calling dispose() on the AnimationController itself. Otherwise,\n'
-          '   the ticker will leak.\n'
-          '   The offending ticker was:\n'
-          '     _TestTicker()\n',
-        ),
-      );
+      expect(error.toStringDeep(), startsWith(
+        'FlutterError\n'
+        '   A Ticker was active .\n'
+        '   All Tickers must be disposed.\n'
+        '   Tickers used by AnimationControllers should be disposed by\n'
+        '   calling dispose() on the AnimationController itself. Otherwise,\n'
+        '   the ticker will leak.\n'
+        '   The offending ticker was:\n'
+        '     _TestTicker()\n',
+      ));
     }
     ticker.stop();
   });
@@ -562,34 +471,24 @@ void main() {
   group('testWidgets variants work', () {
     int numberOfVariationsRun = 0;
 
-    testWidgets(
-      'variant tests run all values provided',
-      (WidgetTester tester) async {
-        if (debugDefaultTargetPlatformOverride == null) {
-          expect(numberOfVariationsRun, equals(TargetPlatform.values.length));
-        } else {
-          numberOfVariationsRun += 1;
-        }
-      },
-      variant: TargetPlatformVariant(TargetPlatform.values.toSet()),
-    );
+    testWidgets('variant tests run all values provided', (WidgetTester tester) async {
+      if (debugDefaultTargetPlatformOverride == null) {
+        expect(numberOfVariationsRun, equals(TargetPlatform.values.length));
+      } else {
+        numberOfVariationsRun += 1;
+      }
+    }, variant: TargetPlatformVariant(TargetPlatform.values.toSet()));
 
-    testWidgets(
-      'variant tests have descriptions with details',
-      (WidgetTester tester) async {
-        if (debugDefaultTargetPlatformOverride == null) {
-          expect(tester.testDescription, equals('variant tests have descriptions with details'));
-        } else {
-          expect(
-            tester.testDescription,
-            equals(
-              'variant tests have descriptions with details (variant: $debugDefaultTargetPlatformOverride)',
-            ),
-          );
-        }
-      },
-      variant: TargetPlatformVariant(TargetPlatform.values.toSet()),
-    );
+    testWidgets('variant tests have descriptions with details', (WidgetTester tester) async {
+      if (debugDefaultTargetPlatformOverride == null) {
+        expect(tester.testDescription, equals('variant tests have descriptions with details'));
+      } else {
+        expect(
+          tester.testDescription,
+          equals('variant tests have descriptions with details (variant: $debugDefaultTargetPlatformOverride)'),
+        );
+      }
+    }, variant: TargetPlatformVariant(TargetPlatform.values.toSet()));
   });
 
   group('TargetPlatformVariant', () {
@@ -604,14 +503,10 @@ void main() {
       expect(debugDefaultTargetPlatformOverride, equals(origTargetPlatform));
     });
 
-    testWidgets(
-      'TargetPlatformVariant.only tests given value',
-      (WidgetTester tester) async {
-        expect(debugDefaultTargetPlatformOverride, equals(TargetPlatform.iOS));
-        expect(defaultTargetPlatform, equals(TargetPlatform.iOS));
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
-    );
+    testWidgets('TargetPlatformVariant.only tests given value', (WidgetTester tester) async {
+      expect(debugDefaultTargetPlatformOverride, equals(TargetPlatform.iOS));
+      expect(defaultTargetPlatform, equals(TargetPlatform.iOS));
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
     group('all', () {
       testWidgets('TargetPlatformVariant.all tests run all variants', (WidgetTester tester) async {
@@ -622,34 +517,22 @@ void main() {
         }
       }, variant: TargetPlatformVariant.all());
 
-      const Set<TargetPlatform> excludePlatforms = <TargetPlatform>{
-        TargetPlatform.android,
-        TargetPlatform.linux,
-      };
-      testWidgets(
-        'TargetPlatformVariant.all, excluding runs an all variants except those provided in excluding',
-        (WidgetTester tester) async {
-          if (debugDefaultTargetPlatformOverride == null) {
-            expect(
-              numberOfVariationsRun,
-              equals(TargetPlatform.values.length - excludePlatforms.length),
-            );
-            expect(
-              excludePlatforms,
-              isNot(contains(debugDefaultTargetPlatformOverride)),
-              reason: 'this test should not run on any platform in excludePlatforms',
-            );
-          } else {
-            numberOfVariationsRun += 1;
-          }
-        },
-        variant: TargetPlatformVariant.all(excluding: excludePlatforms),
-      );
+      const Set<TargetPlatform> excludePlatforms = <TargetPlatform>{ TargetPlatform.android, TargetPlatform.linux };
+      testWidgets('TargetPlatformVariant.all, excluding runs an all variants except those provided in excluding', (WidgetTester tester) async {
+        if (debugDefaultTargetPlatformOverride == null) {
+          expect(numberOfVariationsRun, equals(TargetPlatform.values.length - excludePlatforms.length));
+          expect(
+            excludePlatforms,
+            isNot(contains(debugDefaultTargetPlatformOverride)),
+            reason: 'this test should not run on any platform in excludePlatforms'
+          );
+        } else {
+          numberOfVariationsRun += 1;
+        }
+      }, variant: TargetPlatformVariant.all(excluding: excludePlatforms));
     });
 
-    testWidgets('TargetPlatformVariant.desktop + mobile contains all TargetPlatform values', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('TargetPlatformVariant.desktop + mobile contains all TargetPlatform values', (WidgetTester tester) async {
       final TargetPlatformVariant all = TargetPlatformVariant.all();
       final TargetPlatformVariant desktop = TargetPlatformVariant.all();
       final TargetPlatformVariant mobile = TargetPlatformVariant.all();
@@ -674,17 +557,13 @@ void main() {
       };
 
       final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
-      debugPrint('DISREGARD NEXT PENDING TIMER LIST, IT IS EXPECTED');
       await binding.runTest(() async {
         final Timer timer = Timer(const Duration(seconds: 1), () {});
         expect(timer.isActive, true);
       }, () {});
 
       expect(flutterErrorDetails.exception, isA<AssertionError>());
-      expect(
-        (flutterErrorDetails.exception as AssertionError).message,
-        'A Timer is still pending even after the widget tree was disposed.',
-      );
+      expect((flutterErrorDetails.exception as AssertionError).message, 'A Timer is still pending even after the widget tree was disposed.');
       expect(binding.inTest, true);
       binding.postTest();
     });
@@ -692,21 +571,14 @@ void main() {
 
   group('Accessibility announcements testing API', () {
     testWidgets('Returns the list of announcements', (WidgetTester tester) async {
+
       // Make sure the handler is properly set
-      expect(
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.checkMockMessageHandler(
-          SystemChannels.accessibility.name,
-          null,
-        ),
-        isFalse,
-      );
+      expect(TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .checkMockMessageHandler(SystemChannels.accessibility.name, null), isFalse);
 
       await SemanticsService.announce('announcement 1', TextDirection.ltr);
-      await SemanticsService.announce(
-        'announcement 2',
-        TextDirection.rtl,
-        assertiveness: Assertiveness.assertive,
-      );
+      await SemanticsService.announce('announcement 2', TextDirection.rtl,
+          assertiveness: Assertiveness.assertive);
       await SemanticsService.announce('announcement 3', TextDirection.rtl);
 
       final List<CapturedAccessibilityAnnouncement> list = tester.takeAnnouncements();
@@ -738,41 +610,34 @@ void main() {
       }
 
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockDecodedMessageHandler<dynamic>(SystemChannels.accessibility, handleMessage);
+          .setMockDecodedMessageHandler<dynamic>(
+              SystemChannels.accessibility, handleMessage);
 
-      await SemanticsService.announce(
-        'announcement 1',
-        TextDirection.rtl,
-        assertiveness: Assertiveness.assertive,
-      );
+      await SemanticsService.announce('announcement 1', TextDirection.rtl,
+          assertiveness: Assertiveness.assertive);
       expect(
-        log,
-        equals(<Map<String, dynamic>>[
-          <String, dynamic>{
-            'type': 'announce',
-            'data': <String, dynamic>{
-              'message': 'announcement 1',
-              'textDirection': 0,
-              'assertiveness': 1,
+          log,
+          equals(<Map<String, dynamic>>[
+            <String, dynamic>{
+              'type': 'announce',
+              'data': <String, dynamic>{
+                'message': 'announcement 1',
+                'textDirection': 0,
+                'assertiveness': 1
+              }
             },
-          },
-        ]),
-      );
+      ]));
 
       // Remove the handler
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockDecodedMessageHandler<dynamic>(SystemChannels.accessibility, null);
+          .setMockDecodedMessageHandler<dynamic>(
+              SystemChannels.accessibility, null);
     });
 
     tearDown(() {
       // Make sure that the handler is removed in [TestWidgetsFlutterBinding.postTest]
-      expect(
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.checkMockMessageHandler(
-          SystemChannels.accessibility.name,
-          null,
-        ),
-        isTrue,
-      );
+      expect(TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .checkMockMessageHandler(SystemChannels.accessibility.name, null), isTrue);
     });
   });
 
@@ -798,10 +663,13 @@ void main() {
     expect(find.byType(View), findsNothing);
   });
 
-  testWidgets('passing a view to pumpWidget with wrapWithView: true throws', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(View(view: FakeView(tester.view), child: const SizedBox.shrink()));
+  testWidgets('passing a view to pumpWidget with wrapWithView: true throws', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      View(
+        view: FakeView(tester.view),
+        child: const SizedBox.shrink(),
+      ),
+    );
     expect(
       tester.takeException(),
       isFlutterError.having(
@@ -812,12 +680,13 @@ void main() {
     );
   });
 
-  testWidgets('can pass a View to pumpWidget when wrapWithView: false', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('can pass a View to pumpWidget when wrapWithView: false', (WidgetTester tester) async {
     await tester.pumpWidget(
       wrapWithView: false,
-      View(view: tester.view, child: const SizedBox.shrink()),
+      View(
+        view: tester.view,
+        child: const SizedBox.shrink(),
+      ),
     );
     expect(find.byType(View), findsOne);
   });
@@ -840,7 +709,9 @@ class FakeMatcher extends AsyncMatcher {
 }
 
 class _AlwaysAnimating extends StatefulWidget {
-  const _AlwaysAnimating({required this.onPaint});
+  const _AlwaysAnimating({
+    required this.onPaint,
+  });
 
   final VoidCallback onPaint;
 
@@ -854,7 +725,10 @@ class _AlwaysAnimatingState extends State<_AlwaysAnimating> with SingleTickerPro
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: const Duration(milliseconds: 100), vsync: this);
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
     _controller.repeat();
   }
 
@@ -869,7 +743,9 @@ class _AlwaysAnimatingState extends State<_AlwaysAnimating> with SingleTickerPro
     return AnimatedBuilder(
       animation: _controller.view,
       builder: (BuildContext context, Widget? child) {
-        return CustomPaint(painter: _AlwaysRepaint(widget.onPaint));
+        return CustomPaint(
+          painter: _AlwaysRepaint(widget.onPaint),
+        );
       },
     );
   }

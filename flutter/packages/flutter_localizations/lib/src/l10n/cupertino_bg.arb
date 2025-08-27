@@ -18,7 +18,7 @@
   "cutButtonLabel": "Изрязване",
   "copyButtonLabel": "Копиране",
   "pasteButtonLabel": "Поставяне",
-  "clearButtonLabel": "Изчистване",
+  "clearButtonLabel": "Clear",
   "selectAllButtonLabel": "Избиране на всички",
   "tabSemanticsLabel": "Раздел $tabIndex от $tabCount",
   "modalBarrierDismissLabel": "Отхвърляне",
@@ -27,7 +27,5 @@
   "menuDismissLabel": "Отхвърляне на менюто",
   "lookUpButtonLabel": "Look Up",
   "searchWebButtonLabel": "Търсене в мрежата",
-  "shareButtonLabel": "Споделяне...",
-  "cancelButtonLabel": "Отказ",
-  "backButtonLabel": "Назад"
+  "shareButtonLabel": "Споделяне..."
 }

@@ -10,7 +10,9 @@ void main() {
   testWidgets('Tooltip is visible when tapping button', (WidgetTester tester) async {
     const String tooltipText = 'I am a Tooltip';
 
-    await tester.pumpWidget(const example.TooltipExampleApp());
+    await tester.pumpWidget(
+      const example.TooltipExampleApp(),
+    );
 
     // Tooltip is not visible before tapping the button.
     expect(find.text(tooltipText), findsNothing);

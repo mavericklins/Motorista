@@ -14,29 +14,52 @@ void main() {
         return const Placeholder();
       },
     );
-    await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: inner));
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: inner,
+      ),
+    );
     expect(log, <TextDirection>[TextDirection.ltr]);
-    await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: inner));
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: inner,
+      ),
+    );
     expect(log, <TextDirection>[TextDirection.ltr]);
-    await tester.pumpWidget(Directionality(textDirection: TextDirection.rtl, child: inner));
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.rtl,
+        child: inner,
+      ),
+    );
     expect(log, <TextDirection>[TextDirection.ltr, TextDirection.rtl]);
-    await tester.pumpWidget(Directionality(textDirection: TextDirection.rtl, child: inner));
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.rtl,
+        child: inner,
+      ),
+    );
     expect(log, <TextDirection>[TextDirection.ltr, TextDirection.rtl]);
-    await tester.pumpWidget(Directionality(textDirection: TextDirection.ltr, child: inner));
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: inner,
+      ),
+    );
     expect(log, <TextDirection>[TextDirection.ltr, TextDirection.rtl, TextDirection.ltr]);
   });
 
   testWidgets('Directionality default', (WidgetTester tester) async {
     bool good = false;
-    await tester.pumpWidget(
-      Builder(
-        builder: (BuildContext context) {
-          expect(Directionality.maybeOf(context), isNull);
-          good = true;
-          return const Placeholder();
-        },
-      ),
-    );
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        expect(Directionality.maybeOf(context), isNull);
+        good = true;
+        return const Placeholder();
+      },
+    ));
     expect(good, isTrue);
   });
 
@@ -48,7 +71,9 @@ void main() {
         key: noDirectionality,
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Container(key: hasDirectionality),
+          child: Container(
+            key: hasDirectionality,
+          ),
         ),
       ),
     );
@@ -64,20 +89,17 @@ void main() {
         key: noDirectionality,
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Container(key: hasDirectionality),
+          child: Container(
+            key: hasDirectionality,
+          ),
         ),
       ),
     );
-    expect(
-      () => Directionality.of(noDirectionality.currentContext!),
-      throwsA(
-        isAssertionError.having(
-          (AssertionError e) => e.message,
-          'message',
-          contains('No Directionality widget found.'),
-        ),
-      ),
-    );
+    expect(() => Directionality.of(noDirectionality.currentContext!), throwsA(isAssertionError.having(
+      (AssertionError e) => e.message,
+      'message',
+      contains('No Directionality widget found.'),
+    )));
     expect(Directionality.of(hasDirectionality.currentContext!), TextDirection.rtl);
   });
 }

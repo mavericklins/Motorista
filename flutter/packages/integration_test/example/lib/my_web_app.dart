@@ -22,7 +22,9 @@ class _MyWebAppState extends State<MyWebApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: const Text('Plugin example app')),
+        appBar: AppBar(
+          title: const Text('Plugin example app'),
+        ),
         body: Center(
           key: const Key('mainapp'),
           child: Text('Platform: ${web.window.navigator.platform}\n'),

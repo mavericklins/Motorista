@@ -17,10 +17,11 @@ import '../../common.dart';
 
 void main() {
   group('TimelineSummary', () {
+
     TimelineSummary summarize(List<Map<String, dynamic>> testEvents) {
-      return TimelineSummary.summarize(
-        Timeline.fromJson(<String, dynamic>{'traceEvents': testEvents}),
-      );
+      return TimelineSummary.summarize(Timeline.fromJson(<String, dynamic>{
+        'traceEvents': testEvents,
+      }));
     }
 
     Map<String, dynamic> frameBegin(int timeStamp) => <String, dynamic>{
@@ -51,33 +52,38 @@ void main() {
       'name': 'SceneDisplayLag',
       'ph': 'b',
       'ts': timeStamp,
-      'args': <String, String>{'vsync_transitions_missed': vsyncsMissed.toString()},
+      'args': <String, String>{
+        'vsync_transitions_missed': vsyncsMissed.toString(),
+      },
     };
 
     Map<String, dynamic> lagEnd(int timeStamp, int vsyncsMissed) => <String, dynamic>{
       'name': 'SceneDisplayLag',
       'ph': 'e',
       'ts': timeStamp,
-      'args': <String, String>{'vsync_transitions_missed': vsyncsMissed.toString()},
+      'args': <String, String>{
+        'vsync_transitions_missed': vsyncsMissed.toString(),
+      },
     };
 
     Map<String, dynamic> cpuUsage(int timeStamp, double cpuUsage) => <String, dynamic>{
       'cat': 'embedder',
       'name': 'CpuUsage',
       'ts': timeStamp,
-      'args': <String, String>{'total_cpu_usage': cpuUsage.toString()},
+      'args': <String, String>{
+        'total_cpu_usage': cpuUsage.toString(),
+      },
     };
 
-    Map<String, dynamic> memoryUsage(int timeStamp, double dirty, double shared) =>
-        <String, dynamic>{
-          'cat': 'embedder',
-          'name': 'MemoryUsage',
-          'ts': timeStamp,
-          'args': <String, String>{
-            'owned_shared_memory_usage': shared.toString(),
-            'dirty_memory_usage': dirty.toString(),
-          },
-        };
+    Map<String, dynamic> memoryUsage(int timeStamp, double dirty, double shared) => <String, dynamic>{
+      'cat': 'embedder',
+      'name': 'MemoryUsage',
+      'ts': timeStamp,
+      'args': <String, String>{
+        'owned_shared_memory_usage': shared.toString(),
+        'dirty_memory_usage': dirty.toString(),
+      },
+    };
 
     Map<String, dynamic> platformVsync(int timeStamp) => <String, dynamic>{
       'name': 'VSYNC',
@@ -85,16 +91,14 @@ void main() {
       'ts': timeStamp,
     };
 
-    Map<String, dynamic> vsyncCallback(
-      int timeStamp, {
-      String phase = 'B',
-      String startTime = '2750850055428',
-      String endTime = '2750866722095',
-    }) => <String, dynamic>{
+    Map<String, dynamic> vsyncCallback(int timeStamp, {String phase = 'B', String startTime = '2750850055428', String endTime = '2750866722095'}) => <String, dynamic>{
       'name': 'VsyncProcessCallback',
       'ph': phase,
       'ts': timeStamp,
-      'args': <String, dynamic>{'StartTime': startTime, 'TargetTime': endTime},
+      'args': <String, dynamic>{
+        'StartTime': startTime,
+        'TargetTime': endTime,
+      },
     };
 
     List<Map<String, dynamic>> genGC(String name, int count, int startTime, int timeDiff) {
@@ -110,7 +114,9 @@ void main() {
           'ts': ts,
           'tts': ts,
           'ph': begin ? 'B' : 'E',
-          'args': <String, dynamic>{'isolateGroupId': 'isolateGroups/10824099774666259225'},
+          'args': <String, dynamic>{
+            'isolateGroupId': 'isolateGroups/10824099774666259225',
+          },
         });
         ts = ts + timeDiff;
         begin = !begin;
@@ -155,10 +161,8 @@ void main() {
       test('counts frames', () {
         expect(
           summarize(<Map<String, dynamic>>[
-            frameBegin(1000),
-            frameEnd(2000),
-            frameBegin(3000),
-            frameEnd(5000),
+            frameBegin(1000), frameEnd(2000),
+            frameBegin(3000), frameEnd(5000),
           ]).countFrames(),
           2,
         );
@@ -170,22 +174,19 @@ void main() {
         expect(
           () => summarize(<Map<String, dynamic>>[]).computeAverageFrameBuildTimeMillis(),
           throwsA(
-            isA<StateError>().having(
-              (StateError e) => e.message,
+            isA<StateError>()
+              .having((StateError e) => e.message,
               'message',
               contains('The TimelineSummary had no events to summarize.'),
-            ),
-          ),
+            )),
         );
       });
 
       test('computes average frame build time in milliseconds', () {
         expect(
           summarize(<Map<String, dynamic>>[
-            frameBegin(1000),
-            frameEnd(2000),
-            frameBegin(3000),
-            frameEnd(5000),
+            frameBegin(1000), frameEnd(2000),
+            frameBegin(3000), frameEnd(5000),
           ]).computeAverageFrameBuildTimeMillis(),
           1.5,
         );
@@ -195,8 +196,7 @@ void main() {
         expect(
           summarize(<Map<String, dynamic>>[
             frameEnd(1000),
-            frameBegin(2000),
-            frameEnd(4000),
+            frameBegin(2000), frameEnd(4000),
           ]).computeAverageFrameBuildTimeMillis(),
           2.0,
         );
@@ -205,8 +205,7 @@ void main() {
       test('skips trailing "begin" events', () {
         expect(
           summarize(<Map<String, dynamic>>[
-            frameBegin(2000),
-            frameEnd(4000),
+            frameBegin(2000), frameEnd(4000),
             frameBegin(5000),
           ]).computeAverageFrameBuildTimeMillis(),
           2.0,
@@ -244,31 +243,26 @@ void main() {
         expect(
           () => summarize(<Map<String, dynamic>>[]).computeWorstFrameBuildTimeMillis(),
           throwsA(
-            isA<StateError>().having(
-              (StateError e) => e.message,
+            isA<StateError>()
+              .having((StateError e) => e.message,
               'message',
               contains('The TimelineSummary had no events to summarize.'),
-            ),
-          ),
+            )),
         );
       });
 
       test('computes worst frame build time in milliseconds', () {
         expect(
           summarize(<Map<String, dynamic>>[
-            frameBegin(1000),
-            frameEnd(2000),
-            frameBegin(3000),
-            frameEnd(5000),
+            frameBegin(1000), frameEnd(2000),
+            frameBegin(3000), frameEnd(5000),
           ]).computeWorstFrameBuildTimeMillis(),
           2.0,
         );
         expect(
           summarize(<Map<String, dynamic>>[
-            frameBegin(3000),
-            frameEnd(5000),
-            frameBegin(1000),
-            frameEnd(2000),
+            frameBegin(3000), frameEnd(5000),
+            frameBegin(1000), frameEnd(2000),
           ]).computeWorstFrameBuildTimeMillis(),
           2.0,
         );
@@ -278,8 +272,7 @@ void main() {
         expect(
           summarize(<Map<String, dynamic>>[
             frameEnd(1000),
-            frameBegin(2000),
-            frameEnd(4000),
+            frameBegin(2000), frameEnd(4000),
           ]).computeWorstFrameBuildTimeMillis(),
           2.0,
         );
@@ -288,8 +281,7 @@ void main() {
       test('skips trailing "begin" events', () {
         expect(
           summarize(<Map<String, dynamic>>[
-            frameBegin(2000),
-            frameEnd(4000),
+            frameBegin(2000), frameEnd(4000),
             frameBegin(5000),
           ]).computeWorstFrameBuildTimeMillis(),
           2.0,
@@ -300,12 +292,9 @@ void main() {
     group('computeMissedFrameBuildBudgetCount', () {
       test('computes the number of missed build budgets', () {
         final TimelineSummary summary = summarize(<Map<String, dynamic>>[
-          frameBegin(1000),
-          frameEnd(18000),
-          frameBegin(19000),
-          frameEnd(28000),
-          frameBegin(29000),
-          frameEnd(47000),
+          frameBegin(1000), frameEnd(18000),
+          frameBegin(19000), frameEnd(28000),
+          frameBegin(29000), frameEnd(47000),
         ]);
 
         expect(summary.countFrames(), 3);
@@ -318,46 +307,41 @@ void main() {
         expect(
           () => summarize(<Map<String, dynamic>>[]).computeAverageFrameRasterizerTimeMillis(),
           throwsA(
-            isA<StateError>().having(
-              (StateError e) => e.message,
+            isA<StateError>()
+              .having((StateError e) => e.message,
               'message',
               contains('The TimelineSummary had no events to summarize.'),
-            ),
-          ),
+            )),
         );
       });
 
       test('computes average frame rasterizer time in milliseconds', () {
         expect(
-          summarize(<Map<String, dynamic>>[
-            begin(1000),
-            end(2000),
-            begin(3000),
-            end(5000),
-          ]).computeAverageFrameRasterizerTimeMillis(),
-          1.5,
+            summarize(<Map<String, dynamic>>[
+              begin(1000), end(2000),
+              begin(3000), end(5000),
+            ]).computeAverageFrameRasterizerTimeMillis(),
+            1.5,
         );
       });
 
       test('skips leading "end" events', () {
         expect(
-          summarize(<Map<String, dynamic>>[
-            end(1000),
-            begin(2000),
-            end(4000),
-          ]).computeAverageFrameRasterizerTimeMillis(),
-          2.0,
+            summarize(<Map<String, dynamic>>[
+              end(1000),
+              begin(2000), end(4000),
+            ]).computeAverageFrameRasterizerTimeMillis(),
+            2.0,
         );
       });
 
       test('skips trailing "begin" events', () {
         expect(
-          summarize(<Map<String, dynamic>>[
-            begin(2000),
-            end(4000),
-            begin(5000),
-          ]).computeAverageFrameRasterizerTimeMillis(),
-          2.0,
+            summarize(<Map<String, dynamic>>[
+              begin(2000), end(4000),
+              begin(5000),
+            ]).computeAverageFrameRasterizerTimeMillis(),
+            2.0,
         );
       });
     });
@@ -367,55 +351,49 @@ void main() {
         expect(
           () => summarize(<Map<String, dynamic>>[]).computeWorstFrameRasterizerTimeMillis(),
           throwsA(
-            isA<StateError>().having(
-              (StateError e) => e.message,
+            isA<StateError>()
+              .having((StateError e) => e.message,
               'message',
               contains('The TimelineSummary had no events to summarize.'),
-            ),
-          ),
+            )),
         );
       });
 
+
       test('computes worst frame rasterizer time in milliseconds', () {
         expect(
-          summarize(<Map<String, dynamic>>[
-            begin(1000),
-            end(2000),
-            begin(3000),
-            end(5000),
-          ]).computeWorstFrameRasterizerTimeMillis(),
-          2.0,
+            summarize(<Map<String, dynamic>>[
+              begin(1000), end(2000),
+              begin(3000), end(5000),
+            ]).computeWorstFrameRasterizerTimeMillis(),
+            2.0,
         );
         expect(
-          summarize(<Map<String, dynamic>>[
-            begin(3000),
-            end(5000),
-            begin(1000),
-            end(2000),
-          ]).computeWorstFrameRasterizerTimeMillis(),
-          2.0,
+            summarize(<Map<String, dynamic>>[
+              begin(3000), end(5000),
+              begin(1000), end(2000),
+            ]).computeWorstFrameRasterizerTimeMillis(),
+            2.0,
         );
       });
 
       test('skips leading "end" events', () {
         expect(
-          summarize(<Map<String, dynamic>>[
-            end(1000),
-            begin(2000),
-            end(4000),
-          ]).computeWorstFrameRasterizerTimeMillis(),
-          2.0,
+            summarize(<Map<String, dynamic>>[
+              end(1000),
+              begin(2000), end(4000),
+            ]).computeWorstFrameRasterizerTimeMillis(),
+            2.0,
         );
       });
 
       test('skips trailing "begin" events', () {
         expect(
-          summarize(<Map<String, dynamic>>[
-            begin(2000),
-            end(4000),
-            begin(5000),
-          ]).computeWorstFrameRasterizerTimeMillis(),
-          2.0,
+            summarize(<Map<String, dynamic>>[
+              begin(2000), end(4000),
+              begin(5000),
+            ]).computeWorstFrameRasterizerTimeMillis(),
+            2.0,
         );
       });
     });
@@ -423,17 +401,16 @@ void main() {
     group('percentile_frame_rasterizer_time_millis', () {
       test('throws when there is no data', () {
         expect(
-          () =>
-              summarize(<Map<String, dynamic>>[]).computePercentileFrameRasterizerTimeMillis(90.0),
+          () => summarize(<Map<String, dynamic>>[]).computePercentileFrameRasterizerTimeMillis(90.0),
           throwsA(
-            isA<StateError>().having(
-              (StateError e) => e.message,
+            isA<StateError>()
+              .having((StateError e) => e.message,
               'message',
               contains('The TimelineSummary had no events to summarize.'),
-            ),
-          ),
+            )),
         );
       });
+
 
       const List<List<int>> sequences = <List<int>>[
         <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -441,14 +418,16 @@ void main() {
         <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
       ];
 
-      const List<int> p90s = <int>[9, 5, 18];
+      const List<int> p90s = <int>[
+        9,
+        5,
+        18,
+      ];
 
       test('computes 90th frame rasterizer time in milliseconds', () {
         for (int i = 0; i < sequences.length; ++i) {
           expect(
-            summarize(
-              rasterizeTimeSequenceInMillis(sequences[i]),
-            ).computePercentileFrameRasterizerTimeMillis(90.0),
+            summarize(rasterizeTimeSequenceInMillis(sequences[i])).computePercentileFrameRasterizerTimeMillis(90.0),
             p90s[i],
           );
         }
@@ -460,9 +439,7 @@ void main() {
           sequence.add(i);
         }
         expect(
-          summarize(
-            rasterizeTimeSequenceInMillis(sequence),
-          ).computePercentileFrameRasterizerTimeMillis(99.0),
+          summarize(rasterizeTimeSequenceInMillis(sequence)).computePercentileFrameRasterizerTimeMillis(99.0),
           99,
         );
       });
@@ -471,12 +448,9 @@ void main() {
     group('computeMissedFrameRasterizerBudgetCount', () {
       test('computes the number of missed rasterizer budgets', () {
         final TimelineSummary summary = summarize(<Map<String, dynamic>>[
-          begin(1000),
-          end(18000),
-          begin(19000),
-          end(28000),
-          begin(29000),
-          end(47000),
+          begin(1000), end(18000),
+          begin(19000), end(28000),
+          begin(29000), end(47000),
         ]);
 
         expect(summary.computeMissedFrameRasterizerBudgetCount(), 2);
@@ -487,20 +461,14 @@ void main() {
       test('computes and returns summary as JSON', () {
         expect(
           summarize(<Map<String, dynamic>>[
-            begin(1000),
-            end(19000),
-            begin(19001),
-            end(29001),
-            begin(29002),
-            end(49002),
+            begin(1000), end(19000),
+            begin(19001), end(29001),
+            begin(29002), end(49002),
             ...newGenGC(4, 10, 100),
             ...oldGenGC(5, 10000, 100),
-            frameBegin(1000),
-            frameEnd(18000),
-            frameBegin(19000),
-            frameEnd(28000),
-            frameBegin(29000),
-            frameEnd(48000),
+            frameBegin(1000), frameEnd(18000),
+            frameBegin(19000), frameEnd(28000),
+            frameBegin(29000), frameEnd(48000),
             frameRequestPendingStart('1', 1000),
             frameRequestPendingEnd('1', 2000),
             frameRequestPendingStart('2', 3000),
@@ -574,6 +542,7 @@ void main() {
     });
 
     group('writeTimelineToFile', () {
+
       late Directory tempDir;
 
       setUp(() {
@@ -587,26 +556,24 @@ void main() {
       });
 
       test('writes timeline to JSON file without summary', () async {
-        await summarize(<Map<String, String>>[
-          <String, String>{'foo': 'bar'},
-        ]).writeTimelineToFile('test', destinationDirectory: tempDir.path, includeSummary: false);
-        final String written = await fs
-            .file(path.join(tempDir.path, 'test.timeline.json'))
-            .readAsString();
+        await summarize(<Map<String, String>>[<String, String>{'foo': 'bar'}])
+          .writeTimelineToFile('test', destinationDirectory: tempDir.path, includeSummary: false);
+        final String written =
+            await fs.file(path.join(tempDir.path, 'test.timeline.json')).readAsString();
         expect(written, '{"traceEvents":[{"foo":"bar"}]}');
       });
 
       test('writes timeline to JSON file with summary', () async {
         await summarize(<Map<String, dynamic>>[
           <String, String>{'foo': 'bar'},
-          begin(1000),
-          end(19000),
-          frameBegin(1000),
-          frameEnd(18000),
-        ]).writeTimelineToFile('test', destinationDirectory: tempDir.path);
-        final String written = await fs
-            .file(path.join(tempDir.path, 'test.timeline.json'))
-            .readAsString();
+          begin(1000), end(19000),
+          frameBegin(1000), frameEnd(18000),
+        ]).writeTimelineToFile(
+          'test',
+          destinationDirectory: tempDir.path,
+        );
+        final String written =
+            await fs.file(path.join(tempDir.path, 'test.timeline.json')).readAsString();
         expect(
           written,
           '{"traceEvents":[{"foo":"bar"},'
@@ -619,32 +586,20 @@ void main() {
 
       test('writes summary to JSON file', () async {
         await summarize(<Map<String, dynamic>>[
-          begin(1000),
-          end(19000),
-          begin(19001),
-          end(29001),
-          begin(29002),
-          end(49002),
-          frameBegin(1000),
-          frameEnd(18000),
-          frameBegin(19000),
-          frameEnd(28000),
-          frameBegin(29000),
-          frameEnd(48000),
-          lagBegin(1000, 4),
-          lagEnd(2000, 4),
-          lagBegin(1200, 12),
-          lagEnd(2400, 12),
-          lagBegin(4200, 8),
-          lagEnd(9400, 8),
+          begin(1000), end(19000),
+          begin(19001), end(29001),
+          begin(29002), end(49002),
+          frameBegin(1000), frameEnd(18000),
+          frameBegin(19000), frameEnd(28000),
+          frameBegin(29000), frameEnd(48000),
+          lagBegin(1000, 4), lagEnd(2000, 4),
+          lagBegin(1200, 12), lagEnd(2400, 12),
+          lagBegin(4200, 8), lagEnd(9400, 8),
           ...newGenGC(4, 10, 100),
           ...oldGenGC(5, 10000, 100),
-          cpuUsage(5000, 20),
-          cpuUsage(5010, 60),
-          memoryUsage(6000, 20, 40),
-          memoryUsage(6100, 30, 45),
-          platformVsync(7000),
-          vsyncCallback(7500),
+          cpuUsage(5000, 20), cpuUsage(5010, 60),
+          memoryUsage(6000, 20, 40), memoryUsage(6100, 30, 45),
+          platformVsync(7000), vsyncCallback(7500),
           frameRequestPendingStart('1', 1000),
           frameRequestPendingEnd('1', 2000),
           frameRequestPendingStart('2', 3000),
@@ -652,9 +607,8 @@ void main() {
           frameRequestPendingStart('3', 6000),
           frameRequestPendingEnd('3', 9000),
         ]).writeTimelineToFile('test', destinationDirectory: tempDir.path);
-        final String written = await fs
-            .file(path.join(tempDir.path, 'test.timeline_summary.json'))
-            .readAsString();
+        final String written =
+            await fs.file(path.join(tempDir.path, 'test.timeline_summary.json')).readAsString();
         expect(json.decode(written), <String, dynamic>{
           'average_frame_build_time_millis': 15.0,
           'worst_frame_build_time_millis': 19.0,
@@ -727,18 +681,17 @@ void main() {
 
     group('SceneDisplayLagSummarizer tests', () {
       SceneDisplayLagSummarizer summarize(List<Map<String, dynamic>> traceEvents) {
-        final Timeline timeline = Timeline.fromJson(<String, dynamic>{'traceEvents': traceEvents});
-        return SceneDisplayLagSummarizer(timeline.events!);
+          final Timeline timeline = Timeline.fromJson(<String, dynamic>{
+          'traceEvents': traceEvents,
+          });
+          return SceneDisplayLagSummarizer(timeline.events!);
       }
 
       test('average_vsyncs_missed', () async {
         final SceneDisplayLagSummarizer summarizer = summarize(<Map<String, dynamic>>[
-          lagBegin(1000, 4),
-          lagEnd(2000, 4),
-          lagBegin(1200, 12),
-          lagEnd(2400, 12),
-          lagBegin(4200, 8),
-          lagEnd(9400, 8),
+          lagBegin(1000, 4), lagEnd(2000, 4),
+          lagBegin(1200, 12), lagEnd(2400, 12),
+          lagBegin(4200, 8), lagEnd(9400, 8),
         ]);
         expect(summarizer.computeAverageVsyncTransitionsMissed(), 8.0);
       });
@@ -752,40 +705,26 @@ void main() {
 
       test('90th_percentile_vsyncs_missed', () async {
         final SceneDisplayLagSummarizer summarizer = summarize(<Map<String, dynamic>>[
-          lagBegin(1000, 4),
-          lagEnd(2000, 4),
-          lagBegin(1200, 12),
-          lagEnd(2400, 12),
-          lagBegin(4200, 8),
-          lagEnd(9400, 8),
-          lagBegin(6100, 14),
-          lagEnd(11000, 14),
-          lagBegin(7100, 16),
-          lagEnd(11500, 16),
-          lagBegin(7400, 11),
-          lagEnd(13000, 11),
-          lagBegin(8200, 27),
-          lagEnd(14100, 27),
-          lagBegin(8700, 7),
-          lagEnd(14300, 7),
-          lagBegin(24200, 4187),
-          lagEnd(39400, 4187),
+          lagBegin(1000, 4), lagEnd(2000, 4),
+          lagBegin(1200, 12), lagEnd(2400, 12),
+          lagBegin(4200, 8), lagEnd(9400, 8),
+          lagBegin(6100, 14), lagEnd(11000, 14),
+          lagBegin(7100, 16), lagEnd(11500, 16),
+          lagBegin(7400, 11), lagEnd(13000, 11),
+          lagBegin(8200, 27), lagEnd(14100, 27),
+          lagBegin(8700, 7), lagEnd(14300, 7),
+          lagBegin(24200, 4187), lagEnd(39400, 4187),
         ]);
         expect(summarizer.computePercentileVsyncTransitionsMissed(90), 27.0);
       });
 
       test('99th_percentile_vsyncs_missed', () async {
         final SceneDisplayLagSummarizer summarizer = summarize(<Map<String, dynamic>>[
-          lagBegin(1000, 4),
-          lagEnd(2000, 4),
-          lagBegin(1200, 12),
-          lagEnd(2400, 12),
-          lagBegin(4200, 8),
-          lagEnd(9400, 8),
-          lagBegin(6100, 14),
-          lagEnd(11000, 14),
-          lagBegin(24200, 4187),
-          lagEnd(39400, 4187),
+          lagBegin(1000, 4), lagEnd(2000, 4),
+          lagBegin(1200, 12), lagEnd(2400, 12),
+          lagBegin(4200, 8), lagEnd(9400, 8),
+          lagBegin(6100, 14), lagEnd(11000, 14),
+          lagBegin(24200, 4187), lagEnd(39400, 4187),
         ]);
         expect(summarizer.computePercentileVsyncTransitionsMissed(99), 4187.0);
       });
@@ -793,8 +732,10 @@ void main() {
 
     group('ProfilingSummarizer tests', () {
       ProfilingSummarizer summarize(List<Map<String, dynamic>> traceEvents) {
-        final Timeline timeline = Timeline.fromJson(<String, dynamic>{'traceEvents': traceEvents});
-        return ProfilingSummarizer.fromEvents(timeline.events!);
+          final Timeline timeline = Timeline.fromJson(<String, dynamic>{
+            'traceEvents': traceEvents,
+          });
+          return ProfilingSummarizer.fromEvents(timeline.events!);
       }
 
       test('has_both_cpu_and_memory_usage', () async {
@@ -819,14 +760,10 @@ void main() {
 
       test('90th_percentile_cpu_usage', () async {
         final ProfilingSummarizer summarizer = summarize(<Map<String, dynamic>>[
-          cpuUsage(0, 10),
-          cpuUsage(1, 20),
-          cpuUsage(2, 20),
-          cpuUsage(3, 80),
-          cpuUsage(4, 70),
-          cpuUsage(4, 72),
-          cpuUsage(4, 85),
-          cpuUsage(4, 100),
+          cpuUsage(0, 10), cpuUsage(1, 20),
+          cpuUsage(2, 20), cpuUsage(3, 80),
+          cpuUsage(4, 70), cpuUsage(4, 72),
+          cpuUsage(4, 85), cpuUsage(4, 100),
         ]);
         expect(summarizer.computePercentile(ProfileType.CPU, 90), 85.0);
       });
@@ -834,7 +771,9 @@ void main() {
 
     group('VsyncFrameLagSummarizer tests', () {
       VsyncFrameLagSummarizer summarize(List<Map<String, dynamic>> traceEvents) {
-        final Timeline timeline = Timeline.fromJson(<String, dynamic>{'traceEvents': traceEvents});
+        final Timeline timeline = Timeline.fromJson(<String, dynamic>{
+          'traceEvents': traceEvents,
+        });
         return VsyncFrameLagSummarizer(timeline.events!);
       }
 
@@ -890,30 +829,22 @@ void main() {
     });
 
     group('RefreshRateSummarizer tests', () {
+
       const double kCompareDelta = 0.01;
       RefreshRateSummary summarizeRefresh(List<Map<String, dynamic>> traceEvents) {
-        final Timeline timeline = Timeline.fromJson(<String, dynamic>{'traceEvents': traceEvents});
+        final Timeline timeline = Timeline.fromJson(<String, dynamic>{
+          'traceEvents': traceEvents,
+        });
         return RefreshRateSummary(vsyncEvents: timeline.events!);
       }
 
-      List<Map<String, dynamic>> populateEvents({
-        required int numberOfEvents,
-        required int startTime,
-        required int interval,
-        required int margin,
-      }) {
+      List<Map<String, dynamic>> populateEvents({required int numberOfEvents, required  int startTime, required int interval, required int margin}) {
         final List<Map<String, dynamic>> events = <Map<String, dynamic>>[];
         int startTimeInNanoseconds = startTime;
-        for (int i = 0; i < numberOfEvents; i++) {
-          final int randomMargin = margin >= 1 ? (-margin + Random().nextInt(margin * 2)) : 0;
+        for (int i = 0; i < numberOfEvents; i ++) {
+          final int randomMargin = margin >= 1 ? (-margin + Random().nextInt(margin*2)) : 0;
           final int endTime = startTimeInNanoseconds + interval + randomMargin;
-          events.add(
-            vsyncCallback(
-              0,
-              startTime: startTimeInNanoseconds.toString(),
-              endTime: endTime.toString(),
-            ),
-          );
+          events.add(vsyncCallback(0, startTime: startTimeInNanoseconds.toString(), endTime: endTime.toString()));
           startTimeInNanoseconds = endTime;
         }
         return events;
@@ -924,12 +855,11 @@ void main() {
         const int intervalInNanoseconds = 33333333;
         // allow some margins
         const int margin = 3000000;
-        final List<Map<String, dynamic>> events = populateEvents(
-          numberOfEvents: 100,
-          startTime: startTimeInNanoseconds,
-          interval: intervalInNanoseconds,
-          margin: margin,
-        );
+        final List<Map<String, dynamic>> events = populateEvents(numberOfEvents: 100,
+                                                                  startTime: startTimeInNanoseconds,
+                                                                  interval: intervalInNanoseconds,
+                                                                  margin: margin,
+                                                                 );
         final RefreshRateSummary summary = summarizeRefresh(events);
         expect(summary.percentageOf30HzFrames, closeTo(100, kCompareDelta));
         expect(summary.percentageOf60HzFrames, 0);
@@ -943,12 +873,11 @@ void main() {
         const int intervalInNanoseconds = 16666666;
         // allow some margins
         const int margin = 1200000;
-        final List<Map<String, dynamic>> events = populateEvents(
-          numberOfEvents: 100,
-          startTime: startTimeInNanoseconds,
-          interval: intervalInNanoseconds,
-          margin: margin,
-        );
+        final List<Map<String, dynamic>> events = populateEvents(numberOfEvents: 100,
+                                                                  startTime: startTimeInNanoseconds,
+                                                                  interval: intervalInNanoseconds,
+                                                                  margin: margin,
+                                                                 );
 
         final RefreshRateSummary summary = summarizeRefresh(events);
         expect(summary.percentageOf30HzFrames, 0);
@@ -963,12 +892,11 @@ void main() {
         const int intervalInNanoseconds = 11111111;
         // allow some margins
         const int margin = 500000;
-        final List<Map<String, dynamic>> events = populateEvents(
-          numberOfEvents: 100,
-          startTime: startTimeInNanoseconds,
-          interval: intervalInNanoseconds,
-          margin: margin,
-        );
+        final List<Map<String, dynamic>> events = populateEvents(numberOfEvents: 100,
+                                                                  startTime: startTimeInNanoseconds,
+                                                                  interval: intervalInNanoseconds,
+                                                                  margin: margin,
+                                                                 );
 
         final RefreshRateSummary summary = summarizeRefresh(events);
         expect(summary.percentageOf30HzFrames, 0);
@@ -983,12 +911,11 @@ void main() {
         const int intervalInNanoseconds = 8333333;
         // allow some margins
         const int margin = 300000;
-        final List<Map<String, dynamic>> events = populateEvents(
-          numberOfEvents: 100,
-          startTime: startTimeInNanoseconds,
-          interval: intervalInNanoseconds,
-          margin: margin,
-        );
+        final List<Map<String, dynamic>> events = populateEvents(numberOfEvents: 100,
+                                                                  startTime: startTimeInNanoseconds,
+                                                                  interval: intervalInNanoseconds,
+                                                                  margin: margin,
+                                                                 );
         final RefreshRateSummary summary = summarizeRefresh(events);
         expect(summary.percentageOf30HzFrames, 0);
         expect(summary.percentageOf60HzFrames, 0);
@@ -1000,12 +927,11 @@ void main() {
       test('Identify illegal refresh rates.', () async {
         const int startTimeInNanoseconds = 2750850055430;
         const int intervalInNanoseconds = 10000000;
-        final List<Map<String, dynamic>> events = populateEvents(
-          numberOfEvents: 1,
-          startTime: startTimeInNanoseconds,
-          interval: intervalInNanoseconds,
-          margin: 0,
-        );
+        final List<Map<String, dynamic>> events = populateEvents(numberOfEvents: 1,
+                                                                  startTime: startTimeInNanoseconds,
+                                                                  interval: intervalInNanoseconds,
+                                                                  margin: 0,
+                                                                 );
         final RefreshRateSummary summary = summarizeRefresh(events);
         expect(summary.percentageOf30HzFrames, 0);
         expect(summary.percentageOf60HzFrames, 0);
@@ -1016,6 +942,7 @@ void main() {
       });
 
       test('Mixed refresh rates.', () async {
+
         final List<Map<String, dynamic>> events = <Map<String, dynamic>>[];
         const int num30Hz = 10;
         const int num60Hz = 20;
@@ -1026,45 +953,54 @@ void main() {
         const int totalFrames = num30Hz + num60Hz + num80Hz + num90Hz + num120Hz + numIllegal;
 
         // Add 30hz frames
-        events.addAll(
-          populateEvents(numberOfEvents: num30Hz, startTime: 0, interval: 32000000, margin: 0),
-        );
+        events.addAll(populateEvents(numberOfEvents: num30Hz,
+                                      startTime: 0,
+                                      interval: 32000000,
+                                      margin: 0,
+                                      ));
 
         // Add 60hz frames
-        events.addAll(
-          populateEvents(numberOfEvents: num60Hz, startTime: 0, interval: 16000000, margin: 0),
-        );
+        events.addAll(populateEvents(numberOfEvents: num60Hz,
+                                      startTime: 0,
+                                      interval: 16000000,
+                                      margin: 0,
+                                      ));
 
         // Add 80hz frames
-        events.addAll(
-          populateEvents(numberOfEvents: num80Hz, startTime: 0, interval: 12000000, margin: 0),
-        );
+        events.addAll(populateEvents(numberOfEvents: num80Hz,
+                                      startTime: 0,
+                                      interval: 12000000,
+                                      margin: 0,
+                                      ));
 
         // Add 90hz frames
-        events.addAll(
-          populateEvents(numberOfEvents: num90Hz, startTime: 0, interval: 11000000, margin: 0),
-        );
+        events.addAll(populateEvents(numberOfEvents: num90Hz,
+                                      startTime: 0,
+                                      interval: 11000000,
+                                      margin: 0,
+                                      ));
 
         // Add 120hz frames
-        events.addAll(
-          populateEvents(numberOfEvents: num120Hz, startTime: 0, interval: 8000000, margin: 0),
-        );
+        events.addAll(populateEvents(numberOfEvents: num120Hz,
+                                      startTime: 0,
+                                      interval: 8000000,
+                                      margin: 0,
+                                      ));
 
         // Add illegal refresh rate frames
-        events.addAll(
-          populateEvents(numberOfEvents: numIllegal, startTime: 0, interval: 60000, margin: 0),
-        );
+        events.addAll(populateEvents(numberOfEvents: numIllegal,
+                                      startTime: 0,
+                                      interval: 60000,
+                                      margin: 0,
+                                      ));
 
-        final RefreshRateSummary summary = summarizeRefresh(events);
+        final RefreshRateSummary summary  = summarizeRefresh(events);
 
-        expect(summary.percentageOf30HzFrames, closeTo(num30Hz / totalFrames * 100, kCompareDelta));
-        expect(summary.percentageOf60HzFrames, closeTo(num60Hz / totalFrames * 100, kCompareDelta));
-        expect(summary.percentageOf80HzFrames, closeTo(num80Hz / totalFrames * 100, kCompareDelta));
-        expect(summary.percentageOf90HzFrames, closeTo(num90Hz / totalFrames * 100, kCompareDelta));
-        expect(
-          summary.percentageOf120HzFrames,
-          closeTo(num120Hz / totalFrames * 100, kCompareDelta),
-        );
+        expect(summary.percentageOf30HzFrames, closeTo(num30Hz/totalFrames*100, kCompareDelta));
+        expect(summary.percentageOf60HzFrames, closeTo(num60Hz/totalFrames*100, kCompareDelta));
+        expect(summary.percentageOf80HzFrames, closeTo(num80Hz/totalFrames*100, kCompareDelta));
+        expect(summary.percentageOf90HzFrames, closeTo(num90Hz/totalFrames*100, kCompareDelta));
+        expect(summary.percentageOf120HzFrames, closeTo(num120Hz/totalFrames*100, kCompareDelta));
         expect(summary.framesWithIllegalRefreshRate, isNotEmpty);
         expect(summary.framesWithIllegalRefreshRate.length, 10);
       });

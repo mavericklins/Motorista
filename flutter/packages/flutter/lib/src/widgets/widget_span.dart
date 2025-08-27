@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'editable_text.dart';
-/// @docImport 'text.dart';
-library;
-
 import 'dart:ui' as ui show ParagraphBuilder, PlaceholderAlignment;
 
 import 'package:flutter/foundation.dart';
@@ -78,12 +74,17 @@ class WidgetSpan extends PlaceholderSpan {
   ///
   /// A [TextStyle] may be provided with the [style] property, but only the
   /// decoration, foreground, background, and spacing options will be used.
-  const WidgetSpan({required this.child, super.alignment, super.baseline, super.style})
-    : assert(
-        baseline != null ||
-            !(identical(alignment, ui.PlaceholderAlignment.aboveBaseline) ||
-                identical(alignment, ui.PlaceholderAlignment.belowBaseline) ||
-                identical(alignment, ui.PlaceholderAlignment.baseline)),
+  const WidgetSpan({
+    required this.child,
+    super.alignment,
+    super.baseline,
+    super.style,
+  }) : assert(
+         baseline != null || !(
+          identical(alignment, ui.PlaceholderAlignment.aboveBaseline) ||
+          identical(alignment, ui.PlaceholderAlignment.belowBaseline) ||
+          identical(alignment, ui.PlaceholderAlignment.baseline)
+        ),
       );
 
   /// Helper function for extracting [WidgetSpan]s in preorder, from the given
@@ -116,11 +117,7 @@ class WidgetSpan extends PlaceholderSpan {
             span: span,
             child: Semantics(
               tagForChildren: PlaceholderSpanIndexSemanticsTag(index++),
-              child: _AutoScaleInlineWidget(
-                span: span,
-                textScaleFactor: textScaleFactor,
-                child: span.child,
-              ),
+              child: _AutoScaleInlineWidget(span: span, textScaleFactor: textScaleFactor, child: span.child),
             ),
           ),
         );
@@ -137,7 +134,6 @@ class WidgetSpan extends PlaceholderSpan {
       }
       return true;
     }
-
     visitSubtree(span);
     return widgets;
   }
@@ -154,8 +150,7 @@ class WidgetSpan extends PlaceholderSpan {
   ///
   /// The `textScaler` will be applied to the laid-out size of the widget.
   @override
-  void build(
-    ui.ParagraphBuilder builder, {
+  void build(ui.ParagraphBuilder builder, {
     TextScaler textScaler = TextScaler.noScaling,
     List<PlaceholderDimensions>? dimensions,
   }) {
@@ -242,10 +237,10 @@ class WidgetSpan extends PlaceholderSpan {
     if (super != other) {
       return false;
     }
-    return other is WidgetSpan &&
-        other.child == child &&
-        other.alignment == alignment &&
-        other.baseline == baseline;
+    return other is WidgetSpan
+        && other.child == child
+        && other.alignment == alignment
+        && other.baseline == baseline;
   }
 
   @override
@@ -282,7 +277,7 @@ class WidgetSpan extends PlaceholderSpan {
 
 // A ParentDataWidget that sets TextParentData.span.
 class _WidgetSpanParentData extends ParentDataWidget<TextParentData> {
-  const _WidgetSpanParentData({required this.span, required super.child});
+  const _WidgetSpanParentData({ required this.span, required super.child });
 
   final WidgetSpan span;
 
@@ -302,11 +297,7 @@ class _WidgetSpanParentData extends ParentDataWidget<TextParentData> {
 // TODO(LongCatIsLooong): this shouldn't happen automatically, at least there
 // should be a way to opt out: https://github.com/flutter/flutter/issues/126962
 class _AutoScaleInlineWidget extends SingleChildRenderObjectWidget {
-  const _AutoScaleInlineWidget({
-    required this.span,
-    required this.textScaleFactor,
-    required super.child,
-  });
+  const _AutoScaleInlineWidget({ required this.span, required this.textScaleFactor, required super.child });
 
   final WidgetSpan span;
   final double textScaleFactor;
@@ -389,19 +380,9 @@ class _RenderScaledInlineWidget extends RenderBox with RenderObjectWithChildMixi
   }
 
   @override
-  double? computeDryBaseline(BoxConstraints constraints, TextBaseline baseline) {
-    final double? distance = child?.getDryBaseline(
-      BoxConstraints(maxWidth: constraints.maxWidth / scale),
-      baseline,
-    );
-    return distance == null ? null : scale * distance;
-  }
-
-  @override
   Size computeDryLayout(BoxConstraints constraints) {
     assert(!constraints.hasBoundedHeight);
-    final Size unscaledSize =
-        child?.getDryLayout(BoxConstraints(maxWidth: constraints.maxWidth / scale)) ?? Size.zero;
+    final Size unscaledSize = child?.getDryLayout(BoxConstraints(maxWidth: constraints.maxWidth / scale)) ?? Size.zero;
     return constraints.constrain(unscaledSize * scale);
   }
 
@@ -420,7 +401,7 @@ class _RenderScaledInlineWidget extends RenderBox with RenderObjectWithChildMixi
 
   @override
   void applyPaintTransform(RenderBox child, Matrix4 transform) {
-    transform.scaleByDouble(scale, scale, scale, 1);
+    transform.scale(scale, scale);
   }
 
   @override
@@ -440,7 +421,7 @@ class _RenderScaledInlineWidget extends RenderBox with RenderObjectWithChildMixi
       offset,
       Matrix4.diagonal3Values(scale, scale, 1.0),
       (PaintingContext context, Offset offset) => context.paintChild(child, offset),
-      oldLayer: layer as TransformLayer?,
+      oldLayer: layer as TransformLayer?
     );
   }
 
@@ -453,8 +434,7 @@ class _RenderScaledInlineWidget extends RenderBox with RenderObjectWithChildMixi
     return result.addWithPaintTransform(
       transform: Matrix4.diagonal3Values(scale, scale, 1.0),
       position: position,
-      hitTest: (BoxHitTestResult result, Offset transformedOffset) =>
-          child.hitTest(result, position: transformedOffset),
+      hitTest: (BoxHitTestResult result, Offset transformedOffset) => child.hitTest(result, position: transformedOffset),
     );
   }
 }

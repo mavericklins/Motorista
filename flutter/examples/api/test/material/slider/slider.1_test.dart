@@ -7,30 +7,23 @@ import 'package:flutter_api_samples/material/slider/slider.1.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Slider shows secondary track', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.SliderApp());
-
-    expect(find.byType(Slider), findsNWidgets(2));
-
-    final Finder slider1Finder = find.byType(Slider).at(0);
-    final Finder slider2Finder = find.byType(Slider).at(1);
-
-    Slider slider1 = tester.widget(slider1Finder);
-    Slider slider2 = tester.widget(slider2Finder);
-    expect(slider1.secondaryTrackValue, slider2.value);
-
-    const double targetValue = 0.8;
-    final Rect rect = tester.getRect(slider2Finder);
-    final Offset target = Offset(
-      rect.left + (rect.right - rect.left) * targetValue,
-      rect.top + (rect.bottom - rect.top) / 2,
+  testWidgets('Slider can change its value', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const example.SliderApp(),
     );
-    await tester.tapAt(target);
+
+    expect(find.byType(Slider), findsOneWidget);
+
+    final Finder sliderFinder = find.byType(Slider);
+
+    Slider slider = tester.widget(sliderFinder);
+    expect(slider.value, 20);
+
+    final Offset center = tester.getCenter(sliderFinder);
+    await tester.tapAt(Offset(center.dx + 100, center.dy));
     await tester.pump();
 
-    slider1 = tester.widget(slider1Finder);
-    slider2 = tester.widget(slider2Finder);
-    expect(slider1.secondaryTrackValue, closeTo(targetValue, 0.05));
-    expect(slider1.secondaryTrackValue, slider2.value);
+    slider = tester.widget(sliderFinder);
+    expect(slider.value, 60.0);
   });
 }

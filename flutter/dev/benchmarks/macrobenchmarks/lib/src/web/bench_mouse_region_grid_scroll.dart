@@ -120,7 +120,6 @@ class _Tester {
       kind: PointerDeviceKind.mouse,
     );
   }
-
   TestGesture? _gesture;
 
   Duration currentTime = Duration.zero;

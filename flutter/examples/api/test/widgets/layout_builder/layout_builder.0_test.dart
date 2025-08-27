@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('has two containers when wide', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.LayoutBuilderExampleApp());
+    await tester.pumpWidget(
+      const example.LayoutBuilderExampleApp(),
+    );
 
     final Finder containerFinder = find.byType(Container);
     expect(containerFinder, findsNWidgets(2));

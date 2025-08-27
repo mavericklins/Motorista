@@ -40,7 +40,10 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage> {
   Future<void>? libraryFuture;
 
-  Widget postLoadDisplayWidget = const Text('placeholder', key: Key('PlaceholderText'));
+  Widget postLoadDisplayWidget = const Text(
+      'placeholder',
+      key: Key('PlaceholderText'),
+    );
 
   @override
   void initState() {
@@ -69,23 +72,26 @@ class MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget testWidget = libraryFuture == null
-        ? const Text('preload', key: Key('PreloadText'))
-        : FutureBuilder<void>(
-            future: libraryFuture,
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                return postLoadDisplayWidget;
-              }
-              return postLoadDisplayWidget;
-            },
-          );
+    final Widget testWidget = libraryFuture == null ? const Text('preload', key: Key('PreloadText')) :
+      FutureBuilder<void>(
+        future: libraryFuture,
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            return postLoadDisplayWidget;
+          }
+          return postLoadDisplayWidget;
+        },
+      );
     return Scaffold(
-      appBar: AppBar(title: const Text('Deferred components test')),
-      body: Center(child: testWidget),
+      appBar: AppBar(
+        title: const Text('Deferred components test'),
+      ),
+      body: Center(
+        child: testWidget,
+      ),
       floatingActionButton: FloatingActionButton(
         key: const Key('FloatingActionButton'),
         onPressed: _pressHandler,

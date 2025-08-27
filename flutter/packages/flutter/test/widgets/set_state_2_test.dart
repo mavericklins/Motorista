@@ -15,47 +15,42 @@ void main() {
       },
     );
     int value = 0;
-    await tester.pumpWidget(
-      Builder(
-        builder: (BuildContext context) {
-          log.add('outer');
-          return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              log.add('stateful');
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    value += 1;
-                  });
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        log.add('outer');
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            log.add('stateful');
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  value += 1;
+                });
+              },
+              child: Builder(
+                builder: (BuildContext context) {
+                  log.add('middle $value');
+                  return inner;
                 },
-                child: Builder(
-                  builder: (BuildContext context) {
-                    log.add('middle $value');
-                    return inner;
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
+              ),
+            );
+          },
+        );
+      },
+    ));
     log.add('---');
     await tester.tap(find.text('inner'));
     await tester.pump();
     log.add('---');
-    expect(
-      log,
-      equals(<String>[
-        'outer',
-        'stateful',
-        'middle 0',
-        'inner',
-        '---',
-        'stateful',
-        'middle 1',
-        '---',
-      ]),
-    );
+    expect(log, equals(<String>[
+      'outer',
+      'stateful',
+      'middle 0',
+      'inner',
+      '---',
+      'stateful',
+      'middle 1',
+      '---',
+    ]));
   });
 }

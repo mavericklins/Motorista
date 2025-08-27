@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
-/// Flutter code sample for [FontFeature.proportionalFigures].
+/// Flutter code sample for [FontFeature.FontFeature.proportionalFigures].
 
 void main() => runApp(const ExampleApp());
 
@@ -31,7 +31,9 @@ class ExampleWidget extends StatelessWidget {
       'Call 311-555-2368 now!',
       style: TextStyle(
         fontFamily: 'Kufam',
-        fontFeatures: <FontFeature>[FontFeature.proportionalFigures()],
+        fontFeatures: <FontFeature>[
+          FontFeature.proportionalFigures(),
+        ],
       ),
     );
   }

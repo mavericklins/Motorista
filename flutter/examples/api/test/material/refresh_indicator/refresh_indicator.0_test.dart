@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Trigger RefreshIndicator - Pull from top', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.RefreshIndicatorExampleApp());
+    await tester.pumpWidget(
+      const example.RefreshIndicatorExampleApp(),
+    );
 
     await tester.fling(find.text('Item 1'), const Offset(0.0, 300.0), 1000.0);
     await tester.pump();
@@ -19,7 +21,9 @@ void main() {
   });
 
   testWidgets('Trigger RefreshIndicator - Button', (WidgetTester tester) async {
-    await tester.pumpWidget(const example.RefreshIndicatorExampleApp());
+    await tester.pumpWidget(
+      const example.RefreshIndicatorExampleApp(),
+    );
 
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pump();

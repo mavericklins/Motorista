@@ -33,7 +33,10 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         home: Center(
-          child: DesktopTextSelectionToolbarButton(onPressed: null, child: Text('Cannot tap me')),
+          child: DesktopTextSelectionToolbarButton(
+            onPressed: null,
+            child: Text('Cannot tap me'),
+          ),
         ),
       ),
     );

@@ -22,7 +22,9 @@ class CupertinoProgressIndicatorDemo extends StatelessWidget {
         middle: const Text('Activity Indicator'),
         trailing: CupertinoDemoDocumentationButton(routeName),
       ),
-      child: const Center(child: CupertinoActivityIndicator()),
+      child: const Center(
+        child: CupertinoActivityIndicator(),
+      ),
     );
   }
 }

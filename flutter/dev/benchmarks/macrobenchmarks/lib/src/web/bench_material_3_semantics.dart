@@ -38,15 +38,11 @@ class BenchMaterial3Semantics extends WidgetBuildRecorder {
     if (showWidget) {
       final AggregatedTimings timings = FlutterTimeline.debugCollect();
       final AggregatedTimedBlock semanticsBlock = timings.getAggregated('SEMANTICS');
-      final AggregatedTimedBlock updateChildren = timings.getAggregated('Semantics.updateChildren');
-      final AggregatedTimedBlock ensureGeometry = timings.getAggregated('Semantics.ensureGeometry');
-      final AggregatedTimedBlock ensureSemanticsNode = timings.getAggregated(
-        'Semantics.ensureSemanticsNode',
-      );
+      final AggregatedTimedBlock getFragmentBlock = timings.getAggregated('Semantics.GetFragment');
+      final AggregatedTimedBlock compileChildrenBlock = timings.getAggregated('Semantics.compileChildren');
       profile!.addTimedBlock(semanticsBlock, reported: true);
-      profile!.addTimedBlock(updateChildren, reported: true);
-      profile!.addTimedBlock(ensureGeometry, reported: true);
-      profile!.addTimedBlock(ensureSemanticsNode, reported: true);
+      profile!.addTimedBlock(getFragmentBlock, reported: true);
+      profile!.addTimedBlock(compileChildrenBlock, reported: true);
     }
 
     super.frameDidDraw();
@@ -92,15 +88,11 @@ class BenchMaterial3ScrollSemantics extends WidgetRecorder {
   void frameDidDraw() {
     final AggregatedTimings timings = FlutterTimeline.debugCollect();
     final AggregatedTimedBlock semanticsBlock = timings.getAggregated('SEMANTICS');
-    final AggregatedTimedBlock updateChildren = timings.getAggregated('Semantics.updateChildren');
-    final AggregatedTimedBlock ensureGeometry = timings.getAggregated('Semantics.ensureGeometry');
-    final AggregatedTimedBlock ensureSemanticsNode = timings.getAggregated(
-      'Semantics.ensureSemanticsNode',
-    );
+    final AggregatedTimedBlock getFragmentBlock = timings.getAggregated('Semantics.GetFragment');
+    final AggregatedTimedBlock compileChildrenBlock = timings.getAggregated('Semantics.compileChildren');
     profile!.addTimedBlock(semanticsBlock, reported: true);
-    profile!.addTimedBlock(updateChildren, reported: true);
-    profile!.addTimedBlock(ensureGeometry, reported: true);
-    profile!.addTimedBlock(ensureSemanticsNode, reported: true);
+    profile!.addTimedBlock(getFragmentBlock, reported: true);
+    profile!.addTimedBlock(compileChildrenBlock, reported: true);
 
     super.frameDidDraw();
     FlutterTimeline.debugReset();
@@ -148,6 +140,8 @@ class _ScrollTestState extends State<_ScrollTest> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
-    return SingleColumnMaterial3Components(scrollController: scrollController);
+    return SingleColumnMaterial3Components(
+      scrollController: scrollController,
+    );
   }
 }

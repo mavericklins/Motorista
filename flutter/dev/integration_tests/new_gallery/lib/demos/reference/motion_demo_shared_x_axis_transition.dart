@@ -11,7 +11,8 @@ import '../../gallery_localizations.dart';
 class SharedXAxisTransitionDemo extends StatefulWidget {
   const SharedXAxisTransitionDemo({super.key});
   @override
-  State<SharedXAxisTransitionDemo> createState() => _SharedXAxisTransitionDemoState();
+  State<SharedXAxisTransitionDemo> createState() =>
+      _SharedXAxisTransitionDemoState();
 }
 
 class _SharedXAxisTransitionDemoState extends State<SharedXAxisTransitionDemo> {
@@ -36,7 +37,10 @@ class _SharedXAxisTransitionDemoState extends State<SharedXAxisTransitionDemo> {
             Text(localizations.demoSharedXAxisTitle),
             Text(
               '(${localizations.demoSharedXAxisDemoInstructions})',
-              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.white),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall!
+                  .copyWith(color: Colors.white),
             ),
           ],
         ),
@@ -105,13 +109,18 @@ class _CoursePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
             localizations.demoSharedXAxisCoursePageSubtitle,
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
             textAlign: TextAlign.center,
           ),
         ),
-        _CourseSwitch(course: localizations.demoSharedXAxisArtsAndCraftsCourseTitle),
+        _CourseSwitch(
+            course: localizations.demoSharedXAxisArtsAndCraftsCourseTitle),
         _CourseSwitch(course: localizations.demoSharedXAxisBusinessCourseTitle),
-        _CourseSwitch(course: localizations.demoSharedXAxisIllustrationCourseTitle),
+        _CourseSwitch(
+            course: localizations.demoSharedXAxisIllustrationCourseTitle),
         _CourseSwitch(course: localizations.demoSharedXAxisDesignCourseTitle),
         _CourseSwitch(course: localizations.demoSharedXAxisCulinaryCourseTitle),
       ],
@@ -120,7 +129,9 @@ class _CoursePage extends StatelessWidget {
 }
 
 class _CourseSwitch extends StatefulWidget {
-  const _CourseSwitch({this.course});
+  const _CourseSwitch({
+    this.course,
+  });
 
   final String? course;
 
@@ -134,10 +145,9 @@ class _CourseSwitchState extends State<_CourseSwitch> {
   @override
   Widget build(BuildContext context) {
     final GalleryLocalizations? localizations = GalleryLocalizations.of(context);
-    final String subtitle =
-        _isCourseBundled
-            ? localizations!.demoSharedXAxisBundledCourseSubtitle
-            : localizations!.demoSharedXAxisIndividualCourseSubtitle;
+    final String subtitle = _isCourseBundled
+        ? localizations!.demoSharedXAxisBundledCourseSubtitle
+        : localizations!.demoSharedXAxisIndividualCourseSubtitle;
 
     return SwitchListTile(
       title: Text(widget.course!),
@@ -183,7 +193,10 @@ class _SignInPage extends StatelessWidget {
               spacing,
               Text(
                 localizations.demoSharedXAxisSignInSubtitleText,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,20 +210,29 @@ class _SignInPage extends StatelessWidget {
                     ),
                     child: TextField(
                       decoration: InputDecoration(
-                        suffixIcon: const Icon(Icons.visibility, size: 20, color: Colors.black54),
-                        labelText: localizations.demoSharedXAxisSignInTextFieldLabel,
+                        suffixIcon: const Icon(
+                          Icons.visibility,
+                          size: 20,
+                          color: Colors.black54,
+                        ),
+                        labelText:
+                            localizations.demoSharedXAxisSignInTextFieldLabel,
                         border: const OutlineInputBorder(),
                       ),
                     ),
                   ),
                   TextButton(
                     onPressed: () {},
-                    child: Text(localizations.demoSharedXAxisForgotEmailButtonText),
+                    child: Text(
+                      localizations.demoSharedXAxisForgotEmailButtonText,
+                    ),
                   ),
                   spacing,
                   TextButton(
                     onPressed: () {},
-                    child: Text(localizations.demoSharedXAxisCreateAccountButtonText),
+                    child: Text(
+                      localizations.demoSharedXAxisCreateAccountButtonText,
+                    ),
                   ),
                 ],
               ),

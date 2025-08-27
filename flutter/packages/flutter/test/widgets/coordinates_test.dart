@@ -17,12 +17,20 @@ void main() {
           Positioned(
             top: 100.0,
             left: 100.0,
-            child: SizedBox(key: keyA, width: 10.0, height: 10.0),
+            child: SizedBox(
+              key: keyA,
+              width: 10.0,
+              height: 10.0,
+            ),
           ),
           Positioned(
             left: 100.0,
             top: 200.0,
-            child: SizedBox(key: keyB, width: 20.0, height: 10.0),
+            child: SizedBox(
+              key: keyB,
+              width: 20.0,
+              height: 10.0,
+            ),
           ),
         ],
       ),

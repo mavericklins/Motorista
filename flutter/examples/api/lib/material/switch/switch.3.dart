@@ -15,14 +15,16 @@ class SwitchApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
+      theme: ThemeData.light(useMaterial3: true).copyWith(
         // Use the ambient CupertinoThemeData to style all widgets which would
         // otherwise use iOS defaults.
         cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
       ),
       home: Scaffold(
         appBar: AppBar(title: const Text('Switch Sample')),
-        body: const Center(child: SwitchExample()),
+        body: const Center(
+          child: SwitchExample(),
+        ),
       ),
     );
   }

@@ -9,16 +9,14 @@ import 'package:path/path.dart' as path;
 import '../run_command.dart';
 import '../utils.dart';
 
-Future<void> addToAppLifeCycleRunner() async {
+Future<void> addToAppLifeCycleRunner(String flutterRoot) async {
   if (Platform.isMacOS) {
     printProgress('${green}Running add-to-app life cycle iOS integration tests$reset...');
-    final String addToAppDir = path.join(
-      flutterRoot,
-      'dev',
-      'integration_tests',
-      'ios_add2app_life_cycle',
+    final String addToAppDir = path.join(flutterRoot, 'dev', 'integration_tests', 'ios_add2app_life_cycle');
+    await runCommand('./build_and_test.sh',
+      <String>[],
+      workingDirectory: addToAppDir,
     );
-    await runCommand('./build_and_test.sh', <String>[], workingDirectory: addToAppDir);
   } else {
     throw Exception('Only iOS has add-to-add lifecycle tests at this time.');
   }

@@ -13,20 +13,19 @@ void main() {
     await tester.pumpWidget(
       Container(
         key: noLocalizationsAvailable,
-        child: CupertinoApp(home: Container(key: localizationsAvailable)),
-      ),
-    );
-
-    expect(
-      () => debugCheckHasCupertinoLocalizations(noLocalizationsAvailable.currentContext!),
-      throwsA(
-        isAssertionError.having(
-          (AssertionError e) => e.message,
-          'message',
-          contains('No CupertinoLocalizations found'),
+        child: CupertinoApp(
+          home: Container(
+            key: localizationsAvailable,
+          ),
         ),
       ),
     );
+
+    expect(() => debugCheckHasCupertinoLocalizations(noLocalizationsAvailable.currentContext!), throwsA(isAssertionError.having(
+      (AssertionError e) => e.message,
+      'message',
+      contains('No CupertinoLocalizations found'),
+    )));
 
     expect(debugCheckHasCupertinoLocalizations(localizationsAvailable.currentContext!), isTrue);
   });

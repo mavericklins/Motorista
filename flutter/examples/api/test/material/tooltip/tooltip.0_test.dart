@@ -11,7 +11,9 @@ void main() {
   testWidgets('Tooltip is visible when hovering over text', (WidgetTester tester) async {
     const String tooltipText = 'I am a Tooltip';
 
-    await tester.pumpWidget(const example.TooltipExampleApp());
+    await tester.pumpWidget(
+      const example.TooltipExampleApp(),
+    );
 
     TestGesture? gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     addTearDown(() async {

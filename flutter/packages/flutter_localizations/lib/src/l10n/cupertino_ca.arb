@@ -18,7 +18,7 @@
   "cutButtonLabel": "Retalla",
   "copyButtonLabel": "Copia",
   "pasteButtonLabel": "Enganxa",
-  "clearButtonLabel": "Esborra",
+  "clearButtonLabel": "Clear",
   "selectAllButtonLabel": "Seleccionar-ho tot",
   "tabSemanticsLabel": "Pestanya $tabIndex de $tabCount",
   "modalBarrierDismissLabel": "Ignora",
@@ -27,7 +27,5 @@
   "menuDismissLabel": "Ignora el menú",
   "lookUpButtonLabel": "Mira amunt",
   "searchWebButtonLabel": "Cerca al web",
-  "shareButtonLabel": "Comparteix...",
-  "cancelButtonLabel": "Cancel·la",
-  "backButtonLabel": "Enrere"
+  "shareButtonLabel": "Comparteix..."
 }

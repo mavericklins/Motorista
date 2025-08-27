@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,7 +12,10 @@ void main() {
 
   test('editable intrinsics', () {
     final RenderEditable editable = RenderEditable(
-      text: const TextSpan(style: TextStyle(height: 1.0, fontSize: 10.0), text: '12345'),
+      text: const TextSpan(
+        style: TextStyle(height: 1.0, fontSize: 10.0),
+        text: '12345',
+      ),
       startHandleLayerLink: LayerLink(),
       endHandleLayerLink: LayerLink(),
       textDirection: TextDirection.ltr,
@@ -53,7 +57,10 @@ void main() {
 
   test('textScaler affects intrinsics', () {
     final RenderEditable editable = RenderEditable(
-      text: const TextSpan(style: TextStyle(fontSize: 10), text: 'Hello World'),
+      text: const TextSpan(
+        style: TextStyle(fontSize: 10),
+        text: 'Hello World',
+      ),
       textDirection: TextDirection.ltr,
       startHandleLayerLink: LayerLink(),
       endHandleLayerLink: LayerLink(),
@@ -89,7 +96,10 @@ void main() {
 
   test('strutStyle affects intrinsics', () {
     final RenderEditable editable = RenderEditable(
-      text: const TextSpan(style: TextStyle(fontSize: 10), text: 'Hello World'),
+      text: const TextSpan(
+        style: TextStyle(fontSize: 10),
+        text: 'Hello World',
+      ),
       textDirection: TextDirection.ltr,
       startHandleLayerLink: LayerLink(),
       endHandleLayerLink: LayerLink(),
@@ -101,7 +111,7 @@ void main() {
 
     editable.strutStyle = const StrutStyle(fontSize: 100, forceStrutHeight: true);
     expect(editable.getMaxIntrinsicHeight(double.infinity), 100);
-  });
+  }, skip: kIsWeb && !isCanvasKit); // [intended] strut spport for HTML renderer https://github.com/flutter/flutter/issues/32243.
 }
 
 class _FakeEditableTextState with TextSelectionDelegate {
@@ -111,7 +121,7 @@ class _FakeEditableTextState with TextSelectionDelegate {
   TextSelection? selection;
 
   @override
-  void hideToolbar([bool hideHandles = true]) {}
+  void hideToolbar([bool hideHandles = true]) { }
 
   @override
   void userUpdateTextEditingValue(TextEditingValue value, SelectionChangedCause cause) {
@@ -119,10 +129,10 @@ class _FakeEditableTextState with TextSelectionDelegate {
   }
 
   @override
-  void bringIntoView(TextPosition position) {}
+  void bringIntoView(TextPosition position) { }
 
   @override
-  void cutSelection(SelectionChangedCause cause) {}
+  void cutSelection(SelectionChangedCause cause) { }
 
   @override
   Future<void> pasteText(SelectionChangedCause cause) {
@@ -130,8 +140,8 @@ class _FakeEditableTextState with TextSelectionDelegate {
   }
 
   @override
-  void selectAll(SelectionChangedCause cause) {}
+  void selectAll(SelectionChangedCause cause) { }
 
   @override
-  void copySelection(SelectionChangedCause cause) {}
+  void copySelection(SelectionChangedCause cause) { }
 }

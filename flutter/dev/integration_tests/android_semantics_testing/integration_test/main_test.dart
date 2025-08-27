@@ -32,7 +32,6 @@ Future<void> setClipboard(String message) async {
     });
     completer.complete();
   }
-
   if (SchedulerBinding.instance.hasScheduledFrame) {
     SchedulerBinding.instance.addPostFrameCallback(completeSetClipboard);
   } else {
@@ -45,13 +44,11 @@ Future<AndroidSemanticsNode> getSemantics(Finder finder, WidgetTester tester) as
   final int id = tester.getSemantics(finder).id;
   final Completer<String> completer = Completer<String>();
   Future<void> completeSemantics([Object? _]) async {
-    final dynamic result = await kSemanticsChannel.invokeMethod<dynamic>(
-      'getSemanticsNode',
-      <String, dynamic>{'id': id},
-    );
+    final dynamic result = await kSemanticsChannel.invokeMethod<dynamic>('getSemanticsNode', <String, dynamic>{
+      'id': id,
+    });
     completer.complete(json.encode(result));
   }
-
   if (SchedulerBinding.instance.hasScheduledFrame) {
     SchedulerBinding.instance.addPostFrameCallback(completeSemantics);
   } else {
@@ -97,7 +94,9 @@ Future<void> main() async {
             isFocusable: true,
             isFocused: false,
             isPassword: false,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
             // We can't predict the a11y focus when the screen changes.
             ignoredActions: ignoredAccessibilityFocusActions,
           ),
@@ -164,7 +163,9 @@ Future<void> main() async {
             isFocusable: true,
             isFocused: false,
             isPassword: true,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
             // We can't predict the a11y focus when the screen changes.
             ignoredActions: ignoredAccessibilityFocusActions,
           ),
@@ -228,9 +229,7 @@ Future<void> main() async {
 
       testWidgets('Checkbox has correct Android semantics', (WidgetTester tester) async {
         final Finder checkbox = find.byKey(const ValueKey<String>(checkboxKeyValue));
-        final Finder disabledCheckbox = find.byKey(
-          const ValueKey<String>(disabledCheckboxKeyValue),
-        );
+        final Finder disabledCheckbox = find.byKey(const ValueKey<String>(disabledCheckboxKeyValue));
 
         await prepareSelectionControls(tester);
         expect(
@@ -242,7 +241,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
 
@@ -258,7 +259,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
         expect(
@@ -286,7 +289,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
 
@@ -302,7 +307,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
       }, timeout: Timeout.none);
@@ -320,7 +327,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
 
@@ -336,7 +345,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
       }, timeout: Timeout.none);
@@ -356,7 +367,9 @@ Future<void> main() async {
             isFocusable: true,
             contentDescription: switchLabel,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
       }, timeout: Timeout.none);
@@ -383,7 +396,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
 
@@ -401,7 +416,9 @@ Future<void> main() async {
                 isEnabled: true,
                 isFocusable: true,
                 ignoredActions: ignoredAccessibilityFocusActions,
-                actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+                actions: <AndroidSemanticsAction>[
+                  AndroidSemanticsAction.click,
+                ],
               ),
               reason: "Popup $item doesn't have the right semantics",
             );
@@ -424,7 +441,9 @@ Future<void> main() async {
                 isEnabled: true,
                 isFocusable: true,
                 ignoredActions: ignoredAccessibilityFocusActions,
-                actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+                actions: <AndroidSemanticsAction>[
+                  AndroidSemanticsAction.click,
+                ],
               ),
               reason: "Popup $item doesn't have the right semantics the second time",
             );
@@ -447,7 +466,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
 
@@ -473,7 +494,9 @@ Future<void> main() async {
                 isEnabled: true,
                 isFocusable: true,
                 ignoredActions: ignoredAccessibilityFocusActions,
-                actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+                actions: <AndroidSemanticsAction>[
+                  AndroidSemanticsAction.click,
+                ],
               ),
               reason: "Dropdown $item doesn't have the right semantics",
             );
@@ -509,7 +532,9 @@ Future<void> main() async {
                 isEnabled: true,
                 isFocusable: true,
                 ignoredActions: ignoredAccessibilityFocusActions,
-                actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+                actions: <AndroidSemanticsAction>[
+                  AndroidSemanticsAction.click,
+                ],
               ),
               reason: "Dropdown $item doesn't have the right semantics the second time.",
             );
@@ -537,7 +562,9 @@ Future<void> main() async {
             isEnabled: true,
             isFocusable: true,
             ignoredActions: ignoredAccessibilityFocusActions,
-            actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+            actions: <AndroidSemanticsAction>[
+              AndroidSemanticsAction.click,
+            ],
           ),
         );
 
@@ -554,7 +581,9 @@ Future<void> main() async {
               isEnabled: true,
               isFocusable: true,
               ignoredActions: ignoredAccessibilityFocusActions,
-              actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+              actions: <AndroidSemanticsAction>[
+                AndroidSemanticsAction.click,
+              ],
             ),
             reason: "Alert OK button doesn't have the right semantics",
           );
@@ -592,7 +621,9 @@ Future<void> main() async {
               isEnabled: true,
               isFocusable: true,
               ignoredActions: ignoredAccessibilityFocusActions,
-              actions: <AndroidSemanticsAction>[AndroidSemanticsAction.click],
+              actions: <AndroidSemanticsAction>[
+                AndroidSemanticsAction.click,
+              ],
             ),
             reason: "Alert OK button doesn't have the right semantics",
           );
@@ -626,9 +657,7 @@ Future<void> main() async {
         await tester.pumpAndSettle();
       }
 
-      testWidgets('AppBar title has correct Android heading semantics', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('AppBar title has correct Android heading semantics', (WidgetTester tester) async {
         await prepareHeading(tester);
         expect(
           await getSemantics(find.byKey(const ValueKey<String>(appBarTitleKeyValue)), tester),

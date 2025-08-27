@@ -27,7 +27,9 @@ class CupertinoDialogExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(middle: Text('Home')),
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Home'),
+      ),
       child: Center(
         child: CupertinoButton(
           onPressed: () {

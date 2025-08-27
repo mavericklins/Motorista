@@ -6,37 +6,38 @@ import 'package:flutter/material.dart';
 
 /// Flutter code sample for [SharedAppData].
 
-void main() {
-  runApp(const SharedAppDataExampleApp());
-}
+class ShowSharedValue extends StatelessWidget {
+  const ShowSharedValue({super.key, required this.appDataKey});
 
-class SharedAppDataExampleApp extends StatelessWidget {
-  const SharedAppDataExampleApp({super.key});
+  final String appDataKey;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: SharedAppDataExample());
+    // The SharedAppData.getValue() call causes this widget to depend on the
+    // value of the SharedAppData's 'foo' key. If it's changed, with
+    // SharedAppData.setValue(), then this widget will be rebuilt.
+    final String value = SharedAppData.getValue<String, String>(context, appDataKey, () => 'initial');
+    return Text('$appDataKey: $value');
   }
 }
 
 // Demonstrates that changes to the SharedAppData _only_ cause the dependent
 // widgets to be rebuilt. In this case that's the ShowSharedValue widget that's
 // displaying the value of a key whose value has been updated.
-class SharedAppDataExample extends StatefulWidget {
-  const SharedAppDataExample({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<SharedAppDataExample> createState() => _SharedAppDataExampleState();
+  State<Home> createState() => _HomeState();
 }
 
-class _SharedAppDataExampleState extends State<SharedAppDataExample> {
+class _HomeState extends State<Home> {
   int _fooVersion = 0;
   int _barVersion = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('SharedAppData Sample')),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -49,13 +50,10 @@ class _SharedAppDataExampleState extends State<SharedAppDataExample> {
               child: const Text('change foo'),
               onPressed: () {
                 _fooVersion += 1;
-                // Changing the SharedAppData's value for 'foo' key causes the
-                // widgets that depend on 'foo' key to be rebuilt.
+                // Changing the SharedAppData's value for 'foo' causes the
+                // widgets that depend on 'foo' to be rebuilt.
                 SharedAppData.setValue<String, String?>(
-                  context,
-                  'foo',
-                  'FOO $_fooVersion',
-                ); // No need to call setState().
+                    context, 'foo', 'FOO $_fooVersion'); // no need to call setState()
               },
             ),
             const SizedBox(height: 16),
@@ -63,13 +61,8 @@ class _SharedAppDataExampleState extends State<SharedAppDataExample> {
               child: const Text('change bar'),
               onPressed: () {
                 _barVersion += 1;
-                // Changing the SharedAppData's value for 'bar' key causes the
-                // widgets that depend on 'bar' key to be rebuilt.
                 SharedAppData.setValue<String, String?>(
-                  context,
-                  'bar',
-                  'BAR $_barVersion',
-                ); // No need to call setState().
+                    context, 'bar', 'BAR $_barVersion'); // no need to call setState()
               },
             ),
           ],
@@ -79,22 +72,6 @@ class _SharedAppDataExampleState extends State<SharedAppDataExample> {
   }
 }
 
-class ShowSharedValue extends StatelessWidget {
-  const ShowSharedValue({super.key, required this.appDataKey});
-
-  final String appDataKey;
-
-  @override
-  Widget build(BuildContext context) {
-    // The SharedAppData.getValue() call causes this widget to depend on the
-    // value of the SharedAppData's key. If it's changed, with
-    // SharedAppData.setValue(), then this widget will be rebuilt.
-    final String value = SharedAppData.getValue<String, String>(
-      context,
-      appDataKey,
-      () => 'initial',
-    );
-
-    return Text('$appDataKey: $value');
-  }
+void main() {
+  runApp(const MaterialApp(home: Home()));
 }

@@ -66,7 +66,10 @@ class _StarBorderExampleState extends State<StarBorderExample> {
       ),
       child: ListView(
         children: <Widget>[
-          ColoredBox(color: Colors.grey.shade200, child: Options(_model)),
+          ColoredBox(
+            color: Colors.grey.shade200,
+            child: Options(_model),
+          ),
           Padding(
             padding: const EdgeInsets.all(18.0),
             child: Row(
@@ -129,7 +132,11 @@ class _StarBorderExampleState extends State<StarBorderExample> {
 }
 
 class ExampleBorder extends StatelessWidget {
-  const ExampleBorder({super.key, required this.border, required this.title});
+  const ExampleBorder({
+    super.key,
+    required this.border,
+    required this.title,
+  });
 
   final StarBorder border;
   final String title;
@@ -141,7 +148,10 @@ class ExampleBorder extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       width: 150,
       height: 100,
-      decoration: ShapeDecoration(color: Colors.blue.shade100, shape: border),
+      decoration: ShapeDecoration(
+        color: Colors.blue.shade100,
+        shape: border,
+      ),
       child: Text(title),
     );
   }
@@ -415,12 +425,27 @@ class ControlSlider extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Expanded(flex: 2, child: Text(label, textAlign: TextAlign.end)),
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              textAlign: TextAlign.end,
+            ),
+          ),
           Expanded(
             flex: 5,
-            child: Slider(onChanged: onChanged, min: min, max: max, value: value),
+            child: Slider(
+              onChanged: onChanged,
+              min: min,
+              max: max,
+              value: value,
+            ),
           ),
-          Expanded(child: Text(value.toStringAsFixed(precision))),
+          Expanded(
+            child: Text(
+              value.toStringAsFixed(precision),
+            ),
+          ),
         ],
       ),
     );

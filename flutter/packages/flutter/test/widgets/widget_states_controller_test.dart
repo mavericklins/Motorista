@@ -10,9 +10,7 @@ void main() {
   test('WidgetStatesController constructor', () {
     expect(WidgetStatesController().value, <WidgetState>{});
     expect(WidgetStatesController(<WidgetState>{}).value, <WidgetState>{});
-    expect(WidgetStatesController(<WidgetState>{WidgetState.selected}).value, <WidgetState>{
-      WidgetState.selected,
-    });
+    expect(WidgetStatesController(<WidgetState>{WidgetState.selected}).value, <WidgetState>{WidgetState.selected});
   });
 
   test('WidgetStatesController dispatches memory events', () async {
@@ -27,7 +25,6 @@ void main() {
     void valueChanged() {
       count += 1;
     }
-
     final WidgetStatesController controller = WidgetStatesController();
     controller.addListener(valueChanged);
 
@@ -55,11 +52,7 @@ void main() {
     expect(controller.value, <WidgetState>{WidgetState.hovered, WidgetState.pressed});
     expect(count, 4);
     controller.update(WidgetState.selected, true);
-    expect(controller.value, <WidgetState>{
-      WidgetState.hovered,
-      WidgetState.pressed,
-      WidgetState.selected,
-    });
+    expect(controller.value, <WidgetState>{WidgetState.hovered, WidgetState.pressed, WidgetState.selected});
     expect(count, 5);
     controller.update(WidgetState.selected, false);
     expect(controller.value, <WidgetState>{WidgetState.hovered, WidgetState.pressed});
@@ -80,15 +73,13 @@ void main() {
     expect(count, 8);
   });
 
+
   test('WidgetStatesController const initial value', () {
     int count = 0;
     void valueChanged() {
       count += 1;
     }
-
-    final WidgetStatesController controller = WidgetStatesController(const <WidgetState>{
-      WidgetState.selected,
-    });
+    final WidgetStatesController controller = WidgetStatesController(const <WidgetState>{WidgetState.selected});
     controller.addListener(valueChanged);
 
     controller.update(WidgetState.selected, true);

@@ -11,7 +11,6 @@ void main() {
 }
 
 enum AnimationStyles { defaultStyle, custom, none }
-
 const List<(AnimationStyles, String)> animationStyleSegments = <(AnimationStyles, String)>[
   (AnimationStyles.defaultStyle, 'Default'),
   (AnimationStyles.custom, 'Custom'),
@@ -36,7 +35,10 @@ class _MaterialAppExampleState extends State<MaterialAppExample> {
       themeAnimationStyle: _animationStyle,
       themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(colorSchemeSeed: Colors.green),
-      darkTheme: ThemeData(colorSchemeSeed: Colors.green, brightness: Brightness.dark),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.green,
+        brightness: Brightness.dark,
+      ),
       home: Scaffold(
         body: Center(
           child: Column(
@@ -51,20 +53,20 @@ class _MaterialAppExampleState extends State<MaterialAppExample> {
                       case AnimationStyles.defaultStyle:
                         _animationStyle = null;
                       case AnimationStyles.custom:
-                        _animationStyle = const AnimationStyle(
+                        _animationStyle = AnimationStyle(
                           curve: Easing.emphasizedAccelerate,
-                          duration: Duration(seconds: 1),
+                          duration: const Duration(seconds: 1),
                         );
                       case AnimationStyles.none:
                         _animationStyle = AnimationStyle.noAnimation;
                     }
                   });
                 },
-                segments: animationStyleSegments.map<ButtonSegment<AnimationStyles>>((
-                  (AnimationStyles, String) shirt,
-                ) {
-                  return ButtonSegment<AnimationStyles>(value: shirt.$1, label: Text(shirt.$2));
-                }).toList(),
+                segments: animationStyleSegments
+                  .map<ButtonSegment<AnimationStyles>>(((AnimationStyles, String) shirt) {
+                    return ButtonSegment<AnimationStyles>(value: shirt.$1, label: Text(shirt.$2));
+                  })
+                  .toList(),
               ),
               const SizedBox(height: 10),
               OutlinedButton.icon(

@@ -27,7 +27,5 @@
   "lookUpButtonLabel": "Hae",
   "searchWebButtonLabel": "Hae verkosta",
   "shareButtonLabel": "Jaa…",
-  "clearButtonLabel": "Tyhjennä",
-  "cancelButtonLabel": "Peru",
-  "backButtonLabel": "Takaisin"
+  "clearButtonLabel": "Clear"
 }

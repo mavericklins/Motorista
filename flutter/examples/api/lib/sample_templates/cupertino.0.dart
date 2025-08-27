@@ -41,7 +41,9 @@ class SampleApp extends StatelessWidget {
   const SampleApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return const CupertinoApp(home: PlaceholderExample());
+    return const CupertinoApp(
+      home: PlaceholderExample(),
+    );
   }
 }
 

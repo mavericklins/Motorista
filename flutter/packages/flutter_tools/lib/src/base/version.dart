@@ -66,7 +66,7 @@ class Version implements Comparable<Version> {
   /// This is the highest-numbered stable version.
   static Version? primary(List<Version> versions) {
     Version? primary;
-    for (final version in versions) {
+    for (final Version version in versions) {
       if (primary == null || (version > primary)) {
         primary = version;
       }
@@ -89,13 +89,17 @@ class Version implements Comparable<Version> {
   /// of the parsed version.
   final String _text;
 
-  static final versionPattern = RegExp(r'^(\d+)(\.(\d+)(\.(\d+))?)?');
+  static final RegExp versionPattern =
+      RegExp(r'^(\d+)(\.(\d+)(\.(\d+))?)?');
 
   /// Two [Version]s are equal if their version numbers are. The version text
   /// is ignored.
   @override
   bool operator ==(Object other) {
-    return other is Version && other.major == major && other.minor == minor && other.patch == patch;
+    return other is Version
+        && other.major == major
+        && other.minor == minor
+        && other.patch == patch;
   }
 
   @override
@@ -139,14 +143,16 @@ bool isWithinVersionRange(
   final Version? minVersion = Version.parse(min);
   final Version? maxVersion = Version.parse(max);
 
-  final bool withinMin =
-      minVersion != null &&
+  final bool withinMin = minVersion != null &&
       parsedTargetVersion != null &&
-      (inclusiveMin ? parsedTargetVersion >= minVersion : parsedTargetVersion > minVersion);
+      (inclusiveMin
+      ? parsedTargetVersion >= minVersion
+      : parsedTargetVersion > minVersion);
 
-  final bool withinMax =
-      maxVersion != null &&
+  final bool withinMax = maxVersion != null &&
       parsedTargetVersion != null &&
-      (inclusiveMax ? parsedTargetVersion <= maxVersion : parsedTargetVersion < maxVersion);
+      (inclusiveMax
+          ? parsedTargetVersion <= maxVersion
+          : parsedTargetVersion < maxVersion);
   return withinMin && withinMax;
 }

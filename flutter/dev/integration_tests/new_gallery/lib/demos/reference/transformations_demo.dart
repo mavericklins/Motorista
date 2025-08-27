@@ -19,7 +19,8 @@ class TransformationsDemo extends StatefulWidget {
   State<TransformationsDemo> createState() => _TransformationsDemoState();
 }
 
-class _TransformationsDemoState extends State<TransformationsDemo> with TickerProviderStateMixin {
+class _TransformationsDemoState extends State<TransformationsDemo>
+    with TickerProviderStateMixin {
   final GlobalKey _targetKey = GlobalKey();
   // The radius of a hexagon tile in pixels.
   static const double _kHexagonRadius = 16.0;
@@ -34,7 +35,8 @@ class _TransformationsDemoState extends State<TransformationsDemo> with TickerPr
     hexagonMargin: _kHexagonMargin,
   );
 
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
   Animation<Matrix4>? _animationReset;
   late AnimationController _controllerReset;
   Matrix4? _homeMatrix;
@@ -78,8 +80,10 @@ class _TransformationsDemoState extends State<TransformationsDemo> with TickerPr
   }
 
   void _onTapUp(TapUpDetails details) {
-    final RenderBox renderBox = _targetKey.currentContext!.findRenderObject()! as RenderBox;
-    final Offset offset = details.globalPosition - renderBox.localToGlobal(Offset.zero);
+    final RenderBox renderBox =
+        _targetKey.currentContext!.findRenderObject()! as RenderBox;
+    final Offset offset =
+        details.globalPosition - renderBox.localToGlobal(Offset.zero);
     final Offset scenePoint = _transformationController.toScene(offset);
     final BoardPoint? boardPoint = _board.pointToBoardPoint(scenePoint);
     setState(() {
@@ -90,7 +94,9 @@ class _TransformationsDemoState extends State<TransformationsDemo> with TickerPr
   @override
   void initState() {
     super.initState();
-    _controllerReset = AnimationController(vsync: this);
+    _controllerReset = AnimationController(
+      vsync: this,
+    );
   }
 
   @override
@@ -101,7 +107,8 @@ class _TransformationsDemoState extends State<TransformationsDemo> with TickerPr
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(GalleryLocalizations.of(context)!.demo2dTransformationsTitle),
+        title:
+            Text(GalleryLocalizations.of(context)!.demo2dTransformationsTitle),
       ),
       body: ColoredBox(
         color: backgroundColor,
@@ -109,15 +116,18 @@ class _TransformationsDemoState extends State<TransformationsDemo> with TickerPr
           builder: (BuildContext context, BoxConstraints constraints) {
             // Draw the scene as big as is available, but allow the user to
             // translate beyond that to a visibleSize that's a bit bigger.
-            final Size viewportSize = Size(constraints.maxWidth, constraints.maxHeight);
+            final Size viewportSize = Size(
+              constraints.maxWidth,
+              constraints.maxHeight,
+            );
 
             // Start the first render, start the scene centered in the viewport.
             if (_homeMatrix == null) {
-              _homeMatrix =
-                  Matrix4.identity()..translate(
-                    viewportSize.width / 2 - _board.size.width / 2,
-                    viewportSize.height / 2 - _board.size.height / 2,
-                  );
+              _homeMatrix = Matrix4.identity()
+                ..translate(
+                  viewportSize.width / 2 - _board.size.width / 2,
+                  viewportSize.height / 2 - _board.size.height / 2,
+                );
               _transformationController.value = _homeMatrix!;
             }
 
@@ -137,7 +147,12 @@ class _TransformationsDemoState extends State<TransformationsDemo> with TickerPr
                     minScale: 0.01,
                     onInteractionStart: _onScaleStart,
                     child: SizedBox.expand(
-                      child: CustomPaint(size: _board.size, painter: _BoardPainter(board: _board)),
+                      child: CustomPaint(
+                        size: _board.size,
+                        painter: _BoardPainter(
+                          board: _board,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -170,24 +185,24 @@ class _TransformationsDemoState extends State<TransformationsDemo> with TickerPr
           return;
         }
         showModalBottomSheet<Widget>(
-          context: context,
-          builder: (BuildContext context) {
-            return Container(
-              width: double.infinity,
-              height: 150,
-              padding: const EdgeInsets.all(12),
-              child: EditBoardPoint(
-                boardPoint: _board.selected!,
-                onColorSelection: (Color color) {
-                  setState(() {
-                    _board = _board.copyWithBoardPointColor(_board.selected!, color);
-                    Navigator.pop(context);
-                  });
-                },
-              ),
-            );
-          },
-        );
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                width: double.infinity,
+                height: 150,
+                padding: const EdgeInsets.all(12),
+                child: EditBoardPoint(
+                  boardPoint: _board.selected!,
+                  onColorSelection: (Color color) {
+                    setState(() {
+                      _board = _board.copyWithBoardPointColor(
+                          _board.selected!, color);
+                      Navigator.pop(context);
+                    });
+                  },
+                ),
+              );
+            });
       },
       tooltip: 'Edit',
       color: Theme.of(context).colorScheme.surface,
@@ -212,7 +227,9 @@ class _BoardPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     void drawBoardPoint(BoardPoint? boardPoint) {
-      final Color color = boardPoint!.color.withOpacity(board.selected == boardPoint ? 0.7 : 1);
+      final Color color = boardPoint!.color.withOpacity(
+        board.selected == boardPoint ? 0.7 : 1,
+      );
       final Vertices vertices = board.getVerticesForBoardPoint(boardPoint, color);
       canvas.drawVertices(vertices, BlendMode.color, Paint());
     }

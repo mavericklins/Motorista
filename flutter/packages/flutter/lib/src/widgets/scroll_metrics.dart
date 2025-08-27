@@ -2,14 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'dart:ui';
-/// @docImport 'package:flutter/material.dart';
-///
-/// @docImport 'scroll_position.dart';
-/// @docImport 'scrollable.dart';
-/// @docImport 'viewport.dart';
-library;
-
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -68,8 +60,7 @@ mixin ScrollMetrics {
       minScrollExtent: minScrollExtent ?? (hasContentDimensions ? this.minScrollExtent : null),
       maxScrollExtent: maxScrollExtent ?? (hasContentDimensions ? this.maxScrollExtent : null),
       pixels: pixels ?? (hasPixels ? this.pixels : null),
-      viewportDimension:
-          viewportDimension ?? (hasViewportDimension ? this.viewportDimension : null),
+      viewportDimension: viewportDimension ?? (hasViewportDimension ? this.viewportDimension : null),
       axisDirection: axisDirection ?? this.axisDirection,
       devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
     );
@@ -135,12 +126,10 @@ mixin ScrollMetrics {
   double get extentInside {
     assert(minScrollExtent <= maxScrollExtent);
     return viewportDimension
-        // "above" overscroll value
-        -
-        clampDouble(minScrollExtent - pixels, 0, viewportDimension)
-        // "below" overscroll value
-        -
-        clampDouble(pixels - maxScrollExtent, 0, viewportDimension);
+      // "above" overscroll value
+      - clampDouble(minScrollExtent - pixels, 0, viewportDimension)
+      // "below" overscroll value
+      - clampDouble(pixels - maxScrollExtent, 0, viewportDimension);
   }
 
   /// The quantity of content conceptually "below" the viewport in the scrollable.

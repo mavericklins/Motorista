@@ -8,16 +8,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('copyWith, ==, hashCode basics', () {
-    expect(const AnimationStyle(), const AnimationStyle().copyWith());
-    expect(const AnimationStyle().hashCode, const AnimationStyle().copyWith().hashCode);
+    expect(AnimationStyle(), AnimationStyle().copyWith());
+    expect(AnimationStyle().hashCode, AnimationStyle().copyWith().hashCode);
   });
 
   testWidgets('AnimationStyle.copyWith() overrides all properties', (WidgetTester tester) async {
-    const AnimationStyle original = AnimationStyle(
+    final AnimationStyle original = AnimationStyle(
       curve: Curves.ease,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       reverseCurve: Curves.ease,
-      reverseDuration: Duration(seconds: 1),
+      reverseDuration: const Duration(seconds: 1),
     );
     final AnimationStyle copy = original.copyWith(
       curve: Curves.linear,
@@ -33,22 +33,22 @@ void main() {
 
   test('AnimationStyle.lerp identical a,b', () {
     expect(AnimationStyle.lerp(null, null, 0), null);
-    const AnimationStyle data = AnimationStyle();
+    final AnimationStyle data = AnimationStyle();
     expect(identical(AnimationStyle.lerp(data, data, 0.5), data), true);
   });
 
   testWidgets('default AnimationStyle debugFillProperties', (WidgetTester tester) async {
-    const AnimationStyle a = AnimationStyle(
+    final AnimationStyle a = AnimationStyle(
       curve: Curves.ease,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       reverseCurve: Curves.ease,
-      reverseDuration: Duration(seconds: 1),
+      reverseDuration: const Duration(seconds: 1),
     );
-    const AnimationStyle b = AnimationStyle(
+    final AnimationStyle b = AnimationStyle(
       curve: Curves.linear,
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       reverseCurve: Curves.linear,
-      reverseDuration: Duration(seconds: 2),
+      reverseDuration: const Duration(seconds: 2),
     );
 
     expect(AnimationStyle.lerp(a, b, 0), a);
@@ -59,12 +59,11 @@ void main() {
   testWidgets('default AnimationStyle debugFillProperties', (WidgetTester tester) async {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
 
-    const AnimationStyle().debugFillProperties(builder);
+    AnimationStyle().debugFillProperties(builder);
 
     final List<String> description = builder.properties
-        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-        .map((DiagnosticsNode node) => node.toString())
-        .toList();
+      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+      .map((DiagnosticsNode node) => node.toString()).toList();
 
     expect(description, <String>[]);
   });
@@ -72,23 +71,22 @@ void main() {
   testWidgets('AnimationStyle implements debugFillProperties', (WidgetTester tester) async {
     final DiagnosticPropertiesBuilder builder = DiagnosticPropertiesBuilder();
 
-    const AnimationStyle(
+    AnimationStyle(
       curve: Curves.easeInOut,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       reverseCurve: Curves.bounceInOut,
-      reverseDuration: Duration(seconds: 2),
+      reverseDuration: const Duration(seconds: 2),
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
-        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
-        .map((DiagnosticsNode node) => node.toString())
-        .toList();
+      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+      .map((DiagnosticsNode node) => node.toString()).toList();
 
     expect(description, <String>[
       'curve: Cubic(0.42, 0.00, 0.58, 1.00)',
       'duration: 0:00:01.000000',
       'reverseCurve: _BounceInOutCurve',
-      'reverseDuration: 0:00:02.000000',
+      'reverseDuration: 0:00:02.000000'
     ]);
   });
 }

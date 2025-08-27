@@ -8,8 +8,9 @@ import '../common.dart';
 
 const int _kNumIterations = 100000;
 
-Future<void> execute() async {
-  assert(false, "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
+void main() {
+  assert(false,
+      "Don't run benchmarks in debug mode! Use 'flutter run --release'.");
   final BenchmarkResultPrinter printer = BenchmarkResultPrinter();
 
   const StandardMessageCodec codec = StandardMessageCodec();

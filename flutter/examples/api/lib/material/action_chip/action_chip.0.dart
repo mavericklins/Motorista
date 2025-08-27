@@ -14,7 +14,7 @@ class ChipApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(colorSchemeSeed: const Color(0xff6750a4)),
+      theme: ThemeData(colorSchemeSeed: const Color(0xff6750a4), useMaterial3: true),
       home: const ActionChipExample(),
     );
   }
@@ -33,7 +33,9 @@ class _ActionChipExampleState extends State<ActionChipExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('ActionChip Sample')),
+      appBar: AppBar(
+        title: const Text('ActionChip Sample'),
+      ),
       body: Center(
         child: ActionChip(
           avatar: Icon(favorite ? Icons.favorite : Icons.favorite_border),

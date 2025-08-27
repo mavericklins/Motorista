@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'dialog.dart';
-/// @docImport 'ink_well.dart';
-/// @docImport 'list_tile.dart';
-library;
-
 import 'package:flutter/widgets.dart';
 
 import 'card_theme.dart';
@@ -215,12 +210,12 @@ class Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CardThemeData cardTheme = CardTheme.of(context);
-    final CardThemeData defaults;
+    final CardTheme cardTheme = CardTheme.of(context);
+    final CardTheme defaults;
     if (Theme.of(context).useMaterial3) {
       defaults = switch (_variant) {
         _CardVariant.elevated => _CardDefaultsM3(context),
-        _CardVariant.filled => _FilledCardDefaultsM3(context),
+        _CardVariant.filled   => _FilledCardDefaultsM3(context),
         _CardVariant.outlined => _OutlinedCardDefaultsM3(context),
       };
     } else {
@@ -229,19 +224,21 @@ class Card extends StatelessWidget {
 
     return Semantics(
       container: semanticContainer,
-      child: Padding(
-        padding: margin ?? cardTheme.margin ?? defaults.margin!,
+      child: Container(
+        margin: margin ?? cardTheme.margin ?? defaults.margin!,
         child: Material(
           type: MaterialType.card,
           color: color ?? cardTheme.color ?? defaults.color,
           shadowColor: shadowColor ?? cardTheme.shadowColor ?? defaults.shadowColor,
-          surfaceTintColor:
-              surfaceTintColor ?? cardTheme.surfaceTintColor ?? defaults.surfaceTintColor,
+          surfaceTintColor: surfaceTintColor ?? cardTheme.surfaceTintColor ?? defaults.surfaceTintColor,
           elevation: elevation ?? cardTheme.elevation ?? defaults.elevation!,
           shape: shape ?? cardTheme.shape ?? defaults.shape,
           borderOnForeground: borderOnForeground,
           clipBehavior: clipBehavior ?? cardTheme.clipBehavior ?? defaults.clipBehavior!,
-          child: Semantics(explicitChildNodes: !semanticContainer, child: child),
+          child: Semantics(
+            explicitChildNodes: !semanticContainer,
+            child: child,
+          ),
         ),
       ),
     );
@@ -249,14 +246,16 @@ class Card extends StatelessWidget {
 }
 
 // Hand coded defaults based on Material Design 2.
-class _CardDefaultsM2 extends CardThemeData {
+class _CardDefaultsM2 extends CardTheme {
   const _CardDefaultsM2(this.context)
     : super(
         clipBehavior: Clip.none,
         elevation: 1.0,
         margin: const EdgeInsets.all(4.0),
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0))),
-      );
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        )
+    );
 
   final BuildContext context;
 
@@ -274,8 +273,7 @@ class _CardDefaultsM2 extends CardThemeData {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
-// dart format off
-class _CardDefaultsM3 extends CardThemeData {
+class _CardDefaultsM3 extends CardTheme {
   _CardDefaultsM3(this.context)
     : super(
         clipBehavior: Clip.none,
@@ -298,7 +296,6 @@ class _CardDefaultsM3 extends CardThemeData {
   @override
   ShapeBorder? get shape =>const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0)));
 }
-// dart format on
 
 // END GENERATED TOKEN PROPERTIES - Card
 
@@ -309,8 +306,7 @@ class _CardDefaultsM3 extends CardThemeData {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
-// dart format off
-class _FilledCardDefaultsM3 extends CardThemeData {
+class _FilledCardDefaultsM3 extends CardTheme {
   _FilledCardDefaultsM3(this.context)
     : super(
         clipBehavior: Clip.none,
@@ -333,7 +329,6 @@ class _FilledCardDefaultsM3 extends CardThemeData {
   @override
   ShapeBorder? get shape =>const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0)));
 }
-// dart format on
 
 // END GENERATED TOKEN PROPERTIES - FilledCard
 
@@ -344,8 +339,7 @@ class _FilledCardDefaultsM3 extends CardThemeData {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
-// dart format off
-class _OutlinedCardDefaultsM3 extends CardThemeData {
+class _OutlinedCardDefaultsM3 extends CardTheme {
   _OutlinedCardDefaultsM3(this.context)
     : super(
         clipBehavior: Clip.none,
@@ -371,6 +365,5 @@ class _OutlinedCardDefaultsM3 extends CardThemeData {
       side: BorderSide(color: _colors.outlineVariant)
     );
 }
-// dart format on
 
 // END GENERATED TOKEN PROPERTIES - OutlinedCard

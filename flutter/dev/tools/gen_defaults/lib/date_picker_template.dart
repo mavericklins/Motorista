@@ -5,12 +5,9 @@
 import 'template.dart';
 
 class DatePickerTemplate extends TokenTemplate {
-  const DatePickerTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
+  const DatePickerTemplate(super.blockName, super.fileName, super.tokens, {
     super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
+    super.textThemePrefix = '_textTheme.'
   });
 
   String _layerOpacity(String layerToken) {
@@ -29,9 +26,9 @@ class DatePickerTemplate extends TokenTemplate {
   String _stateColor(String componentToken, String? type, String state) {
     final String baseColor = color(
       type != null
-          ? '$componentToken.$type.$state.state-layer.color'
-          : '$componentToken.$state.state-layer.color',
-      '',
+        ? '$componentToken.$type.$state.state-layer.color'
+        : '$componentToken.$state.state-layer.color',
+      ''
     );
     if (baseColor.isEmpty) {
       return 'null';
@@ -41,8 +38,7 @@ class DatePickerTemplate extends TokenTemplate {
   }
 
   @override
-  String generate() =>
-      '''
+  String generate() => '''
 class _${blockName}DefaultsM3 extends DatePickerThemeData {
   _${blockName}DefaultsM3(this.context)
     : super(
@@ -50,8 +46,7 @@ class _${blockName}DefaultsM3 extends DatePickerThemeData {
         shape: ${shape("md.comp.date-picker.modal.container")},
         // TODO(tahatesser): Update this to use token when gen_defaults
         // supports `CircleBorder` for fully rounded corners.
-        dayShape: const WidgetStatePropertyAll<OutlinedBorder>(CircleBorder()),
-        yearShape: const WidgetStatePropertyAll<OutlinedBorder>(StadiumBorder()),
+        dayShape: const MaterialStatePropertyAll<OutlinedBorder>(CircleBorder()),
         rangePickerElevation: ${elevation("md.comp.date-picker.modal.range-selection.container")},
         rangePickerShape: ${shape("md.comp.date-picker.modal.range-selection.container")},
       );
@@ -63,14 +58,6 @@ class _${blockName}DefaultsM3 extends DatePickerThemeData {
 
   @override
   Color? get backgroundColor => ${componentColor("md.comp.date-picker.modal.container")};
-
-  @override
-  Color? get subHeaderForegroundColor => ${componentColor("md.comp.date-picker.modal.weekdays.label-text")}.withOpacity(0.60);
-
-  @override
-  TextStyle? get toggleButtonTextStyle => ${textStyle("md.comp.date-picker.modal.range-selection.month.subhead")}?.apply(
-    color: subHeaderForegroundColor,
-  );
 
   @override
   ButtonStyle get cancelButtonStyle {
@@ -109,46 +96,46 @@ class _${blockName}DefaultsM3 extends DatePickerThemeData {
   TextStyle? get dayStyle => ${textStyle("md.comp.date-picker.modal.date.label-text")};
 
   @override
-  WidgetStateProperty<Color?>? get dayForegroundColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
+  MaterialStateProperty<Color?>? get dayForegroundColor =>
+    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
         return ${componentColor('md.comp.date-picker.modal.date.selected.label-text')};
-      } else if (states.contains(WidgetState.disabled)) {
+      } else if (states.contains(MaterialState.disabled)) {
         return ${componentColor('md.comp.date-picker.modal.date.unselected.label-text')}.withOpacity(0.38);
       }
       return ${componentColor('md.comp.date-picker.modal.date.unselected.label-text')};
     });
 
   @override
-  WidgetStateProperty<Color?>? get dayBackgroundColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
+  MaterialStateProperty<Color?>? get dayBackgroundColor =>
+    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
         return ${componentColor('md.comp.date-picker.modal.date.selected.container')};
       }
       return ${componentColor('md.comp.date-picker.modal.date.unselected.container')};
     });
 
   @override
-  WidgetStateProperty<Color?>? get dayOverlayColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
-        if (states.contains(WidgetState.pressed)) {
+  MaterialStateProperty<Color?>? get dayOverlayColor =>
+    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
+        if (states.contains(MaterialState.pressed)) {
           return ${_stateColor('md.comp.date-picker.modal.date', 'selected', 'pressed')};
         }
-        if (states.contains(WidgetState.hovered)) {
+        if (states.contains(MaterialState.hovered)) {
           return ${_stateColor('md.comp.date-picker.modal.date', 'selected', 'hover')};
         }
-        if (states.contains(WidgetState.focused)) {
+        if (states.contains(MaterialState.focused)) {
           return ${_stateColor('md.comp.date-picker.modal.date', 'selected', 'focus')};
         }
       } else {
-        if (states.contains(WidgetState.pressed)) {
+        if (states.contains(MaterialState.pressed)) {
           return ${_stateColor('md.comp.date-picker.modal.date', 'unselected', 'pressed')};
         }
-        if (states.contains(WidgetState.hovered)) {
+        if (states.contains(MaterialState.hovered)) {
           return ${_stateColor('md.comp.date-picker.modal.date', 'unselected', 'hover')};
         }
-        if (states.contains(WidgetState.focused)) {
+        if (states.contains(MaterialState.focused)) {
           return ${_stateColor('md.comp.date-picker.modal.date', 'unselected', 'focus')};
         }
       }
@@ -156,18 +143,18 @@ class _${blockName}DefaultsM3 extends DatePickerThemeData {
     });
 
   @override
-  WidgetStateProperty<Color?>? get todayForegroundColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
+  MaterialStateProperty<Color?>? get todayForegroundColor =>
+    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
         return ${componentColor('md.comp.date-picker.modal.date.selected.label-text')};
-      } else if (states.contains(WidgetState.disabled)) {
+      } else if (states.contains(MaterialState.disabled)) {
         return ${componentColor('md.comp.date-picker.modal.date.today.label-text')}.withOpacity(0.38);
       }
       return ${componentColor('md.comp.date-picker.modal.date.today.label-text')};
     });
 
   @override
-  WidgetStateProperty<Color?>? get todayBackgroundColor => dayBackgroundColor;
+  MaterialStateProperty<Color?>? get todayBackgroundColor => dayBackgroundColor;
 
   @override
   BorderSide? get todayBorder => ${border('md.comp.date-picker.modal.date.today.container.outline')};
@@ -176,46 +163,46 @@ class _${blockName}DefaultsM3 extends DatePickerThemeData {
   TextStyle? get yearStyle => ${textStyle("md.comp.date-picker.modal.year-selection.year.label-text")};
 
   @override
-  WidgetStateProperty<Color?>? get yearForegroundColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
+  MaterialStateProperty<Color?>? get yearForegroundColor =>
+    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
         return ${componentColor('md.comp.date-picker.modal.year-selection.year.selected.label-text')};
-      } else if (states.contains(WidgetState.disabled)) {
+      } else if (states.contains(MaterialState.disabled)) {
         return ${componentColor('md.comp.date-picker.modal.year-selection.year.unselected.label-text')}.withOpacity(0.38);
       }
       return ${componentColor('md.comp.date-picker.modal.year-selection.year.unselected.label-text')};
     });
 
   @override
-  WidgetStateProperty<Color?>? get yearBackgroundColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
+  MaterialStateProperty<Color?>? get yearBackgroundColor =>
+    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
         return ${componentColor('md.comp.date-picker.modal.year-selection.year.selected.container')};
       }
       return ${componentColor('md.comp.date-picker.modal.year-selection.year.unselected.container')};
     });
 
   @override
-  WidgetStateProperty<Color?>? get yearOverlayColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.selected)) {
-        if (states.contains(WidgetState.pressed)) {
+  MaterialStateProperty<Color?>? get yearOverlayColor =>
+    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
+        if (states.contains(MaterialState.pressed)) {
           return ${_stateColor('md.comp.date-picker.modal.year-selection.year', 'selected', 'pressed')};
         }
-        if (states.contains(WidgetState.hovered)) {
+        if (states.contains(MaterialState.hovered)) {
           return ${_stateColor('md.comp.date-picker.modal.year-selection.year', 'selected', 'hover')};
         }
-        if (states.contains(WidgetState.focused)) {
+        if (states.contains(MaterialState.focused)) {
           return ${_stateColor('md.comp.date-picker.modal.year-selection.year', 'selected', 'focus')};
         }
       } else {
-        if (states.contains(WidgetState.pressed)) {
+        if (states.contains(MaterialState.pressed)) {
           return ${_stateColor('md.comp.date-picker.modal.year-selection.year', 'unselected', 'pressed')};
         }
-        if (states.contains(WidgetState.hovered)) {
+        if (states.contains(MaterialState.hovered)) {
           return ${_stateColor('md.comp.date-picker.modal.year-selection.year', 'unselected', 'hover')};
         }
-        if (states.contains(WidgetState.focused)) {
+        if (states.contains(MaterialState.focused)) {
           return ${_stateColor('md.comp.date-picker.modal.year-selection.year', 'unselected', 'focus')};
         }
       }
@@ -232,15 +219,15 @@ class _${blockName}DefaultsM3 extends DatePickerThemeData {
     Color? get rangeSelectionBackgroundColor => ${colorOrTransparent("md.comp.date-picker.modal.range-selection.active-indicator.container.color")};
 
   @override
-  WidgetStateProperty<Color?>? get rangeSelectionOverlayColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.pressed)) {
+  MaterialStateProperty<Color?>? get rangeSelectionOverlayColor =>
+    MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.pressed)) {
         return ${_stateColor('md.comp.date-picker.modal.range-selection.date.in-range', null, 'pressed')};
       }
-      if (states.contains(WidgetState.hovered)) {
+      if (states.contains(MaterialState.hovered)) {
         return ${_stateColor('md.comp.date-picker.modal.range-selection.date.in-range', null, 'hover')};
       }
-      if (states.contains(WidgetState.focused)) {
+      if (states.contains(MaterialState.focused)) {
         return ${_stateColor('md.comp.date-picker.modal.range-selection.date.in-range', null, 'focus')};
       }
       return null;

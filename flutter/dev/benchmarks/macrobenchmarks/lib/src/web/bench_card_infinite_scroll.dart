@@ -56,7 +56,9 @@ class _InfiniteScrollCardsState extends State<_InfiniteScrollCards> {
 
     offset = widget.initialOffset;
 
-    scrollController = ScrollController(initialScrollOffset: offset);
+    scrollController = ScrollController(
+      initialScrollOffset: offset,
+    );
 
     // Without the timer the animation doesn't begin.
     Timer.run(() async {
@@ -84,7 +86,10 @@ class _InfiniteScrollCardsState extends State<_InfiniteScrollCards> {
           height: 100.0,
           child: Card(
             elevation: 16.0,
-            child: Text('${lipsum[index % lipsum.length]} $index', textAlign: TextAlign.center),
+            child: Text(
+              '${lipsum[index % lipsum.length]} $index',
+              textAlign: TextAlign.center,
+            ),
           ),
         );
       },

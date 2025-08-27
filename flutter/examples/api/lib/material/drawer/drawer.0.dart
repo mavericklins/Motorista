@@ -13,7 +13,10 @@ class DrawerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: DrawerExample());
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const DrawerExample(),
+    );
   }
 }
 
@@ -30,14 +33,24 @@ class _DrawerExampleState extends State<DrawerExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Drawer Example')),
+      appBar: AppBar(
+        title: const Text('Drawer Example'),
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text('Drawer Header', style: TextStyle(color: Colors.white, fontSize: 24)),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Drawer Header',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.message),
@@ -69,7 +82,9 @@ class _DrawerExampleState extends State<DrawerExample> {
           ],
         ),
       ),
-      body: Center(child: Text('Page: $selectedPage')),
+      body: Center(
+        child: Text('Page: $selectedPage'),
+      ),
     );
   }
 }

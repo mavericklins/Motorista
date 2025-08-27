@@ -32,8 +32,7 @@ class CycleException implements Exception {
   final Set<Target> targets;
 
   @override
-  String toString() =>
-      'Dependency cycle detected in build: '
+  String toString() => 'Dependency cycle detected in build: '
       '${targets.map((Target target) => target.name).join(' -> ')}';
 }
 

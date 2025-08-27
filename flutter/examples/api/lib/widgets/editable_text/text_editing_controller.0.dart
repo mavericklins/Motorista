@@ -13,7 +13,9 @@ class TextEditingControllerExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: TextEditingControllerExample());
+    return const MaterialApp(
+      home: TextEditingControllerExample(),
+    );
   }
 }
 

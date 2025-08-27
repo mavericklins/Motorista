@@ -4,12 +4,5 @@
   "reorderItemUp": "Omhoog verplaatsen",
   "reorderItemDown": "Omlaag verplaatsen",
   "reorderItemLeft": "Naar links verplaatsen",
-  "reorderItemRight": "Naar rechts verplaatsen",
-  "copyButtonLabel": "Kopiëren",
-  "cutButtonLabel": "Knippen",
-  "lookUpButtonLabel": "Opzoeken",
-  "searchWebButtonLabel": "Op internet zoeken",
-  "shareButtonLabel": "Delen",
-  "pasteButtonLabel": "Plakken",
-  "selectAllButtonLabel": "Alles selecteren"
+  "reorderItemRight": "Naar rechts verplaatsen"
 }

@@ -14,8 +14,7 @@ import '../framework/utils.dart';
 const String _messagePrefix = 'entrypoint:';
 const String _entrypointName = 'entrypoint';
 
-const String _dartCode =
-    '''
+const String _dartCode = '''
 import 'package:flutter/widgets.dart';
 
 @pragma('vm:entry-point')
@@ -31,8 +30,7 @@ void $_entrypointName() {
 }
 ''';
 
-const String _kotlinCode =
-    '''
+const String _kotlinCode = '''
 package com.example.entrypoint_dart_registrant
 
 import io.flutter.embedding.android.FlutterActivity
@@ -48,7 +46,11 @@ Future<TaskResult> _runWithTempDir(Directory tempDir) async {
   const String testDirName = 'entrypoint_dart_registrant';
   final String testPath = '${tempDir.path}/$testDirName';
   await inDirectory(tempDir, () async {
-    await flutter('create', options: <String>['--platforms', 'android', testDirName]);
+    await flutter('create', options: <String>[
+      '--platforms',
+      'android',
+      testDirName,
+    ]);
   });
   final String mainPath = '${tempDir.path}/$testDirName/lib/main.dart';
   print(mainPath);
@@ -63,30 +65,20 @@ Future<TaskResult> _runWithTempDir(Directory tempDir) async {
     // (which path_provider has).
     await flutter('pub', options: <String>['add', 'path_provider:2.0.9']);
     // The problem only manifested on release builds, so we test release.
-    final Process process = await startFlutter('run', options: <String>['--release']);
+    final Process process =
+        await startFlutter('run', options: <String>['--release']);
     final Completer<String> completer = Completer<String>();
     final StreamSubscription<String> stdoutSub = process.stdout
         .transform<String>(const Utf8Decoder())
         .transform<String>(const LineSplitter())
         .listen((String line) async {
-          print(line);
-          if (line.contains(_messagePrefix)) {
-            completer.complete(line);
-          }
-        });
-    final StreamSubscription<String> stderrSub = process.stderr
-        .transform<String>(const Utf8Decoder())
-        .transform<String>(const LineSplitter())
-        .listen((String line) async {
-          print(line);
-        });
-    final Object result = await Future.any(<Future<Object>>[completer.future, process.exitCode]);
-    if (result is int) {
-      throw Exception('flutter run failed, exitCode=$result');
-    }
-    final String entrypoint = result as String;
+      print(line);
+      if (line.contains(_messagePrefix)) {
+        completer.complete(line);
+      }
+    });
+    final String entrypoint = await completer.future;
     await stdoutSub.cancel();
-    await stderrSub.cancel();
     process.stdin.write('q');
     await process.stdin.flush();
     process.kill(ProcessSignal.sigint);
@@ -103,7 +95,8 @@ Future<TaskResult> _runWithTempDir(Directory tempDir) async {
 /// registrant.
 TaskFunction entrypointDartRegistrant() {
   return () async {
-    final Directory tempDir = Directory.systemTemp.createTempSync('entrypoint_dart_registrant.');
+    final Directory tempDir =
+        Directory.systemTemp.createTempSync('entrypoint_dart_registrant.');
     try {
       return await _runWithTempDir(tempDir);
     } finally {

@@ -11,7 +11,12 @@ void main() {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
-      _TestWidget(pinned: false, floating: false, bottom: false, controller: controller),
+        _TestWidget(
+          pinned: false,
+          floating: false,
+          bottom: false,
+          controller: controller,
+        ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -28,7 +33,12 @@ void main() {
     await tester.pumpWidget(
       MediaQuery(
         data: const MediaQueryData(accessibleNavigation: true),
-        child: _TestWidget(pinned: false, floating: false, bottom: false, controller: controller),
+        child:  _TestWidget(
+          pinned: false,
+          floating: false,
+          bottom: false,
+          controller: controller,
+        ),
       ),
     );
 
@@ -52,7 +62,12 @@ void main() {
       ..accessibilityFeaturesTestValue = const FakeAccessibilityFeatures();
 
     await tester.pumpWidget(
-      _TestWidget(pinned: false, floating: false, bottom: false, controller: controller),
+      _TestWidget(
+        pinned: false,
+        floating: false,
+        bottom: false,
+        controller: controller,
+      ),
     );
 
     // AccessibleNavigation is off
@@ -62,14 +77,14 @@ void main() {
     expect(render.text.style!.color!.opacity < 1.0, true);
 
     // Turn on accessibleNavigation
-    tester.platformDispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(
-      accessibleNavigation: true,
-    );
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(accessibleNavigation: true);
     await tester.pumpAndSettle();
     expect(render.text.style!.color!.opacity, 1.0);
 
     // Turn off accessibleNavigation
-    tester.platformDispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures();
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures();
     await tester.pumpAndSettle();
     expect(render.text.style!.color!.opacity < 1.0, true);
   });
@@ -77,7 +92,12 @@ void main() {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
-      _TestWidget(pinned: false, floating: false, bottom: true, controller: controller),
+        _TestWidget(
+          pinned: false,
+          floating: false,
+          bottom: true,
+          controller: controller,
+        ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -92,7 +112,12 @@ void main() {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
-      _TestWidget(pinned: false, floating: true, bottom: false, controller: controller),
+        _TestWidget(
+          pinned: false,
+          floating: true,
+          bottom: false,
+          controller: controller,
+        ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -107,7 +132,12 @@ void main() {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
-      _TestWidget(pinned: false, floating: true, bottom: true, controller: controller),
+        _TestWidget(
+          pinned: false,
+          floating: true,
+          bottom: true,
+          controller: controller,
+        ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -122,7 +152,12 @@ void main() {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
-      _TestWidget(pinned: true, floating: false, bottom: false, controller: controller),
+        _TestWidget(
+          pinned: true,
+          floating: false,
+          bottom: false,
+          controller: controller,
+        ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -137,7 +172,12 @@ void main() {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
-      _TestWidget(pinned: true, floating: false, bottom: true, controller: controller),
+        _TestWidget(
+          pinned: true,
+          floating: false,
+          bottom: true,
+          controller: controller,
+        ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -154,7 +194,12 @@ void main() {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
-      _TestWidget(pinned: true, floating: true, bottom: false, controller: controller),
+        _TestWidget(
+          pinned: true,
+          floating: true,
+          bottom: false,
+          controller: controller,
+        ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -165,15 +210,18 @@ void main() {
     expect(render.text.style!.color!.opacity, 1.0);
   });
 
-  testWidgets('pinned && floating && bottom && extraToolbarHeight == 0.0 ==> fade opacity', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('pinned && floating && bottom && extraToolbarHeight == 0.0 ==> fade opacity', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/25993.
 
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
-      _TestWidget(pinned: true, floating: true, bottom: true, controller: controller),
+      _TestWidget(
+        pinned: true,
+        floating: true,
+        bottom: true,
+        controller: controller,
+      ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -184,9 +232,7 @@ void main() {
     expect(render.text.style!.color!.opacity, 0.0);
   });
 
-  testWidgets('pinned && floating && bottom && extraToolbarHeight != 0.0 ==> 1.0 opacity', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('pinned && floating && bottom && extraToolbarHeight != 0.0 ==> 1.0 opacity', (WidgetTester tester) async {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
@@ -207,20 +253,18 @@ void main() {
     expect(render.text.style!.color!.opacity, 1.0);
   });
 
-  testWidgets('!pinned && !floating && !bottom && extraToolbarHeight != 0.0 ==> fade opacity', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('!pinned && !floating && !bottom && extraToolbarHeight != 0.0 ==> fade opacity', (WidgetTester tester) async {
     final ScrollController controller = ScrollController();
     addTearDown(controller.dispose);
     const double collapsedHeight = 100.0;
     await tester.pumpWidget(
-      _TestWidget(
-        pinned: false,
-        floating: false,
-        bottom: false,
-        controller: controller,
-        collapsedHeight: collapsedHeight,
-      ),
+        _TestWidget(
+          pinned: false,
+          floating: false,
+          bottom: false,
+          controller: controller,
+          collapsedHeight: collapsedHeight,
+        ),
     );
 
     final RenderParagraph render = tester.renderObject(find.text('Hallo Welt!!1'));
@@ -233,6 +277,7 @@ void main() {
 }
 
 class _TestWidget extends StatelessWidget {
+
   const _TestWidget({
     required this.pinned,
     required this.floating,
@@ -259,19 +304,22 @@ class _TestWidget extends StatelessWidget {
             expandedHeight: 120.0,
             collapsedHeight: collapsedHeight,
             title: const Text('Hallo Welt!!1'),
-            bottom: !bottom
-                ? null
-                : PreferredSize(preferredSize: const Size.fromHeight(35.0), child: Container()),
+            bottom: !bottom ? null :  PreferredSize(
+              preferredSize: const Size.fromHeight(35.0),
+              child: Container(),
+            ),
           ),
           SliverList(
-            delegate: SliverChildListDelegate(
-              List<Widget>.generate(20, (int i) {
-                return SizedBox(height: 100.0, child: Text('Tile $i'));
-              }),
-            ),
+            delegate: SliverChildListDelegate(List<Widget>.generate(20, (int i) {
+              return SizedBox(
+                height: 100.0,
+                child: Text('Tile $i'),
+              );
+            })),
           ),
         ],
       ),
     );
   }
+
 }

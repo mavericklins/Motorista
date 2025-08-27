@@ -8,36 +8,23 @@ import 'package:flutter/rendering.dart';
 /// Flutter code sample for [BuildOwner].
 
 void main() {
-  runApp(const BuildOwnerExample());
-}
+  WidgetsFlutterBinding.ensureInitialized();
+  final Size size = measureWidget(const SizedBox(width: 640, height: 480));
 
-class BuildOwnerExample extends StatefulWidget {
-  const BuildOwnerExample({super.key});
-
-  @override
-  State<BuildOwnerExample> createState() => _BuildOwnerExampleState();
-}
-
-class _BuildOwnerExampleState extends State<BuildOwnerExample> {
-  late final Size size;
-
-  @override
-  void initState() {
-    super.initState();
-    size = measureWidget(const SizedBox(width: 640, height: 480));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Just displays the size calculated above.
-    return WidgetsApp(
+  // Just displays the size calculated above.
+  runApp(
+    WidgetsApp(
       title: 'BuildOwner Sample',
       color: const Color(0xff000000),
       builder: (BuildContext context, Widget? child) {
-        return Scaffold(body: Center(child: Text(size.toString())));
+        return Scaffold(
+          body: Center(
+            child: Text(size.toString()),
+          ),
+        );
       },
-    );
-  }
+    ),
+  );
 }
 
 Size measureWidget(Widget widget) {

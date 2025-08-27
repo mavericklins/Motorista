@@ -16,7 +16,9 @@ class OnDeletedExampleApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('DeletableChipAttributes.onDeleted Sample')),
-        body: const Center(child: OnDeletedExample()),
+        body: const Center(
+          child: OnDeletedExample(),
+        ),
       ),
     );
   }
@@ -64,7 +66,9 @@ class CastListState extends State<CastList> {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(children: actorWidgets.toList());
+    return Wrap(
+      children: actorWidgets.toList(),
+    );
   }
 }
 

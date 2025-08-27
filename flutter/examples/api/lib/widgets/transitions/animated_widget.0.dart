@@ -15,13 +15,17 @@ class AnimatedWidgetExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: AnimatedWidgetExample());
+    return const MaterialApp(
+      home: AnimatedWidgetExample(),
+    );
   }
 }
 
 class SpinningContainer extends AnimatedWidget {
-  const SpinningContainer({super.key, required AnimationController controller})
-    : super(listenable: controller);
+  const SpinningContainer({
+    super.key,
+    required AnimationController controller,
+  }) : super(listenable: controller);
 
   Animation<double> get _progress => listenable as Animation<double>;
 
@@ -43,8 +47,7 @@ class AnimatedWidgetExample extends StatefulWidget {
 
 /// [AnimationController]s can be created with `vsync: this` because of
 /// [TickerProviderStateMixin].
-class _AnimatedWidgetExampleState extends State<AnimatedWidgetExample>
-    with TickerProviderStateMixin {
+class _AnimatedWidgetExampleState extends State<AnimatedWidgetExample> with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 10),
     vsync: this,

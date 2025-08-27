@@ -4,12 +4,5 @@
   "reorderItemUp": "Flytt opp",
   "reorderItemDown": "Flytt ned",
   "reorderItemLeft": "Flytt til venstre",
-  "reorderItemRight": "Flytt til høyre",
-  "copyButtonLabel": "Kopiér",
-  "cutButtonLabel": "Klipp ut",
-  "lookUpButtonLabel": "Slå opp",
-  "searchWebButtonLabel": "Søk på nettet",
-  "shareButtonLabel": "Del",
-  "pasteButtonLabel": "Lim inn",
-  "selectAllButtonLabel": "Velg alle"
+  "reorderItemRight": "Flytt til høyre"
 }

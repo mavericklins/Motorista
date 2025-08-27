@@ -18,7 +18,7 @@
   "cutButtonLabel": "Kəsin",
   "copyButtonLabel": "Kopyalayın",
   "pasteButtonLabel": "Yerləşdirin",
-  "clearButtonLabel": "Silin",
+  "clearButtonLabel": "Clear",
   "selectAllButtonLabel": "Hamısını seçin",
   "tabSemanticsLabel": "Tab $tabIndex/$tabCount",
   "modalBarrierDismissLabel": "İmtina edin",
@@ -27,7 +27,5 @@
   "menuDismissLabel": "Menyunu qapadın",
   "lookUpButtonLabel": "Axtarın",
   "searchWebButtonLabel": "Vebdə axtarın",
-  "shareButtonLabel": "Paylaşın...",
-  "cancelButtonLabel": "Ləğv edin",
-  "backButtonLabel": "Geri"
+  "shareButtonLabel": "Paylaşın..."
 }

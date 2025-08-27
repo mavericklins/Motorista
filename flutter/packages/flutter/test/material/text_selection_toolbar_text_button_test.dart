@@ -61,14 +61,13 @@ void main() {
     expect(onlySize.width, greaterThan(lastSize.width));
   });
 
-  for (final ColorScheme colorScheme in <ColorScheme>[
-    ThemeData().colorScheme,
-    ThemeData.dark().colorScheme,
-  ]) {
+  for (final ColorScheme colorScheme in <ColorScheme>[ThemeData.light().colorScheme, ThemeData.dark().colorScheme]) {
     testWidgets('foreground color by default', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(colorScheme: colorScheme),
+          theme: ThemeData(
+            colorScheme: colorScheme,
+          ),
           home: Scaffold(
             body: Center(
               child: TextSelectionToolbarTextButton(
@@ -99,7 +98,11 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(colorScheme: colorScheme.copyWith(onSurface: customForegroundColor)),
+          theme: ThemeData(
+            colorScheme: colorScheme.copyWith(
+              onSurface: customForegroundColor,
+            ),
+          ),
           home: Scaffold(
             body: Center(
               child: TextSelectionToolbarTextButton(
@@ -114,14 +117,19 @@ void main() {
       expect(find.byType(TextButton), findsOneWidget);
 
       final TextButton textButton = tester.widget(find.byType(TextButton));
-      expect(textButton.style!.foregroundColor!.resolve(<MaterialState>{}), customForegroundColor);
+      expect(
+        textButton.style!.foregroundColor!.resolve(<MaterialState>{}),
+        customForegroundColor,
+      );
     });
 
     testWidgets('background color by default', (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/133027
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(colorScheme: colorScheme),
+          theme: ThemeData(
+            colorScheme: colorScheme,
+          ),
           home: Scaffold(
             body: Center(
               child: TextSelectionToolbarTextButton(
@@ -140,19 +148,22 @@ void main() {
       // are the color of the container behind them. For example TextSelectionToolbar
       // hardcodes the color value, and TextSelectionToolbarTextButton that are its
       // children should be that color.
-      expect(textButton.style!.backgroundColor!.resolve(<MaterialState>{}), Colors.transparent);
+      expect(
+        textButton.style!.backgroundColor!.resolve(<MaterialState>{}),
+        Colors.transparent,
+      );
     });
 
-    testWidgets('textButtonTheme should not override default background color', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('textButtonTheme should not override default background color', (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/133027
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
             colorScheme: colorScheme,
             textButtonTheme: const TextButtonThemeData(
-              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue)),
+              style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll<Color>(Colors.blue),
+              ),
             ),
           ),
           home: Scaffold(
@@ -173,7 +184,10 @@ void main() {
       // are the color of the container behind them. For example TextSelectionToolbar
       // hardcodes the color value, and TextSelectionToolbarTextButton that are its
       // children should be that color.
-      expect(textButton.style!.backgroundColor!.resolve(<MaterialState>{}), Colors.transparent);
+      expect(
+        textButton.style!.backgroundColor!.resolve(<MaterialState>{}),
+        Colors.transparent,
+      );
     });
   }
 }

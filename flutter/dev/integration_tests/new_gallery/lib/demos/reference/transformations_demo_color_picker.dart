@@ -22,18 +22,17 @@ class ColorPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children:
-          colors.map((Color color) {
-            return _ColorPickerSwatch(
-              color: color,
-              selected: color == selectedColor,
-              onTap: () {
-                if (onColorSelection != null) {
-                  onColorSelection!(color);
-                }
-              },
-            );
-          }).toList(),
+      children: colors.map((Color color) {
+        return _ColorPickerSwatch(
+          color: color,
+          selected: color == selectedColor,
+          onTap: () {
+            if (onColorSelection != null) {
+              onColorSelection!(color);
+            }
+          },
+        );
+      }).toList(),
     );
   }
 }
@@ -41,7 +40,11 @@ class ColorPicker extends StatelessWidget {
 // A single selectable color widget in the ColorPicker.
 @immutable
 class _ColorPickerSwatch extends StatelessWidget {
-  const _ColorPickerSwatch({required this.color, required this.selected, this.onTap});
+  const _ColorPickerSwatch({
+    required this.color,
+    required this.selected,
+    this.onTap,
+  });
 
   final Color color;
   final bool selected;
@@ -60,7 +63,12 @@ class _ColorPickerSwatch extends StatelessWidget {
             onTap!();
           }
         },
-        child: !selected ? null : const Icon(Icons.check, color: Colors.white),
+        child: !selected
+            ? null
+            : const Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
       ),
     );
   }

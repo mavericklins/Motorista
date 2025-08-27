@@ -17,8 +17,7 @@ class FlyForm extends BackLayerItem {
 
 class _FlyFormState extends State<FlyForm> with RestorationMixin {
   final RestorableTextEditingController travelerController = RestorableTextEditingController();
-  final RestorableTextEditingController countryDestinationController =
-      RestorableTextEditingController();
+  final RestorableTextEditingController countryDestinationController = RestorableTextEditingController();
   final RestorableTextEditingController destinationController = RestorableTextEditingController();
   final RestorableTextEditingController dateController = RestorableTextEditingController();
 

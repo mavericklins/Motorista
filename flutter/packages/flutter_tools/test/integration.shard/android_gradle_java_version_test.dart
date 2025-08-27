@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:flutter_tools/src/android/gradle_utils.dart' show getGradlewFileName;
+import 'package:flutter_tools/src/android/gradle_utils.dart'
+    show getGradlewFileName;
 import 'package:flutter_tools/src/base/io.dart';
 
 import '../src/common.dart';
@@ -20,8 +21,11 @@ void main() {
     tryToDelete(tempDir);
   });
 
-  testWithoutContext('gradle task exists named javaVersion that prints jdk version', () async {
+  testWithoutContext(
+      'gradle task exists named javaVersion that prints jdk version', () async {
     // Create a new flutter project.
+    final String flutterBin =
+        fileSystem.path.join(getFlutterRoot(), 'bin', 'flutter');
     ProcessResult result = await processManager.run(<String>[
       flutterBin,
       'create',

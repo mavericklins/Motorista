@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'routes.dart';
-library;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
@@ -30,11 +27,14 @@ import 'transitions.dart';
 ///
 ///  * [ModalBarrier], which utilizes this widget to adjust the barrier focus
 /// size based on the size of the content layer rendered on top of it.
-class _SemanticsClipper extends SingleChildRenderObjectWidget {
-  /// creates a [_SemanticsClipper] that updates the size of the
+class _SemanticsClipper extends SingleChildRenderObjectWidget{
+  /// creates a [SemanticsClipper] that updates the size of the
   /// [SemanticsNode.rect] of its child based on the value inside the provided
   /// [ValueNotifier], or a default value of [EdgeInsets.zero].
-  const _SemanticsClipper({super.child, required this.clipDetailsNotifier});
+  const _SemanticsClipper({
+    super.child,
+    required this.clipDetailsNotifier,
+  });
 
   /// The [ValueNotifier] whose value determines how the child's
   /// [SemanticsNode.rect] should be clipped in four directions.
@@ -42,7 +42,7 @@ class _SemanticsClipper extends SingleChildRenderObjectWidget {
 
   @override
   _RenderSemanticsClipper createRenderObject(BuildContext context) {
-    return _RenderSemanticsClipper(clipDetailsNotifier: clipDetailsNotifier);
+    return _RenderSemanticsClipper(clipDetailsNotifier: clipDetailsNotifier,);
   }
 
   @override
@@ -50,7 +50,6 @@ class _SemanticsClipper extends SingleChildRenderObjectWidget {
     renderObject.clipDetailsNotifier = clipDetailsNotifier;
   }
 }
-
 /// Updates the [SemanticsNode.rect] of its child based on the value inside
 /// provided [ValueNotifier].
 class _RenderSemanticsClipper extends RenderProxyBox {
@@ -60,14 +59,14 @@ class _RenderSemanticsClipper extends RenderProxyBox {
     required ValueNotifier<EdgeInsets> clipDetailsNotifier,
     RenderBox? child,
   }) : _clipDetailsNotifier = clipDetailsNotifier,
-       super(child);
+      super(child);
 
   ValueNotifier<EdgeInsets> _clipDetailsNotifier;
 
   /// The getter and setter retrieves / updates the [ValueNotifier] associated
   /// with this clipper.
   ValueNotifier<EdgeInsets> get clipDetailsNotifier => _clipDetailsNotifier;
-  set clipDetailsNotifier(ValueNotifier<EdgeInsets> newNotifier) {
+  set clipDetailsNotifier (ValueNotifier<EdgeInsets> newNotifier) {
     if (_clipDetailsNotifier == newNotifier) {
       return;
     }
@@ -219,8 +218,7 @@ class ModalBarrier extends StatelessWidget {
         platformSupportsDismissingBarrier = true;
     }
     final bool semanticsDismissible = dismissible && platformSupportsDismissingBarrier;
-    final bool modalBarrierSemanticsDismissible =
-        barrierSemanticsDismissible ?? semanticsDismissible;
+    final bool modalBarrierSemanticsDismissible = barrierSemanticsDismissible ?? semanticsDismissible;
 
     void handleDismiss() {
       if (dismissible) {
@@ -239,14 +237,14 @@ class ModalBarrier extends StatelessWidget {
       onTap: semanticsDismissible && semanticsLabel != null ? handleDismiss : null,
       onDismiss: semanticsDismissible && semanticsLabel != null ? handleDismiss : null,
       label: semanticsDismissible ? semanticsLabel : null,
-      textDirection: semanticsDismissible && semanticsLabel != null
-          ? Directionality.of(context)
-          : null,
+      textDirection: semanticsDismissible && semanticsLabel != null ? Directionality.of(context) : null,
       child: MouseRegion(
         cursor: SystemMouseCursors.basic,
         child: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: color == null ? null : ColoredBox(color: color!),
+        constraints: const BoxConstraints.expand(),
+        child: color == null ? null : ColoredBox(
+          color: color!,
+          ),
         ),
       ),
     );
@@ -258,13 +256,19 @@ class ModalBarrier extends StatelessWidget {
     final bool excluding = !semanticsDismissible || !modalBarrierSemanticsDismissible;
 
     if (!excluding && clipDetailsNotifier != null) {
-      barrier = _SemanticsClipper(clipDetailsNotifier: clipDetailsNotifier!, child: barrier);
+      barrier = _SemanticsClipper(
+        clipDetailsNotifier: clipDetailsNotifier!,
+        child: barrier,
+      );
     }
 
     return BlockSemantics(
       child: ExcludeSemantics(
         excluding: excluding,
-        child: _ModalBarrierGestureDetector(onDismiss: handleDismiss, child: barrier),
+        child: _ModalBarrierGestureDetector(
+          onDismiss: handleDismiss,
+          child: barrier,
+        ),
       ),
     );
   }
@@ -422,7 +426,10 @@ class _AnyTapGestureRecognizerFactory extends GestureRecognizerFactory<_AnyTapGe
 // A GestureDetector used by ModalBarrier. It only has one callback,
 // [onAnyTapDown], which recognizes tap down unconditionally.
 class _ModalBarrierGestureDetector extends StatelessWidget {
-  const _ModalBarrierGestureDetector({required this.child, required this.onDismiss});
+  const _ModalBarrierGestureDetector({
+    required this.child,
+    required this.onDismiss,
+  });
 
   /// The widget below this widget in the tree.
   /// See [RawGestureDetector.child].
@@ -438,6 +445,10 @@ class _ModalBarrierGestureDetector extends StatelessWidget {
       _AnyTapGestureRecognizer: _AnyTapGestureRecognizerFactory(onAnyTapUp: onDismiss),
     };
 
-    return RawGestureDetector(gestures: gestures, behavior: HitTestBehavior.opaque, child: child);
+    return RawGestureDetector(
+      gestures: gestures,
+      behavior: HitTestBehavior.opaque,
+      child: child,
+    );
   }
 }

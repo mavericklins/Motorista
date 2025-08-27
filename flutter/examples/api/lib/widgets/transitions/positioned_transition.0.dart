@@ -13,7 +13,9 @@ class PositionedTransitionExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: PositionedTransitionExample());
+    return const MaterialApp(
+      home: PositionedTransitionExample(),
+    );
   }
 }
 
@@ -26,8 +28,7 @@ class PositionedTransitionExample extends StatefulWidget {
 
 /// [AnimationController]s can be created with `vsync: this` because of
 /// [TickerProviderStateMixin].
-class _PositionedTransitionExampleState extends State<PositionedTransitionExample>
-    with TickerProviderStateMixin {
+class _PositionedTransitionExampleState extends State<PositionedTransitionExample> with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 2),
     vsync: this,
@@ -56,16 +57,17 @@ class _PositionedTransitionExampleState extends State<PositionedTransitionExampl
                   biggest,
                 ),
                 end: RelativeRect.fromSize(
-                  Rect.fromLTWH(
-                    biggest.width - bigLogo,
-                    biggest.height - bigLogo,
-                    bigLogo,
-                    bigLogo,
-                  ),
+                  Rect.fromLTWH(biggest.width - bigLogo, biggest.height - bigLogo, bigLogo, bigLogo),
                   biggest,
                 ),
-              ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticInOut)),
-              child: const Padding(padding: EdgeInsets.all(8), child: FlutterLogo()),
+              ).animate(CurvedAnimation(
+                parent: _controller,
+                curve: Curves.elasticInOut,
+              )),
+              child: const Padding(
+                padding: EdgeInsets.all(8),
+                child: FlutterLogo(),
+              ),
             ),
           ],
         );

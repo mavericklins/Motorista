@@ -23,7 +23,7 @@
   "cutButtonLabel": "Izreži",
   "copyButtonLabel": "Kopiraj",
   "pasteButtonLabel": "Zalijepi",
-  "clearButtonLabel": "Obriši",
+  "clearButtonLabel": "Clear",
   "selectAllButtonLabel": "Odaberi sve",
   "tabSemanticsLabel": "Kartica $tabIndex od $tabCount",
   "modalBarrierDismissLabel": "Odbaci",
@@ -32,7 +32,5 @@
   "menuDismissLabel": "Odbacivanje menija",
   "lookUpButtonLabel": "Pogled nagore",
   "searchWebButtonLabel": "Pretraži Web",
-  "shareButtonLabel": "Dijeli...",
-  "cancelButtonLabel": "Otkaži",
-  "backButtonLabel": "Nazad"
+  "shareButtonLabel": "Dijeli..."
 }

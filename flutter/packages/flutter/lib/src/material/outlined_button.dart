@@ -2,12 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'elevated_button.dart';
-/// @docImport 'filled_button.dart';
-/// @docImport 'material.dart';
-/// @docImport 'text_button.dart';
-library;
-
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/foundation.dart';
@@ -84,6 +78,7 @@ class OutlinedButton extends ButtonStyleButton {
     super.clipBehavior,
     super.statesController,
     required super.child,
+    super.iconAlignment,
   });
 
   /// Create a text button from a pair of widgets that serve as the button's
@@ -100,8 +95,6 @@ class OutlinedButton extends ButtonStyleButton {
     Key? key,
     required VoidCallback? onPressed,
     VoidCallback? onLongPress,
-    ValueChanged<bool>? onHover,
-    ValueChanged<bool>? onFocusChange,
     ButtonStyle? style,
     FocusNode? focusNode,
     bool? autofocus,
@@ -109,15 +102,13 @@ class OutlinedButton extends ButtonStyleButton {
     MaterialStatesController? statesController,
     Widget? icon,
     required Widget label,
-    IconAlignment? iconAlignment,
+    IconAlignment iconAlignment = IconAlignment.start,
   }) {
     if (icon == null) {
       return OutlinedButton(
         key: key,
         onPressed: onPressed,
         onLongPress: onLongPress,
-        onHover: onHover,
-        onFocusChange: onFocusChange,
         style: style,
         focusNode: focusNode,
         autofocus: autofocus ?? false,
@@ -130,8 +121,6 @@ class OutlinedButton extends ButtonStyleButton {
       key: key,
       onPressed: onPressed,
       onLongPress: onLongPress,
-      onHover: onHover,
-      onFocusChange: onFocusChange,
       style: style,
       focusNode: focusNode,
       autofocus: autofocus ?? false,
@@ -147,29 +136,24 @@ class OutlinedButton extends ButtonStyleButton {
   /// [ButtonStyle] given simple values.
   ///
   /// The [foregroundColor] and [disabledForegroundColor] colors are used
-  /// to create a [WidgetStateProperty] [ButtonStyle.foregroundColor], and
+  /// to create a [MaterialStateProperty] [ButtonStyle.foregroundColor], and
   /// a derived [ButtonStyle.overlayColor] if [overlayColor] isn't specified.
   ///
   /// The [backgroundColor] and [disabledBackgroundColor] colors are
-  /// used to create a [WidgetStateProperty] [ButtonStyle.backgroundColor].
+  /// used to create a [MaterialStateProperty] [ButtonStyle.backgroundColor].
   ///
   /// Similarly, the [enabledMouseCursor] and [disabledMouseCursor]
-  /// parameters are used to construct [ButtonStyle.mouseCursor].
-  ///
-  /// The [iconColor], [disabledIconColor] are used to construct
-  /// [ButtonStyle.iconColor] and [iconSize] is used to construct
-  /// [ButtonStyle.iconSize].
-  ///
-  /// If [iconColor] is null, the button icon will use [foregroundColor]. If [foregroundColor] is also
-  /// null, the button icon will use the default icon color.
+  /// parameters are used to construct [ButtonStyle.mouseCursor] and
+  /// [iconColor], [disabledIconColor] are used to construct
+  /// [ButtonStyle.iconColor].
   ///
   /// If [overlayColor] is specified and its value is [Colors.transparent]
   /// then the pressed/focused/hovered highlights are effectively defeated.
-  /// Otherwise a [WidgetStateProperty] with the same opacities as the
+  /// Otherwise a [MaterialStateProperty] with the same opacities as the
   /// default is created.
   ///
   /// All of the other parameters are either used directly or used to
-  /// create a [WidgetStateProperty] with a single value for all
+  /// create a [MaterialStateProperty] with a single value for all
   /// states.
   ///
   /// All parameters default to null, by default this method returns
@@ -198,8 +182,6 @@ class OutlinedButton extends ButtonStyleButton {
     Color? shadowColor,
     Color? surfaceTintColor,
     Color? iconColor,
-    double? iconSize,
-    IconAlignment? iconAlignment,
     Color? disabledIconColor,
     Color? overlayColor,
     double? elevation,
@@ -221,37 +203,34 @@ class OutlinedButton extends ButtonStyleButton {
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
   }) {
-    final MaterialStateProperty<Color?>? backgroundColorProp = switch ((
-      backgroundColor,
-      disabledBackgroundColor,
-    )) {
-      (_?, null) => WidgetStatePropertyAll<Color?>(backgroundColor),
-      (_, _) => ButtonStyleButton.defaultColor(backgroundColor, disabledBackgroundColor),
-    };
-    final MaterialStateProperty<Color?>? overlayColorProp = switch ((
-      foregroundColor,
-      overlayColor,
-    )) {
+    final MaterialStateProperty<Color?>? foregroundColorProp = switch ((foregroundColor, disabledForegroundColor)) {
       (null, null) => null,
-      (_, Color(a: 0.0)) => WidgetStatePropertyAll<Color?>(overlayColor),
-      (_, final Color color) ||
-      (final Color color, _) => WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
-        WidgetState.pressed: color.withOpacity(0.1),
-        WidgetState.hovered: color.withOpacity(0.08),
-        WidgetState.focused: color.withOpacity(0.1),
-      }),
+      (_, _) => _OutlinedButtonDefaultColor(foregroundColor, disabledForegroundColor),
     };
+    final MaterialStateProperty<Color?>? backgroundColorProp = switch ((backgroundColor, disabledBackgroundColor)) {
+      (null, null) => null,
+      (_, null) => MaterialStatePropertyAll<Color?>(backgroundColor),
+      (_, _) => _OutlinedButtonDefaultColor(backgroundColor, disabledBackgroundColor),
+    };
+    final MaterialStateProperty<Color?>? iconColorProp = switch ((iconColor, disabledIconColor)) {
+      (null, null) => null,
+      (_, _) => _OutlinedButtonDefaultColor(iconColor, disabledIconColor),
+    };
+    final MaterialStateProperty<Color?>? overlayColorProp = switch ((foregroundColor, overlayColor)) {
+      (null, null) => null,
+      (_, final Color overlayColor) when overlayColor.value == 0 => const MaterialStatePropertyAll<Color?>(Colors.transparent),
+      (_, _) => _OutlinedButtonDefaultOverlay((overlayColor ?? foregroundColor)!),
+    };
+    final MaterialStateProperty<MouseCursor?> mouseCursor = _OutlinedButtonDefaultMouseCursor(enabledMouseCursor, disabledMouseCursor);
 
     return ButtonStyle(
       textStyle: ButtonStyleButton.allOrNull<TextStyle>(textStyle),
-      foregroundColor: ButtonStyleButton.defaultColor(foregroundColor, disabledForegroundColor),
+      foregroundColor: foregroundColorProp,
       backgroundColor: backgroundColorProp,
       overlayColor: overlayColorProp,
       shadowColor: ButtonStyleButton.allOrNull<Color>(shadowColor),
       surfaceTintColor: ButtonStyleButton.allOrNull<Color>(surfaceTintColor),
-      iconColor: ButtonStyleButton.defaultColor(iconColor, disabledIconColor),
-      iconSize: ButtonStyleButton.allOrNull<double>(iconSize),
-      iconAlignment: iconAlignment,
+      iconColor: iconColorProp,
       elevation: ButtonStyleButton.allOrNull<double>(elevation),
       padding: ButtonStyleButton.allOrNull<EdgeInsetsGeometry>(padding),
       minimumSize: ButtonStyleButton.allOrNull<Size>(minimumSize),
@@ -259,10 +238,7 @@ class OutlinedButton extends ButtonStyleButton {
       maximumSize: ButtonStyleButton.allOrNull<Size>(maximumSize),
       side: ButtonStyleButton.allOrNull<BorderSide>(side),
       shape: ButtonStyleButton.allOrNull<OutlinedBorder>(shape),
-      mouseCursor: WidgetStateProperty<MouseCursor?>.fromMap(<WidgetStatesConstraint, MouseCursor?>{
-        WidgetState.disabled: disabledMouseCursor,
-        WidgetState.any: enabledMouseCursor,
-      }),
+      mouseCursor: mouseCursor,
       visualDensity: visualDensity,
       tapTargetSize: tapTargetSize,
       animationDuration: animationDuration,
@@ -289,7 +265,7 @@ class OutlinedButton extends ButtonStyleButton {
   /// All of the ButtonStyle's defaults appear below. In this list
   /// "Theme.foo" is shorthand for `Theme.of(context).foo`. Color
   /// scheme values like "onSurface(0.38)" are shorthand for
-  /// `onSurface.withOpacity(0.38)`. [WidgetStateProperty] valued
+  /// `onSurface.withOpacity(0.38)`. [MaterialStateProperty] valued
   /// properties that are not followed by a sublist have the same
   /// value for all states, otherwise the values are as specified for
   /// each state and "others" means all other states.
@@ -369,36 +345,36 @@ class OutlinedButton extends ButtonStyleButton {
   /// * `splashFactory` - Theme.splashFactory
   ///
   /// For the [OutlinedButton.icon] factory, the start (generally the left) value of
-  /// [ButtonStyle.padding] is reduced from 24 to 16.
+  /// [padding] is reduced from 24 to 16.
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
 
     return Theme.of(context).useMaterial3
-        ? _OutlinedButtonDefaultsM3(context)
-        : styleFrom(
-            foregroundColor: colorScheme.primary,
-            disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
-            backgroundColor: Colors.transparent,
-            disabledBackgroundColor: Colors.transparent,
-            shadowColor: theme.shadowColor,
-            elevation: 0,
-            textStyle: theme.textTheme.labelLarge,
-            padding: _scaledPadding(context),
-            minimumSize: const Size(64, 36),
-            maximumSize: Size.infinite,
-            side: BorderSide(color: colorScheme.onSurface.withOpacity(0.12)),
-            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4))),
-            enabledMouseCursor: SystemMouseCursors.click,
-            disabledMouseCursor: SystemMouseCursors.basic,
-            visualDensity: theme.visualDensity,
-            tapTargetSize: theme.materialTapTargetSize,
-            animationDuration: kThemeChangeDuration,
-            enableFeedback: true,
-            alignment: Alignment.center,
-            splashFactory: InkRipple.splashFactory,
-          );
+      ? _OutlinedButtonDefaultsM3(context)
+      : styleFrom(
+          foregroundColor: colorScheme.primary,
+          disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+          backgroundColor: Colors.transparent,
+          disabledBackgroundColor: Colors.transparent,
+          shadowColor: theme.shadowColor,
+          elevation: 0,
+          textStyle: theme.textTheme.labelLarge,
+          padding: _scaledPadding(context),
+          minimumSize: const Size(64, 36),
+          maximumSize: Size.infinite,
+          side: BorderSide(color: colorScheme.onSurface.withOpacity(0.12)),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4))),
+          enabledMouseCursor: SystemMouseCursors.click,
+          disabledMouseCursor: SystemMouseCursors.basic,
+          visualDensity: theme.visualDensity,
+          tapTargetSize: theme.materialTapTargetSize,
+          animationDuration: kThemeChangeDuration,
+          enableFeedback: true,
+          alignment: Alignment.center,
+          splashFactory: InkRipple.splashFactory,
+        );
   }
 
   @override
@@ -413,11 +389,64 @@ EdgeInsetsGeometry _scaledPadding(BuildContext context) {
   final double defaultFontSize = theme.textTheme.labelLarge?.fontSize ?? 14.0;
   final double effectiveTextScale = MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
   return ButtonStyleButton.scaledPadding(
-    EdgeInsets.symmetric(horizontal: padding1x),
-    EdgeInsets.symmetric(horizontal: padding1x / 2),
-    EdgeInsets.symmetric(horizontal: padding1x / 2 / 2),
-    effectiveTextScale,
+     EdgeInsets.symmetric(horizontal: padding1x),
+     EdgeInsets.symmetric(horizontal: padding1x / 2),
+     EdgeInsets.symmetric(horizontal: padding1x / 2 / 2),
+     effectiveTextScale,
   );
+}
+
+@immutable
+class _OutlinedButtonDefaultColor extends MaterialStateProperty<Color?>  with Diagnosticable {
+  _OutlinedButtonDefaultColor(this.color, this.disabled);
+
+  final Color? color;
+  final Color? disabled;
+
+  @override
+  Color? resolve(Set<MaterialState> states) {
+    if (states.contains(MaterialState.disabled)) {
+      return disabled;
+    }
+    return color;
+  }
+}
+
+@immutable
+class _OutlinedButtonDefaultOverlay extends MaterialStateProperty<Color?> with Diagnosticable {
+  _OutlinedButtonDefaultOverlay(this.foreground);
+
+  final Color foreground;
+
+  @override
+  Color? resolve(Set<MaterialState> states) {
+    if (states.contains(MaterialState.pressed)) {
+      return foreground.withOpacity(0.1);
+    }
+    if (states.contains(MaterialState.hovered)) {
+      return foreground.withOpacity(0.08);
+    }
+    if (states.contains(MaterialState.focused)) {
+      return foreground.withOpacity(0.1);
+    }
+    return null;
+  }
+}
+
+@immutable
+class _OutlinedButtonDefaultMouseCursor extends MaterialStateProperty<MouseCursor?> with Diagnosticable {
+  _OutlinedButtonDefaultMouseCursor(this.enabledCursor, this.disabledCursor);
+
+  final MouseCursor? enabledCursor;
+  final MouseCursor? disabledCursor;
+
+  @override
+  MouseCursor? resolve(Set<MaterialState> states) {
+    if (states.contains(MaterialState.disabled)) {
+      return disabledCursor;
+    }
+    return enabledCursor;
+  }
 }
 
 class _OutlinedButtonWithIcon extends OutlinedButton {
@@ -425,8 +454,6 @@ class _OutlinedButtonWithIcon extends OutlinedButton {
     super.key,
     required super.onPressed,
     super.onLongPress,
-    super.onHover,
-    super.onFocusChange,
     super.style,
     super.focusNode,
     bool? autofocus,
@@ -434,7 +461,7 @@ class _OutlinedButtonWithIcon extends OutlinedButton {
     super.statesController,
     required Widget icon,
     required Widget label,
-    IconAlignment? iconAlignment,
+    super.iconAlignment,
   }) : super(
          autofocus: autofocus ?? false,
          child: _OutlinedButtonWithIconChild(
@@ -443,7 +470,7 @@ class _OutlinedButtonWithIcon extends OutlinedButton {
            buttonStyle: style,
            iconAlignment: iconAlignment,
          ),
-       );
+      );
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
@@ -452,10 +479,8 @@ class _OutlinedButtonWithIcon extends OutlinedButton {
       return super.defaultStyleOf(context);
     }
     final ButtonStyle buttonStyle = super.defaultStyleOf(context);
-    final double defaultFontSize =
-        buttonStyle.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
-    final double effectiveTextScale =
-        MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
+    final double defaultFontSize = buttonStyle.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
+    final double effectiveTextScale = MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0;
     final EdgeInsetsGeometry scaledPadding = ButtonStyleButton.scaledPadding(
       const EdgeInsetsDirectional.fromSTEB(16, 0, 24, 0),
       const EdgeInsetsDirectional.fromSTEB(8, 0, 12, 0),
@@ -479,27 +504,18 @@ class _OutlinedButtonWithIconChild extends StatelessWidget {
   final Widget label;
   final Widget icon;
   final ButtonStyle? buttonStyle;
-  final IconAlignment? iconAlignment;
+  final IconAlignment iconAlignment;
 
   @override
   Widget build(BuildContext context) {
-    final double defaultFontSize =
-        buttonStyle?.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
-    final double scale =
-        clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
-
-    final OutlinedButtonThemeData outlinedButtonTheme = OutlinedButtonTheme.of(context);
-    final IconAlignment effectiveIconAlignment =
-        iconAlignment ??
-        outlinedButtonTheme.style?.iconAlignment ??
-        buttonStyle?.iconAlignment ??
-        IconAlignment.start;
+    final double defaultFontSize = buttonStyle?.textStyle?.resolve(const <MaterialState>{})?.fontSize ?? 14.0;
+    final double scale = clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
+    final double gap = lerpDouble(8, 4, scale)!;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      spacing: lerpDouble(8, 4, scale)!,
-      children: effectiveIconAlignment == IconAlignment.start
-          ? <Widget>[icon, Flexible(child: label)]
-          : <Widget>[Flexible(child: label), icon],
+      children: iconAlignment == IconAlignment.start
+        ? <Widget>[icon, SizedBox(width: gap), Flexible(child: label)]
+        : <Widget>[Flexible(child: label), SizedBox(width: gap), icon],
     );
   }
 }
@@ -511,7 +527,6 @@ class _OutlinedButtonWithIconChild extends StatelessWidget {
 // Design token database by the script:
 //   dev/tools/gen_defaults/bin/gen_defaults.dart.
 
-// dart format off
 class _OutlinedButtonDefaultsM3 extends ButtonStyle {
   _OutlinedButtonDefaultsM3(this.context)
    : super(
@@ -578,29 +593,6 @@ class _OutlinedButtonDefaultsM3 extends ButtonStyle {
   // No default fixedSize
 
   @override
-  MaterialStateProperty<double>? get iconSize =>
-    const MaterialStatePropertyAll<double>(18.0);
-
-  @override
-  MaterialStateProperty<Color>? get iconColor {
-    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
-      }
-      if (states.contains(MaterialState.pressed)) {
-        return _colors.primary;
-      }
-      if (states.contains(MaterialState.hovered)) {
-        return _colors.primary;
-      }
-      if (states.contains(MaterialState.focused)) {
-        return _colors.primary;
-      }
-      return _colors.primary;
-    });
-  }
-
-  @override
   MaterialStateProperty<Size>? get maximumSize =>
     const MaterialStatePropertyAll<Size>(Size.infinite);
 
@@ -638,6 +630,5 @@ class _OutlinedButtonDefaultsM3 extends ButtonStyle {
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
 }
-// dart format on
 
 // END GENERATED TOKEN PROPERTIES - OutlinedButton

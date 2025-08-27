@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This file is auto generated.
-// To update all the settings.gradle files in the Flutter repo,
-// See dev/tools/bin/generate_gradle_lockfiles.dart.
+// Contents of this file should be generated automatically by
+// dev/tools/bin/generate_gradle_lockfiles.dart, but currently are not.
+// See #141540.
 
 allprojects {
     repositories {
@@ -13,18 +13,10 @@ allprojects {
     }
 }
 
-rootProject.layout.buildDirectory.value(
-    rootProject.layout.buildDirectory
-        .dir("../../build")
-        .get()
-)
+rootProject.buildDir = file("../build")
 
 subprojects {
-    project.layout.buildDirectory.value(
-        rootProject.layout.buildDirectory
-            .dir(project.name)
-            .get()
-    )
+    project.buildDir = file("${rootProject.buildDir}/${project.name}")
 }
 subprojects {
     project.evaluationDependsOn(":app")
@@ -38,5 +30,5 @@ subprojects {
 }
 
 tasks.register<Delete>("clean") {
-    delete(rootProject.layout.buildDirectory)
+    delete(rootProject.buildDir)
 }

@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
-/// Flutter code sample for [FontFeature.slashedZero].
+/// Flutter code sample for [FontFeature.FontFeature.slashedZero].
 
 void main() => runApp(const ExampleApp());
 
@@ -31,7 +31,9 @@ class ExampleWidget extends StatelessWidget {
       'One million is: 1,000,000.00',
       style: TextStyle(
         fontFamily: 'Source Code Pro',
-        fontFeatures: <FontFeature>[FontFeature.slashedZero()],
+        fontFeatures: <FontFeature>[
+          FontFeature.slashedZero(),
+        ],
       ),
     );
   }
