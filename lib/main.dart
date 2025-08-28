@@ -34,8 +34,8 @@ class VelloMotoristaApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => LocationService()),
-        ChangeNotifierProvider(create: (_) => NotificationService()),
-        ChangeNotifierProvider(create: (_) => SoundService()),
+        Provider<NotificationService>(create: (_) => NotificationService()),
+        Provider<SoundService>(create: (_) => SoundService()),
       ],
       child: MaterialApp(
         title: 'Vello Motorista',

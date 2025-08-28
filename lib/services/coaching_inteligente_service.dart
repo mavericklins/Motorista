@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -59,7 +58,7 @@ class CoachingInteligenteService extends ChangeNotifier {
         totalGanhos += (data['valor'] as num?)?.toDouble() ?? 0;
         totalDistancia += (data['distancia'] as num?)?.toDouble() ?? 0;
         totalTempo += (data['tempoViagem'] as num?)?.toDouble() ?? 0;
-        
+
         final avaliacao = (data['avaliacaoPassageiro'] as num?)?.toDouble() ?? 0;
         if (avaliacao > 0) {
           somaAvaliacoes += avaliacao;
@@ -92,7 +91,7 @@ class CoachingInteligenteService extends ChangeNotifier {
     // Análise de ganhos
     if (_performanceAtual['mediaDiaria'] != null) {
       final mediaDiaria = _performanceAtual['mediaDiaria'] as double;
-      
+
       if (mediaDiaria < 100) {
         _dicasAtivas.add({
           'tipo': 'ganhos',
@@ -109,7 +108,7 @@ class CoachingInteligenteService extends ChangeNotifier {
     // Análise de avaliações
     if (_performanceAtual['avaliacaoMedia'] != null) {
       final avaliacaoMedia = _performanceAtual['avaliacaoMedia'] as double;
-      
+
       if (avaliacaoMedia < 4.5) {
         _dicasAtivas.add({
           'tipo': 'avaliacao',
@@ -126,7 +125,7 @@ class CoachingInteligenteService extends ChangeNotifier {
     // Análise de eficiência
     if (_performanceAtual['eficiencia'] != null) {
       final eficiencia = _performanceAtual['eficiencia'] as double;
-      
+
       if (eficiencia < 2.0) {
         _dicasAtivas.add({
           'tipo': 'eficiencia',
@@ -219,7 +218,7 @@ class CoachingInteligenteService extends ChangeNotifier {
 
       _metasPersonalizadas[tipo] = meta;
       await _salvarMetas();
-      
+
       // Gerar dica específica para a meta
       _dicasAtivas.add({
         'tipo': 'meta_personalizada',
@@ -304,7 +303,7 @@ class CoachingInteligenteService extends ChangeNotifier {
       final agora = DateTime.now();
       final horasOnlineConsecutivas = await _calcularHorasOnlineConsecutivas();
       final diasSemParada = await _calcularDiasSemParada();
-      
+
       // Alerta de fadiga
       if (horasOnlineConsecutivas >= 8) {
         _dicasAtivas.add({
@@ -317,7 +316,7 @@ class CoachingInteligenteService extends ChangeNotifier {
           'categoria': 'saude'
         });
       }
-      
+
       // Alerta de sobrecarga
       if (diasSemParada >= 7) {
         _dicasAtivas.add({
@@ -330,7 +329,7 @@ class CoachingInteligenteService extends ChangeNotifier {
           'categoria': 'saude'
         });
       }
-      
+
       // Dicas de postura (baseado em tempo dirigindo)
       final tempoDirigindo = _performanceAtual['tempoMedioViagem'] ?? 0;
       if (tempoDirigindo > 30) {
@@ -344,7 +343,7 @@ class CoachingInteligenteService extends ChangeNotifier {
           'categoria': 'saude'
         });
       }
-      
+
     } catch (e) {
       print('Erro na análise de bem-estar: $e');
     }

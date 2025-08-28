@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/metas_inteligentes_service.dart';
@@ -27,7 +26,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
     final service = Provider.of<MetasInteligentesService>(context, listen: false);
     await service.gerarMetasPersonalizadas();
     await service.gerarInsightsPersonalizados();
-    
+
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -132,7 +131,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
 
   Widget _buildMetasAtivas(List<MetaInteligente> metas) {
     final metasAtivas = metas.where((m) => m.ativa && !m.completada && !m.expirada).toList();
-    
+
     if (metasAtivas.isEmpty) {
       return _buildEmptyState(
         'Nenhuma meta ativa',
@@ -155,7 +154,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
 
   Widget _buildMetasConcluidas(List<MetaInteligente> metas) {
     final metasConcluidas = metas.where((m) => m.completada).toList();
-    
+
     if (metasConcluidas.isEmpty) {
       return _buildEmptyState(
         'Nenhuma meta concluída',
@@ -240,9 +239,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
                   ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Barra de progresso
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,9 +277,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Informações adicionais
             Row(
               children: [
@@ -350,9 +349,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
               'Eficiência: ${(performance['eficiencia'] ?? 0).toStringAsFixed(1)}%',
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           _buildInsightCard(
             'Recomendações',
             Icons.lightbulb,
@@ -364,9 +363,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
               'Use pontos estratégicos (-50% tempo espera)',
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           _buildInsightCard(
             'Previsões',
             Icons.trending_up,
@@ -436,9 +435,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           ...itens.map((item) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
@@ -574,7 +573,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
   String _formatarTempoRestante(MetaInteligente meta) {
     if (meta.expirada) return 'Expirada';
     if (meta.completada) return 'Concluída';
-    
+
     final tempo = meta.tempoRestante;
     if (tempo.inDays > 0) {
       return '${tempo.inDays}d restantes';

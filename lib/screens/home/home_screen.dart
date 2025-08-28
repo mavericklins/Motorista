@@ -13,7 +13,7 @@ class WelcomeBanner extends StatelessWidget {
   final bool isOnline;
 
   const WelcomeBanner({
-    super.key, 
+    super.key,
     required this.userName,
     required this.isOnline,
   });
@@ -212,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isOnline = !_isOnline;
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

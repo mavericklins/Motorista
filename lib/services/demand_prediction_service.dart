@@ -99,13 +99,8 @@ class DemandPredictionService extends ChangeNotifier {
     };
   }
 
-  Future<Map<String, dynamic>> getPredictions() async {
-    // Mock de predições para evitar erro
-    return {
-      'predictions': [
-        {'area': 'Centro', 'demand': 0.8, 'time': '18:00'},
-        {'area': 'Zona Sul', 'demand': 0.6, 'time': '19:00'},
-      ],
-    };
+  Future<List<Map<String, Object>>> getPredictions() async {
+    // TODO: Implementar predição de demanda real
+    return [];
   }
 }

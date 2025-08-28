@@ -6,6 +6,11 @@ import 'package:intl/intl.dart';
 /// Serviço de relatórios financeiros para Vello Motorista
 class FinancialService {
   
+  Future<void> adicionarCredito(num valor, String descricao) async {
+    // TODO: Implementar adição de crédito
+    print('Adicionando crédito: R\$ $valor - $descricao');
+  }
+  
   Future<void> adicionarCredito(double valor, String descricao) async {
     // Mock de adição de crédito
     print('Crédito adicionado: R\$ $valor - $descricao');

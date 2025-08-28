@@ -2,13 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show FlutterError;
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io';
+import 'dart:ui' show PlatformDispatcher;
 
 class AnalyticsService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -96,7 +97,7 @@ class AnalyticsService {
     try {
       final deviceInfo = DeviceInfoPlugin();
       final packageInfo = await PackageInfo.fromPlatform();
-      
+
       Map<String, dynamic> infoDispositivo = {
         'app_version': packageInfo.version,
         'app_build': packageInfo.buildNumber,
@@ -148,7 +149,7 @@ class AnalyticsService {
       if (user == null) return;
 
       final posicao = await _obterPosicaoAtual();
-      
+
       await _firestore.collection('analytics_sessoes').add({
         'motoristaId': user.uid,
         'inicio_sessao': Timestamp.now(),
@@ -261,7 +262,7 @@ class AnalyticsService {
   }) async {
     try {
       final user = _auth.currentUser;
-      
+
       final parametrosCompletos = {
         'user_id': user?.uid,
         'timestamp': DateTime.now().millisecondsSinceEpoch,
@@ -347,7 +348,7 @@ class AnalyticsService {
   }) async {
     try {
       final user = _auth.currentUser;
-      
+
       // Registrar no Analytics
       await _analytics.logEvent(
         name: 'user_action',
@@ -532,7 +533,7 @@ class AnalyticsService {
         'duration_minutes': duracaoMinutos,
       },
     );
-    
+
     // Registrar como conversão também
     await registrarConversao(tipoConversao: 'ride_completed', valor: valor);
   }
@@ -553,9 +554,8 @@ class AnalyticsService {
         'payment_method': metodo,
       },
     );
-    
+
     // Registrar como conversão
     await registrarConversao(tipoConversao: 'payment_received', valor: valor);
   }
 }
-
