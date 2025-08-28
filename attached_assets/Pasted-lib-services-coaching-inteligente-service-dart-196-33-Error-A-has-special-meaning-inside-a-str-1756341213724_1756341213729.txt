@@ -1,0 +1,452 @@
+lib/services/coaching_inteligente_service.dart:196:33: Error: A '$' has special meaning inside a string, and must be followed by an identifier or an expression in curly braces ({}).
+Try adding a backslash (\) to escape the '$'.
+        'descricao': 'Superou R$ 150 de média diária!',                                                                                                                             
+                                ^
+lib/main.dart:37:9: Error: Inferred type argument 'NotificationService' doesn't conform to the bound 'ChangeNotifier?' of the type variable 'T' on 'ChangeNotifierProvider'.        
+ - 'NotificationService' is from 'package:vello_motorista/services/notification_service.dart' ('lib/services/notification_service.dart').
+ - 'ChangeNotifier' is from 'package:flutter/src/foundation/change_notifier.dart' ('/C:/src/flutter/packages/flutter/lib/src/foundation/change_notifier.dart').
+Try specifying type arguments explicitly so that they conform to the bounds.
+        ChangeNotifierProvider(create: (_) => NotificationService()),
+        ^
+/C:/Users/BraveTec/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.5+1/lib/src/change_notifier_provider.dart:98:30: Context: This is the type variable whose bound isn't conformed to.
+class ChangeNotifierProvider<T extends ChangeNotifier?>                                                                                                                             
+                             ^
+lib/main.dart:38:9: Error: Inferred type argument 'SoundService' doesn't conform to the bound 'ChangeNotifier?' of the type variable 'T' on 'ChangeNotifierProvider'.
+ - 'SoundService' is from 'package:vello_motorista/services/sound_service.dart' ('lib/services/sound_service.dart').
+ - 'ChangeNotifier' is from 'package:flutter/src/foundation/change_notifier.dart' ('/C:/src/flutter/packages/flutter/lib/src/foundation/change_notifier.dart').
+Try specifying type arguments explicitly so that they conform to the bounds.
+        ChangeNotifierProvider(create: (_) => SoundService()),
+        ^
+/C:/Users/BraveTec/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.5+1/lib/src/change_notifier_provider.dart:98:30: Context: This is the type variable whose bound isn't conformed to.
+class ChangeNotifierProvider<T extends ChangeNotifier?>
+                             ^
+lib/routes/app_routes.dart:58:36: Error: Cannot invoke a non-'const' constructor where a const expression is expected.
+Try using a constructor or factory that is 'const'.
+      coaching: (context) => const CoachingInteligenteScreen(),
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/routes/app_routes.dart:59:38: Error: Cannot invoke a non-'const' constructor where a const expression is expected.
+Try using a constructor or factory that is 'const'.
+      conquistas: (context) => const ConquistasScreen(),
+                                     ^^^^^^^^^^^^^^^^
+lib/routes/app_routes.dart:62:31: Error: Couldn't find constructor 'SosScreen'.
+      sos: (context) => const SosScreen(),
+                              ^^^^^^^^^
+lib/routes/app_routes.dart:96:62: Error: Cannot invoke a non-'const' constructor where a const expression is expected.
+Try using a constructor or factory that is 'const'.
+        return MaterialPageRoute(builder: (context) => const CoachingInteligenteScreen());
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/routes/app_routes.dart:98:62: Error: Cannot invoke a non-'const' constructor where a const expression is expected.
+Try using a constructor or factory that is 'const'.
+        return MaterialPageRoute(builder: (context) => const ConquistasScreen());
+                                                             ^^^^^^^^^^^^^^^^
+lib/routes/app_routes.dart:104:62: Error: Couldn't find constructor 'SosScreen'.
+        return MaterialPageRoute(builder: (context) => const SosScreen());
+                                                             ^^^^^^^^^
+lib/services/notification_service.dart:516:46: Error: The getter 'UILocalNotificationDateInterpretation' isn't defined for the type 'NotificationService'.
+ - 'NotificationService' is from 'package:vello_motorista/services/notification_service.dart' ('lib/services/notification_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'UILocalNotificationDateInterpretation'.
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,                                                                                    
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                                                                                  
+lib/services/notification_service.dart:516:7: Error: No named parameter with the name 'uiLocalNotificationDateInterpretation'.
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/services/notification_service.dart:588:46: Error: The getter 'UILocalNotificationDateInterpretation' isn't defined for the type 'NotificationService'.
+ - 'NotificationService' is from 'package:vello_motorista/services/notification_service.dart' ('lib/services/notification_service.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'UILocalNotificationDateInterpretation'.
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/services/notification_service.dart:588:7: Error: No named parameter with the name 'uiLocalNotificationDateInterpretation'.
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/theme/app_theme.dart:58:18: Error: The argument type 'CardTheme' can't be assigned to the parameter type 'CardThemeData?'.
+ - 'CardTheme' is from 'package:flutter/src/material/card_theme.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/card_theme.dart').
+ - 'CardThemeData' is from 'package:flutter/src/material/card_theme.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/card_theme.dart').
+      cardTheme: _buildCardTheme(),                                                                                                                                                 
+                 ^
+lib/theme/app_theme.dart:70:20: Error: The argument type 'DialogTheme' can't be assigned to the parameter type 'DialogThemeData?'.
+ - 'DialogTheme' is from 'package:flutter/src/material/dialog_theme.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/dialog_theme.dart').
+ - 'DialogThemeData' is from 'package:flutter/src/material/dialog_theme.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/dialog_theme.dart').                              
+      dialogTheme: _buildDialogTheme(),
+                   ^
+lib/screens/auth/splash_screen.dart:133:54: Error: Member not found: 'laranja'.                                                                                                     
+                                  color: VelloColors.laranja,
+                                                     ^^^^^^^                                                                                                                        
+lib/screens/auth/login_screen.dart:39:40: Error: Member not found: 'erro'.
+          backgroundColor: VelloColors.erro,                                                                                                                                        
+                                       ^^^^
+lib/screens/auth/login_screen.dart:49:36: Error: Member not found: 'creme'.
+      backgroundColor: VelloColors.creme,                                                                                                                                           
+                                   ^^^^^
+lib/screens/auth/login_screen.dart:62:38: Error: Member not found: 'branco'.
+                  color: VelloColors.branco,                                                                                                                                        
+                                     ^^^^^^
+lib/screens/auth/login_screen.dart:66:42: Error: Member not found: 'pretoTransparente'.
+                      color: VelloColors.pretoTransparente,
+                                         ^^^^^^^^^^^^^^^^^
+lib/screens/auth/login_screen.dart:75:38: Error: Member not found: 'laranja'.
+                  color: VelloColors.laranja,
+                                     ^^^^^^^                                                                                                                                        
+lib/screens/auth/login_screen.dart:86:38: Error: Member not found: 'azul'.                                                                                                          
+                  color: VelloColors.azul,
+                                     ^^^^                                                                                                                                           
+lib/screens/auth/login_screen.dart:96:38: Error: Member not found: 'cinza'.
+                  color: VelloColors.cinza,                                                                                                                                         
+                                     ^^^^^                                                                                                                                          
+lib/screens/auth/login_screen.dart:109:77: Error: Member not found: 'laranja'.
+                  prefixIcon: Icon(Icons.email_outlined, color: VelloColors.laranja),
+                                                                            ^^^^^^^
+lib/screens/auth/login_screen.dart:122:75: Error: Member not found: 'laranja'.
+                  prefixIcon: Icon(Icons.lock_outline, color: VelloColors.laranja),                                                                                                 
+                                                                          ^^^^^^^
+lib/screens/auth/login_screen.dart:135:45: Error: Member not found: 'gradienteLaranja'.
+                      gradient: VelloColors.gradienteLaranja,
+                                            ^^^^^^^^^^^^^^^^
+lib/screens/auth/login_screen.dart:139:46: Error: Member not found: 'laranjaTransparente'.
+                          color: VelloColors.laranjaTransparente,
+                                             ^^^^^^^^^^^^^^^^^^^                                                                                                                    
+lib/screens/auth/login_screen.dart:152:84: Error: Member not found: 'branco'.
+                              ? const CircularProgressIndicator(color: VelloColors.branco)
+                                                                                   ^^^^^^
+lib/screens/auth/login_screen.dart:156:56: Error: Member not found: 'branco'.
+                                    color: VelloColors.branco,
+                                                       ^^^^^^                                                                                                                       
+lib/screens/auth/login_screen.dart:177:34: Error: Member not found: 'azul'.
+              color: VelloColors.azul,
+                                 ^^^^
+lib/screens/auth/register_screen.dart:121:30: Error: Member not found: 'creme'.
+      fillColor: VelloColors.creme,
+                             ^^^^^
+lib/screens/auth/register_screen.dart:130:36: Error: Member not found: 'branco'.                                                                                                    
+      backgroundColor: VelloColors.branco,
+                                   ^^^^^^
+lib/screens/auth/register_screen.dart:133:38: Error: Member not found: 'laranja'.
+        backgroundColor: VelloColors.laranja,
+                                     ^^^^^^^
+lib/screens/auth/register_screen.dart:160:78: Error: Member not found: 'laranja'.
+                style: ElevatedButton.styleFrom(backgroundColor: VelloColors.laranja),
+                                                                             ^^^^^^^
+lib/screens/auth/register_screen.dart:166:78: Error: Member not found: 'laranja'.
+                style: ElevatedButton.styleFrom(backgroundColor: VelloColors.laranja),
+                                                                             ^^^^^^^
+lib/screens/auth/register_screen.dart:172:78: Error: Member not found: 'laranja'.
+                style: ElevatedButton.styleFrom(backgroundColor: VelloColors.laranja),
+                                                                             ^^^^^^^
+lib/screens/auth/register_screen.dart:179:48: Error: Member not found: 'azul'.                                                                                                      
+                  backgroundColor: VelloColors.azul,
+                                               ^^^^
+lib/screens/home/home_screen.dart:534:13: Error: No named parameter with the name 'center'.
+            center: currentLocation!,
+            ^^^^^^
+/C:/Users/BraveTec/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_map-8.2.1/lib/src/map/options/options.dart:143:9: Context: Found this candidate, but the arguments don't match.   
+  const MapOptions({                                                                                                                                                                
+        ^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:23:36: Error: Member not found: 'creme'.
+      backgroundColor: VelloColors.creme, // Changed from AppColors.background
+                                   ^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:26:38: Error: Member not found: 'laranja'.
+        backgroundColor: VelloColors.laranja, // Changed from AppColors.primary
+                                     ^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:45:61: Error: Member not found: 'laranjaClaro'.                                                                                   
+                  colors: [VelloColors.laranja, VelloColors.laranjaClaro], // Changed from AppColors.primary, AppColors.secondary
+                                                            ^^^^^^^^^^^^                                                                                                            
+lib/screens/carteira/carteira_digital_screen.dart:45:40: Error: Member not found: 'laranja'.
+                  colors: [VelloColors.laranja, VelloColors.laranjaClaro], // Changed from AppColors.primary, AppColors.secondary                                                   
+                                       ^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:52:40: Error: Member not found: 'laranja'.
+                    color: VelloColors.laranja.withOpacity(0.3), // Changed from AppColors.primary
+                                       ^^^^^^^                                                                                                                                      
+lib/screens/carteira/carteira_digital_screen.dart:140:40: Error: Member not found: 'laranja'.
+                    color: VelloColors.laranja, // Changed from AppColors.primary
+                                       ^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:179:42: Error: Member not found: 'laranja'.
+                      color: VelloColors.laranja, // Changed from AppColors.primary
+                                         ^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:184:69: Error: Member not found: 'laranja'.                                                                                       
+                    leading: Icon(Icons.qr_code, color: VelloColors.laranja), // Changed from AppColors.primary
+                                                                    ^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:363:42: Error: Member not found: 'laranja'.                                                                                       
+            backgroundColor: VelloColors.laranja, // Changed from AppColors.primary
+                                         ^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:140:15: Error: Member not found: 'target'.
+        Icons.target,
+              ^^^^^^                                                                                                                                                                
+lib/screens/coaching/coaching_inteligente_screen.dart:26:36: Error: Member not found: 'primaryColor'.
+        backgroundColor: AppColors.primaryColor,                                                                                                                                    
+                                   ^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:71:58: Error: Member not found: 'primaryColor'.
+                Icon(Icons.trending_up, color: AppColors.primaryColor),
+                                                         ^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:129:37: Error: Member not found: 'primaryColor'.
+        Icon(icon, color: AppColors.primaryColor, size: 24),
+                                    ^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:207:24: Error: Member not found: 'Border.left'.
+        border: Border.left(
+                       ^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:259:44: Error: Member not found: 'primaryColor'.                                                                              
+                backgroundColor: AppColors.primaryColor,
+                                           ^^^^^^^^^^^^                                                                                                                             
+lib/screens/coaching/coaching_inteligente_screen.dart:284:55: Error: Member not found: 'primaryColor'.
+                    Icon(Icons.flag, color: AppColors.primaryColor),                                                                                                                
+                                                      ^^^^^^^^^^^^                                                                                                                  
+lib/screens/coaching/coaching_inteligente_screen.dart:337:70: Error: Member not found: 'primaryColor'.
+                  color: progresso >= 100 ? Colors.green : AppColors.primaryColor,
+                                                                     ^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:348:59: Error: Member not found: 'primaryColor'.
+              progresso >= 100 ? Colors.green : AppColors.primaryColor,
+                                                          ^^^^^^^^^^^^
+lib/screens/insights/demand_prediction_screen.dart:28:35: Error: The method 'getPredictions' isn't defined for the type 'DemandPredictionService'.
+ - 'DemandPredictionService' is from 'package:vello_motorista/services/demand_prediction_service.dart' ('lib/services/demand_prediction_service.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'getPredictions'.
+      final data = await _service.getPredictions();                                                                                                                                 
+                                  ^^^^^^^^^^^^^^
+lib/services/metas_inteligentes_service.dart:496:29: Error: The method 'adicionarCredito' isn't defined for the type 'FinancialService'.                                            
+ - 'FinancialService' is from 'package:vello_motorista/services/financial_service.dart' ('lib/services/financial_service.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'adicionarCredito'.
+    await _financialService.adicionarCredito(meta.recompensa, 'Meta completada: ${meta.titulo}');                                                                                   
+                            ^^^^^^^^^^^^^^^^
+lib/services/analytics_service.dart:57:5: Error: Undefined name 'FlutterError'.
+    FlutterError.onError = (errorDetails) {
+    ^^^^^^^^^^^^
+lib/services/analytics_service.dart:62:5: Error: Undefined name 'PlatformDispatcher'.
+    PlatformDispatcher.instance.onError = (error, stack) {
+    ^^^^^^^^^^^^^^^^^^
+lib/services/analytics_service.dart:238:59: Error: The argument type 'Map<String, dynamic>' can't be assigned to the parameter type 'Map<String, Object>?'.
+ - 'Map' is from 'dart:core'.
+ - 'Object' is from 'dart:core'.
+      await _analytics.logEvent(name: evento, parameters: parametros);
+                                                          ^
+lib/services/analytics_service.dart:270:63: Error: The argument type 'Map<String, dynamic>' can't be assigned to the parameter type 'Map<String, Object>?'.
+ - 'Map' is from 'dart:core'.                                                                                                                                                       
+ - 'Object' is from 'dart:core'.
+      await _analytics.logEvent(name: nomeEvento, parameters: parametrosCompletos);
+                                                              ^                                                                                                                     
+lib/services/analytics_service.dart:355:20: Error: A value of type 'String?' can't be assigned to a variable of type 'Object'.                                                      
+ - 'Object' is from 'dart:core'.                                                                                                                                                    
+          'value': valor,                                                                                                                                                           
+                   ^                                                                                                                                                                
+lib/services/analytics_service.dart:356:28: Error: A value of type 'int?' can't be assigned to a variable of type 'Object'.                                                         
+ - 'Object' is from 'dart:core'.                                                                                                                                                    
+          'numeric_value': valorNumerico,                                                                                                                                           
+                           ^                                                                                                                                                        
+lib/services/analytics_service.dart:357:22: Error: A value of type 'String?' can't be assigned to a variable of type 'Object'.                                                      
+ - 'Object' is from 'dart:core'.                                                                                                                                                    
+          'user_id': user?.uid,                                                                                                                                                     
+                     ^                                                                                                                                                              
+lib/services/analytics_service.dart:479:23: Error: A value of type 'String?' can't be assigned to a variable of type 'Object'.                                                      
+ - 'Object' is from 'dart:core'.                                                                                                                                                    
+          'currency': moeda,                                                                                                                                                        
+                      ^                                                                                                                                                             
+e: Daemon compilation failed: null
+java.lang.Exception
+        at org.jetbrains.kotlin.daemon.common.CompileService$CallResult$Error.get(CompileService.kt:69)
+        at org.jetbrains.kotlin.daemon.common.CompileService$CallResult$Error.get(CompileService.kt:65)
+        at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.compileWithDaemon(GradleKotlinCompilerWork.kt:240)
+        at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.compileWithDaemonOrFallbackImpl(GradleKotlinCompilerWork.kt:159)
+        at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:111)
+        at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:76)
+        at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+        at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+        at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+        at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+        at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+        at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+        at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+        at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:209)
+        at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+        at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+        at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+        at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:166)
+        at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+        at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)                                                                     
+        at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)                                                                        
+        at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)                                                                         
+        at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:174)                                                                    
+        at java.base/java.util.concurrent.FutureTask.run(Unknown Source)                                                                                                            
+        at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:194)                                        
+        at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:127)                                          
+        at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:169)                                               
+        at org.gradle.internal.Factories$1.create(Factories.java:31)                                                                                                                
+        at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+        at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)                                                                 
+        at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)                                                                 
+        at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:164)                                            
+        at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:133)                                                 
+        at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)                                                                                            
+        at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+        at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)                                                                   
+        at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)                                                                            
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)                                                                                              
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)                                                                                             
+        at java.base/java.lang.Thread.run(Unknown Source)                                                                                                                           
+Caused by: java.lang.AssertionError: java.lang.Exception: Could not close incremental caches in D:\AndroidStudioProjects\Motorista\build\camera_android_camerax\kotlin\compileDebugKotlin\cacheable\caches-jvm\jvm\kotlin: class-fq-name-to-source.tab, source-to-classes.tab, internal-name-to-source.tab
+        at org.jetbrains.kotlin.com.google.common.io.Closer.close(Closer.java:236)                                                                                                  
+        at org.jetbrains.kotlin.incremental.IncrementalCachesManager.close(IncrementalCachesManager.kt:55)                                                                          
+        at kotlin.io.CloseableKt.closeFinally(Closeable.kt:56)
+        at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileNonIncrementally(IncrementalCompilerRunner.kt:293)                                                     
+        at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compile(IncrementalCompilerRunner.kt:129)
+        at org.jetbrains.kotlin.daemon.CompileServiceImplBase.execIncrementalCompiler(CompileServiceImpl.kt:674)                                                                    
+        at org.jetbrains.kotlin.daemon.CompileServiceImplBase.access$execIncrementalCompiler(CompileServiceImpl.kt:91)                                                              
+        at org.jetbrains.kotlin.daemon.CompileServiceImpl.compile(CompileServiceImpl.kt:1659)                                                                                       
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)                                                                                         
+        at java.base/java.lang.reflect.Method.invoke(Unknown Source)                                                                                                                
+        at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(Unknown Source)                                                                                                        
+        at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)                                                                                                               
+        at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)                                                                                                               
+        at java.base/java.security.AccessController.doPrivileged(Unknown Source)                                                                                                    
+        at java.rmi/sun.rmi.transport.Transport.serviceCall(Unknown Source)                                                                                                         
+        at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(Unknown Source)                                                                                               
+        at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(Unknown Source)                                                                                       
+        at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(Unknown Source)                                                                               
+        at java.base/java.security.AccessController.doPrivileged(Unknown Source)                                                                                                    
+        at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(Unknown Source)                                                                                        
+        ... 3 more                                                                                                                                                                  
+Caused by: java.lang.Exception: Could not close incremental caches in D:\AndroidStudioProjects\Motorista\build\camera_android_camerax\kotlin\compileDebugKotlin\cacheable\caches-jvm\jvm\kotlin: class-fq-name-to-source.tab, source-to-classes.tab, internal-name-to-source.tab
+        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.forEachMapSafe(BasicMapsOwner.kt:95)                                                                             
+        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.close(BasicMapsOwner.kt:53)                                                                                      
+        at org.jetbrains.kotlin.com.google.common.io.Closer.close(Closer.java:223)                                                                                                  
+        ... 22 more                                                                                                                                                                 
+        Suppressed: java.lang.IllegalArgumentException: this and base files have different roots: C:\Users\BraveTec\AppData\Local\Pub\Cache\hosted\pub.dev\camera_android_camerax-0.6.21\android\src\main\java\io\flutter\plugins\camerax\CameraXLibrary.g.kt and D:\AndroidStudioProjects\Motorista\android.
+                at kotlin.io.FilesKt__UtilsKt.toRelativeString(Utils.kt:117)                                                                                                        
+                at kotlin.io.FilesKt__UtilsKt.relativeTo(Utils.kt:128)                                                                                                              
+                at org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter.toPath(RelocatableFileToPathConverter.kt:24)                                             
+                at org.jetbrains.kotlin.incremental.storage.FileDescriptor.save(FileToPathConverter.kt:33)                                                                          
+                at org.jetbrains.kotlin.incremental.storage.FileDescriptor.save(FileToPathConverter.kt:30)                                                                          
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.doPut(PersistentMapImpl.java:443)                                                                    
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.put(PersistentMapImpl.java:422)                                                                      
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentHashMap.put(PersistentHashMap.java:105)                                                                      
+                at org.jetbrains.kotlin.incremental.storage.LazyStorage.set(LazyStorage.kt:80)                                                                                      
+                at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.applyChanges(InMemoryStorage.kt:108)                                                                    
+                at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.close(InMemoryStorage.kt:136)                                                                           
+                at org.jetbrains.kotlin.incremental.storage.PersistentStorageWrapper.close(PersistentStorage.kt:124)                                                                
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                                     
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                                     
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.forEachMapSafe(BasicMapsOwner.kt:87)                                                                     
+                ... 24 more                                                                                                                                                         
+        Suppressed: java.lang.IllegalArgumentException: this and base files have different roots: C:\Users\BraveTec\AppData\Local\Pub\Cache\hosted\pub.dev\camera_android_camerax-0.6.21\android\src\main\java\io\flutter\plugins\camerax\CameraXLibrary.g.kt and D:\AndroidStudioProjects\Motorista\android.
+                at kotlin.io.FilesKt__UtilsKt.toRelativeString(Utils.kt:117)
+                at kotlin.io.FilesKt__UtilsKt.relativeTo(Utils.kt:128)                                                                                                              
+                at org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter.toPath(RelocatableFileToPathConverter.kt:24)                                             
+                at org.jetbrains.kotlin.incremental.storage.FileDescriptor.getHashCode(FileToPathConverter.kt:50)                                                                   
+                at org.jetbrains.kotlin.incremental.storage.FileDescriptor.getHashCode(FileToPathConverter.kt:30)                                                                   
+                at org.jetbrains.kotlin.com.intellij.util.containers.LinkedCustomHashMap.hashKey(LinkedCustomHashMap.java:109)
+                at org.jetbrains.kotlin.com.intellij.util.containers.LinkedCustomHashMap.remove(LinkedCustomHashMap.java:153)
+                at org.jetbrains.kotlin.com.intellij.util.containers.SLRUMap.remove(SLRUMap.java:89)                                                                                
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.flushAppendCache(PersistentMapImpl.java:999)                                                         
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.doPut(PersistentMapImpl.java:451)
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.put(PersistentMapImpl.java:422)                                                                      
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentHashMap.put(PersistentHashMap.java:105)                                                                      
+                at org.jetbrains.kotlin.incremental.storage.LazyStorage.set(LazyStorage.kt:80)
+                at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.applyChanges(InMemoryStorage.kt:108)                                                                    
+                at org.jetbrains.kotlin.incremental.storage.AppendableInMemoryStorage.applyChanges(InMemoryStorage.kt:179)                                                          
+                at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.close(InMemoryStorage.kt:136)                                                                           
+                at org.jetbrains.kotlin.incremental.storage.AppendableSetBasicMap.close(BasicMap.kt:157)
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                                     
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.forEachMapSafe(BasicMapsOwner.kt:87)                                                                     
+                ... 24 more                                                                                                                                                         
+        Suppressed: java.lang.IllegalArgumentException: this and base files have different roots: C:\Users\BraveTec\AppData\Local\Pub\Cache\hosted\pub.dev\camera_android_camerax-0.6.21\android\src\main\java\io\flutter\plugins\camerax\CameraXLibrary.g.kt and D:\AndroidStudioProjects\Motorista\android.
+                at kotlin.io.FilesKt__UtilsKt.toRelativeString(Utils.kt:117)                                                                                                        
+                at kotlin.io.FilesKt__UtilsKt.relativeTo(Utils.kt:128)                                                                                                              
+                at org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter.toPath(RelocatableFileToPathConverter.kt:24)                                             
+                at org.jetbrains.kotlin.incremental.storage.FileDescriptor.save(FileToPathConverter.kt:33)                                                                          
+                at org.jetbrains.kotlin.incremental.storage.FileDescriptor.save(FileToPathConverter.kt:30)                                                                          
+                at org.jetbrains.kotlin.incremental.storage.AppendableCollectionExternalizer.save(LazyStorage.kt:151)                                                               
+                at org.jetbrains.kotlin.incremental.storage.AppendableCollectionExternalizer.save(LazyStorage.kt:142)
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.doPut(PersistentMapImpl.java:443)                                                                    
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.put(PersistentMapImpl.java:422)
+                at org.jetbrains.kotlin.com.intellij.util.io.PersistentHashMap.put(PersistentHashMap.java:105)                                                                      
+                at org.jetbrains.kotlin.incremental.storage.LazyStorage.set(LazyStorage.kt:80)                                                                                      
+                at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.applyChanges(InMemoryStorage.kt:108)
+                at org.jetbrains.kotlin.incremental.storage.AppendableInMemoryStorage.applyChanges(InMemoryStorage.kt:179)                                                          
+                at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.close(InMemoryStorage.kt:136)                                                                           
+                at org.jetbrains.kotlin.incremental.storage.PersistentStorageWrapper.close(PersistentStorage.kt:124)                                                                
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                                     
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                                     
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.forEachMapSafe(BasicMapsOwner.kt:87)                                                                     
+                ... 24 more                                                                                                                                                         
+        Suppressed: java.lang.Exception: Could not close incremental caches in D:\AndroidStudioProjects\Motorista\build\camera_android_camerax\kotlin\compileDebugKotlin\cacheable\caches-jvm\lookups: id-to-file.tab, file-to-id.tab
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.forEachMapSafe(BasicMapsOwner.kt:95)                                                                     
+                at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.close(BasicMapsOwner.kt:53)                                                                              
+                at org.jetbrains.kotlin.incremental.LookupStorage.close(LookupStorage.kt:155)                                                                                       
+                ... 23 more                                                                                                                                                         
+                Suppressed: java.lang.IllegalArgumentException: this and base files have different roots: C:\Users\BraveTec\AppData\Local\Pub\Cache\hosted\pub.dev\camera_android_camerax-0.6.21\android\src\main\java\io\flutter\plugins\camerax\CameraXLibrary.g.kt and D:\AndroidStudioProjects\Motorista\android.
+                        at kotlin.io.FilesKt__UtilsKt.toRelativeString(Utils.kt:117)                                                                                                
+                        at kotlin.io.FilesKt__UtilsKt.relativeTo(Utils.kt:128)                                                                                                      
+                        at org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter.toPath(RelocatableFileToPathConverter.kt:24)                                     
+                        at org.jetbrains.kotlin.incremental.storage.LegacyFileExternalizer.save(IdToFileMap.kt:51)                                                                  
+                        at org.jetbrains.kotlin.incremental.storage.LegacyFileExternalizer.save(IdToFileMap.kt:48)                                                                  
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.doPut(PersistentMapImpl.java:443)                                                            
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.put(PersistentMapImpl.java:422)                                                              
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentHashMap.put(PersistentHashMap.java:105)                                                              
+                        at org.jetbrains.kotlin.incremental.storage.LazyStorage.set(LazyStorage.kt:80)                                                                              
+                        at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.applyChanges(InMemoryStorage.kt:108)                                                            
+                        at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.close(InMemoryStorage.kt:136)
+                        at org.jetbrains.kotlin.incremental.storage.PersistentStorageWrapper.close(PersistentStorage.kt:124)                                                        
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                             
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                             
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.forEachMapSafe(BasicMapsOwner.kt:87)                                                             
+                        ... 25 more                                                                                                                                                 
+                Suppressed: java.lang.IllegalArgumentException: this and base files have different roots: C:\Users\BraveTec\AppData\Local\Pub\Cache\hosted\pub.dev\camera_android_camerax-0.6.21\android\src\main\java\io\flutter\plugins\camerax\CameraXLibrary.g.kt and D:\AndroidStudioProjects\Motorista\android.
+                        at kotlin.io.FilesKt__UtilsKt.toRelativeString(Utils.kt:117)                                                                                                
+                        at kotlin.io.FilesKt__UtilsKt.relativeTo(Utils.kt:128)
+                        at org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter.toPath(RelocatableFileToPathConverter.kt:24)                                     
+                        at org.jetbrains.kotlin.incremental.storage.FileDescriptor.getHashCode(FileToPathConverter.kt:50)                                                           
+                        at org.jetbrains.kotlin.incremental.storage.FileDescriptor.getHashCode(FileToPathConverter.kt:30)                                                           
+                        at org.jetbrains.kotlin.com.intellij.util.containers.LinkedCustomHashMap.hashKey(LinkedCustomHashMap.java:109)                                              
+                        at org.jetbrains.kotlin.com.intellij.util.containers.LinkedCustomHashMap.remove(LinkedCustomHashMap.java:153)                                               
+                        at org.jetbrains.kotlin.com.intellij.util.containers.SLRUMap.remove(SLRUMap.java:89)                                                                        
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.flushAppendCache(PersistentMapImpl.java:999)                                                 
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.doPut(PersistentMapImpl.java:451)                                                            
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.put(PersistentMapImpl.java:422)                                                              
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentHashMap.put(PersistentHashMap.java:105)                                                              
+                        at org.jetbrains.kotlin.incremental.storage.LazyStorage.set(LazyStorage.kt:80)                                                                              
+                        at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.applyChanges(InMemoryStorage.kt:108)                                                            
+                        at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.close(InMemoryStorage.kt:136)                                                                   
+                        at org.jetbrains.kotlin.incremental.storage.PersistentStorageWrapper.close(PersistentStorage.kt:124)                                                        
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                             
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.forEachMapSafe(BasicMapsOwner.kt:87)                                                             
+                        ... 25 more                                                                                                                                                 
+        Suppressed: java.lang.Exception: Could not close incremental caches in D:\AndroidStudioProjects\Motorista\build\camera_android_camerax\kotlin\compileDebugKotlin\cacheable\caches-jvm\inputs: source-to-output.tab
+                ... 25 more                                                                                                                                                         
+                Suppressed: java.lang.IllegalArgumentException: this and base files have different roots: C:\Users\BraveTec\AppData\Local\Pub\Cache\hosted\pub.dev\camera_android_camerax-0.6.21\android\src\main\java\io\flutter\plugins\camerax\CameraXLibrary.g.kt and D:\AndroidStudioProjects\Motorista\android.
+                        at kotlin.io.FilesKt__UtilsKt.toRelativeString(Utils.kt:117)                                                                                                
+                        at kotlin.io.FilesKt__UtilsKt.relativeTo(Utils.kt:128)                                                                                                      
+                        at org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter.toPath(RelocatableFileToPathConverter.kt:24)                                     
+                        at org.jetbrains.kotlin.incremental.storage.FileDescriptor.getHashCode(FileToPathConverter.kt:50)                                                           
+                        at org.jetbrains.kotlin.incremental.storage.FileDescriptor.getHashCode(FileToPathConverter.kt:30)                                                           
+                        at org.jetbrains.kotlin.com.intellij.util.containers.LinkedCustomHashMap.hashKey(LinkedCustomHashMap.java:109)                                              
+                        at org.jetbrains.kotlin.com.intellij.util.containers.LinkedCustomHashMap.remove(LinkedCustomHashMap.java:153)                                               
+                        at org.jetbrains.kotlin.com.intellij.util.containers.SLRUMap.remove(SLRUMap.java:89)                                                                        
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.flushAppendCache(PersistentMapImpl.java:999)                                                 
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.doPut(PersistentMapImpl.java:451)                                                            
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentMapImpl.put(PersistentMapImpl.java:422)                                                              
+                        at org.jetbrains.kotlin.com.intellij.util.io.PersistentHashMap.put(PersistentHashMap.java:105)                                                              
+                        at org.jetbrains.kotlin.incremental.storage.LazyStorage.set(LazyStorage.kt:80)                                                                              
+                        at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.applyChanges(InMemoryStorage.kt:108)                                                            
+                        at org.jetbrains.kotlin.incremental.storage.AppendableInMemoryStorage.applyChanges(InMemoryStorage.kt:179)                                                  
+                        at org.jetbrains.kotlin.incremental.storage.InMemoryStorage.close(InMemoryStorage.kt:136)                                                                   
+                        at org.jetbrains.kotlin.incremental.storage.AppendableSetBasicMap.close(BasicMap.kt:157)                                                                    
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                             
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner$close$1.invoke(BasicMapsOwner.kt:53)                                                             
+                        at org.jetbrains.kotlin.incremental.storage.BasicMapsOwner.forEachMapSafe(BasicMapsOwner.kt:87)                                                             
+                        ... 24 more                                                                                                                                                 
+
+Target kernel_snapshot_program failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 5m 2s                                                                                                                                                               
+Running Gradle task 'assembleDebug'...                            304,2s
+Error: Gradle task assembleDebug failed with exit code 1
