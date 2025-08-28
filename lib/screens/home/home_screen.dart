@@ -531,7 +531,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: FlutterMap(
           mapController: _mapController!,
           options: MapOptions(
-            center: currentLocation!,
+            initialCenter: currentLocation!,
             zoom: 16,
             minZoom: 10.0,
             maxZoom: 18.0,

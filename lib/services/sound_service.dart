@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-class SoundService {
+class SoundService extends ChangeNotifier {
   static final AudioPlayer _audioPlayer = AudioPlayer();
   static bool _soundEnabled = true;
 

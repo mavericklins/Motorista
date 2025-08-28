@@ -67,46 +67,46 @@ class AppRoutes {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AppRoutes.splash:
-        return MaterialPageRoute(builder: (context) => const SplashScreen());
+        return MaterialPageRoute(builder: (context) => SplashScreen());
       case AppRoutes.login:
-        return MaterialPageRoute(builder: (context) => const LoginScreen());
+        return MaterialPageRoute(builder: (context) => LoginScreen());
       case AppRoutes.register:
-        return MaterialPageRoute(builder: (context) => const RegisterScreen());
+        return MaterialPageRoute(builder: (context) => RegisterScreen());
       case AppRoutes.mainNavigation:
-        return MaterialPageRoute(builder: (context) => const MainNavigationScreen());
+        return MaterialPageRoute(builder: (context) => MainNavigationScreen());
       case AppRoutes.home:
-        return MaterialPageRoute(builder: (context) => const HomeScreen());
+        return MaterialPageRoute(builder: (context) => HomeScreen());
       case AppRoutes.configuracoes:
-        return MaterialPageRoute(builder: (context) => const ConfiguracoesScreen());
+        return MaterialPageRoute(builder: (context) => ConfiguracoesScreen());
       case AppRoutes.perfil:
-        return MaterialPageRoute(builder: (context) => const PerfilScreen());
+        return MaterialPageRoute(builder: (context) => PerfilScreen());
       case AppRoutes.historico:
-        return MaterialPageRoute(builder: (context) => const HistoricoScreen());
+        return MaterialPageRoute(builder: (context) => HistoricoScreen());
       case AppRoutes.ganhos:
-        return MaterialPageRoute(builder: (context) => const MeusCreditosScreen());
+        return MaterialPageRoute(builder: (context) => MeusCreditosScreen());
       case AppRoutes.carteira:
-        return MaterialPageRoute(builder: (context) => const CarteiraDigitalScreen());
+        return MaterialPageRoute(builder: (context) => CarteiraDigitalScreen());
       case AppRoutes.metas:
-        return MaterialPageRoute(builder: (context) => const MetasInteligentesScreen());
+        return MaterialPageRoute(builder: (context) => MetasInteligentesScreen());
       case AppRoutes.corridasProgramadas:
-        return MaterialPageRoute(builder: (context) => const CorridasProgramadasScreen());
+        return MaterialPageRoute(builder: (context) => CorridasProgramadasScreen());
       case AppRoutes.analytics:
-        return MaterialPageRoute(builder: (context) => const AnalyticsDashboardScreen());
+        return MaterialPageRoute(builder: (context) => AnalyticsDashboardScreen());
       case AppRoutes.coaching:
-        return MaterialPageRoute(builder: (context) => const CoachingInteligenteScreen());
+        return MaterialPageRoute(builder: (context) => CoachingInteligenteScreen());
       case AppRoutes.conquistas:
-        return MaterialPageRoute(builder: (context) => const ConquistasScreen());
+        return MaterialPageRoute(builder: (context) => ConquistasScreen());
       case AppRoutes.goals:
-        return MaterialPageRoute(builder: (context) => const GoalsScreen());
+        return MaterialPageRoute(builder: (context) => GoalsScreen());
       case AppRoutes.insights:
-        return MaterialPageRoute(builder: (context) => const DemandPredictionScreen());
+        return MaterialPageRoute(builder: (context) => DemandPredictionScreen());
       case AppRoutes.sos:
-        return MaterialPageRoute(builder: (context) => const SosScreen());
+        return MaterialPageRoute(builder: (context) => SosScreen());
       case AppRoutes.suporte:
-        return MaterialPageRoute(builder: (context) => const SuporteScreen());
+        return MaterialPageRoute(builder: (context) => SuporteScreen());
       default:
         // Fallback for unknown routes, could be SplashScreen or HomeScreen
-        return MaterialPageRoute(builder: (context) => const HomeScreen());
+        return MaterialPageRoute(builder: (context) => HomeScreen());
     }
   }
 }

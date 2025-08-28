@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -55,7 +54,7 @@ class DemandPredictionService extends ChangeNotifier {
     try {
       // Simular dados por enquanto
       await Future.delayed(const Duration(seconds: 2));
-      
+
       _currentHotZone = HotZone(
         name: 'Centro da Cidade',
         demandLevel: 'Alta',
@@ -97,6 +96,16 @@ class DemandPredictionService extends ChangeNotifier {
       'hotZones': [_currentHotZone],
       'predictions': _predictions,
       'lastUpdate': DateTime.now().toIso8601String(),
+    };
+  }
+
+  Future<Map<String, dynamic>> getPredictions() async {
+    // Mock de predições para evitar erro
+    return {
+      'predictions': [
+        {'area': 'Centro', 'demand': 0.8, 'time': '18:00'},
+        {'area': 'Zona Sul', 'demand': 0.6, 'time': '19:00'},
+      ],
     };
   }
 }

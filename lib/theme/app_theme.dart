@@ -55,7 +55,10 @@ class VelloTheme {
       outlinedButtonTheme: _buildOutlinedButtonTheme(),
       
       // Card Theme
-      cardTheme: _buildCardTheme(),
+      cardTheme: CardThemeData(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
       
       // Input Theme
       inputDecorationTheme: _buildInputTheme(),
@@ -67,7 +70,10 @@ class VelloTheme {
       navigationBarTheme: _buildNavigationBarTheme(),
       
       // Dialog Theme
-      dialogTheme: _buildDialogTheme(),
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 8,
+      ),
       
       // Bottom Sheet Theme
       bottomSheetTheme: _buildBottomSheetTheme(),

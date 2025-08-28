@@ -193,7 +193,7 @@ class CoachingInteligenteService extends ChangeNotifier {
       novasConquistas.add({
         'id': 'meta_diaria',
         'titulo': 'Meta Batida',
-        'descricao': 'Superou R$ 150 de média diária!',
+        'descricao': 'Superou R\$ 150 de média diária!',
         'icone': '🎯',
         'pontos': 100,
         'desbloqueadaEm': DateTime.now(),

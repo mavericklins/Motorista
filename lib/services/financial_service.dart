@@ -5,6 +5,11 @@ import 'package:intl/intl.dart';
 
 /// Serviço de relatórios financeiros para Vello Motorista
 class FinancialService {
+  
+  Future<void> adicionarCredito(double valor, String descricao) async {
+    // Mock de adição de crédito
+    print('Crédito adicionado: R\$ $valor - $descricao');
+  }
 
   static Future<FinancialModel?> obterDadosFinanceiros() async {
     // TODO: mapear para FinancialModel real

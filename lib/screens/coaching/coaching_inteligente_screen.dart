@@ -204,7 +204,8 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen> {
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.left(
+        border: Border(
+          left: BorderSide(
           color: corPrioridade,
           width: 4,
         ),

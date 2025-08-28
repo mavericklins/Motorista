@@ -1,0 +1,124 @@
+Segue um prompt cirúrgico pra colar no teu assistente de código (Replit/VSCode Copilot etc.). Ele manda corrigir **toda** a lista sem mexer no que já funciona.
+
+---
+
+**PROMPT PARA O ASSISTENTE DE CÓDIGO (COLAR INTEIRO):**
+
+Quero **resolver todos os erros de build listados abaixo** sem alterar comportamento existente. **Nada de refatoração**, apenas correções mínimas e compatibilização com as versões atuais do projeto. Se um item não existir, **crie o stub mínimo**. Após as mudanças, o projeto deve compilar em Flutter 3.5+ com Android compileSdk 35.
+
+### Regras
+
+* Preserve APIs públicas e fluxo atual.
+* Sem `dependency_overrides`.
+* Só adicione `const` quando 100% seguro.
+* Onde houver dúvida entre duas opções, escolha a **menos intrusiva**.
+
+### Correções (por arquivo)
+
+1. **lib/services/coaching\_inteligente\_service.dart**
+
+* Escape de cifrão em strings com “R\$”:
+  `Superou R\$ 150 de média diária!`
+* Faça um scan rápido e aplique o mesmo escape em outras ocorrências “R\$ ” dentro de strings literais.
+
+2. **lib/main.dart**
+
+* Ajuste os providers:
+
+  * Se `NotificationService` e `SoundService` **não** estendem `ChangeNotifier`, use `Provider<T>(create: ...)`.
+  * Se estendem `ChangeNotifier`, mantenha `ChangeNotifierProvider<T>(create: ...)`.
+* Import correto de `provider`.
+
+3. **lib/routes/app\_routes.dart**
+
+* Remova `const` dos construtores de telas que **não** têm construtor `const`.
+  Ex.: `CoachingInteligenteScreen(), ConquistasScreen(), SosScreen()`.
+* Onde usa `MaterialPageRoute`, idem: não usar `const` no builder.
+* **SosScreen**: se não existir, criar.
+
+4. **lib/screens/sos/sos\_screen.dart** (criar se faltar)
+
+```dart
+import 'package:flutter/material.dart';
+class SosScreen extends StatelessWidget {
+  const SosScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(title: const Text('SOS')),
+      body: const Center(child: Text('SOS')),);
+  }
+}
+```
+
+5. **lib/services/notification\_service.dart** (flutter\_local\_notifications v18)
+
+* Remover o parâmetro **`uiLocalNotificationDateInterpretation`** e o enum **`UILocalNotificationDateInterpretation`** nas chamadas (API removida).
+* Em `zonedSchedule(...)`, manter: `androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle` e `matchDateTimeComponents` se necessário.
+* Não alterar a lógica funcional (títulos, payload etc.).
+
+6. **lib/theme/app\_theme.dart**
+
+* `ThemeData.cardTheme` agora espera **`CardThemeData`**;
+* `ThemeData.dialogTheme` agora espera **`DialogThemeData`**.
+* Ajuste os métodos `_buildCardTheme()` e `_buildDialogTheme()` para retornarem esses tipos.
+
+7. **Cores da marca**
+
+* Garantir existência de **`lib/theme/vello_colors.dart`** (ou adequar para o arquivo já usado).
+* Defina os membros usados nos erros:
+  `laranja, laranjaClaro, laranjaTransparente, creme, branco, azul, cinza, pretoTransparente, gradienteLaranja (LinearGradient)`.
+* Importe onde necessário e troque `AppColors.primaryColor` pelos equivalentes em `VelloColors` **apenas onde quebrou** (ex.: CoachingInteligente).
+
+8. **flutter\_map** (versão nova) – **lib/screens/home/home\_screen.dart**
+
+* Em `MapOptions`, trocar `center:` por **`initialCenter:`** e `zoom:` por **`initialZoom:`**.
+* Não mudar lógica de localização/zoom atual.
+
+9. **Ícone inexistente** – **lib/screens/metas/metas\_inteligentes\_screen.dart**
+
+* Trocar `Icons.target` por `Icons.track_changes` (ou `Icons.flag`).
+
+10. **Analytics** – **lib/services/analytics\_service.dart**
+
+* Imports:
+
+  ```dart
+  import 'package:flutter/foundation.dart' show FlutterError;
+  import 'dart:ui' show PlatformDispatcher;
+  ```
+* Onde chamar `logEvent`, use `Map<String, Object>` (não `dynamic`).
+* Ao montar mapas, garanta valores não-nulos/conversões seguras:
+  `'value': (valor ?? '').toString()`, `'numeric_value': (valorNumerico ?? 0)`, `'user_id': (user?.uid ?? '')`, `'currency': (moeda ?? 'BRL')`.
+
+11. **Predição de demanda** – **lib/services/demand\_prediction\_service.dart**
+
+* Criar o método ausente `Future<List<Map<String, Object>>> getPredictions()` retornando lista vazia ou adaptando à implementação existente **sem quebrar chamadas**.
+
+12. **Financeiro** – **lib/services/financial\_service.dart**
+
+* Criar método ausente:
+  `Future<void> adicionarCredito(num valor, String descricao)` com corpo mínimo (TODO / no-op ou gravação simples) para manter chamadas existentes.
+
+13. **Telas que referenciam as novas cores**
+
+* Ajustar imports em:
+  `auth/splash_screen.dart`, `auth/login_screen.dart`, `auth/register_screen.dart`,
+  `carteira/carteira_digital_screen.dart`,
+  `coaching/coaching_inteligente_screen.dart`.
+* Não alterar estilos além de resolver símbolos ausentes/nomes de membros.
+
+### Extras (opcional, mas recomendável)
+
+* Se persistirem erros de cache Kotlin (camera\_android\_camerax), adicionar temporariamente em **android/gradle.properties**:
+  `kotlin.incremental=false`
+  (o time pode voltar para true depois do primeiro build OK).
+
+### Critérios de aceite
+
+* `flutter clean && flutter pub get && flutter build apk` conclui sem erros.
+* App inicia e navega nas rotas impactadas (Coaching, Conquistas, SOS).
+* Notificações agendadas compilam sem parâmetros removidos.
+* Map abre com posição e zoom como antes.
+* Nenhuma funcionalidade previamente OK foi alterada.
+
+**Execute e finalize.**

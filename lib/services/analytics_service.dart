@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -235,7 +237,7 @@ class AnalyticsService {
       };
 
       // Registrar no Analytics
-      await _analytics.logEvent(name: evento, parameters: parametros);
+      await _analytics.logEvent(name: evento, parameters: Map<String, Object>.from(parametros));
 
       // Salvar no Firestore para análise detalhada
       await _firestore.collection('analytics_eventos').add({
@@ -267,7 +269,7 @@ class AnalyticsService {
       };
 
       // Registrar no Analytics
-      await _analytics.logEvent(name: nomeEvento, parameters: parametrosCompletos);
+      await _analytics.logEvent(name: nomeEvento, parameters: Map<String, Object>.from(parametrosCompletos));
 
       // Salvar no Firestore
       await _firestore.collection('analytics_eventos').add({
@@ -352,9 +354,9 @@ class AnalyticsService {
         parameters: {
           'category': categoria,
           'action': acao,
-          'value': valor,
-          'numeric_value': valorNumerico,
-          'user_id': user?.uid,
+          'value': valor ?? '',
+          'numeric_value': valorNumerico ?? 0,
+          'user_id': user?.uid ?? '',
           'timestamp': DateTime.now().millisecondsSinceEpoch,
         },
       );
@@ -476,7 +478,7 @@ class AnalyticsService {
         parameters: {
           'conversion_type': tipoConversao,
           'value': valor,
-          'currency': moeda,
+          'currency': moeda ?? 'BRL',
           'timestamp': DateTime.now().millisecondsSinceEpoch,
         },
       );

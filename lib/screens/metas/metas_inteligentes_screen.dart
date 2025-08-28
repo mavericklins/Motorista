@@ -137,7 +137,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
       return _buildEmptyState(
         'Nenhuma meta ativa',
         'Suas metas personalizadas aparecerão aqui',
-        Icons.target,
+        Icons.my_location,
       );
     }
 

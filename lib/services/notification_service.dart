@@ -42,7 +42,7 @@ class NotificationService {
   /// Inicializa o serviço de notificações
   Future<void> initialize(String driverId) async {
     _driverId = driverId;
-    
+
     await _initializeLocalNotifications();
     await _initializeFirebaseMessaging();
     await _requestPermissions();
@@ -58,7 +58,7 @@ class NotificationService {
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
-    
+
     const initSettings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
@@ -155,7 +155,7 @@ class NotificationService {
     print('Mensagem recebida em foreground: ${message.data}');
 
     final notificationType = message.data['type'] ?? 'general';
-    
+
     // Mostra notificação local
     await _showLocalNotification(
       title: message.notification?.title ?? 'Vello Motorista',
@@ -171,7 +171,7 @@ class NotificationService {
   /// Manipula mensagem em background
   Future<void> _handleBackgroundMessage(RemoteMessage message) async {
     print('Mensagem clicada em background: ${message.data}');
-    
+
     final notificationType = message.data['type'] ?? 'general';
     _handleNotificationByType(notificationType, message.data);
   }
@@ -511,7 +511,6 @@ class NotificationService {
       body,
       tz.TZDateTime.from(scheduledDate, tz.local),
       details,
-      payload: payload,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
@@ -585,7 +584,6 @@ class NotificationService {
       tz.TZDateTime.from(scheduledDate, tz.local),
       NotificationDetails(android: androidDetails),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
@@ -602,7 +600,7 @@ import 'package:permission_handler/permission_handler.dart';
 class NotificationService extends ChangeNotifier {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  
+
   bool _isInitialized = false;
 
   bool get isInitialized => _isInitialized;
@@ -611,7 +609,7 @@ class NotificationService extends ChangeNotifier {
     try {
       const androidInitialize = AndroidInitializationSettings('@mipmap/ic_launcher');
       const iOSInitialize = DarwinInitializationSettings();
-      
+
       const initializationSettings = InitializationSettings(
         android: androidInitialize,
         iOS: iOSInitialize,
@@ -619,7 +617,7 @@ class NotificationService extends ChangeNotifier {
 
       await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await _requestPermissions();
-      
+
       _isInitialized = true;
       notifyListeners();
     } catch (e) {
