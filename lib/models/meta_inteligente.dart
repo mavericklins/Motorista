@@ -24,7 +24,9 @@ enum CategoriaMeta {
 enum DificuldadeMeta {
   facil,
   media,
+  medio,
   dificil,
+  alto,
 }
 
 class MetaInteligente {

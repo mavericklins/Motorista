@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../services/coaching_inteligente_service.dart';
 import '../../widgets/common/vello_card.dart';
@@ -18,9 +17,9 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
   late TabController _tabController;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  
+
   final CoachingInteligenteService _coachingService = CoachingInteligenteService();
-  
+
   bool _isLoading = false;
   List<CoachingTip> _tips = [];
   PerformanceAnalysis? _analysis;
@@ -36,7 +35,7 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
-    
+
     _loadCoachingData();
   }
 
@@ -49,10 +48,10 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
 
   Future<void> _loadCoachingData() async {
     setState(() => _isLoading = true);
-    
+
     try {
       await Future.delayed(const Duration(milliseconds: 800));
-      
+
       setState(() {
         _tips = [
           CoachingTip(
@@ -89,7 +88,7 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
             progresso: 0.3,
           ),
         ];
-        
+
         _analysis = PerformanceAnalysis(
           pontuacaoGeral: 87,
           areas: {
@@ -109,10 +108,10 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
             'Avaliação 4.8+ por 30 dias',
           ],
         );
-        
+
         _isLoading = false;
       });
-      
+
       _fadeController.forward();
     } catch (e) {
       setState(() => _isLoading = false);
@@ -180,7 +179,7 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
 
   Widget _buildPerformanceHeader() {
     if (_analysis == null) return const SizedBox.shrink();
-    
+
     return Container(
       margin: const EdgeInsets.all(16),
       child: VelloCard.gradient(
@@ -373,6 +372,7 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
                             label: _getPriorityLabel(tip.prioridade),
                             type: _getPriorityChipType(tip.prioridade),
                             size: StatusChipSize.small,
+                            status: DriverStatus.values[tip.prioridade.index],
                           ),
                         ],
                       ),
@@ -400,7 +400,7 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Progress section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,7 +446,7 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
 
   Widget _buildAnalysisView() {
     if (_analysis == null) return const SizedBox.shrink();
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -493,7 +493,7 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
         : score >= 75 
             ? VelloTokens.warning 
             : VelloTokens.danger;
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -807,3 +807,7 @@ class PerformanceAnalysis {
 }
 
 enum PrioridadeTip { alta, media, baixa }
+
+// Definição temporária para StatusChipType e DriverStatus, caso não existam
+enum StatusChipType { info, warning, error, success }
+enum DriverStatus { offline, online, busy }

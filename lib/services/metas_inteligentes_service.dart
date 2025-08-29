@@ -23,11 +23,12 @@ class MetasInteligentesService extends ChangeNotifier {
         categoria: CategoriaMeta.crescimento,
         valorObjetivo: 800.0,
         valorAtual: 480.0,
+        valorAlvo: 800.0,
+        recompensa: 'R\$ 50,00',
         dataInicio: DateTime.now().subtract(Duration(days: 2)),
         dataFim: DateTime.now().add(Duration(days: 5)),
-        // difficulty: DifficultyLevel.medium, // Este campo não está no construtor de MetaInteligente
-        recompensa: 50.0,
-        ativa: true,
+        prazo: DateTime.now().add(Duration(days: 5)),
+        isAtiva: true,
       ),
       MetaInteligente(
         id: '2',
@@ -37,11 +38,12 @@ class MetasInteligentesService extends ChangeNotifier {
         categoria: CategoriaMeta.produtividade,
         valorObjetivo: 12.0,
         valorAtual: 9.0,
+        valorAlvo: 12.0,
+        recompensa: 'R\$ 25,00',
         dataInicio: DateTime.now(),
         dataFim: DateTime.now().add(Duration(days: 1)),
-        // difficulty: DifficultyLevel.medium, // Este campo não está no construtor de MetaInteligente
-        recompensa: 25.0,
-        ativa: true,
+        prazo: DateTime.now().add(Duration(days: 1)),
+        isAtiva: true,
       ),
     ];
 

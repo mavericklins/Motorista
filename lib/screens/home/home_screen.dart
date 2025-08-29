@@ -351,13 +351,12 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.all(16),
               width: double.infinity,
               height: 60,
-              child: VelloButton(
+              child: VelloButton.icon(
                 onPressed: _toggleOnlineStatus,
-                text: _isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE',
-                icon: _isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                icon: Icon(_isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled),
+                label: Text(_isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE'),
                 backgroundColor: _isOnline ? VelloTokens.colorRed : VelloTokens.colorOrange,
-                borderRadius: BorderRadius.circular(30),
-                elevation: 4,
+                style: VelloButtonStyle.outlined,
                 textStyle: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -450,6 +449,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.refresh),
                 label: const Text('Tentar Novamente'),
                 backgroundColor: velloOrange,
+                style: VelloButtonStyle.outlined,
               ),
             ],
           ),

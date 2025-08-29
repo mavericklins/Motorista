@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/financial_service.dart';
@@ -18,7 +17,7 @@ class _MeusCreditosScreenState extends State<MeusCreditosScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final FinancialService _financialService = FinancialService();
-  
+
   bool _isLoading = false;
   double _saldoAtual = 0.0;
   double _creditosPendentes = 0.0;
@@ -39,14 +38,14 @@ class _MeusCreditosScreenState extends State<MeusCreditosScreen>
 
   Future<void> _loadCreditos() async {
     setState(() => _isLoading = true);
-    
+
     try {
       await Future.delayed(const Duration(milliseconds: 800));
-      
+
       setState(() {
         _saldoAtual = 247.83;
         _creditosPendentes = 89.45;
-        
+
         _transacoes = [
           TransacaoCredito(
             id: '1',
@@ -85,7 +84,7 @@ class _MeusCreditosScreenState extends State<MeusCreditosScreen>
             detalhes: 'Transferido para conta ****1234',
           ),
         ];
-        
+
         _isLoading = false;
       });
     } catch (e) {
@@ -203,7 +202,7 @@ class _MeusCreditosScreenState extends State<MeusCreditosScreen>
                 ],
               ),
               const SizedBox(height: 20),
-              
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -246,7 +245,7 @@ class _MeusCreditosScreenState extends State<MeusCreditosScreen>
                   ),
                 ],
               ),
-              
+
               if (_creditosPendentes > 0) ...[
                 const SizedBox(height: 16),
                 Container(
@@ -718,7 +717,7 @@ class _MeusCreditosScreenState extends State<MeusCreditosScreen>
   String _formatDateTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
         return '${difference.inMinutes}min atrás';
@@ -729,7 +728,7 @@ class _MeusCreditosScreenState extends State<MeusCreditosScreen>
     } else if (difference.inDays < 7) {
       return '${difference.inDays} dias atrás';
     }
-    
+
     return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
   }
 

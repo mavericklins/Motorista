@@ -92,6 +92,26 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             recompensa: 'Bônus de R\$ 50',
             dificuldade: DificuldadeMeta.facil,
           ),
+          MetaInteligente(
+            id: '5',
+            titulo: 'Meta de Eficiência',
+            descricao: 'Mantenha uma eficiência acima de 15 pontos',
+            tipo: TipoMeta.eficiencia,
+            valorAlvo: 15.0,
+            recompensa: 'Badge bronze',
+            prazo: DateTime.now().add(Duration(days: 1)),
+            isAtiva: true,
+          ),
+          MetaInteligente(
+            id: '6',
+            titulo: 'Meta de Avaliação Diária',
+            descricao: 'Mantenha uma avaliação média diária de 4.5',
+            tipo: TipoMeta.avaliacao,
+            valorAlvo: 4.5,
+            recompensa: 'Estrela de qualidade',
+            prazo: DateTime.now().add(Duration(days: 7)),
+            isAtiva: true,
+          ),
         ];
 
         _isLoading = false;
@@ -645,6 +665,15 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
                 ],
               ),
             ),
+            // Check if meta is completed to display StatusChip
+            if (meta.isAtiva == false) ...[
+              const SizedBox(height: 16),
+              StatusChip(
+                text: meta.completada ? 'Concluída' : 'Ativa',
+                type: meta.completada ? StatusChipType.success : StatusChipType.info,
+                status: meta.completada ? DriverStatus.offline : DriverStatus.online,
+              ),
+            ]
           ],
         ),
       ),

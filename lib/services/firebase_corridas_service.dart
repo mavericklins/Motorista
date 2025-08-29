@@ -455,6 +455,11 @@ class FirebaseCorridasService {
     double raioKm = 5,
     void Function(Map<String, dynamic> corrida)? onCorridaEncontrada,
   }) {
+    // Helper function to convert degrees to radians
+    double degreesToRadians(double degrees) {
+      return degrees * math.pi / 180;
+    }
+
     // Helper function to calculate distance using Haversine formula
     double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
       const R = 6371; // Radius of the earth in km
@@ -466,11 +471,6 @@ class FirebaseCorridasService {
       final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
       final d = R * c; // Distance in km
       return d;
-    }
-
-    // Helper function to convert degrees to radians
-    double degreesToRadians(double degrees) {
-      return degrees * math.pi / 180;
     }
 
     // Mocking GeofireCommon for demonstration purposes if it's not available
@@ -501,8 +501,8 @@ class FirebaseCorridasService {
     for (final b in bounds) {
       final sub = _firestore.collection('corridas')
         .where('status', isEqualTo: 'pendente')
-        .where('origem.geohash', isGreaterThanOrEqualTo: b.start)
-        .where('origem.geohash', isLessThanOrEqualTo: b.end)
+        .where('origem.geohash', isGreaterThanOrEqualTo: b['start'])
+        .where('origem.geohash', isLessThanOrEqualTo: b['end'])
         .snapshots()
         .listen((snap) {
           final resultados = <Map<String, dynamic>>[];
@@ -526,30 +526,7 @@ class FirebaseCorridasService {
     return subs;
   }
 
-  /// Aceita corrida com transação otimista (garante exclusividade)
-  static Future<bool> aceitarCorrida({
-    required String corridaId,
-    required String motoristaId,
-    required String motoristaNome,
-  }) async {
-    final ref = _firestore.collection('corridas').doc(corridaId);
-    return await _firestore.runTransaction((tx) async {
-      final snap = await tx.get(ref);
-      if (!snap.exists) return false;
-      final data = snap.data()! as Map<String, dynamic>;
-      if (data['status'] != 'pendente' || (data['motoristaId'] ?? '').toString().isNotEmpty) {
-        return false;
-      }
-      tx.update(ref, {
-        'motoristaId': motoristaId,
-        'motoristaNome': motoristaNome,
-        'status': 'aceita',
-        'dataHoraAceita': FieldValue.serverTimestamp(),
-        'atualizadoEm': FieldValue.serverTimestamp(),
-      });
-      return true;
-    });
-  }
+  
 
   /// Atualiza status da corrida (a_caminho, chegou, em_andamento, concluida, etc)
   static Future<void> atualizarStatus({
