@@ -249,32 +249,26 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
       child: Row(
         children: [
           Expanded(
-            child: VelloButton.icon(
+            child: VelloButton.primary(
               onPressed: () => _showSacarDialog(),
               icon: const Icon(Icons.account_balance),
-              label: const Text('Sacar'),
-              backgroundColor: VelloTokens.success,
-              style: VelloButtonStyle.primary,
+              text: 'Sacar',
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: VelloButton.icon(
+            child: VelloButton.primary(
               onPressed: () => _showAdicionarCreditoDialog(),
               icon: const Icon(Icons.add_card),
-              label: const Text('Adicionar'),
-              backgroundColor: VelloTokens.info,
-              style: VelloButtonStyle.primary,
+              text: 'Adicionar',
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: VelloButton.icon(
+            child: VelloButton.primary(
               onPressed: () => Navigator.pushNamed(context, '/historico'),
               icon: const Icon(Icons.receipt_long),
-              label: const Text('Extrato'),
-              backgroundColor: VelloTokens.gray600,
-              style: VelloButtonStyle.primary,
+              text: 'Extrato',
             ),
           ),
         ],
@@ -755,11 +749,9 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
           'Funcionalidade de saque será implementada em breve.\n\nVocê receberá uma notificação quando estiver disponível.',
         ),
         actions: [
-          VelloButton(
+          VelloButton.primary(
             onPressed: () => Navigator.pop(context),
             text: 'Entendi',
-            backgroundColor: VelloTokens.brand,
-            style: VelloButtonStyle.primary,
           ),
         ],
       ),
@@ -778,14 +770,16 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
           'Para adicionar créditos à sua carteira, complete mais corridas ou participe de promoções especiais.',
         ),
         actions: [
-          VelloButton(
+          VelloButton.primary(
             onPressed: () => Navigator.pop(context),
             text: 'Ok',
-            backgroundColor: VelloTokens.brand,
-            style: VelloButtonStyle.primary,
           ),
         ],
       ),
     );
   }
+
+  void _addCredit() {}
+  void _transferMoney() {}
+  void _payBill() {}
 }

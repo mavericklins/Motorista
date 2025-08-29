@@ -55,6 +55,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             prazo: DateTime.now().add(const Duration(days: 3)),
             recompensa: 'Bônus de R\$ 150',
             dificuldade: DificuldadeMeta.medio,
+            categoria: 'semanal',
           ),
           MetaInteligente(
             id: '2',
@@ -66,6 +67,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             prazo: DateTime.now().add(const Duration(days: 12)),
             recompensa: 'Cashback de 5%',
             dificuldade: DificuldadeMeta.alto,
+            categoria: 'mensal',
           ),
           MetaInteligente(
             id: '3',
@@ -77,6 +79,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             prazo: DateTime.now().add(const Duration(days: 7)),
             recompensa: 'Badge Premium',
             dificuldade: DificuldadeMeta.facil,
+            categoria: 'diaria',
           ),
         ];
 
@@ -91,6 +94,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             prazo: DateTime.now().subtract(const Duration(days: 5)),
             recompensa: 'Bônus de R\$ 50',
             dificuldade: DificuldadeMeta.facil,
+            categoria: 'semanal',
           ),
           MetaInteligente(
             id: '5',
@@ -101,6 +105,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             recompensa: 'Badge bronze',
             prazo: DateTime.now().add(Duration(days: 1)),
             isAtiva: true,
+            categoria: 'eficiencia',
           ),
           MetaInteligente(
             id: '6',
@@ -111,6 +116,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             recompensa: 'Estrela de qualidade',
             prazo: DateTime.now().add(Duration(days: 7)),
             isAtiva: true,
+            categoria: 'diaria',
           ),
         ];
 
@@ -701,10 +707,10 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
     switch (dificuldade) {
       case DificuldadeMeta.facil:
         return 'Fácil';
-      case DificuldadeMeta.media:
+      case DificuldadeMeta.medio:
         return 'Médio';
-      case DificuldadeMeta.dificil:
-        return 'Alto';
+      case DificuldadeMeta.alto:
+        return 'Difícil';
     }
   }
 
@@ -712,9 +718,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
     switch (dificuldade) {
       case DificuldadeMeta.facil:
         return StatusChipType.success;
-      case DificuldadeMeta.media:
+      case DificuldadeMeta.medio:
         return StatusChipType.warning;
-      case DificuldadeMeta.dificil:
+      case DificuldadeMeta.alto:
         return StatusChipType.error;
     }
   }

@@ -449,6 +449,7 @@ class _MeusCreditosScreenState extends State<MeusCreditosScreen>
                         label: _getStatusLabel(transacao.status),
                         type: _getStatusChipType(transacao.status),
                         size: StatusChipSize.small,
+                        status: transacao.status == StatusTransacao.confirmada ? DriverStatus.online : DriverStatus.offline, // Fix: Added status parameter
                       ),
                     ],
                   ),
@@ -848,4 +849,9 @@ enum StatusTransacao {
   pendente,
   confirmada,
   cancelada,
+}
+
+enum DriverStatus {
+  online,
+  offline,
 }

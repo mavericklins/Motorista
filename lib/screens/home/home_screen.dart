@@ -247,6 +247,17 @@ class _HomeScreenState extends State<HomeScreen> {
     _initializeLocation();
   }
 
+  // Dummy methods for navigation routes that were not provided in the original code
+  void _showDriverInfo() {
+    // Placeholder for navigation to driver profile
+    print('Navigating to driver profile');
+  }
+
+  void _showEarnings() {
+    // Placeholder for navigation to earnings
+    print('Navigating to earnings');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -260,14 +271,8 @@ class _HomeScreenState extends State<HomeScreen> {
           // Status chip
           StatusChip(
             label: _isOnline ? 'ONLINE' : 'OFFLINE',
-            color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,
-            textColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            borderRadius: BorderRadius.circular(20),
-            textStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+            status: _isOnline ? DriverStatus.online : DriverStatus.offline,
+            icon: Icons.circle,
           ),
           const SizedBox(width: 8),
           IconButton(
@@ -447,8 +452,7 @@ class _HomeScreenState extends State<HomeScreen> {
               VelloButton.icon(
                 onPressed: _retryLocation,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Tentar Novamente'),
-                backgroundColor: velloOrange,
+                text: 'Tentar Novamente',
                 style: VelloButtonStyle.outlined,
               ),
             ],

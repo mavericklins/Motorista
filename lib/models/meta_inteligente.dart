@@ -44,6 +44,7 @@ class MetaInteligente {
   final DateTime prazo;
   final bool isAtiva;
   bool completada;
+  final DificuldadeMeta dificuldade;
 
   MetaInteligente({
     required this.id,
@@ -60,6 +61,7 @@ class MetaInteligente {
     required this.prazo,
     required this.isAtiva,
     this.completada = false,
+    this.dificuldade = DificuldadeMeta.medio,
   });
 
   double get progresso {
@@ -99,6 +101,7 @@ class MetaInteligente {
       'prazo': prazo.toIso8601String(),
       'isAtiva': isAtiva,
       'completada': completada,
+      'dificuldade': dificuldade.toString(),
     };
   }
 
@@ -118,6 +121,7 @@ class MetaInteligente {
       prazo: DateTime.parse(json['prazo']),
       isAtiva: json['isAtiva'] ?? true,
       completada: json['completada'] ?? false,
+      dificuldade: DificuldadeMeta.values.firstWhere((e) => e.toString() == json['dificuldade']),
     );
   }
 
@@ -136,6 +140,7 @@ class MetaInteligente {
     DateTime? prazo,
     bool? isAtiva,
     bool? completada,
+    DificuldadeMeta? dificuldade,
   }) {
     return MetaInteligente(
       id: id ?? this.id,
@@ -152,6 +157,7 @@ class MetaInteligente {
       prazo: prazo ?? this.prazo,
       isAtiva: isAtiva ?? this.isAtiva,
       completada: completada ?? this.completada,
+      dificuldade: dificuldade ?? this.dificuldade,
     );
   }
 }
