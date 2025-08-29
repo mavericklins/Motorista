@@ -1,0 +1,360 @@
+Error: Couldn't resolve the package 'geofire_common' in 'package:geofire_common/geofire_common.dart'.
+lib/services/firebase_corridas_service.dart:3:8: Error: Not found: 'package:geofire_common/geofire_common.dart'                                                                     
+import 'package:geofire_common/geofire_common.dart';
+       ^
+lib/services/firebase_corridas_service.dart:507:23: Error: 'aceitarCorrida' is already declared in this scope.                                                                      
+  static Future<bool> aceitarCorrida({
+                      ^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:165:23: Context: Previous declaration of 'aceitarCorrida'.
+  static Future<bool> aceitarCorrida({
+                      ^^^^^^^^^^^^^^
+lib/screens/historico/historico_screen.dart:382:3: Error: Type 'StatusChipType' not found.                                                                                          
+  StatusChipType _getStatusChipType(String status) {
+  ^^^^^^^^^^^^^^
+lib/screens/ganhos/meus_creditos_screen.dart:707:3: Error: Type 'StatusChipType' not found.
+  StatusChipType _getStatusChipType(StatusTransacao status) {
+  ^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:685:3: Error: Type 'StatusChipType' not found.
+  StatusChipType _getDifficultyChipType(DificuldadeMeta dificuldade) {
+  ^^^^^^^^^^^^^^
+lib/screens/analytics/analytics_dashboard_screen.dart:16:52: Error: Type 'AnalyticsAnalyticsDashboardScreenState' not found.
+class _AnalyticsDashboardScreenState extends State<AnalyticsAnalyticsDashboardScreenState>
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:686:3: Error: Type 'StatusChipType' not found.
+  StatusChipType _getPriorityChipType(PrioridadeTip prioridade) {
+  ^^^^^^^^^^^^^^                                                                                                                                                                    
+lib/theme/app_theme.dart:60:18: Error: The argument type 'CardTheme' can't be assigned to the parameter type 'CardThemeData?'.                                                      
+ - 'CardTheme' is from 'package:flutter/src/material/card_theme.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/card_theme.dart').
+ - 'CardThemeData' is from 'package:flutter/src/material/card_theme.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/card_theme.dart').
+      cardTheme: _buildPremiumCardTheme(),
+                 ^
+lib/theme/app_theme.dart:155:18: Error: The argument type 'CardTheme' can't be assigned to the parameter type 'CardThemeData?'.
+ - 'CardTheme' is from 'package:flutter/src/material/card_theme.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/card_theme.dart').
+ - 'CardThemeData' is from 'package:flutter/src/material/card_theme.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/card_theme.dart').
+      cardTheme: _buildPremiumCardTheme(),
+                 ^
+lib/screens/main_navigation_screen.dart:117:38: Error: Member not found: 'surfaceBackground'.
+        backgroundColor: VelloTokens.surfaceBackground,                                                                                                                             
+                                     ^^^^^^^^^^^^^^^^^
+lib/screens/main_navigation_screen.dart:159:38: Error: Member not found: 'surfaceBackground'.
+        backgroundColor: VelloTokens.surfaceBackground,                                                                                                                             
+                                     ^^^^^^^^^^^^^^^^^
+lib/screens/main_navigation_screen.dart:199:36: Error: Member not found: 'surfaceBackground'.
+      backgroundColor: VelloTokens.surfaceBackground,
+                                   ^^^^^^^^^^^^^^^^^                                                                                                                                
+lib/screens/home/home_screen.dart:263:44: Error: Member not found: 'colorGreen'.
+            color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,
+                                           ^^^^^^^^^^
+lib/screens/home/home_screen.dart:263:69: Error: Member not found: 'colorOrange'.
+            color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,
+                                                                    ^^^^^^^^^^^
+lib/screens/home/home_screen.dart:262:13: Error: No named parameter with the name 'label'.                                                                                          
+            label: _isOnline ? 'ONLINE' : 'OFFLINE',
+            ^^^^^
+lib/widgets/common/status_chip.dart:22:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/home/home_screen.dart:358:58: Error: Member not found: 'colorRed'.
+                backgroundColor: _isOnline ? VelloTokens.colorRed : VelloTokens.colorOrange,
+                                                         ^^^^^^^^                                                                                                                   
+lib/screens/home/home_screen.dart:358:81: Error: Member not found: 'colorOrange'.
+                backgroundColor: _isOnline ? VelloTokens.colorRed : VelloTokens.colorOrange,                                                                                        
+                                                                                ^^^^^^^^^^^
+lib/screens/home/home_screen.dart:358:17: Error: No named parameter with the name 'backgroundColor'.
+                backgroundColor: _isOnline ? VelloTokens.colorRed : VelloTokens.colorOrange,
+                ^^^^^^^^^^^^^^^
+lib/widgets/common/vello_button.dart:45:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton({
+        ^^^^^^^^^^^
+lib/screens/home/home_screen.dart:449:27: Error: Member not found: 'VelloButton.icon'.                                                                                              
+              VelloButton.icon(
+                          ^^^^
+lib/screens/perfil/perfil_screen.dart:240:21: Error: No named parameter with the name 'icon'.
+                    icon: Icons.directions_car,                                                                                                                                     
+                    ^^^^
+lib/widgets/common/status_chip.dart:22:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/perfil/perfil_screen.dart:251:21: Error: No named parameter with the name 'icon'.
+                    icon: Icons.local_activity,
+                    ^^^^
+lib/widgets/common/status_chip.dart:22:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/perfil/perfil_screen.dart:358:24: Error: Member not found: 'VelloButton.danger'.
+    return VelloButton.danger(
+                       ^^^^^^
+lib/screens/historico/historico_screen.dart:290:29: Error: No named parameter with the name 'label'.
+                            label: corrida.status,
+                            ^^^^^
+lib/widgets/common/status_chip.dart:22:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/historico/historico_screen.dart:385:16: Error: The getter 'StatusChipType' isn't defined for the type '_HistoricoScreenState'.
+ - '_HistoricoScreenState' is from 'package:vello_motorista/screens/historico/historico_screen.dart' ('lib/screens/historico/historico_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.success;
+               ^^^^^^^^^^^^^^
+lib/screens/historico/historico_screen.dart:387:16: Error: The getter 'StatusChipType' isn't defined for the type '_HistoricoScreenState'.
+ - '_HistoricoScreenState' is from 'package:vello_motorista/screens/historico/historico_screen.dart' ('lib/screens/historico/historico_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.                                                                    
+        return StatusChipType.error;
+               ^^^^^^^^^^^^^^
+lib/screens/historico/historico_screen.dart:389:16: Error: The getter 'StatusChipType' isn't defined for the type '_HistoricoScreenState'.
+ - '_HistoricoScreenState' is from 'package:vello_motorista/screens/historico/historico_screen.dart' ('lib/screens/historico/historico_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.warning;
+               ^^^^^^^^^^^^^^
+lib/screens/historico/historico_screen.dart:391:16: Error: The getter 'StatusChipType' isn't defined for the type '_HistoricoScreenState'.
+ - '_HistoricoScreenState' is from 'package:vello_motorista/screens/historico/historico_screen.dart' ('lib/screens/historico/historico_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.info;
+               ^^^^^^^^^^^^^^
+lib/screens/historico/historico_screen.dart:400:28: Error: Member not found: 'error'.                                                                                               
+        return VelloTokens.error;
+                           ^^^^^
+lib/screens/ganhos/meus_creditos_screen.dart:450:25: Error: No named parameter with the name 'label'.
+                        label: _getStatusLabel(transacao.status),
+                        ^^^^^
+lib/widgets/common/status_chip.dart:22:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/ganhos/meus_creditos_screen.dart:710:16: Error: The getter 'StatusChipType' isn't defined for the type '_MeusCreditosScreenState'.
+ - '_MeusCreditosScreenState' is from 'package:vello_motorista/screens/ganhos/meus_creditos_screen.dart' ('lib/screens/ganhos/meus_creditos_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.warning;                                                                                                                                              
+               ^^^^^^^^^^^^^^
+lib/screens/ganhos/meus_creditos_screen.dart:712:16: Error: The getter 'StatusChipType' isn't defined for the type '_MeusCreditosScreenState'.
+ - '_MeusCreditosScreenState' is from 'package:vello_motorista/screens/ganhos/meus_creditos_screen.dart' ('lib/screens/ganhos/meus_creditos_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.success;
+               ^^^^^^^^^^^^^^
+lib/screens/ganhos/meus_creditos_screen.dart:714:16: Error: The getter 'StatusChipType' isn't defined for the type '_MeusCreditosScreenState'.
+ - '_MeusCreditosScreenState' is from 'package:vello_motorista/screens/ganhos/meus_creditos_screen.dart' ('lib/screens/ganhos/meus_creditos_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.error;
+               ^^^^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:254:32: Error: Member not found: 'VelloButton.icon'.
+            child: VelloButton.icon(
+                               ^^^^
+lib/screens/carteira/carteira_digital_screen.dart:265:32: Error: Member not found: 'VelloButton.icon'.
+            child: VelloButton.icon(
+                               ^^^^
+lib/screens/carteira/carteira_digital_screen.dart:276:32: Error: Member not found: 'VelloButton.icon'.
+            child: VelloButton.icon(
+                               ^^^^
+lib/screens/carteira/carteira_digital_screen.dart:766:13: Error: No named parameter with the name 'backgroundColor'.                                                                
+            backgroundColor: VelloTokens.brand,
+            ^^^^^^^^^^^^^^^
+lib/widgets/common/vello_button.dart:45:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton({
+        ^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:789:13: Error: No named parameter with the name 'backgroundColor'.
+            backgroundColor: VelloTokens.brand,
+            ^^^^^^^^^^^^^^^
+lib/widgets/common/vello_button.dart:45:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton({
+        ^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:59:42: Error: Member not found: 'medio'.
+            dificuldade: DificuldadeMeta.medio,
+                                         ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:54:13: Error: No named parameter with the name 'valorAlvo'.
+            valorAlvo: 50,
+            ^^^^^^^^^
+lib/models/meta_inteligente.dart:39:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:71:42: Error: Member not found: 'alto'.
+            dificuldade: DificuldadeMeta.alto,
+                                         ^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:66:13: Error: No named parameter with the name 'valorAlvo'.
+            valorAlvo: 3500,
+            ^^^^^^^^^
+lib/models/meta_inteligente.dart:39:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:77:28: Error: Member not found: 'avaliacao'.
+            tipo: TipoMeta.avaliacao,
+                           ^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:78:13: Error: No named parameter with the name 'valorAlvo'.
+            valorAlvo: 4.8,                                                                                                                                                         
+            ^^^^^^^^^
+lib/models/meta_inteligente.dart:39:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:93:13: Error: No named parameter with the name 'valorAlvo'.
+            valorAlvo: 20,
+            ^^^^^^^^^
+lib/models/meta_inteligente.dart:39:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:250:23: Error: The argument type 'Object' can't be assigned to the parameter type 'String'.                                        
+ - 'Object' is from 'dart:core'.
+                      proximaPremio,
+                      ^
+lib/screens/metas/metas_inteligentes_screen.dart:489:29: Error: No named parameter with the name 'label'.
+                            label: _getDifficultyLabel(meta.dificuldade),
+                            ^^^^^
+lib/widgets/common/status_chip.dart:22:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:441:45: Error: The getter 'valorAlvo' isn't defined for the type 'MetaInteligente'.
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'valorAlvo'.
+    final progress = meta.valorAtual / meta.valorAlvo;
+                                            ^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:558:56: Error: The getter 'valorAlvo' isn't defined for the type 'MetaInteligente'.
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'valorAlvo'.
+                      _formatMetaValue(meta.tipo, meta.valorAlvo),
+                                                       ^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:608:32: Error: The argument type 'double' can't be assigned to the parameter type 'String'.
+                          meta.recompensa,
+                               ^
+lib/screens/metas/metas_inteligentes_screen.dart:641:46: Error: The getter 'prazo' isn't defined for the type 'MetaInteligente'.
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').                                                           
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'prazo'.
+                        _formatDeadline(meta.prazo),                                                                                                                                
+                                             ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:665:21: Error: Member not found: 'avaliacao'.
+      case TipoMeta.avaliacao:
+                    ^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:667:21: Error: Member not found: 'tempo'.
+      case TipoMeta.tempo:
+                    ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:669:21: Error: Member not found: 'distancia'.
+      case TipoMeta.distancia:
+                    ^^^^^^^^^                                                                                                                                                       
+lib/screens/metas/metas_inteligentes_screen.dart:678:28: Error: Member not found: 'medio'.
+      case DificuldadeMeta.medio:
+                           ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:680:28: Error: Member not found: 'alto'.
+      case DificuldadeMeta.alto:
+                           ^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:689:28: Error: Member not found: 'medio'.
+      case DificuldadeMeta.medio:
+                           ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:691:28: Error: Member not found: 'alto'.
+      case DificuldadeMeta.alto:
+                           ^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:688:16: Error: The getter 'StatusChipType' isn't defined for the type '_MetasInteligentesScreenState'.
+ - '_MetasInteligentesScreenState' is from 'package:vello_motorista/screens/metas/metas_inteligentes_screen.dart' ('lib/screens/metas/metas_inteligentes_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.success;                                                                                                                                              
+               ^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:690:16: Error: The getter 'StatusChipType' isn't defined for the type '_MetasInteligentesScreenState'.
+ - '_MetasInteligentesScreenState' is from 'package:vello_motorista/screens/metas/metas_inteligentes_screen.dart' ('lib/screens/metas/metas_inteligentes_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.warning;
+               ^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:692:16: Error: The getter 'StatusChipType' isn't defined for the type '_MetasInteligentesScreenState'.
+ - '_MetasInteligentesScreenState' is from 'package:vello_motorista/screens/metas/metas_inteligentes_screen.dart' ('lib/screens/metas/metas_inteligentes_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.error;
+               ^^^^^^^^^^^^^^                                                                                                                                                       
+lib/screens/metas/metas_inteligentes_screen.dart:702:21: Error: Member not found: 'avaliacao'.
+      case TipoMeta.avaliacao:                                                                                                                                                      
+                    ^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:704:21: Error: Member not found: 'tempo'.
+      case TipoMeta.tempo:
+                    ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:706:21: Error: Member not found: 'distancia'.
+      case TipoMeta.distancia:                                                                                                                                                      
+                    ^^^^^^^^^
+lib/screens/analytics/analytics_dashboard_screen.dart:124:19: Error: The method '_buildMetricsCards' isn't defined for the type '_AnalyticsDashboardScreenState'.
+ - '_AnalyticsDashboardScreenState' is from 'package:vello_motorista/screens/analytics/analytics_dashboard_screen.dart' ('lib/screens/analytics/analytics_dashboard_screen.dart').  
+Try correcting the name to the name of an existing method, or defining a method named '_buildMetricsCards'.
+                  _buildMetricsCards(),                                                                                                                                             
+                  ^^^^^^^^^^^^^^^^^^
+lib/screens/analytics/analytics_dashboard_screen.dart:143:27: Error: Member not found: 'green500'.
+              VelloTokens.green500,
+                          ^^^^^^^^
+lib/screens/analytics/analytics_dashboard_screen.dart:189:61: Error: Member not found: 'green500'.
+                color: change.startsWith('+') ? VelloTokens.green500 : VelloTokens.red500,
+                                                            ^^^^^^^^
+lib/screens/analytics/analytics_dashboard_screen.dart:189:84: Error: Member not found: 'red500'.                                                                                    
+                color: change.startsWith('+') ? VelloTokens.green500 : VelloTokens.red500,
+                                                                                   ^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:373:29: Error: No named parameter with the name 'label'.
+                            label: _getPriorityLabel(tip.prioridade),
+                            ^^^^^
+lib/widgets/common/status_chip.dart:22:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:689:16: Error: The getter 'StatusChipType' isn't defined for the type '_CoachingInteligenteScreenState'.
+ - '_CoachingInteligenteScreenState' is from 'package:vello_motorista/screens/coaching/coaching_inteligente_screen.dart' ('lib/screens/coaching/coaching_inteligente_screen.dart'). 
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.
+        return StatusChipType.error;                                                                                                                                                
+               ^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:691:16: Error: The getter 'StatusChipType' isn't defined for the type '_CoachingInteligenteScreenState'.
+ - '_CoachingInteligenteScreenState' is from 'package:vello_motorista/screens/coaching/coaching_inteligente_screen.dart' ('lib/screens/coaching/coaching_inteligente_screen.dart'). 
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.                                                                    
+        return StatusChipType.warning;
+               ^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:693:16: Error: The getter 'StatusChipType' isn't defined for the type '_CoachingInteligenteScreenState'.
+ - '_CoachingInteligenteScreenState' is from 'package:vello_motorista/screens/coaching/coaching_inteligente_screen.dart' ('lib/screens/coaching/coaching_inteligente_screen.dart'). 
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'StatusChipType'.                                                                    
+        return StatusChipType.info;
+               ^^^^^^^^^^^^^^
+lib/screens/insights/demand_prediction_screen.dart:23:9: Error: The getter 'FeatureFlags' isn't defined for the type '_DemandPredictionScreenState'.
+ - '_DemandPredictionScreenState' is from 'package:vello_motorista/screens/insights/demand_prediction_screen.dart' ('lib/screens/insights/demand_prediction_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'FeatureFlags'.
+    if (FeatureFlags.enableDemandPrediction) {
+        ^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:457:20: Error: Undefined name 'GeofireCommon'.
+    final bounds = GeofireCommon.geohashQueryBounds([latMotorista, lonMotorista], raioKm);
+                   ^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:490:26: Error: Undefined name 'GeofireCommon'.
+            final dist = GeofireCommon.distanceBetween([latMotorista, lonMotorista], [lat, lon]);                                                                                   
+                         ^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:660:13: Error: The type 'TipoMeta' is not exhaustively matched by the switch cases since it doesn't match 'TipoMeta.eficiencia'.   
+ - 'TipoMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'TipoMeta.eficiencia'.
+    switch (tipo) {                                                                                                                                                                 
+            ^
+lib/screens/metas/metas_inteligentes_screen.dart:675:13: Error: The type 'DificuldadeMeta' is not exhaustively matched by the switch cases since it doesn't match 'DificuldadeMeta.media'.
+ - 'DificuldadeMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'DificuldadeMeta.media'.
+    switch (dificuldade) {
+            ^
+lib/screens/metas/metas_inteligentes_screen.dart:686:13: Error: The type 'DificuldadeMeta' is not exhaustively matched by the switch cases since it doesn't match 'DificuldadeMeta.media'.
+ - 'DificuldadeMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'DificuldadeMeta.media'.
+    switch (dificuldade) {                                                                                                                                                          
+            ^
+lib/screens/metas/metas_inteligentes_screen.dart:697:13: Error: The type 'TipoMeta' is not exhaustively matched by the switch cases since it doesn't match 'TipoMeta.eficiencia'.   
+ - 'TipoMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'TipoMeta.eficiencia'.                                                                                                                
+    switch (tipo) {
+            ^
+Unhandled exception:                                                                                                                                                                
+FileSystemException(uri=org-dartlang-untranslatable-uri:package%3Ageofire_common%2Fgeofire_common.dart; message=StandardFileSystem only supports file:* and data:* URIs)            
+#0      StandardFileSystem.entityForUri (package:front_end/src/api_prototype/standard_file_system.dart:45)
+#1      asFileUri (package:vm/kernel_front_end.dart:1002)                                                                                                                           
+#2      writeDepfile (package:vm/kernel_front_end.dart:1165)
+<asynchronous suspension>
+#3      FrontendCompiler.compile (package:frontend_server/frontend_server.dart:729)
+<asynchronous suspension>
+#4      starter (package:frontend_server/starter.dart:102)
+<asynchronous suspension>
+#5      main (file:///C:/b/s/w/ir/x/w/sdk/pkg/frontend_server/bin/frontend_server_starter.dart:13)
+<asynchronous suspension>
+
+Target kernel_snapshot_program failed: Exception                                                                                                                                    
+
+
+FAILURE: Build failed with an exception.                                                                                                                                            
+
+* What went wrong:                                                                                                                                                                  
+Execution failed for task ':app:compileFlutterBuildDebug'.                                                                                                                          
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1                                                                                            
+
+* Try:                                                                                                                                                                              
+> Run with --stacktrace option to get the stack trace.                                                                                                                              
+> Run with --info or --debug option to get more log output.                                                                                                                         
+> Run with --scan to get full insights.                                                                                                                                             
+> Get more help at https://help.gradle.org.                                                                                                                                         
+
+BUILD FAILED in 1m 17s                                                                                                                                                              
+Running Gradle task 'assembleDebug'...                             79,4s
+Error: Gradle task assembleDebug failed with exit code 1                  
