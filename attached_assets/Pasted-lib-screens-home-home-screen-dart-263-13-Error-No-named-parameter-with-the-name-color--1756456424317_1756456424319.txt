@@ -1,0 +1,134 @@
+lib/screens/home/home_screen.dart:263:13: Error: No named parameter with the name 'color'.
+            color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,                                                                                                    
+            ^^^^^
+lib/widgets/common/status_chip.dart:30:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/home/home_screen.dart:359:17: Error: No named parameter with the name 'style'.
+                style: VelloButtonStyle.outlined,
+                ^^^^^
+lib/widgets/common/vello_button.dart:186:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/home/home_screen.dart:452:17: Error: No named parameter with the name 'style'.
+                style: VelloButtonStyle.outlined,
+                ^^^^^
+lib/widgets/common/vello_button.dart:186:9: Context: Found this candidate, but the arguments don't match.                                                                           
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/ganhos/meus_creditos_screen.dart:448:33: Error: Required named parameter 'status' must be provided.
+                      StatusChip(
+                                ^
+lib/widgets/common/status_chip.dart:30:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:257:15: Error: No named parameter with the name 'style'.
+              style: VelloButtonStyle.primary,
+              ^^^^^
+lib/widgets/common/vello_button.dart:186:9: Context: Found this candidate, but the arguments don't match.                                                                           
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:267:15: Error: No named parameter with the name 'style'.
+              style: VelloButtonStyle.primary,                                                                                                                                      
+              ^^^^^
+lib/widgets/common/vello_button.dart:186:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:277:15: Error: No named parameter with the name 'style'.
+              style: VelloButtonStyle.primary,
+              ^^^^^                                                                                                                                                                 
+lib/widgets/common/vello_button.dart:186:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:762:13: Error: No named parameter with the name 'style'.
+            style: VelloButtonStyle.primary,
+            ^^^^^
+lib/widgets/common/vello_button.dart:49:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton({
+        ^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:785:13: Error: No named parameter with the name 'style'.
+            style: VelloButtonStyle.primary,                                                                                                                                        
+            ^^^^^
+lib/widgets/common/vello_button.dart:49:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton({
+        ^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:57:13: Error: No named parameter with the name 'dificuldade'.
+            dificuldade: DificuldadeMeta.medio,
+            ^^^^^^^^^^^
+lib/models/meta_inteligente.dart:48:3: Context: Found this candidate, but the arguments don't match.                                                                                
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:68:13: Error: No named parameter with the name 'dificuldade'.
+            dificuldade: DificuldadeMeta.alto,
+            ^^^^^^^^^^^
+lib/models/meta_inteligente.dart:48:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:79:13: Error: No named parameter with the name 'dificuldade'.
+            dificuldade: DificuldadeMeta.facil,
+            ^^^^^^^^^^^
+lib/models/meta_inteligente.dart:48:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:93:13: Error: No named parameter with the name 'dificuldade'.
+            dificuldade: DificuldadeMeta.facil,
+            ^^^^^^^^^^^
+lib/models/meta_inteligente.dart:48:3: Context: Found this candidate, but the arguments don't match.                                                                                
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:95:26: Error: Required named parameter 'categoria' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:48:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:105:26: Error: Required named parameter 'categoria' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:48:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:503:37: Error: Required named parameter 'status' must be provided.
+                          StatusChip(
+                                    ^
+lib/widgets/common/status_chip.dart:30:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:373:35: Error: The argument type 'StatusChipType/*1*/' can't be assigned to the parameter type 'StatusChipType/*2*/'.
+ - 'StatusChipType/*1*/' is from 'package:vello_motorista/screens/coaching/coaching_inteligente_screen.dart' ('lib/screens/coaching/coaching_inteligente_screen.dart').
+ - 'StatusChipType/*2*/' is from 'package:vello_motorista/widgets/common/status_chip.dart' ('lib/widgets/common/status_chip.dart').
+                            type: _getPriorityChipType(tip.prioridade),                                                                                                             
+                                  ^
+lib/screens/coaching/coaching_inteligente_screen.dart:375:56: Error: The argument type 'DriverStatus/*1*/' can't be assigned to the parameter type 'DriverStatus/*2*/'.
+ - 'DriverStatus/*1*/' is from 'package:vello_motorista/screens/coaching/coaching_inteligente_screen.dart' ('lib/screens/coaching/coaching_inteligente_screen.dart').
+ - 'DriverStatus/*2*/' is from 'package:vello_motorista/widgets/common/status_chip.dart' ('lib/widgets/common/status_chip.dart').
+                            status: DriverStatus.values[tip.prioridade.index],
+                                                       ^
+lib/screens/metas/metas_inteligentes_screen.dart:701:13: Error: The type 'DificuldadeMeta' is not exhaustively matched by the switch cases since it doesn't match 'DificuldadeMeta.medio'.
+ - 'DificuldadeMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'DificuldadeMeta.medio'.
+    switch (dificuldade) {                                                                                                                                                          
+            ^
+lib/screens/metas/metas_inteligentes_screen.dart:712:13: Error: The type 'DificuldadeMeta' is not exhaustively matched by the switch cases since it doesn't match 'DificuldadeMeta.medio'.
+ - 'DificuldadeMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'DificuldadeMeta.medio'.
+    switch (dificuldade) {
+            ^
+Target kernel_snapshot_program failed: Exception                                                                                                                                    
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.                                                                                                                                         
+
+BUILD FAILED in 52s
+Running Gradle task 'assembleDebug'...                             53,8s
+Error: Gradle task assembleDebug failed with exit code 1
