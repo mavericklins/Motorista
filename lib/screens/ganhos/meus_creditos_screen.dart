@@ -851,7 +851,4 @@ enum StatusTransacao {
   cancelada,
 }
 
-enum DriverStatus {
-  online,
-  offline,
-}
+// DriverStatus already imported from status_chip.dart

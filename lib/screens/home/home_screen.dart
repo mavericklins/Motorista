@@ -271,8 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Status chip
           StatusChip(
               text: _isOnline ? 'Online' : 'Offline',
-              status: _isOnline ? 'online' : 'offline',
-              color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,
+              status: _isOnline ? DriverStatus.online : DriverStatus.offline,
             ),
           const SizedBox(width: 8),
           IconButton(
@@ -358,14 +357,12 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 60,
               child: VelloButton.icon(
                 onPressed: _toggleOnlineStatus,
-                icon: Icon(_isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled),
-                label: Text(_isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE'),
-                backgroundColor: _isOnline ? VelloTokens.colorRed : VelloTokens.colorOrange,
-                style: VelloButtonStyle.outlined,
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                icon: _isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                text: _isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE',
+                backgroundColor: _isOnline ? VelloTokens.danger : VelloTokens.brand,
+                type: VelloButtonType.primary,
+                size: VelloButtonSize.large,
+                isFullWidth: true,
               ),
             ),
           ],

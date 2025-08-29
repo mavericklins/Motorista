@@ -24,9 +24,7 @@ enum CategoriaMeta {
 enum DificuldadeMeta {
   facil,
   media,
-  medio,
   dificil,
-  alto,
 }
 
 class MetaInteligente {
@@ -61,7 +59,7 @@ class MetaInteligente {
     required this.prazo,
     required this.isAtiva,
     this.completada = false,
-    this.dificuldade = DificuldadeMeta.medio,
+    this.dificuldade = DificuldadeMeta.media,
   });
 
   double get progresso {

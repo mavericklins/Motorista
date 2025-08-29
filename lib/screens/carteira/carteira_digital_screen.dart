@@ -251,7 +251,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
           Expanded(
             child: VelloButton.primary(
               onPressed: () => _showSacarDialog(),
-              icon: const Icon(Icons.account_balance),
+              icon: Icons.account_balance,
               text: 'Sacar',
             ),
           ),
@@ -259,7 +259,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
           Expanded(
             child: VelloButton.primary(
               onPressed: () => _showAdicionarCreditoDialog(),
-              icon: const Icon(Icons.add_card),
+              icon: Icons.add_card,
               text: 'Adicionar',
             ),
           ),
@@ -267,7 +267,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
           Expanded(
             child: VelloButton.primary(
               onPressed: () => Navigator.pushNamed(context, '/historico'),
-              icon: const Icon(Icons.receipt_long),
+              icon: Icons.receipt_long,
               text: 'Extrato',
             ),
           ),

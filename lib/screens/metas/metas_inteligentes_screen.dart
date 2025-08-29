@@ -102,6 +102,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             descricao: 'Mantenha uma eficiência acima de 15 pontos',
             tipo: TipoMeta.eficiencia,
             valorAlvo: 15.0,
+            valorAtual: 15.0,
             recompensa: 'Badge bronze',
             prazo: DateTime.now().add(Duration(days: 1)),
             isAtiva: true,
@@ -113,6 +114,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             descricao: 'Mantenha uma avaliação média diária de 4.5',
             tipo: TipoMeta.avaliacao,
             valorAlvo: 4.5,
+            valorAtual: 4.5,
             recompensa: 'Estrela de qualidade',
             prazo: DateTime.now().add(Duration(days: 7)),
             isAtiva: true,
@@ -459,7 +461,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
   }
 
   Widget _buildMetaCard(MetaInteligente meta, {bool isCompleted = false}) {
-    final progress = meta.valorAtual / meta.valorAlvo;
+    final progress = meta.valorAlvo == 0 ? 0 : (meta.valorAtual / meta.valorAlvo).clamp(0.0, 1.0);
     final progressColor = isCompleted
         ? VelloTokens.success
         : progress >= 0.8
@@ -507,9 +509,10 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
                             ),
                           ),
                           StatusChip(
-                            label: _getDifficultyLabel(meta.dificuldade),
+                            text: _getDifficultyLabel(meta.dificuldade),
                             type: _getDifficultyChipType(meta.dificuldade),
                             size: StatusChipSize.small,
+                            status: DriverStatus.online,
                           ),
                         ],
                       ),
@@ -557,7 +560,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
                 ClipRRect(
                   borderRadius: VelloTokens.radiusSmall,
                   child: LinearProgressIndicator(
-                    value: progress.clamp(0.0, 1.0),
+                    value: progress,
                     backgroundColor: VelloTokens.gray200,
                     valueColor: AlwaysStoppedAnimation<Color>(progressColor),
                     minHeight: 8,
@@ -675,9 +678,10 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             if (meta.isAtiva == false) ...[
               const SizedBox(height: 16),
               StatusChip(
-                text: meta.completada ? 'Concluída' : 'Ativa',
-                type: meta.completada ? StatusChipType.success : StatusChipType.info,
-                status: meta.completada ? DriverStatus.offline : DriverStatus.online,
+                text: _getStatusText(meta.status),
+                type: _getStatusChipType(meta.status),
+                size: StatusChipSize.small,
+                status: DriverStatus.online,
               ),
             ]
           ],
@@ -700,6 +704,18 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
         return Icons.route;
       case TipoMeta.eficiencia:
         return Icons.bolt;
+      case TipoMeta.ganhosDiarios:
+        return Icons.attach_money;
+      case TipoMeta.corridasCompletadas:
+        return Icons.directions_run;
+      case TipoMeta.avaliacaoMedia:
+        return Icons.star_half;
+      case TipoMeta.economiaGeral:
+        return Icons.savings;
+      case TipoMeta.tempoOnline:
+        return Icons.timer;
+      case TipoMeta.distanciaPercorrida:
+        return Icons.map;
     }
   }
 
@@ -707,9 +723,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
     switch (dificuldade) {
       case DificuldadeMeta.facil:
         return 'Fácil';
-      case DificuldadeMeta.medio:
-        return 'Médio';
-      case DificuldadeMeta.alto:
+      case DificuldadeMeta.media:
+        return 'Média';
+      case DificuldadeMeta.dificil:
         return 'Difícil';
     }
   }
@@ -718,27 +734,56 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
     switch (dificuldade) {
       case DificuldadeMeta.facil:
         return StatusChipType.success;
-      case DificuldadeMeta.medio:
+      case DificuldadeMeta.media:
         return StatusChipType.warning;
-      case DificuldadeMeta.alto:
+      case DificuldadeMeta.dificil:
         return StatusChipType.error;
+    }
+  }
+
+  String _getStatusText(StatusMeta status) {
+    switch (status) {
+      case StatusMeta.ativa:
+        return 'Ativa';
+      case StatusMeta.concluida:
+        return 'Concluída';
+      case StatusMeta.pausada:
+        return 'Pausada';
+    }
+  }
+
+  StatusChipType _getStatusChipType(StatusMeta status) {
+    switch (status) {
+      case StatusMeta.ativa:
+        return StatusChipType.info;
+      case StatusMeta.concluida:
+        return StatusChipType.success;
+      case StatusMeta.pausada:
+        return StatusChipType.warning;
     }
   }
 
   String _formatMetaValue(TipoMeta tipo, double valor) {
     switch (tipo) {
       case TipoMeta.corridas:
+      case TipoMeta.corridasCompletadas:
         return '${valor.toInt()} corridas';
       case TipoMeta.ganhos:
+      case TipoMeta.ganhosDiarios:
         return 'R\$ ${valor.toStringAsFixed(2).replaceAll('.', ',')}';
       case TipoMeta.avaliacao:
+      case TipoMeta.avaliacaoMedia:
         return '${valor.toStringAsFixed(1)} ⭐';
       case TipoMeta.tempo:
+      case TipoMeta.tempoOnline:
         return '${valor.toInt()}h';
       case TipoMeta.distancia:
+      case TipoMeta.distanciaPercorrida:
         return '${valor.toInt()}km';
       case TipoMeta.eficiencia:
         return '${valor.toStringAsFixed(0)} pontos de eficiência';
+      case TipoMeta.economiaGeral:
+        return '${valor.toStringAsFixed(1)}% de economia';
     }
   }
 
