@@ -1,0 +1,80 @@
+Objetivo:
+Elevar o visual do app Vello Motorista para um padrão premium, SEM alterar lógica de negócios, rotas, serviços, modelos, dependências ou versões. Manter 100% da funcionalidade atual e entregar APK buildando ao final.
+
+Regras inegociáveis:
+- NÃO alterar pubspec.yaml (sem adicionar/remover deps, sem trocar versões).
+- NÃO mexer em lib/services, lib/models, lib/routes, firebase_options.dart, regras de providers ou nomes de rotas.
+- Mudanças restritas à camada de apresentação: lib/theme, lib/widgets, lib/screens/* (somente layout/estilo).
+- Compatível com Material 3 já habilitado. Usar *ThemeData* corretos (DialogThemeData, TabBarThemeData etc.) e `const` onde exigido.
+- Assets: usar apenas os já listados no pubspec. Nada de caminhos absolutos.
+
+Plano de execução (incremental e atômico):
+
+1) Design Tokens e Theme
+- Criar lib/theme/vello_tokens.dart com cores semânticas:
+  brand(#FF7A00), success(#10B981), warning(#F59E0B), danger(#EF4444), info(#3B82F6),
+  gray scale neutra (50–900) para Light/Dark.
+- Atualizar lib/theme/app_theme.dart para consumir tokens:
+  • ajustar ColorScheme e manter useMaterial3: true
+  • garantir tipos *ThemeData* novos (DialogThemeData, TabBarThemeData)
+  • Buttons: estados (enabled/pressed/disabled) com MaterialStateProperty
+  • SnackBar/Toast padronizados
+  • DarkTheme: alto contraste e sem cinza lavado
+- Não duplicar cores hardcoded em telas; usar tokens.
+
+2) Componentes reutilizáveis (lib/widgets/)
+- VelloCard: Card com bordas 16, elevação suave. Param “glass=false”.
+  Se glass=true, aplicar BackdropFilter leve (sigma 6–10) e opacidade 0.85, apenas em overlays (HUD sobre mapa). Nunca em listas grandes.
+- VelloButton: primary/secondary/ghost com estados visuais (loading/success/error), usando AnimatedSwitcher/AnimatedOpacity. Sem libs novas.
+- VelloInput: floating label + ícone opcional; estados de erro/sucesso.
+- StatusChip: online/offline (cores semânticas, ícone + texto).
+- ProgressGoal: barra e circular para metas de ganhos (AnimatedContainer).
+- SkeletonPlaceholder: shimmer simples sem libs (Gradient + AnimatedContainer).
+
+3) Home (map-first) — layout e microinterações
+- Manter FlutterMap e lógicas existentes.
+- Reorganizar com Stack: mapa ao fundo; HUD flutuante (VelloCard glass=true) com status e ganhos de hoje; FAB “target” para recentrar no motorista.
+- Follow-me: pausar quando usuário arrasta o mapa e retomar ao tocar o FAB.
+- Marcador do carro: ícone 2D rotacionado suavemente; sem 3D agora.
+- Não tocar em providers/streams. Apenas ler os mesmos.
+
+4) Financeiro
+- Usar fl_chart já presente (sem novas libs).
+- Ganhos “Hoje” com contador e ProgressGoal para meta diária.
+- Um gráfico simples (linha ou barras) com animação leve. Nada de heavy shaders.
+
+5) Navegação/Bar
+- BottomNavigation com indicador fluido (AnimatedAlign/Container), sem libs.
+- Tamanhos touch-friendly (mínimo 44dp).
+
+6) Feedback e estados
+- Padronizar loading com SkeletonPlaceholder nos cards de lista e painéis.
+- SnackBars discretos para sucesso/erro; haptic feedback nos toggles críticos.
+
+Performance e limites:
+- Limitar BackdropFilter a no máx. 2 elementos simultâneos.
+- Evitar sombras profundas em listas (usar 1–2 níveis de elevation).
+- RepaintBoundary em gráficos e painéis animados.
+- Sem AR, sem heatmap novo, sem 3D marker pesado neste ciclo.
+
+Qualidade/Build:
+- Rodar: `flutter clean && flutter pub get && flutter analyze`
+- Garantir ZERO warnings novos preferencialmente; sem erros.
+- Buildar: `flutter build apk -v`
+- Se qualquer ajuste de tema causar erro de tipo (ex.: DialogTheme vs DialogThemeData), padronizar para *ThemeData* e corrigir `const` aninhados (ex.: usar `RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16)))` com `const` correto).
+- Se faltar asset referenciado, substituir por placeholder existente; não alterar pubspec.
+
+Git:
+- Criar branch: `feat/ui-polish-premium`
+- Commits pequenos por tópico: theme, widgets, home, financeiro, feedback.
+- Mensagem final: `feat(ui): premium polish sem quebrar lógica + dark mode + HUD no mapa`
+- Abrir PR (se aplicável) e anexar GIFs curtos das telas alteradas.
+
+Aceite:
+- App inicia sem crash.
+- Home mantém todas ações atuais; mapa centraliza via FAB; seguir motorista quando `_follow` ativo.
+- Telas financeiras exibem dados atuais com gráfico e metas.
+- Dark e Light funcionam; tipografia e cores consistentes.
+- APK gerado com sucesso.
+
+Se alguma regra conflitar com o build, priorize COMPILAR e ENTREGAR. Evitar mudanças invasivas.
