@@ -42,6 +42,9 @@ class VelloButton extends StatefulWidget {
   final Widget? child;
   final bool hapticFeedback;
   final Color? backgroundColor; // Added backgroundColor property
+  final Color? color; // Added color parameter
+  final BorderRadius? borderRadius; // Added borderRadius parameter
+  final Widget? label; // Added label parameter
 
   const VelloButton({
     Key? key,
@@ -55,6 +58,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor, // Added backgroundColor parameter
+    this.color, // Added color parameter
+    this.borderRadius, // Added borderRadius parameter
+    this.label, // Added label parameter
   }) : super(key: key);
 
   /// Botão primário (padrão)
@@ -69,6 +75,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor,
+    this.color,
+    this.borderRadius,
+    this.label,
   }) : type = VelloButtonType.primary, super(key: key);
 
   /// Botão secundário
@@ -83,6 +92,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor,
+    this.color,
+    this.borderRadius,
+    this.label,
   }) : type = VelloButtonType.secondary, super(key: key);
 
   /// Botão de sucesso
@@ -97,6 +109,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor,
+    this.color,
+    this.borderRadius,
+    this.label,
   }) : type = VelloButtonType.success, super(key: key);
 
   /// Botão de erro
@@ -111,6 +126,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor,
+    this.color,
+    this.borderRadius,
+    this.label,
   }) : type = VelloButtonType.error, super(key: key);
 
   /// Botão ghost (transparente)
@@ -125,6 +143,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor,
+    this.color,
+    this.borderRadius,
+    this.label,
   }) : type = VelloButtonType.ghost, super(key: key);
 
   /// Botão outlined
@@ -139,6 +160,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor,
+    this.color,
+    this.borderRadius,
+    this.label,
   }) : type = VelloButtonType.outlined, super(key: key);
 
   // Added danger constructor
@@ -153,6 +177,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor,
+    this.color,
+    this.borderRadius,
+    this.label,
   }) : type = VelloButtonType.danger, super(key: key);
 
   // Added icon constructor
@@ -168,6 +195,9 @@ class VelloButton extends StatefulWidget {
     this.child,
     this.hapticFeedback = true,
     this.backgroundColor,
+    this.color,
+    this.borderRadius,
+    this.label, // Added label parameter
   }) : super(key: key);
 
 
@@ -325,6 +355,18 @@ class _VelloButtonState extends State<VelloButton>
             ],
           );
         }
+        
+        if (widget.label != null) {
+          return Row(
+            key: const ValueKey('label'),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(widget.text),
+              const SizedBox(width: VelloTokens.spaceS),
+              widget.label!,
+            ],
+          );
+        }
 
         return KeyedSubtree(
           key: const ValueKey('text'),
@@ -454,14 +496,13 @@ class _VelloButtonState extends State<VelloButton>
   }
 
   BorderRadius _getBorderRadius() {
-    switch (widget.size) {
-      case VelloButtonSize.small:
-        return VelloTokens.radiusSmall;
-      case VelloButtonSize.medium:
-        return VelloTokens.radiusMedium;
-      case VelloButtonSize.large:
-        return VelloTokens.radiusLarge;
-    }
+    // Use provided borderRadius if available, otherwise fallback to size-based radius
+    return widget.borderRadius ?? 
+      switch (widget.size) {
+        VelloButtonSize.small => VelloTokens.radiusSmall,
+        VelloButtonSize.medium => VelloTokens.radiusMedium,
+        VelloButtonSize.large => VelloTokens.radiusLarge,
+      };
   }
 
   EdgeInsetsGeometry _getPadding() {
