@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'register_screen.dart';
 import 'package:vello_motorista/constants/app_colors.dart';
 import 'package:vello_motorista/services/auth_service.dart';
+import 'package:vello_motorista/theme/vello_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -187,4 +188,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-

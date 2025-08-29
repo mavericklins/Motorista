@@ -55,11 +55,11 @@ class AppRoutes {
       metas: (context) => const MetasInteligentesScreen(),
       corridasProgramadas: (context) => const CorridasProgramadasScreen(),
       analytics: (context) => const AnalyticsDashboardScreen(),
-      coaching: (context) => const CoachingInteligenteScreen(),
-      conquistas: (context) => const ConquistasScreen(),
+      coaching: (context) => CoachingInteligenteScreen(),
+      conquistas: (context) => ConquistasScreen(),
       goals: (context) => const GoalsScreen(),
       insights: (context) => const DemandPredictionScreen(),
-      sos: (context) => const SosScreen(),
+      sos: (context) => SosScreen(),
       suporte: (context) => const SuporteScreen(),
     };
   }

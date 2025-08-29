@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/coaching_inteligente_service.dart';
@@ -204,13 +203,14 @@ class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen> {
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(
-          color: corPrioridade,
-          width: 4,
-        ),
         color: Colors.grey[50],
         borderRadius: BorderRadius.circular(8),
+        border: Border(
+          left: BorderSide(
+            color: corPrioridade,
+            width: 4,
+          ),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

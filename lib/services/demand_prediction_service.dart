@@ -99,8 +99,12 @@ class DemandPredictionService extends ChangeNotifier {
     };
   }
 
-  Future<List<Map<String, Object>>> getPredictions() async {
-    // TODO: Implementar predição de demanda real
-    return [];
+  Future<Map<String, dynamic>?> getPredictions() async {
+    // Alinhar com expectativa do screen que consome
+    return {
+      'hotZones': [_currentHotZone],
+      'predictions': _predictions,
+      'lastUpdate': DateTime.now().toIso8601String(),
+    };
   }
 }

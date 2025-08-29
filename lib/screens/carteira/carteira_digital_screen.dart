@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../gamification/goals_screen.dart';
 import '../../constants/app_colors.dart'; // Assuming VelloColors is within app_colors.dart
+import 'package:vello_motorista/theme/vello_colors.dart';
 
 class CarteiraDigitalScreen extends StatefulWidget {
   const CarteiraDigitalScreen({super.key});

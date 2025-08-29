@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:vello_motorista/constants/app_colors.dart';
 import 'package:vello_motorista/services/auth_service.dart';
+import 'package:vello_motorista/theme/vello_colors.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

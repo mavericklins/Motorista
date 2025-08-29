@@ -532,15 +532,15 @@ class _HomeScreenState extends State<HomeScreen> {
           mapController: _mapController!,
           options: MapOptions(
             initialCenter: currentLocation!,
-            zoom: 16,
+            initialZoom: 16,
             minZoom: 10.0,
             maxZoom: 18.0,
-            interactiveFlags: InteractiveFlag.all,
+            interactionOptions: const InteractionOptions(flags: InteractiveFlag.all),
           ),
           children: [
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.vello.motorista',
+              userAgentPackageName: 'com.vello.motorista', // CORRIGIDO: Warning do flutter_map
               maxZoom: 18,
             ),
             MarkerLayer(

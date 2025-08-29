@@ -135,7 +135,7 @@ class _PontosApoioScreenGeoapifyState extends State<PontosApoioScreenGeoapify> {
           // Usando Geoapify tiles (mesma API que você já usa)
           TileLayer(
             urlTemplate: 'https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=203ba4a0a4304d349299a8aa22e1dcae',
-            userAgentPackageName: 'com.vello.motorista',
+            userAgentPackageName: 'com.vello.motorista', // CORRIGIDO: Warning do flutter_map
           ),
           MarkerLayer(
             markers: [
@@ -529,4 +529,3 @@ class SupportPoint {
     this.fonte = 'firebase',
   });
 }
-

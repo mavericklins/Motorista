@@ -3,13 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vello_motorista/services/notification_service.dart';
 
 class AdvancedSecurityService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  const AdvancedSecurityService();
+  
+  Future<void> initialize() async {}
+  Future<void> enablePanic() async {}
+  
   Future<void> suggestRestPoints() async {
     try {
       final position = await Geolocator.getCurrentPosition();
 
-      final pontos = await _firestore
+      final pontos = await FirebaseFirestore.instance
           .collection('pontos_apoio')
           .where('ativo', isEqualTo: true)
           .get();

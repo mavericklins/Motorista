@@ -6,21 +6,20 @@ import 'package:intl/intl.dart';
 /// Serviço de relatórios financeiros para Vello Motorista
 class FinancialService {
   
+  // Método único para adicionar crédito - compatível com ambas as assinaturas
   Future<void> adicionarCredito(num valor, String descricao) async {
-    // TODO: Implementar adição de crédito
+    // Implementar adição de crédito
     print('Adicionando crédito: R\$ $valor - $descricao');
-  }
-  
-  Future<void> adicionarCredito(double valor, String descricao) async {
-    // Mock de adição de crédito
-    print('Crédito adicionado: R\$ $valor - $descricao');
+    
+    // TODO: Implementar lógica real de adição de crédito
+    // TODO: Integrar com sistema de pagamentos
+    // TODO: Atualizar saldo do motorista
   }
 
   static Future<FinancialModel?> obterDadosFinanceiros() async {
     // TODO: mapear para FinancialModel real
     return null;
   }
-
 
   static Future<List<TransactionModel>> obterHistoricoTransacoes() async {
     // TODO: mapear para TransactionModel real
@@ -798,4 +797,3 @@ enum EarningsGroupBy {
   week,
   month,
 }
-

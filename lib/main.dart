@@ -8,6 +8,11 @@ import 'services/auth_service.dart';
 import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/sound_service.dart';
+import 'services/coaching_inteligente_service.dart';
+import 'services/metas_inteligentes_service.dart';
+import 'services/gamification_service.dart';
+import 'services/demand_prediction_service.dart';
+import 'services/scheduled_rides_service.dart'; // ADICIONADO: Import do service ausente
 import 'constants/app_colors.dart';
 import 'theme/app_theme.dart';
 
@@ -32,10 +37,15 @@ class VelloMotoristaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (_) => LocationService()),
-        Provider<NotificationService>(create: (_) => NotificationService()),
-        Provider<SoundService>(create: (_) => SoundService()),
+        ChangeNotifierProvider<AuthService>(create: (_) => AuthService()),
+        ChangeNotifierProvider<LocationService>(create: (_) => LocationService()),
+        ChangeNotifierProvider<NotificationService>(create: (_) => NotificationService()),
+        ChangeNotifierProvider<SoundService>(create: (_) => SoundService()),
+        ChangeNotifierProvider<CoachingInteligenteService>(create: (_) => CoachingInteligenteService()),
+        ChangeNotifierProvider<MetasInteligentesService>(create: (_) => MetasInteligentesService()),
+        ChangeNotifierProvider<GamificationService>(create: (_) => GamificationService()),
+        ChangeNotifierProvider<DemandPredictionService>(create: (_) => DemandPredictionService()),
+        ChangeNotifierProvider<ScheduledRidesService>(create: (_) => ScheduledRidesService()), // ADICIONADO: Provider ausente
       ],
       child: MaterialApp(
         title: 'Vello Motorista',

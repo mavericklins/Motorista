@@ -80,7 +80,7 @@ class _MetasGanhosScreenState extends State<MetasGanhosScreen> with TickerProvid
           unselectedLabelColor: Colors.white70,
           indicatorColor: Colors.white,
           tabs: const [
-            Tab(text: 'Configurar', icon: Icon(Icons.target)),
+            Tab(text: 'Configurar', icon: Icon(Icons.track_changes)),
             Tab(text: 'Análises', icon: Icon(Icons.analytics)),
             Tab(text: 'Dicas', icon: Icon(Icons.lightbulb)),
           ],

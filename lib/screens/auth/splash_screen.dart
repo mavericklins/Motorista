@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:vello_motorista/services/auth_service.dart';
 import '../../constants/app_colors.dart';
+import 'package:vello_motorista/theme/vello_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

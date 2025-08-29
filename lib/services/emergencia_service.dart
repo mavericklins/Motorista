@@ -43,6 +43,20 @@ class EmergenciaService {
     }
   }
 
+  /// Método público principal usado pela tela SOS
+  Future<void> acionarEmergencia() async {
+    // Log da emergência
+    print('EMERGÊNCIA ACIONADA - ${DateTime.now()}');
+    
+    // TODO: Implementar integração real de emergência
+    // TODO: Enviar localização para central
+    // TODO: Notificar contatos de emergência
+    // TODO: Acionar serviços de emergência
+    
+    // Simular processamento
+    await Future.delayed(Duration(seconds: 2));
+  }
+
   void _showMessage(BuildContext context, String message) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

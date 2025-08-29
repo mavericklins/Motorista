@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class SoundService extends ChangeNotifier {
@@ -144,9 +145,19 @@ class SoundService extends ChangeNotifier {
     await playSuccessSound();
   }
 
-  /// Libera recursos
-  static Future<void> dispose() async {
+  /// Libera recursos estáticos - RENOMEADO para evitar conflito
+  static Future<void> disposeAll() async {
     await _audioPlayer.dispose();
+  }
+
+  /// Libera recursos - método de instância
+  @override
+  void dispose() {
+    try {
+      // limpezas síncronas locais, se houver
+    } finally {
+      super.dispose();
+    }
   }
 }
 
@@ -158,50 +169,5 @@ extension SoundServiceExtension on SoundService {
     } else {
       await SoundService.playOfflineSound();
     }
-  }
-}
-
-import 'package:flutter/foundation.dart';
-import 'package:audioplayers/audioplayers.dart';
-
-class SoundService extends ChangeNotifier {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  bool _isSoundEnabled = true;
-
-  bool get isSoundEnabled => _isSoundEnabled;
-
-  void toggleSound() {
-    _isSoundEnabled = !_isSoundEnabled;
-    notifyListeners();
-  }
-
-  Future<void> playSound(String soundPath) async {
-    if (!_isSoundEnabled) return;
-
-    try {
-      await _audioPlayer.play(AssetSource(soundPath));
-    } catch (e) {
-      if (kDebugMode) {
-        print('Erro ao reproduzir som: $e');
-      }
-    }
-  }
-
-  Future<void> playNewRideSound() async {
-    await playSound('sounds/vello_new_ride.mp3');
-  }
-
-  Future<void> playSuccessSound() async {
-    await playSound('sounds/vello_success.mp3');
-  }
-
-  Future<void> playErrorSound() async {
-    await playSound('sounds/vello_error.mp3');
-  }
-
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
   }
 }

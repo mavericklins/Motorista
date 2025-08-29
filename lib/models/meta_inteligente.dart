@@ -1,6 +1,3 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 enum TipoMeta {
   ganhos,
   corridas,
@@ -8,19 +5,6 @@ enum TipoMeta {
   consistencia,
   crescimento,
   estrategico,
-}
-
-enum PeriodoMeta {
-  diario,
-  semanal,
-  mensal,
-  personalizado,
-}
-
-enum DificuldadeMeta {
-  facil,
-  media,
-  dificil,
 }
 
 enum CategoriaMeta {
@@ -31,124 +15,129 @@ enum CategoriaMeta {
   social,
 }
 
+enum DificuldadeMeta {
+  facil,
+  media,
+  dificil,
+}
+
 class MetaInteligente {
   final String id;
-  final TipoMeta tipo;
-  final PeriodoMeta periodo;
   final String titulo;
   final String descricao;
+  final TipoMeta tipo;
+  final CategoriaMeta categoria;
   final double valorObjetivo;
-  final double valorAtual;
+  double valorAtual;
   final DateTime dataInicio;
   final DateTime dataFim;
-  final double recompensa;
   final DificuldadeMeta dificuldade;
-  final CategoriaMeta categoria;
-  final Map<String, dynamic> condicoes;
-  final bool ativa;
-  final DateTime? dataCompletada;
+  final double recompensa;
+  bool ativa;
+  bool completada;
 
   MetaInteligente({
     required this.id,
-    required this.tipo,
-    required this.periodo,
     required this.titulo,
     required this.descricao,
+    required this.tipo,
+    required this.categoria,
     required this.valorObjetivo,
-    required this.valorAtual,
+    this.valorAtual = 0.0,
     required this.dataInicio,
     required this.dataFim,
-    required this.recompensa,
-    required this.dificuldade,
-    required this.categoria,
-    required this.condicoes,
+    this.dificuldade = DificuldadeMeta.media,
+    this.recompensa = 0.0,
     this.ativa = true,
-    this.dataCompletada,
+    this.completada = false,
   });
 
-  bool get completada => valorAtual >= valorObjetivo;
-  
-  double get progresso => valorObjetivo > 0 ? (valorAtual / valorObjetivo).clamp(0.0, 1.0) : 0.0;
-  
-  int get progressoPorcentagem => (progresso * 100).round();
+  double get progresso {
+    if (valorObjetivo == 0) return 0.0;
+    return (valorAtual / valorObjetivo).clamp(0.0, 1.0);
+  }
 
-  bool get expirada => DateTime.now().isAfter(dataFim);
+  int get progressoPorcentagem {
+    return (progresso * 100).round();
+  }
 
-  Duration get tempoRestante => dataFim.difference(DateTime.now());
+  bool get expirada {
+    return DateTime.now().isAfter(dataFim) && !completada;
+  }
 
-  Map<String, dynamic> toMap() {
+  Duration get tempoRestante {
+    final agora = DateTime.now();
+    if (agora.isAfter(dataFim)) {
+      return Duration.zero;
+    }
+    return dataFim.difference(agora);
+  }
+
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'tipo': tipo.toString(),
-      'periodo': periodo.toString(),
       'titulo': titulo,
       'descricao': descricao,
+      'tipo': tipo.toString(),
+      'categoria': categoria.toString(),
       'valorObjetivo': valorObjetivo,
       'valorAtual': valorAtual,
-      'dataInicio': Timestamp.fromDate(dataInicio),
-      'dataFim': Timestamp.fromDate(dataFim),
-      'recompensa': recompensa,
+      'dataInicio': dataInicio.toIso8601String(),
+      'dataFim': dataFim.toIso8601String(),
       'dificuldade': dificuldade.toString(),
-      'categoria': categoria.toString(),
-      'condicoes': condicoes,
+      'recompensa': recompensa,
       'ativa': ativa,
-      'dataCompletada': dataCompletada != null ? Timestamp.fromDate(dataCompletada!) : null,
+      'completada': completada,
     };
   }
 
-  factory MetaInteligente.fromMap(Map<String, dynamic> map) {
+  factory MetaInteligente.fromJson(Map<String, dynamic> json) {
     return MetaInteligente(
-      id: map['id'] ?? '',
-      tipo: TipoMeta.values.firstWhere((e) => e.toString() == map['tipo']),
-      periodo: PeriodoMeta.values.firstWhere((e) => e.toString() == map['periodo']),
-      titulo: map['titulo'] ?? '',
-      descricao: map['descricao'] ?? '',
-      valorObjetivo: (map['valorObjetivo'] ?? 0).toDouble(),
-      valorAtual: (map['valorAtual'] ?? 0).toDouble(),
-      dataInicio: (map['dataInicio'] as Timestamp).toDate(),
-      dataFim: (map['dataFim'] as Timestamp).toDate(),
-      recompensa: (map['recompensa'] ?? 0).toDouble(),
-      dificuldade: DificuldadeMeta.values.firstWhere((e) => e.toString() == map['dificuldade']),
-      categoria: CategoriaMeta.values.firstWhere((e) => e.toString() == map['categoria']),
-      condicoes: Map<String, dynamic>.from(map['condicoes'] ?? {}),
-      ativa: map['ativa'] ?? true,
-      dataCompletada: map['dataCompletada'] != null ? (map['dataCompletada'] as Timestamp).toDate() : null,
+      id: json['id'],
+      titulo: json['titulo'],
+      descricao: json['descricao'],
+      tipo: TipoMeta.values.firstWhere((e) => e.toString() == json['tipo']),
+      categoria: CategoriaMeta.values.firstWhere((e) => e.toString() == json['categoria']),
+      valorObjetivo: json['valorObjetivo'].toDouble(),
+      valorAtual: json['valorAtual']?.toDouble() ?? 0.0,
+      dataInicio: DateTime.parse(json['dataInicio']),
+      dataFim: DateTime.parse(json['dataFim']),
+      dificuldade: DificuldadeMeta.values.firstWhere((e) => e.toString() == json['dificuldade']),
+      recompensa: json['recompensa']?.toDouble() ?? 0.0,
+      ativa: json['ativa'] ?? true,
+      completada: json['completada'] ?? false,
     );
   }
 
   MetaInteligente copyWith({
     String? id,
-    TipoMeta? tipo,
-    PeriodoMeta? periodo,
     String? titulo,
     String? descricao,
+    TipoMeta? tipo,
+    CategoriaMeta? categoria,
     double? valorObjetivo,
     double? valorAtual,
     DateTime? dataInicio,
     DateTime? dataFim,
-    double? recompensa,
     DificuldadeMeta? dificuldade,
-    CategoriaMeta? categoria,
-    Map<String, dynamic>? condicoes,
+    double? recompensa,
     bool? ativa,
-    DateTime? dataCompletada,
+    bool? completada,
   }) {
     return MetaInteligente(
       id: id ?? this.id,
-      tipo: tipo ?? this.tipo,
-      periodo: periodo ?? this.periodo,
       titulo: titulo ?? this.titulo,
       descricao: descricao ?? this.descricao,
+      tipo: tipo ?? this.tipo,
+      categoria: categoria ?? this.categoria,
       valorObjetivo: valorObjetivo ?? this.valorObjetivo,
       valorAtual: valorAtual ?? this.valorAtual,
       dataInicio: dataInicio ?? this.dataInicio,
       dataFim: dataFim ?? this.dataFim,
-      recompensa: recompensa ?? this.recompensa,
       dificuldade: dificuldade ?? this.dificuldade,
-      categoria: categoria ?? this.categoria,
-      condicoes: condicoes ?? this.condicoes,
+      recompensa: recompensa ?? this.recompensa,
       ativa: ativa ?? this.ativa,
-      dataCompletada: dataCompletada ?? this.dataCompletada,
+      completada: completada ?? this.completada,
     );
   }
 }

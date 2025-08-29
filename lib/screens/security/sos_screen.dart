@@ -1,50 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vello_motorista/services/advanced_security_service.dart';
-
-class SOSScreen extends StatelessWidget {
-  final AdvancedSecurityService _securityService = AdvancedSecurityService();
-
-  SOSScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('SOS Emergência'),
-        backgroundColor: Colors.red,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton.icon(
-              onPressed: () => _securityService.shareLocation(),
-              icon: const Icon(Icons.location_on),
-              label: const Text('Compartilhar Localização'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () => _securityService.callEmergency('190'),
-              icon: const Icon(Icons.phone),
-              label: const Text('Ligar para Emergência'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () => _securityService.activateEmergency(),
-              icon: const Icon(Icons.warning),
-              label: const Text('Ativar Emergência'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-import 'package:flutter/material.dart';
 import '../../services/emergencia_service.dart';
 import '../../constants/app_colors.dart';
 
@@ -135,46 +89,5 @@ class _SosScreenState extends State<SosScreen> {
     setState(() {
       _emergenciaAtiva = false;
     });
-  }
-}
-import 'package:flutter/material.dart';
-
-class SosScreen extends StatelessWidget {
-  const SosScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('SOS'),
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.emergency,
-              size: 100,
-              color: Colors.red,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Emergência',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Funcionalidade em desenvolvimento',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

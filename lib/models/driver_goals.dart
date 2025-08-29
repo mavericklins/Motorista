@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DriverGoals {
@@ -13,7 +12,7 @@ class DriverGoals {
   final Map<String, dynamic> estatisticas;
   final Timestamp atualizadoEm;
 
-  DriverGoals({
+  const DriverGoals({
     required this.id,
     required this.motoristaId,
     required this.metasDiarias,
@@ -25,6 +24,20 @@ class DriverGoals {
     required this.estatisticas,
     required this.atualizadoEm,
   });
+
+  // Fábrica neutra para compilar sem mexer na UI
+  factory DriverGoals.empty() => DriverGoals(
+    id: '',
+    motoristaId: '',
+    metasDiarias: const {},
+    metasSemanais: const {},
+    metasMensais: const {},
+    conquistas: const [],
+    pontuacao: 0,
+    nivel: 1,
+    estatisticas: const {},
+    atualizadoEm: Timestamp.now(),
+  );
 
   factory DriverGoals.fromMap(Map<String, dynamic> map, String docId) {
     return DriverGoals(
@@ -55,7 +68,7 @@ class GoalTarget {
   final DateTime? dataLimite;
   final double? bonus;
 
-  GoalTarget({
+  const GoalTarget({
     required this.tipo,
     required this.objetivo,
     required this.atual,
@@ -99,7 +112,7 @@ class Achievement {
   final DateTime conquistadoEm;
   final int pontos;
 
-  Achievement({
+  const Achievement({
     required this.id,
     required this.titulo,
     required this.descricao,
