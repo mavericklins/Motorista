@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
+import 'package:flutter/services.dart';
+import '../../theme/vello_tokens.dart';
 
-/// Tipos de botão Vello
+/// Tipos de botão Vello Premium
 enum VelloButtonType {
   primary,
   secondary,
@@ -10,26 +11,36 @@ enum VelloButtonType {
   warning,
   error,
   ghost,
+  outlined,
 }
 
-/// Tamanhos de botão Vello
+/// Tamanhos de botão Vello Premium
 enum VelloButtonSize {
   small,
   medium,
   large,
 }
 
-/// Botão padronizado do Vello Motorista
-/// Implementa design system consistente
-class VelloButton extends StatelessWidget {
+/// Estados do botão Vello Premium
+enum VelloButtonState {
+  normal,
+  loading,
+  success,
+  error,
+}
+
+/// Botão padronizado do Vello Motorista Premium
+/// Implementa design system consistente com estados visuais
+class VelloButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
   final VelloButtonType type;
   final VelloButtonSize size;
-  final bool isLoading;
+  final VelloButtonState state;
   final bool isFullWidth;
   final IconData? icon;
   final Widget? child;
+  final bool hapticFeedback;
 
   const VelloButton({
     Key? key,
@@ -37,10 +48,11 @@ class VelloButton extends StatelessWidget {
     this.onPressed,
     this.type = VelloButtonType.primary,
     this.size = VelloButtonSize.medium,
-    this.isLoading = false,
+    this.state = VelloButtonState.normal,
     this.isFullWidth = false,
     this.icon,
     this.child,
+    this.hapticFeedback = true,
   }) : super(key: key);
 
   /// Botão primário (padrão)
@@ -49,10 +61,11 @@ class VelloButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.size = VelloButtonSize.medium,
-    this.isLoading = false,
+    this.state = VelloButtonState.normal,
     this.isFullWidth = false,
     this.icon,
     this.child,
+    this.hapticFeedback = true,
   }) : type = VelloButtonType.primary, super(key: key);
 
   /// Botão secundário
@@ -61,10 +74,11 @@ class VelloButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.size = VelloButtonSize.medium,
-    this.isLoading = false,
+    this.state = VelloButtonState.normal,
     this.isFullWidth = false,
     this.icon,
     this.child,
+    this.hapticFeedback = true,
   }) : type = VelloButtonType.secondary, super(key: key);
 
   /// Botão de sucesso
@@ -73,10 +87,11 @@ class VelloButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.size = VelloButtonSize.medium,
-    this.isLoading = false,
+    this.state = VelloButtonState.normal,
     this.isFullWidth = false,
     this.icon,
     this.child,
+    this.hapticFeedback = true,
   }) : type = VelloButtonType.success, super(key: key);
 
   /// Botão de erro
@@ -85,10 +100,11 @@ class VelloButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.size = VelloButtonSize.medium,
-    this.isLoading = false,
+    this.state = VelloButtonState.normal,
     this.isFullWidth = false,
     this.icon,
     this.child,
+    this.hapticFeedback = true,
   }) : type = VelloButtonType.error, super(key: key);
 
   /// Botão ghost (transparente)
@@ -97,167 +113,323 @@ class VelloButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.size = VelloButtonSize.medium,
-    this.isLoading = false,
+    this.state = VelloButtonState.normal,
     this.isFullWidth = false,
     this.icon,
     this.child,
+    this.hapticFeedback = true,
   }) : type = VelloButtonType.ghost, super(key: key);
+
+  /// Botão outlined
+  const VelloButton.outlined({
+    Key? key,
+    required this.text,
+    this.onPressed,
+    this.size = VelloButtonSize.medium,
+    this.state = VelloButtonState.normal,
+    this.isFullWidth = false,
+    this.icon,
+    this.child,
+    this.hapticFeedback = true,
+  }) : type = VelloButtonType.outlined, super(key: key);
+
+  @override
+  State<VelloButton> createState() => _VelloButtonState();
+}
+
+class _VelloButtonState extends State<VelloButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: VelloTokens.animationFast,
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: isFullWidth ? double.infinity : null,
-      child: _buildButton(context),
+      width: widget.isFullWidth ? double.infinity : null,
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: _buildButton(context),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildButton(BuildContext context) {
-    final buttonStyle = _getButtonStyle();
-    final content = _buildContent();
+    final buttonStyle = _getButtonStyle(context);
+    final content = _buildContent(context);
 
-    switch (type) {
+    Widget button;
+
+    switch (widget.type) {
       case VelloButtonType.primary:
-        return ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
+      case VelloButtonType.success:
+      case VelloButtonType.warning:
+      case VelloButtonType.error:
+        button = ElevatedButton(
+          onPressed: _getOnPressed(),
           style: buttonStyle,
           child: content,
         );
+        break;
       case VelloButtonType.secondary:
-        return OutlinedButton(
-          onPressed: isLoading ? null : onPressed,
+      case VelloButtonType.outlined:
+        button = OutlinedButton(
+          onPressed: _getOnPressed(),
           style: buttonStyle,
           child: content,
         );
+        break;
       case VelloButtonType.ghost:
-        return TextButton(
-          onPressed: isLoading ? null : onPressed,
+        button = TextButton(
+          onPressed: _getOnPressed(),
           style: buttonStyle,
           child: content,
         );
+        break;
+    }
+
+    return GestureDetector(
+      onTapDown: (_) => _animationController.forward(),
+      onTapUp: (_) => _animationController.reverse(),
+      onTapCancel: () => _animationController.reverse(),
+      child: button,
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return AnimatedSwitcher(
+      duration: VelloTokens.animationMedium,
+      child: _buildContentByState(context, theme),
+    );
+  }
+
+  Widget _buildContentByState(BuildContext context, ThemeData theme) {
+    switch (widget.state) {
+      case VelloButtonState.loading:
+        return SizedBox(
+          key: const ValueKey('loading'),
+          height: _getIconSize(),
+          width: _getIconSize(),
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(_getLoadingColor(theme)),
+          ),
+        );
+
+      case VelloButtonState.success:
+        return Row(
+          key: const ValueKey('success'),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle, size: _getIconSize()),
+            const SizedBox(width: VelloTokens.spaceS),
+            Text('Sucesso'),
+          ],
+        );
+
+      case VelloButtonState.error:
+        return Row(
+          key: const ValueKey('error'),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error, size: _getIconSize()),
+            const SizedBox(width: VelloTokens.spaceS),
+            Text('Erro'),
+          ],
+        );
+
+      case VelloButtonState.normal:
       default:
-        return ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: buttonStyle,
-          child: content,
+        if (widget.child != null) {
+          return KeyedSubtree(
+            key: const ValueKey('custom'),
+            child: widget.child!,
+          );
+        }
+
+        if (widget.icon != null) {
+          return Row(
+            key: const ValueKey('icon'),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(widget.icon, size: _getIconSize()),
+              const SizedBox(width: VelloTokens.spaceS),
+              Text(widget.text),
+            ],
+          );
+        }
+
+        return KeyedSubtree(
+          key: const ValueKey('text'),
+          child: Text(widget.text),
         );
     }
   }
 
-  Widget _buildContent() {
-    if (isLoading) {
-      return SizedBox(
-        height: _getIconSize(),
-        width: _getIconSize(),
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(_getLoadingColor()),
-        ),
-      );
-    }
+  VoidCallback? _getOnPressed() {
+    if (widget.state == VelloButtonState.loading) return null;
+    if (widget.onPressed == null) return null;
 
-    if (child != null) return child!;
-
-    if (icon != null) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: _getIconSize()),
-          const SizedBox(width: 8),
-          Text(text),
-        ],
-      );
-    }
-
-    return Text(text);
+    return () {
+      if (widget.hapticFeedback) {
+        HapticFeedback.lightImpact();
+      }
+      widget.onPressed!();
+    };
   }
 
-  ButtonStyle _getButtonStyle() {
-    final colors = _getColors();
+  ButtonStyle _getButtonStyle(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = _getColors(theme);
     final padding = _getPadding();
     final textStyle = _getTextStyle();
 
     return ButtonStyle(
       backgroundColor: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.disabled)) {
-          return VelloColors.disabled;
+          return theme.colorScheme.surfaceVariant;
+        }
+        if (states.contains(MaterialState.pressed)) {
+          return colors['backgroundPressed'];
         }
         return colors['background'];
       }),
       foregroundColor: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.disabled)) {
-          return VelloColors.onSurfaceVariant;
+          return theme.colorScheme.onSurfaceVariant;
         }
         return colors['foreground'];
       }),
-      side: type == VelloButtonType.secondary 
-        ? MaterialStateProperty.all(BorderSide(color: colors['border']!, width: 1))
+      side: _needsBorder() 
+        ? MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.disabled)) {
+              return BorderSide(color: theme.colorScheme.outline, width: 1);
+            }
+            return BorderSide(color: colors['border']!, width: 1);
+          })
         : null,
       padding: MaterialStateProperty.all(padding),
       shape: MaterialStateProperty.all(
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        RoundedRectangleBorder(borderRadius: _getBorderRadius()),
       ),
-      elevation: type == VelloButtonType.ghost 
-        ? MaterialStateProperty.all(0)
-        : MaterialStateProperty.all(1),
+      elevation: _getElevation(),
       textStyle: MaterialStateProperty.all(textStyle),
       minimumSize: MaterialStateProperty.all(_getMinimumSize()),
+      animationDuration: VelloTokens.animationMedium,
     );
   }
 
-  Map<String, Color> _getColors() {
-    switch (type) {
+  Map<String, Color> _getColors(ThemeData theme) {
+    switch (widget.type) {
       case VelloButtonType.primary:
         return {
-          'background': VelloColors.primary,
-          'foreground': VelloColors.onPrimary,
-          'border': VelloColors.primary,
+          'background': theme.colorScheme.primary,
+          'backgroundPressed': VelloTokens.brandDark,
+          'foreground': theme.colorScheme.onPrimary,
+          'border': theme.colorScheme.primary,
         };
       case VelloButtonType.secondary:
         return {
           'background': Colors.transparent,
-          'foreground': VelloColors.primary,
-          'border': VelloColors.primary,
+          'backgroundPressed': theme.colorScheme.primary.withOpacity(0.08),
+          'foreground': theme.colorScheme.primary,
+          'border': theme.colorScheme.primary,
         };
       case VelloButtonType.success:
         return {
-          'background': VelloColors.success,
-          'foreground': VelloColors.onSuccess,
-          'border': VelloColors.success,
+          'background': VelloTokens.success,
+          'backgroundPressed': VelloTokens.successDark,
+          'foreground': Colors.white,
+          'border': VelloTokens.success,
         };
       case VelloButtonType.warning:
         return {
-          'background': VelloColors.warning,
-          'foreground': VelloColors.onWarning,
-          'border': VelloColors.warning,
+          'background': VelloTokens.warning,
+          'backgroundPressed': VelloTokens.warningDark,
+          'foreground': Colors.white,
+          'border': VelloTokens.warning,
         };
       case VelloButtonType.error:
         return {
-          'background': VelloColors.error,
-          'foreground': VelloColors.onError,
-          'border': VelloColors.error,
+          'background': VelloTokens.danger,
+          'backgroundPressed': VelloTokens.dangerDark,
+          'foreground': Colors.white,
+          'border': VelloTokens.danger,
         };
       case VelloButtonType.ghost:
         return {
           'background': Colors.transparent,
-          'foreground': VelloColors.primary,
+          'backgroundPressed': theme.colorScheme.primary.withOpacity(0.08),
+          'foreground': theme.colorScheme.primary,
           'border': Colors.transparent,
+        };
+      case VelloButtonType.outlined:
+        return {
+          'background': Colors.transparent,
+          'backgroundPressed': theme.colorScheme.surfaceVariant,
+          'foreground': theme.colorScheme.onSurface,
+          'border': theme.colorScheme.outline,
         };
     }
   }
 
-  EdgeInsetsGeometry _getPadding() {
-    switch (size) {
+  bool _needsBorder() {
+    return widget.type == VelloButtonType.secondary ||
+           widget.type == VelloButtonType.outlined;
+  }
+
+  BorderRadius _getBorderRadius() {
+    switch (widget.size) {
       case VelloButtonSize.small:
-        return const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+        return VelloTokens.radiusSmall;
       case VelloButtonSize.medium:
-        return const EdgeInsets.symmetric(horizontal: 24, vertical: 12);
+        return VelloTokens.radiusMedium;
       case VelloButtonSize.large:
-        return const EdgeInsets.symmetric(horizontal: 32, vertical: 16);
+        return VelloTokens.radiusLarge;
+    }
+  }
+
+  EdgeInsetsGeometry _getPadding() {
+    switch (widget.size) {
+      case VelloButtonSize.small:
+        return const EdgeInsets.symmetric(horizontal: VelloTokens.spaceM, vertical: VelloTokens.spaceS);
+      case VelloButtonSize.medium:
+        return const EdgeInsets.symmetric(horizontal: VelloTokens.spaceL, vertical: VelloTokens.spaceM);
+      case VelloButtonSize.large:
+        return const EdgeInsets.symmetric(horizontal: VelloTokens.spaceXL, vertical: VelloTokens.spaceL);
     }
   }
 
   TextStyle _getTextStyle() {
-    switch (size) {
+    switch (widget.size) {
       case VelloButtonSize.small:
         return const TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
       case VelloButtonSize.medium:
@@ -268,18 +440,33 @@ class VelloButton extends StatelessWidget {
   }
 
   Size _getMinimumSize() {
-    switch (size) {
+    switch (widget.size) {
       case VelloButtonSize.small:
         return const Size(64, 36);
       case VelloButtonSize.medium:
-        return const Size(64, 48);
+        return const Size(64, VelloTokens.minTouchTarget);
       case VelloButtonSize.large:
         return const Size(64, 56);
     }
   }
 
+  MaterialStateProperty<double?> _getElevation() {
+    if (widget.type == VelloButtonType.ghost || 
+        widget.type == VelloButtonType.secondary ||
+        widget.type == VelloButtonType.outlined) {
+      return MaterialStateProperty.all(0);
+    }
+
+    return MaterialStateProperty.resolveWith((states) {
+      if (states.contains(MaterialState.pressed)) return 1;
+      if (states.contains(MaterialState.hovered)) return 4;
+      if (states.contains(MaterialState.disabled)) return 0;
+      return 2;
+    });
+  }
+
   double _getIconSize() {
-    switch (size) {
+    switch (widget.size) {
       case VelloButtonSize.small:
         return 16;
       case VelloButtonSize.medium:
@@ -289,16 +476,17 @@ class VelloButton extends StatelessWidget {
     }
   }
 
-  Color _getLoadingColor() {
-    switch (type) {
+  Color _getLoadingColor(ThemeData theme) {
+    switch (widget.type) {
       case VelloButtonType.primary:
       case VelloButtonType.success:
       case VelloButtonType.warning:
       case VelloButtonType.error:
-        return VelloColors.onPrimary;
+        return Colors.white;
       case VelloButtonType.secondary:
       case VelloButtonType.ghost:
-        return VelloColors.primary;
+      case VelloButtonType.outlined:
+        return theme.colorScheme.primary;
     }
   }
 }

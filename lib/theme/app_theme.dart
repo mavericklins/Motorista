@@ -1,10 +1,11 @@
-import 'package:vello_motorista/theme/vello_colors.dart';
 
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import 'vello_colors.dart';
+import 'vello_tokens.dart';
 
 /// Tema principal do Vello Motorista
-/// Implementa Material Design 3 com identidade visual da marca
+/// Implementa Material Design 3 com identidade visual premium
 class VelloTheme {
   
   // ========== TEMA PRINCIPAL (LIGHT) ==========
@@ -13,118 +14,195 @@ class VelloTheme {
     return ThemeData(
       useMaterial3: true,
       
-      // Color Scheme
+      // Color Scheme Premium
       colorScheme: const ColorScheme.light(
         brightness: Brightness.light,
-        primary: VelloColors.primary,
-        onPrimary: VelloColors.onPrimary,
-        primaryContainer: VelloColors.primaryLight,
-        onPrimaryContainer: VelloColors.primaryDark,
-        secondary: VelloColors.secondary,
-        onSecondary: VelloColors.onSecondary,
-        secondaryContainer: VelloColors.secondaryLight,
-        onSecondaryContainer: VelloColors.secondaryDark,
-        tertiary: VelloColors.rating,
-        surface: VelloColors.surface,
-        onSurface: VelloColors.onSurface,
-        surfaceVariant: VelloColors.surfaceVariant,
-        onSurfaceVariant: VelloColors.onSurfaceVariant,
-        background: VelloColors.background,
-        onBackground: VelloColors.onBackground,
-        error: VelloColors.error,
-        onError: VelloColors.onError,
-        errorContainer: VelloColors.errorContainer,
-        onErrorContainer: VelloColors.onErrorContainer,
-        outline: VelloColors.divider,
-        shadow: VelloColors.shadow,
-        scrim: VelloColors.scrim,
+        primary: VelloTokens.brand,
+        onPrimary: Colors.white,
+        primaryContainer: VelloTokens.brandLight,
+        onPrimaryContainer: VelloTokens.brandDark,
+        secondary: VelloTokens.info,
+        onSecondary: Colors.white,
+        secondaryContainer: VelloTokens.infoLight,
+        onSecondaryContainer: VelloTokens.infoDark,
+        tertiary: VelloTokens.warning,
+        surface: VelloTokens.gray50,
+        onSurface: VelloTokens.gray900,
+        surfaceVariant: VelloTokens.gray100,
+        onSurfaceVariant: VelloTokens.gray600,
+        background: Colors.white,
+        onBackground: VelloTokens.gray900,
+        error: VelloTokens.danger,
+        onError: Colors.white,
+        errorContainer: VelloTokens.dangerLight,
+        onErrorContainer: VelloTokens.dangerDark,
+        outline: VelloTokens.gray300,
+        shadow: VelloTokens.gray800,
+        scrim: Colors.black54,
       ),
       
       // Scaffold
-      scaffoldBackgroundColor: VelloColors.background,
+      scaffoldBackgroundColor: Colors.white,
       
-      // Typography
-      textTheme: _buildTextTheme(),
+      // Typography Premium
+      textTheme: _buildPremiumTextTheme(),
       
       // AppBar Theme
-      appBarTheme: _buildAppBarTheme(),
+      appBarTheme: _buildPremiumAppBarTheme(),
       
       // Button Themes
-      elevatedButtonTheme: _buildElevatedButtonTheme(),
-      filledButtonTheme: _buildFilledButtonTheme(),
-      textButtonTheme: _buildTextButtonTheme(),
-      outlinedButtonTheme: _buildOutlinedButtonTheme(),
+      elevatedButtonTheme: _buildPremiumElevatedButtonTheme(),
+      filledButtonTheme: _buildPremiumFilledButtonTheme(),
+      textButtonTheme: _buildPremiumTextButtonTheme(),
+      outlinedButtonTheme: _buildPremiumOutlinedButtonTheme(),
       
-      // Card Theme
-      cardTheme: _buildCardTheme(),
+      // Card Theme Premium
+      cardTheme: _buildPremiumCardTheme(),
       
-      // Input Theme
-      inputDecorationTheme: _buildInputTheme(),
+      // Input Theme Premium
+      inputDecorationTheme: _buildPremiumInputTheme(),
       
-      // Bottom Navigation
-      bottomNavigationBarTheme: _buildBottomNavTheme(),
+      // Bottom Navigation Premium
+      bottomNavigationBarTheme: _buildPremiumBottomNavTheme(),
       
       // Navigation Bar (Material 3)
-      navigationBarTheme: _buildNavigationBarTheme(),
+      navigationBarTheme: _buildPremiumNavigationBarTheme(),
       
-      // Dialog Theme
-      dialogTheme: DialogThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 8,
-      ),
+      // Dialog Theme Premium
+      dialogTheme: _buildPremiumDialogTheme(),
       
-      // Bottom Sheet Theme
-      bottomSheetTheme: _buildBottomSheetTheme(),
+      // Bottom Sheet Theme Premium
+      bottomSheetTheme: _buildPremiumBottomSheetTheme(),
       
-      // Chip Theme
-      chipTheme: _buildChipTheme(),
+      // Tab Bar Theme Premium
+      tabBarTheme: _buildPremiumTabBarTheme(),
+      
+      // Chip Theme Premium
+      chipTheme: _buildPremiumChipTheme(),
       
       // Progress Indicator Theme
-      progressIndicatorTheme: _buildProgressIndicatorTheme(),
+      progressIndicatorTheme: _buildPremiumProgressIndicatorTheme(),
       
-      // Floating Action Button
-      floatingActionButtonTheme: _buildFabTheme(),
+      // Floating Action Button Premium
+      floatingActionButtonTheme: _buildPremiumFabTheme(),
       
-      // Switch Theme
-      switchTheme: _buildSwitchTheme(),
+      // Switch Theme Premium
+      switchTheme: _buildPremiumSwitchTheme(),
       
-      // Checkbox Theme
-      checkboxTheme: _buildCheckboxTheme(),
+      // Checkbox Theme Premium
+      checkboxTheme: _buildPremiumCheckboxTheme(),
       
-      // Radio Theme
-      radioTheme: _buildRadioTheme(),
+      // Radio Theme Premium
+      radioTheme: _buildPremiumRadioTheme(),
+      
+      // SnackBar Theme Premium
+      snackBarTheme: _buildPremiumSnackBarTheme(),
       
       // Divider Theme
       dividerTheme: const DividerThemeData(
-        color: VelloColors.divider,
+        color: VelloTokens.gray200,
         thickness: 1,
         space: 1,
       ),
     );
   }
   
-  // ========== TEXT THEME ==========
+  // ========== TEMA DARK PREMIUM ==========
   
-  static TextTheme _buildTextTheme() {
-    return const TextTheme(
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      
+      // Color Scheme Dark Premium
+      colorScheme: const ColorScheme.dark(
+        brightness: Brightness.dark,
+        primary: VelloTokens.brandLight,
+        onPrimary: VelloTokens.darkSurface,
+        primaryContainer: VelloTokens.brand,
+        onPrimaryContainer: Colors.white,
+        secondary: VelloTokens.infoLight,
+        onSecondary: VelloTokens.darkSurface,
+        secondaryContainer: VelloTokens.info,
+        onSecondaryContainer: Colors.white,
+        tertiary: VelloTokens.warningLight,
+        surface: VelloTokens.darkSurfaceVariant,
+        onSurface: VelloTokens.darkOnSurface,
+        surfaceVariant: VelloTokens.gray800,
+        onSurfaceVariant: VelloTokens.darkOnSurfaceVariant,
+        background: VelloTokens.darkSurface,
+        onBackground: VelloTokens.darkOnSurface,
+        error: VelloTokens.dangerLight,
+        onError: VelloTokens.darkSurface,
+        errorContainer: VelloTokens.danger,
+        onErrorContainer: Colors.white,
+        outline: VelloTokens.gray600,
+        shadow: Colors.black87,
+        scrim: Colors.black87,
+      ),
+      
+      // Scaffold Dark
+      scaffoldBackgroundColor: VelloTokens.darkSurface,
+      
+      // Typography Premium Dark
+      textTheme: _buildPremiumTextTheme(isDark: true),
+      
+      // Components Dark (usando mesmo padrão, cores ajustadas automaticamente pelo ColorScheme)
+      appBarTheme: _buildPremiumAppBarTheme(),
+      elevatedButtonTheme: _buildPremiumElevatedButtonTheme(),
+      filledButtonTheme: _buildPremiumFilledButtonTheme(),
+      textButtonTheme: _buildPremiumTextButtonTheme(),
+      outlinedButtonTheme: _buildPremiumOutlinedButtonTheme(),
+      cardTheme: _buildPremiumCardTheme(),
+      inputDecorationTheme: _buildPremiumInputTheme(),
+      bottomNavigationBarTheme: _buildPremiumBottomNavTheme(),
+      navigationBarTheme: _buildPremiumNavigationBarTheme(),
+      dialogTheme: _buildPremiumDialogTheme(),
+      bottomSheetTheme: _buildPremiumBottomSheetTheme(),
+      tabBarTheme: _buildPremiumTabBarTheme(),
+      chipTheme: _buildPremiumChipTheme(),
+      progressIndicatorTheme: _buildPremiumProgressIndicatorTheme(),
+      floatingActionButtonTheme: _buildPremiumFabTheme(),
+      switchTheme: _buildPremiumSwitchTheme(),
+      checkboxTheme: _buildPremiumCheckboxTheme(),
+      radioTheme: _buildPremiumRadioTheme(),
+      snackBarTheme: _buildPremiumSnackBarTheme(),
+      
+      dividerTheme: const DividerThemeData(
+        color: VelloTokens.gray700,
+        thickness: 1,
+        space: 1,
+      ),
+    );
+  }
+  
+  // ========== TEXT THEME PREMIUM ==========
+  
+  static TextTheme _buildPremiumTextTheme({bool isDark = false}) {
+    final Color textColor = isDark ? VelloTokens.darkOnSurface : VelloTokens.gray900;
+    final Color textColorVariant = isDark ? VelloTokens.darkOnSurfaceVariant : VelloTokens.gray600;
+    
+    return TextTheme(
       // Display
       displayLarge: TextStyle(
         fontSize: 57,
         fontWeight: FontWeight.w400,
         letterSpacing: -0.25,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.12,
       ),
       displayMedium: TextStyle(
         fontSize: 45,
         fontWeight: FontWeight.w400,
         letterSpacing: 0,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.16,
       ),
       displaySmall: TextStyle(
         fontSize: 36,
         fontWeight: FontWeight.w400,
         letterSpacing: 0,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.22,
       ),
       
       // Headlines
@@ -132,19 +210,22 @@ class VelloTheme {
         fontSize: 32,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.25,
       ),
       headlineMedium: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.29,
       ),
       headlineSmall: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.33,
       ),
       
       // Titles
@@ -152,19 +233,22 @@ class VelloTheme {
         fontSize: 22,
         fontWeight: FontWeight.w500,
         letterSpacing: 0,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.27,
       ),
       titleMedium: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.5,
       ),
       titleSmall: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.43,
       ),
       
       // Body
@@ -172,19 +256,22 @@ class VelloTheme {
         fontSize: 16,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.5,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.5,
       ),
       bodyMedium: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.25,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.43,
       ),
       bodySmall: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.4,
-        color: VelloColors.onSurfaceVariant,
+        color: textColorVariant,
+        height: 1.33,
       ),
       
       // Labels
@@ -192,303 +279,273 @@ class VelloTheme {
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.43,
       ),
       labelMedium: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
-        color: VelloColors.onSurface,
+        color: textColor,
+        height: 1.33,
       ),
       labelSmall: TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
-        color: VelloColors.onSurfaceVariant,
+        color: textColorVariant,
+        height: 1.45,
       ),
     );
   }
   
-  // ========== COMPONENT THEMES ==========
+  // ========== COMPONENT THEMES PREMIUM ==========
   
-  static AppBarTheme _buildAppBarTheme() {
-    return const AppBarTheme(
+  static AppBarTheme _buildPremiumAppBarTheme() {
+    return AppBarTheme(
       elevation: 0,
-      scrolledUnderElevation: 3,
-      backgroundColor: VelloColors.primary,
-      foregroundColor: VelloColors.onPrimary,
+      scrolledUnderElevation: 2,
       surfaceTintColor: Colors.transparent,
-      titleTextStyle: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.w500,
-        color: VelloColors.onPrimary,
-      ),
       centerTitle: true,
-      iconTheme: IconThemeData(
-        color: VelloColors.onPrimary,
-        size: 24,
+      titleTextStyle: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.15,
       ),
+      iconTheme: const IconThemeData(size: 24),
     );
   }
   
-  static ElevatedButtonThemeData _buildElevatedButtonTheme() {
+  static ElevatedButtonThemeData _buildPremiumElevatedButtonTheme() {
     return ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: VelloColors.primary,
-        foregroundColor: VelloColors.onPrimary,
         elevation: 2,
-        shadowColor: VelloColors.primary.withOpacity(0.3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        minimumSize: const Size(64, 56),
+        shape: const RoundedRectangleBorder(borderRadius: VelloTokens.radiusLarge),
+        padding: const EdgeInsets.symmetric(horizontal: VelloTokens.spaceL, vertical: VelloTokens.spaceM),
+        minimumSize: const Size(64, VelloTokens.minTouchTarget),
         textStyle: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
       ).copyWith(
-        backgroundColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.pressed)) {
-            return VelloColors.primaryDark;
-          }
-          if (states.contains(MaterialState.disabled)) {
-            return VelloColors.disabled;
-          }
-          return VelloColors.primary;
-        }),
         elevation: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.pressed)) {
-            return 1;
-          }
-          if (states.contains(MaterialState.hovered)) {
-            return 4;
-          }
+          if (states.contains(MaterialState.pressed)) return 1;
+          if (states.contains(MaterialState.hovered)) return 4;
+          if (states.contains(MaterialState.disabled)) return 0;
           return 2;
         }),
       ),
     );
   }
   
-  static FilledButtonThemeData _buildFilledButtonTheme() {
+  static FilledButtonThemeData _buildPremiumFilledButtonTheme() {
     return FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: VelloColors.primary,
-        foregroundColor: VelloColors.onPrimary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: const RoundedRectangleBorder(borderRadius: VelloTokens.radiusMedium),
+        padding: const EdgeInsets.symmetric(horizontal: VelloTokens.spaceL, vertical: VelloTokens.spaceM),
         minimumSize: const Size(64, 48),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
+        ),
       ),
     );
   }
   
-  static TextButtonThemeData _buildTextButtonTheme() {
+  static TextButtonThemeData _buildPremiumTextButtonTheme() {
     return TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: VelloColors.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+        shape: const RoundedRectangleBorder(borderRadius: VelloTokens.radiusMedium),
+        padding: const EdgeInsets.symmetric(horizontal: VelloTokens.spaceM, vertical: VelloTokens.spaceS),
+        minimumSize: const Size(64, 40),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
     );
   }
   
-  static OutlinedButtonThemeData _buildOutlinedButtonTheme() {
+  static OutlinedButtonThemeData _buildPremiumOutlinedButtonTheme() {
     return OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: VelloColors.primary,
-        side: const BorderSide(color: VelloColors.primary, width: 1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: const RoundedRectangleBorder(borderRadius: VelloTokens.radiusMedium),
+        padding: const EdgeInsets.symmetric(horizontal: VelloTokens.spaceL, vertical: VelloTokens.spaceM),
         minimumSize: const Size(64, 48),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.1,
+        ),
+      ).copyWith(
+        side: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.disabled)) {
+            return const BorderSide(color: VelloTokens.gray300, width: 1);
+          }
+          return const BorderSide(width: 1);
+        }),
       ),
     );
   }
   
-  static CardTheme _buildCardTheme() {
+  static CardTheme _buildPremiumCardTheme() {
     return CardTheme(
       elevation: 2,
-      shadowColor: VelloColors.shadow,
       surfaceTintColor: Colors.transparent,
-      color: VelloColors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: const RoundedRectangleBorder(borderRadius: VelloTokens.radiusLarge),
+      margin: const EdgeInsets.symmetric(horizontal: VelloTokens.spaceM, vertical: VelloTokens.spaceS),
     );
   }
   
-  static InputDecorationTheme _buildInputTheme() {
+  static InputDecorationTheme _buildPremiumInputTheme() {
     return InputDecorationTheme(
       filled: true,
-      fillColor: VelloColors.surfaceVariant,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+      border: const OutlineInputBorder(
+        borderRadius: VelloTokens.radiusLarge,
         borderSide: BorderSide.none,
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: VelloColors.divider, width: 1),
+      enabledBorder: const OutlineInputBorder(
+        borderRadius: VelloTokens.radiusLarge,
+        borderSide: BorderSide(color: VelloTokens.gray300, width: 1),
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: VelloColors.primary, width: 2),
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: VelloTokens.radiusLarge,
+        borderSide: BorderSide(color: VelloTokens.brand, width: 2),
       ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: VelloColors.error, width: 1),
+      errorBorder: const OutlineInputBorder(
+        borderRadius: VelloTokens.radiusLarge,
+        borderSide: BorderSide(color: VelloTokens.danger, width: 1),
       ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: VelloColors.error, width: 2),
+      focusedErrorBorder: const OutlineInputBorder(
+        borderRadius: VelloTokens.radiusLarge,
+        borderSide: BorderSide(color: VelloTokens.danger, width: 2),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: VelloTokens.spaceM),
       hintStyle: const TextStyle(
-        color: VelloColors.onSurfaceVariant,
         fontSize: 16,
         fontWeight: FontWeight.w400,
       ),
       labelStyle: const TextStyle(
-        color: VelloColors.onSurfaceVariant,
         fontSize: 16,
         fontWeight: FontWeight.w500,
       ),
       floatingLabelStyle: const TextStyle(
-        color: VelloColors.primary,
         fontSize: 14,
         fontWeight: FontWeight.w500,
       ),
     );
   }
   
-  static BottomNavigationBarThemeData _buildBottomNavTheme() {
+  static BottomNavigationBarThemeData _buildPremiumBottomNavTheme() {
     return const BottomNavigationBarThemeData(
-      backgroundColor: VelloColors.surface,
-      selectedItemColor: VelloColors.primary,
-      unselectedItemColor: VelloColors.onSurfaceVariant,
       type: BottomNavigationBarType.fixed,
       elevation: 8,
+      selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      unselectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
     );
   }
   
-  static NavigationBarThemeData _buildNavigationBarTheme() {
+  static NavigationBarThemeData _buildPremiumNavigationBarTheme() {
     return NavigationBarThemeData(
-      backgroundColor: VelloColors.surface,
-      indicatorColor: VelloColors.primaryLight,
       surfaceTintColor: Colors.transparent,
       labelTextStyle: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.selected)) {
-          return const TextStyle(color: VelloColors.primary, fontSize: 12);
+          return const TextStyle(fontSize: 12, fontWeight: FontWeight.w500);
         }
-        return const TextStyle(color: VelloColors.onSurfaceVariant, fontSize: 12);
+        return const TextStyle(fontSize: 12, fontWeight: FontWeight.w400);
       }),
       iconTheme: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return const IconThemeData(color: VelloColors.primary);
-        }
-        return const IconThemeData(color: VelloColors.onSurfaceVariant);
+        return const IconThemeData(size: 24);
       }),
     );
   }
   
-  static DialogTheme _buildDialogTheme() {
-    return DialogTheme(
-      backgroundColor: VelloColors.surface,
+  static DialogThemeData _buildPremiumDialogTheme() {
+    return const DialogThemeData(
       surfaceTintColor: Colors.transparent,
-      elevation: 6,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: VelloTokens.radiusXLarge),
+      insetPadding: EdgeInsets.all(VelloTokens.spaceL),
     );
   }
   
-  static BottomSheetThemeData _buildBottomSheetTheme() {
+  static BottomSheetThemeData _buildPremiumBottomSheetTheme() {
     return const BottomSheetThemeData(
-      backgroundColor: VelloColors.surface,
       surfaceTintColor: Colors.transparent,
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
     );
   }
   
-  static ChipThemeData _buildChipTheme() {
+  static TabBarThemeData _buildPremiumTabBarTheme() {
+    return const TabBarThemeData(
+      labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+      unselectedLabelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+      indicatorSize: TabBarIndicatorSize.label,
+    );
+  }
+  
+  static ChipThemeData _buildPremiumChipTheme() {
     return ChipThemeData(
-      backgroundColor: VelloColors.surfaceVariant,
-      selectedColor: VelloColors.primaryLight,
-      deleteIconColor: VelloColors.onSurfaceVariant,
-      disabledColor: VelloColors.disabled,
-      labelStyle: const TextStyle(color: VelloColors.onSurface),
-      secondaryLabelStyle: const TextStyle(color: VelloColors.onSurfaceVariant),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: VelloTokens.spaceM, vertical: VelloTokens.spaceS),
+      shape: const RoundedRectangleBorder(borderRadius: VelloTokens.radiusSmall),
+      labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      secondaryLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
     );
   }
   
-  static ProgressIndicatorThemeData _buildProgressIndicatorTheme() {
+  static ProgressIndicatorThemeData _buildPremiumProgressIndicatorTheme() {
     return const ProgressIndicatorThemeData(
-      color: VelloColors.primary,
-      linearTrackColor: VelloColors.surfaceVariant,
-      circularTrackColor: VelloColors.surfaceVariant,
+      refreshBackgroundColor: VelloTokens.gray100,
     );
   }
   
-  static FloatingActionButtonThemeData _buildFabTheme() {
+  static FloatingActionButtonThemeData _buildPremiumFabTheme() {
     return const FloatingActionButtonThemeData(
-      backgroundColor: VelloColors.primary,
-      foregroundColor: VelloColors.onPrimary,
       elevation: 6,
       shape: CircleBorder(),
     );
   }
   
-  static SwitchThemeData _buildSwitchTheme() {
+  static SwitchThemeData _buildPremiumSwitchTheme() {
     return SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith((states) {
+      thumbIcon: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.selected)) {
-          return VelloColors.primary;
+          return const Icon(Icons.check, size: 16);
         }
-        return VelloColors.surfaceContainerHighest;
-      }),
-      trackColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return VelloColors.primaryLight;
-        }
-        return VelloColors.surfaceVariant;
+        return null;
       }),
     );
   }
   
-  static CheckboxThemeData _buildCheckboxTheme() {
+  static CheckboxThemeData _buildPremiumCheckboxTheme() {
     return CheckboxThemeData(
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return VelloColors.primary;
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4))),
+      side: MaterialStateBorderSide.resolveWith((states) {
+        if (states.contains(MaterialState.disabled)) {
+          return const BorderSide(color: VelloTokens.gray300, width: 2);
         }
-        return Colors.transparent;
+        return const BorderSide(width: 2);
       }),
-      checkColor: MaterialStateProperty.all(VelloColors.onPrimary),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
     );
   }
   
-  static RadioThemeData _buildRadioTheme() {
+  static RadioThemeData _buildPremiumRadioTheme() {
     return RadioThemeData(
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return VelloColors.primary;
-        }
-        return VelloColors.onSurfaceVariant;
-      }),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+  }
+  
+  static SnackBarThemeData _buildPremiumSnackBarTheme() {
+    return const SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: VelloTokens.radiusMedium),
+      insetPadding: EdgeInsets.all(VelloTokens.spaceM),
     );
   }
 }
