@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../services/auth_service.dart';
+import '../../widgets/common/vello_card.dart';
+import '../../widgets/common/vello_button.dart';
+import '../../widgets/common/status_chip.dart';
+import '../../theme/vello_tokens.dart';
 import 'package:vello_motorista/screens/configuracoes/alterar_senha/alterar_senha_screen.dart';
 import 'package:vello_motorista/screens/configuracoes/notificacoes_screen.dart';
 import 'package:vello_motorista/screens/suporte/suporte_screen.dart';
@@ -25,23 +30,39 @@ class _PerfilScreenState extends State<PerfilScreen> {
   int totalCorridas = 1247;
   String statusMotorista = 'Ativo';
 
+  // Mock data for the new design
+  final Map<String, dynamic> _profileData = {
+    'nome': 'João Silva',
+    'email': 'joao.silva@email.com',
+    'telefone': '(11) 99999-9999',
+    'avaliacao': 4.8,
+    'totalAvaliacoes': 156,
+    'veiculo': 'Honda Civic 2020',
+    'placa': 'ABC-1234',
+    'status': 'Ativo',
+    'totalCorridas': 1247,
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: velloLightGray,
+      backgroundColor: VelloTokens.gray50,
       appBar: AppBar(
         title: const Text(
           'Meu Perfil',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
-        backgroundColor: velloOrange,
+        backgroundColor: VelloTokens.brand,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            onPressed: _editarPerfil,
             icon: const Icon(Icons.edit),
-            tooltip: 'Editar Perfil',
+            onPressed: _editProfile,
+            tooltip: 'Editar perfil',
           ),
         ],
       ),
@@ -49,360 +70,235 @@ class _PerfilScreenState extends State<PerfilScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _buildPerfilCard(),
-            const SizedBox(height: 16),
-            _buildEstatisticasCard(),
-            const SizedBox(height: 16),
-            _buildVeiculoCard(),
-            const SizedBox(height: 16),
-            _buildConfiguracoesRapidasCard(),
-            const SizedBox(height: 16),
-            _buildLogoutButton(),
+            _buildProfileHeader(),
+            const SizedBox(height: 20),
+            _buildProfileStats(),
+            const SizedBox(height: 20),
+            _buildProfileOptions(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPerfilCard() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: velloCardBackground,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+  Widget _buildProfileHeader() {
+    return VelloCard.gradient(
+      gradient: const LinearGradient(
+        colors: [VelloTokens.brand, VelloTokens.brandLight],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
       ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: velloOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(40),
-                  border: Border.all(color: velloOrange, width: 3),
-                ),
-                child: const Icon(
-                  Icons.person,
-                  size: 40,
-                  color: velloOrange,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      nomeMotorista,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: velloBlue,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      emailMotorista,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF6B7280),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      telefoneMotorista,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF6B7280),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.verified,
-                        color: Color(0xFF10B981),
-                        size: 24,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        statusMotorista,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF10B981),
-                        ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.5),
+                      width: 4,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFBBF24).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Color(0xFFFBBF24),
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            avaliacaoMedia.toString(),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: velloBlue,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Avaliação',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFFBBF24),
-                        ),
-                      ),
-                    ],
+                  child: Icon(
+                    Icons.person,
+                    size: 50,
+                    color: VelloTokens.gray600,
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEstatisticasCard() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: velloCardBackground,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Estatísticas',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: velloBlue,
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: VelloTokens.success,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.verified,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: velloOrange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      const Icon(Icons.directions_car, color: velloOrange, size: 28),
-                      const SizedBox(height: 8),
-                      Text(
-                        totalCorridas.toString(),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: velloOrange,
-                        ),
-                      ),
-                      const Text(
-                        'Total de Corridas',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF6B7280),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            const SizedBox(height: 16),
+            Text(
+              _profileData['nome'] ?? 'Nome do Motorista',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVeiculoCard() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: velloCardBackground,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Meu Veículo',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: velloBlue,
-                ),
-              ),
-              IconButton(
-                onPressed: _editarVeiculo,
-                icon: const Icon(Icons.edit, size: 20),
-                color: velloOrange,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: velloOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.directions_car,
-                  color: velloOrange,
-                  size: 32,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      modeloVeiculo,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: velloBlue,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Placa: $placaVeiculo',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF6B7280),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildConfiguracoesRapidasCard() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: velloCardBackground,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Ações Rápidas',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: velloBlue,
             ),
-          ),
-          const SizedBox(height: 16),
-          _buildActionItem(
-            Icons.security,
-            'Alterar Senha',
-            'Mantenha sua conta segura',
-            () => _alterarSenha(),
-          ),
-          const Divider(height: 24),
-          _buildActionItem(
-            Icons.notifications,
-            'Notificações',
-            'Gerencie suas preferências',
-            () => _configurarNotificacoes(),
-          ),
-          const Divider(height: 24),
-          _buildActionItem(
-            Icons.help,
-            'Suporte',
-            'Precisa de ajuda?',
-            () => _abrirSuporte(),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.star,
+                  color: VelloTokens.warning,
+                  size: 20,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${_profileData['avaliacao'] ?? '4.8'}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '(${_profileData['totalAvaliacoes'] ?? '156'} avaliações)',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.local_taxi,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Motorista Premium',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileStats() {
+    return VelloCard(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Estatísticas',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: VelloTokens.gray900,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: StatusChip(
+                    icon: Icons.directions_car,
+                    label: 'Corridas',
+                    value: _profileData['totalCorridas'].toString(),
+                    valueColor: VelloTokens.brand,
+                    labelColor: VelloTokens.gray600,
+                    iconColor: VelloTokens.brand,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: StatusChip(
+                    icon: Icons.local_activity,
+                    label: 'Ativo',
+                    value: _profileData['status'] ?? 'Indisponível',
+                    valueColor: VelloTokens.success,
+                    labelColor: VelloTokens.gray600,
+                    iconColor: VelloTokens.success,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileOptions() {
+    return VelloCard(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildActionItem(
+              Icons.car_rental,
+              'Meu Veículo',
+              _profileData['veiculo'],
+              () => _editVehicle(),
+            ),
+            const Divider(height: 24),
+            _buildActionItem(
+              Icons.security,
+              'Alterar Senha',
+              'Mantenha sua conta segura',
+              () => _changePassword(),
+            ),
+            const Divider(height: 24),
+            _buildActionItem(
+              Icons.notifications,
+              'Notificações',
+              'Gerencie suas preferências',
+              () => _configureNotifications(),
+            ),
+            const Divider(height: 24),
+            _buildActionItem(
+              Icons.help,
+              'Suporte',
+              'Precisa de ajuda?',
+              () => _openSupport(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -412,18 +308,18 @@ class _PerfilScreenState extends State<PerfilScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: velloOrange.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: VelloTokens.brand.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: velloOrange, size: 20),
+              child: Icon(icon, color: VelloTokens.brand, size: 24),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,25 +327,26 @@ class _PerfilScreenState extends State<PerfilScreen> {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: velloBlue,
+                      color: VelloTokens.gray900,
                     ),
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: const TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF6B7280),
+                      fontSize: 13,
+                      color: VelloTokens.gray600,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Color(0xFF6B7280),
+              color: VelloTokens.gray600,
             ),
           ],
         ),
@@ -458,57 +355,40 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 
   Widget _buildLogoutButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton.icon(
-        onPressed: _logout,
-        icon: const Icon(Icons.logout),
-        label: const Text(
-          'Sair da Conta',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red.shade600,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
+    return VelloButton.danger(
+      onPressed: _logout,
+      text: 'Sair da Conta',
+      icon: Icons.logout,
     );
   }
 
-  void _editarPerfil() {
+  void _editProfile() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Abrindo edição de perfil...')),
     );
   }
 
-  void _editarVeiculo() {
+  void _editVehicle() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Abrindo edição de veículo...')),
     );
   }
 
-  void _alterarSenha() {
+  void _changePassword() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const AlterarSenhaScreen()),
     );
   }
 
-  void _configurarNotificacoes() {
+  void _configureNotifications() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const NotificacoesScreen()),
     );
   }
 
-  void _abrirSuporte() {
+  void _openSupport() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const SuporteScreen()),
