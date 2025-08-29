@@ -1,0 +1,152 @@
+lib/screens/metas/metas_inteligentes_screen.dart:744:25: Error: Type 'StatusMeta' not found.
+  String _getStatusText(StatusMeta status) {
+                        ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:755:37: Error: Type 'StatusMeta' not found.
+  StatusChipType _getStatusChipType(StatusMeta status) {
+                                    ^^^^^^^^^^
+lib/screens/home/home_screen.dart:453:17: Error: No named parameter with the name 'style'.
+                style: VelloButtonStyle.outlined,
+                ^^^^^
+lib/widgets/common/vello_button.dart:186:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton.icon({                                                                                                                                                          
+        ^^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:57:42: Error: Member not found: 'medio'.
+            dificuldade: DificuldadeMeta.medio,
+                                         ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:48:26: Error: Required named parameter 'valorObjetivo' must be provided.                                                           
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:47:3: Context: Found this candidate, but the arguments don't match.                                                                                
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:69:42: Error: Member not found: 'alto'.
+            dificuldade: DificuldadeMeta.alto,
+                                         ^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:60:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:47:3: Context: Found this candidate, but the arguments don't match.                                                                                
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:72:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:47:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:87:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:47:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:99:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:47:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:111:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:47:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:563:28: Error: The argument type 'num' can't be assigned to the parameter type 'double?'.
+                    value: progress,
+                           ^
+lib/screens/metas/metas_inteligentes_screen.dart:681:43: Error: The getter 'status' isn't defined for the type 'MetaInteligente'.                                                   
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'status'.
+                text: _getStatusText(meta.status),                                                                                                                                  
+                                          ^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:682:47: Error: The getter 'status' isn't defined for the type 'MetaInteligente'.
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'status'.
+                type: _getStatusChipType(meta.status),
+                                              ^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:707:21: Error: Member not found: 'ganhosDiarios'.
+      case TipoMeta.ganhosDiarios:
+                    ^^^^^^^^^^^^^                                                                                                                                                   
+lib/screens/metas/metas_inteligentes_screen.dart:709:21: Error: Member not found: 'corridasCompletadas'.                                                                            
+      case TipoMeta.corridasCompletadas:
+                    ^^^^^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:711:21: Error: Member not found: 'avaliacaoMedia'.
+      case TipoMeta.avaliacaoMedia:
+                    ^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:713:21: Error: Member not found: 'economiaGeral'.
+      case TipoMeta.economiaGeral:
+                    ^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:715:21: Error: Member not found: 'tempoOnline'.
+      case TipoMeta.tempoOnline:
+                    ^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:717:21: Error: Member not found: 'distanciaPercorrida'.
+      case TipoMeta.distanciaPercorrida:
+                    ^^^^^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:744:25: Error: 'StatusMeta' isn't a type.
+  String _getStatusText(StatusMeta status) {
+                        ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:746:12: Error: Not a constant expression.
+      case StatusMeta.ativa:                                                                                                                                                        
+           ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:748:12: Error: Not a constant expression.
+      case StatusMeta.concluida:
+           ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:750:12: Error: Not a constant expression.
+      case StatusMeta.pausada:
+           ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:744:10: Error: A non-null value must be returned since the return type 'String' doesn't allow null.
+  String _getStatusText(StatusMeta status) {
+         ^
+lib/screens/metas/metas_inteligentes_screen.dart:755:37: Error: 'StatusMeta' isn't a type.
+  StatusChipType _getStatusChipType(StatusMeta status) {
+                                    ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:757:12: Error: Not a constant expression.
+      case StatusMeta.ativa:
+           ^^^^^^^^^^                                                                                                                                                               
+lib/screens/metas/metas_inteligentes_screen.dart:759:12: Error: Not a constant expression.
+      case StatusMeta.concluida:
+           ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:761:12: Error: Not a constant expression.
+      case StatusMeta.pausada:
+           ^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:755:18: Error: A non-null value must be returned since the return type 'StatusChipType' doesn't allow null.
+ - 'StatusChipType' is from 'package:vello_motorista/widgets/common/status_chip.dart' ('lib/widgets/common/status_chip.dart').
+  StatusChipType _getStatusChipType(StatusMeta status) {
+                 ^
+lib/screens/metas/metas_inteligentes_screen.dart:769:21: Error: Member not found: 'corridasCompletadas'.
+      case TipoMeta.corridasCompletadas:
+                    ^^^^^^^^^^^^^^^^^^^                                                                                                                                             
+lib/screens/metas/metas_inteligentes_screen.dart:772:21: Error: Member not found: 'ganhosDiarios'.                                                                                  
+      case TipoMeta.ganhosDiarios:
+                    ^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:775:21: Error: Member not found: 'avaliacaoMedia'.
+      case TipoMeta.avaliacaoMedia:
+                    ^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:778:21: Error: Member not found: 'tempoOnline'.
+      case TipoMeta.tempoOnline:
+                    ^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:781:21: Error: Member not found: 'distanciaPercorrida'.
+      case TipoMeta.distanciaPercorrida:                                                                                                                                            
+                    ^^^^^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:785:21: Error: Member not found: 'economiaGeral'.
+      case TipoMeta.economiaGeral:
+                    ^^^^^^^^^^^^^
+Target kernel_snapshot_program failed: Exception                                                                                                                                    
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 29s
+Running Gradle task 'assembleDebug'...                             92,8s
+Error: Gradle task assembleDebug failed with exit code 1
