@@ -11,6 +11,12 @@ enum TipoMeta {
   avaliacao,
   tempo,
   distancia,
+  ganhosDiarios,
+  corridasCompletadas,
+  avaliacaoMedia,
+  economiaGeral,
+  tempoOnline,
+  distanciaPercorrida,
 }
 
 enum CategoriaMeta {
@@ -25,6 +31,12 @@ enum DificuldadeMeta {
   facil,
   media,
   dificil,
+}
+
+enum StatusMeta {
+  ativa,
+  concluida,
+  pausada,
 }
 
 class MetaInteligente {
@@ -43,6 +55,7 @@ class MetaInteligente {
   final bool isAtiva;
   bool completada;
   final DificuldadeMeta dificuldade;
+  final StatusMeta status;
 
   MetaInteligente({
     required this.id,
@@ -60,6 +73,7 @@ class MetaInteligente {
     required this.isAtiva,
     this.completada = false,
     this.dificuldade = DificuldadeMeta.media,
+    this.status = StatusMeta.ativa,
   });
 
   double get progresso {
@@ -100,6 +114,7 @@ class MetaInteligente {
       'isAtiva': isAtiva,
       'completada': completada,
       'dificuldade': dificuldade.toString(),
+      'status': status.toString(),
     };
   }
 
@@ -120,6 +135,7 @@ class MetaInteligente {
       isAtiva: json['isAtiva'] ?? true,
       completada: json['completada'] ?? false,
       dificuldade: DificuldadeMeta.values.firstWhere((e) => e.toString() == json['dificuldade']),
+      status: StatusMeta.values.firstWhere((e) => e.toString() == (json['status'] ?? 'StatusMeta.ativa')),
     );
   }
 
@@ -139,6 +155,7 @@ class MetaInteligente {
     bool? isAtiva,
     bool? completada,
     DificuldadeMeta? dificuldade,
+    StatusMeta? status,
   }) {
     return MetaInteligente(
       id: id ?? this.id,
@@ -156,6 +173,7 @@ class MetaInteligente {
       isAtiva: isAtiva ?? this.isAtiva,
       completada: completada ?? this.completada,
       dificuldade: dificuldade ?? this.dificuldade,
+      status: status ?? this.status,
     );
   }
 }

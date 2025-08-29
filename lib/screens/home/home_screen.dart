@@ -448,9 +448,9 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 16),
               VelloButton.icon(
                 onPressed: _retryLocation,
-                icon: const Icon(Icons.refresh),
+                icon: Icons.refresh,
                 text: 'Tentar Novamente',
-                style: VelloButtonStyle.outlined,
+                type: VelloButtonType.ghost,
               ),
             ],
           ),
