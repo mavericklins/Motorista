@@ -1,0 +1,348 @@
+lib/screens/coaching/coaching_inteligente_screen.dart:812:1: Error: Expected a declaration, but got '`'.
+```import 'package:flutter/material.dart';
+^
+lib/screens/coaching/coaching_inteligente_screen.dart:812:2: Error: Expected a declaration, but got '`'.
+```import 'package:flutter/material.dart';
+ ^
+lib/screens/coaching/coaching_inteligente_screen.dart:812:3: Error: Expected a declaration, but got '`'.
+```import 'package:flutter/material.dart';
+  ^
+lib/screens/coaching/coaching_inteligente_screen.dart:812:4: Error: Directives must appear before any declarations.                                                                 
+Try moving the directive before any declarations.
+```import 'package:flutter/material.dart';
+   ^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:813:1: Error: Directives must appear before any declarations.
+Try moving the directive before any declarations.
+import '../../services/coaching_inteligente_service.dart';                                                                                                                          
+^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:814:1: Error: Directives must appear before any declarations.
+Try moving the directive before any declarations.
+import '../../widgets/common/vello_card.dart';
+^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:815:1: Error: Directives must appear before any declarations.                                                                 
+Try moving the directive before any declarations.
+import '../../widgets/common/vello_button.dart';                                                                                                                                    
+^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:816:1: Error: Directives must appear before any declarations.
+Try moving the directive before any declarations.
+import '../../widgets/common/status_chip.dart';
+^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:817:1: Error: Directives must appear before any declarations.
+Try moving the directive before any declarations.
+import '../../theme/vello_tokens.dart';
+^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:819:7: Error: 'CoachingInteligenteScreen' is already declared in this scope.
+class CoachingInteligenteScreen extends StatefulWidget {
+      ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:8:7: Context: Previous declaration of 'CoachingInteligenteScreen'.
+class CoachingInteligenteScreen extends StatefulWidget {
+      ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:826:7: Error: '_CoachingInteligenteScreenState' is already declared in this scope.
+class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                                                                                                                               
+lib/screens/coaching/coaching_inteligente_screen.dart:15:7: Context: Previous declaration of '_CoachingInteligenteScreenState'.
+class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1582:7: Error: 'CoachingTip' is already declared in this scope.
+class CoachingTip {
+      ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:771:7: Context: Previous declaration of 'CoachingTip'.
+class CoachingTip {
+      ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1606:7: Error: 'PerformanceAnalysis' is already declared in this scope.
+class PerformanceAnalysis {
+      ^^^^^^^^^^^^^^^^^^^                                                                                                                                                           
+lib/screens/coaching/coaching_inteligente_screen.dart:795:7: Context: Previous declaration of 'PerformanceAnalysis'.
+class PerformanceAnalysis {
+      ^^^^^^^^^^^^^^^^^^^                                                                                                                                                           
+lib/screens/coaching/coaching_inteligente_screen.dart:1620:6: Error: 'PrioridadeTip' is already declared in this scope.
+enum PrioridadeTip { alta, media, baixa }
+     ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:809:6: Context: Previous declaration of 'PrioridadeTip'.
+enum PrioridadeTip { alta, media, baixa }
+     ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:12:9: Error: 'CoachingInteligenteScreen' isn't a type.
+  State<CoachingInteligenteScreen> createState() => _CoachingInteligenteScreenState();                                                                                              
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:12:9: Context: This isn't a type.
+  State<CoachingInteligenteScreen> createState() => _CoachingInteligenteScreenState();
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:15:53: Error: 'CoachingInteligenteScreen' isn't a type.
+class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:15:53: Context: This isn't a type.
+class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>                                                                                                      
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^                                                                                                       
+lib/screens/coaching/coaching_inteligente_screen.dart:24:8: Error: 'CoachingTip' isn't a type.
+  List<CoachingTip> _tips = [];
+       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:24:8: Context: This isn't a type.
+  List<CoachingTip> _tips = [];
+       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:25:3: Error: 'PerformanceAnalysis' isn't a type.
+  PerformanceAnalysis? _analysis;
+  ^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:25:3: Context: This isn't a type.
+  PerformanceAnalysis? _analysis;
+  ^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:331:24: Error: 'CoachingTip' isn't a type.
+  Widget _buildTipCard(CoachingTip tip) {
+                       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:331:24: Context: This isn't a type.
+  Widget _buildTipCard(CoachingTip tip) {                                                                                                                                           
+                       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:675:28: Error: 'PrioridadeTip' isn't a type.
+  String _getPriorityLabel(PrioridadeTip prioridade) {                                                                                                                              
+                           ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:675:28: Context: This isn't a type.
+  String _getPriorityLabel(PrioridadeTip prioridade) {
+                           ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:686:39: Error: 'PrioridadeTip' isn't a type.
+  StatusChipType _getPriorityChipType(PrioridadeTip prioridade) {
+                                      ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:686:39: Context: This isn't a type.
+  StatusChipType _getPriorityChipType(PrioridadeTip prioridade) {
+                                      ^^^^^^^^^^^^^                                                                                                                                 
+lib/screens/coaching/coaching_inteligente_screen.dart:718:24: Error: 'CoachingTip' isn't a type.
+  void _showTipDetails(CoachingTip tip) {
+                       ^^^^^^^^^^^                                                                                                                                                  
+lib/screens/coaching/coaching_inteligente_screen.dart:718:24: Context: This isn't a type.
+  void _showTipDetails(CoachingTip tip) {
+                       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:777:9: Error: 'PrioridadeTip' isn't a type.
+  final PrioridadeTip prioridade;
+        ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:777:9: Context: This isn't a type.
+  final PrioridadeTip prioridade;
+        ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:823:9: Error: 'CoachingInteligenteScreen' isn't a type.
+  State<CoachingInteligenteScreen> createState() => _CoachingInteligenteScreenState();
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:823:9: Context: This isn't a type.
+  State<CoachingInteligenteScreen> createState() => _CoachingInteligenteScreenState();
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:826:53: Error: 'CoachingInteligenteScreen' isn't a type.
+class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:826:53: Context: This isn't a type.
+class _CoachingInteligenteScreenState extends State<CoachingInteligenteScreen>
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:835:8: Error: 'CoachingTip' isn't a type.                                                                                     
+  List<CoachingTip> _tips = [];
+       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:835:8: Context: This isn't a type.
+  List<CoachingTip> _tips = [];
+       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:836:3: Error: 'PerformanceAnalysis' isn't a type.
+  PerformanceAnalysis? _analysis;
+  ^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:836:3: Context: This isn't a type.
+  PerformanceAnalysis? _analysis;
+  ^^^^^^^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1142:24: Error: 'CoachingTip' isn't a type.
+  Widget _buildTipCard(CoachingTip tip) {
+                       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1142:24: Context: This isn't a type.
+  Widget _buildTipCard(CoachingTip tip) {
+                       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1486:28: Error: 'PrioridadeTip' isn't a type.
+  String _getPriorityLabel(PrioridadeTip prioridade) {
+                           ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1486:28: Context: This isn't a type.
+  String _getPriorityLabel(PrioridadeTip prioridade) {
+                           ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1497:39: Error: 'PrioridadeTip' isn't a type.
+  StatusChipType _getPriorityChipType(PrioridadeTip prioridade) {
+                                      ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1497:39: Context: This isn't a type.
+  StatusChipType _getPriorityChipType(PrioridadeTip prioridade) {                                                                                                                   
+                                      ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1529:24: Error: 'CoachingTip' isn't a type.
+  void _showTipDetails(CoachingTip tip) {
+                       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1529:24: Context: This isn't a type.
+  void _showTipDetails(CoachingTip tip) {
+                       ^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1588:9: Error: 'PrioridadeTip' isn't a type.
+  final PrioridadeTip prioridade;
+        ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:1588:9: Context: This isn't a type.
+  final PrioridadeTip prioridade;
+        ^^^^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:809:22: Error: Couldn't find constructor 'PrioridadeTip'.
+enum PrioridadeTip { alta, media, baixa }
+                     ^
+lib/screens/coaching/coaching_inteligente_screen.dart:809:28: Error: Couldn't find constructor 'PrioridadeTip'.
+enum PrioridadeTip { alta, media, baixa }
+                           ^
+lib/screens/coaching/coaching_inteligente_screen.dart:809:35: Error: Couldn't find constructor 'PrioridadeTip'.                                                                     
+enum PrioridadeTip { alta, media, baixa }
+                                  ^
+lib/screens/coaching/coaching_inteligente_screen.dart:1620:22: Error: Couldn't find constructor 'PrioridadeTip'.
+enum PrioridadeTip { alta, media, baixa }
+                     ^
+lib/screens/coaching/coaching_inteligente_screen.dart:1620:28: Error: Couldn't find constructor 'PrioridadeTip'.                                                                    
+enum PrioridadeTip { alta, media, baixa }
+                           ^
+lib/screens/coaching/coaching_inteligente_screen.dart:1620:35: Error: Couldn't find constructor 'PrioridadeTip'.
+enum PrioridadeTip { alta, media, baixa }                                                                                                                                           
+                                  ^                                                                                                                                                 
+lib/screens/home/home_screen.dart:275:15: Error: No named parameter with the name 'color'.                                                                                          
+              color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,
+              ^^^^^
+lib/widgets/common/status_chip.dart:30:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/home/home_screen.dart:364:17: Error: No named parameter with the name 'style'.
+                style: VelloButtonStyle.outlined,
+                ^^^^^
+lib/widgets/common/vello_button.dart:186:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/home/home_screen.dart:456:17: Error: No named parameter with the name 'style'.
+                style: VelloButtonStyle.outlined,                                                                                                                                   
+                ^^^^^
+lib/widgets/common/vello_button.dart:186:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/ganhos/meus_creditos_screen.dart:452:80: Error: The argument type 'DriverStatus/*1*/' can't be assigned to the parameter type 'DriverStatus/*2*/'.
+ - 'DriverStatus/*1*/' is from 'package:vello_motorista/screens/ganhos/meus_creditos_screen.dart' ('lib/screens/ganhos/meus_creditos_screen.dart').
+ - 'DriverStatus/*2*/' is from 'package:vello_motorista/widgets/common/status_chip.dart' ('lib/widgets/common/status_chip.dart').
+                        status: transacao.status == StatusTransacao.confirmada ? DriverStatus.online : DriverStatus.offline,
+                                                                               ^
+lib/screens/carteira/carteira_digital_screen.dart:254:27: Error: The argument type 'Icon' can't be assigned to the parameter type 'IconData?'.
+ - 'Icon' is from 'package:flutter/src/widgets/icon.dart' ('/C:/src/flutter/packages/flutter/lib/src/widgets/icon.dart').
+ - 'IconData' is from 'package:flutter/src/widgets/icon_data.dart' ('/C:/src/flutter/packages/flutter/lib/src/widgets/icon_data.dart').
+              icon: const Icon(Icons.account_balance),
+                          ^
+lib/screens/carteira/carteira_digital_screen.dart:262:27: Error: The argument type 'Icon' can't be assigned to the parameter type 'IconData?'.
+ - 'Icon' is from 'package:flutter/src/widgets/icon.dart' ('/C:/src/flutter/packages/flutter/lib/src/widgets/icon.dart').
+ - 'IconData' is from 'package:flutter/src/widgets/icon_data.dart' ('/C:/src/flutter/packages/flutter/lib/src/widgets/icon_data.dart').
+              icon: const Icon(Icons.add_card),
+                          ^
+lib/screens/carteira/carteira_digital_screen.dart:270:27: Error: The argument type 'Icon' can't be assigned to the parameter type 'IconData?'.
+ - 'Icon' is from 'package:flutter/src/widgets/icon.dart' ('/C:/src/flutter/packages/flutter/lib/src/widgets/icon.dart').
+ - 'IconData' is from 'package:flutter/src/widgets/icon_data.dart' ('/C:/src/flutter/packages/flutter/lib/src/widgets/icon_data.dart').
+              icon: const Icon(Icons.receipt_long),
+                          ^
+lib/screens/metas/metas_inteligentes_screen.dart:48:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:49:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:60:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:49:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:72:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:49:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:87:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:49:3: Context: Found this candidate, but the arguments don't match.                                                                                
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:99:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:49:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:110:26: Error: Required named parameter 'valorObjetivo' must be provided.
+          MetaInteligente(
+                         ^
+lib/models/meta_inteligente.dart:49:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:509:37: Error: Required named parameter 'status' must be provided.
+                          StatusChip(
+                                    ^
+lib/widgets/common/status_chip.dart:30:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/coaching/coaching_inteligente_screen.dart:675:10: Error: A non-null value must be returned since the return type 'String' doesn't allow null.
+  String _getPriorityLabel(PrioridadeTip prioridade) {
+         ^
+lib/screens/coaching/coaching_inteligente_screen.dart:686:18: Error: A non-null value must be returned since the return type 'StatusChipType' doesn't allow null.
+ - 'StatusChipType' is from 'package:vello_motorista/widgets/common/status_chip.dart' ('lib/widgets/common/status_chip.dart').
+  StatusChipType _getPriorityChipType(PrioridadeTip prioridade) {
+                 ^
+lib/screens/coaching/coaching_inteligente_screen.dart:1486:10: Error: A non-null value must be returned since the return type 'String' doesn't allow null.
+  String _getPriorityLabel(PrioridadeTip prioridade) {
+         ^
+lib/screens/coaching/coaching_inteligente_screen.dart:1497:18: Error: A non-null value must be returned since the return type 'StatusChipType' doesn't allow null.
+ - 'StatusChipType' is from 'package:vello_motorista/widgets/common/status_chip.dart' ('lib/widgets/common/status_chip.dart').
+  StatusChipType _getPriorityChipType(PrioridadeTip prioridade) {
+                 ^
+lib/screens/metas/metas_inteligentes_screen.dart:707:13: Error: The type 'DificuldadeMeta' is not exhaustively matched by the switch cases since it doesn't match 'DificuldadeMeta.media'.
+ - 'DificuldadeMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'DificuldadeMeta.media'.
+    switch (dificuldade) {
+            ^
+lib/screens/metas/metas_inteligentes_screen.dart:718:13: Error: The type 'DificuldadeMeta' is not exhaustively matched by the switch cases since it doesn't match 'DificuldadeMeta.media'.
+ - 'DificuldadeMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'DificuldadeMeta.media'.
+    switch (dificuldade) {
+            ^
+Unhandled exception:
+root::package:vello_motorista/screens/coaching/coaching_inteligente_screen.dart::__CoachingInteligenteScreenState&State&TickerProviderStateMixin is already bound to Reference to pa
+ckage:vello_motorista/screens/coaching/coaching_inteligente_screen.dart::__CoachingInteligenteScreenState&State&TickerProviderStateMixin with node Class(__CoachingInteligenteScreen
+State&State&TickerProviderStateMixin) (Class:2428531), trying to bind to Reference to __CoachingInteligenteScreenState&State&TickerProviderStateMixin with node Class(__CoachingInteligenteScreenState&State&TickerProviderStateMixin) (Class:2428532)
+#0      CanonicalName.bindTo (package:kernel/canonical_name.dart:215)
+#1      Class.bindCanonicalNames (package:kernel/src/ast/declarations.dart:344)
+#2      Class.ensureCanonicalNames (package:kernel/src/ast/declarations.dart:349)
+#3      Library.ensureCanonicalNames (package:kernel/src/ast/libraries.dart:238)
+#4      Component.computeCanonicalNamesForLibrary (package:kernel/src/ast/components.dart:99)
+#5      Component.computeCanonicalNames (package:kernel/src/ast/components.dart:62)
+#6      sortComponent (package:vm/kernel_front_end.dart:1099)
+#7      FrontendCompiler.writeDillFile (package:frontend_server/frontend_server.dart:935)                                                                                           
+#8      FrontendCompiler.compile (package:frontend_server/frontend_server.dart:714)                                                                                                 
+<asynchronous suspension>                                                                                                                                                           
+#9      starter (package:frontend_server/starter.dart:102)                                                                                                                          
+<asynchronous suspension>                                                                                                                                                           
+#10     main (file:///C:/b/s/w/ir/x/w/sdk/pkg/frontend_server/bin/frontend_server_starter.dart:13)                                                                                  
+<asynchronous suspension>                                                                                                                                                           
+
+Target kernel_snapshot_program failed: Exception                                                                                                                                    
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.                  
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 19s
+Running Gradle task 'assembleDebug'...                             81,1s
+Unhandled exception:
+root::package:vello_motorista/screens/coaching/coaching_inteligente_screen.dart::__CoachingInteligenteScreenState&State&TickerProviderStateMixin is already bound to Reference to
+package:vello_motorista/screens/coaching/coaching_inteligente_screen.dart::__CoachingInteligenteScreenState&State&TickerProviderStateMixin with node
+Class(__CoachingInteligenteScreenState&State&TickerProviderStateMixin) (Class:94624), trying to bind to Reference to __CoachingInteligenteScreenState&State&TickerProviderStateMixin
+with node Class(__CoachingInteligenteScreenState&State&TickerProviderStateMixin) (Class:94625)
+#0      CanonicalName.bindTo (package:kernel/canonical_name.dart:215)
+#1      Class.bindCanonicalNames (package:kernel/src/ast/declarations.dart:344)
+#2      Class.ensureCanonicalNames (package:kernel/src/ast/declarations.dart:349)
+#3      Library.ensureCanonicalNames (package:kernel/src/ast/libraries.dart:238)
+#4      Component.computeCanonicalNamesForLibrary (package:kernel/src/ast/components.dart:99)
+#5      Component.computeCanonicalNames (package:kernel/src/ast/components.dart:62)
+#6      sortComponent (package:vm/kernel_front_end.dart:1099)
+#7      FrontendCompiler.writeDillFile (package:frontend_server/frontend_server.dart:935)
+#8      FrontendCompiler.compile (package:frontend_server/frontend_server.dart:714)
+<asynchronous suspension>
+#9      listenAndCompile.<anonymous closure> (package:frontend_server/frontend_server.dart:1423)
+<asynchronous suspension>
+The Dart compiler exited unexpectedly.
+Error: Gradle task assembleDebug failed with exit code 1
