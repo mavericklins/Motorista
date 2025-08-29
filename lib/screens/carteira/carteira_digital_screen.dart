@@ -1,9 +1,7 @@
+
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../services/financial_service.dart';
 import '../../widgets/common/vello_card.dart';
 import '../../widgets/common/vello_button.dart';
-import '../../widgets/common/status_chip.dart';
 import '../../theme/vello_tokens.dart';
 
 class CarteiraDigitalScreen extends StatefulWidget {
@@ -16,21 +14,17 @@ class CarteiraDigitalScreen extends StatefulWidget {
 class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final FinancialService _financialService = FinancialService();
-
-  double _saldoAtual = 1247.50;
-  double _ganhosDia = 89.40;
-  double _ganhosOntem = 125.60;
-  double _ganhosSemana = 623.80;
-  double _ganhosMes = 2749.20;
-
-  bool _isLoading = false;
+  
+  // Dados simulados
+  final double _saldoTotal = 89.40;
+  final int _corridasHoje = 12;
+  final String _metaAnual = "R\$ 45.000";
+  final double _progressoMeta = 0.68;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _loadFinancialData();
   }
 
   @override
@@ -39,106 +33,57 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
     super.dispose();
   }
 
-  Future<void> _loadFinancialData() async {
-    setState(() => _isLoading = true);
-
-    try {
-      // Simular carregamento de dados
-      await Future.delayed(const Duration(seconds: 1));
-
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao carregar dados financeiros: $e'),
-            backgroundColor: VelloTokens.danger,
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: VelloTokens.gray50,
       appBar: AppBar(
         title: const Text(
-          'Carteira Digital',
+          'Ganhos',
           style: TextStyle(
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
         ),
         backgroundColor: VelloTokens.brand,
+        foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadFinancialData,
-            tooltip: 'Atualizar dados',
-          ),
-          IconButton(
             icon: const Icon(Icons.history),
             onPressed: () => Navigator.pushNamed(context, '/historico'),
-            tooltip: 'Histórico completo',
+            tooltip: 'Histórico',
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.pushNamed(context, '/configuracoes'),
+            tooltip: 'Configurações',
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: VelloTokens.brand,
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: _loadFinancialData,
-              color: VelloTokens.brand,
-              child: CustomScrollView(
-                slivers: [
-                  // Header com saldo principal
-                  SliverToBoxAdapter(
-                    child: _buildBalanceHeader(),
-                  ),
-
-                  // Cards de ações rápidas
-                  SliverToBoxAdapter(
-                    child: _buildQuickActions(),
-                  ),
-
-                  // Tabs de períodos
-                  SliverToBoxAdapter(
-                    child: _buildTabsSection(),
-                  ),
-
-                  // Conteúdo das tabs
-                  SliverFillRemaining(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildDailyView(),
-                        _buildWeeklyView(),
-                        _buildMonthlyView(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+      body: Column(
+        children: [
+          _buildHeaderCard(),
+          _buildTabsSection(),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildCreditosTab(),
+                _buildCarteiraTab(),
+                _buildMetasTab(),
+              ],
             ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildBalanceHeader() {
+  Widget _buildHeaderCard() {
     return Container(
       margin: const EdgeInsets.all(16),
-      child: VelloCard(
-        borderRadius: VelloTokens.radiusXLarge,
+      child: VelloCard.gradient(
         gradient: const LinearGradient(
           colors: [VelloTokens.brand, VelloTokens.brandLight],
           begin: Alignment.topLeft,
@@ -152,86 +97,58 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Saldo Disponível',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Saldo Disponível',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'R\$ 89,40',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
-                      borderRadius: VelloTokens.radiusSmall,
+                      borderRadius: VelloTokens.radiusMedium,
                     ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.account_balance_wallet,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'Vello Pay',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                    child: const Icon(
+                      Icons.account_balance_wallet,
+                      color: Colors.white,
+                      size: 28,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Text(
-                'R\$ ${_saldoAtual.toStringAsFixed(2).replaceAll('.', ',')}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 36,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -1,
-                ),
-              ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 20),
               Row(
                 children: [
-                  Icon(
-                    _ganhosDia > _ganhosOntem
-                        ? Icons.trending_up
-                        : Icons.trending_down,
-                    color: _ganhosDia > _ganhosOntem
-                        ? VelloTokens.success
-                        : VelloTokens.warning,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    _ganhosDia > _ganhosOntem
-                        ? '+${(_ganhosDia - _ganhosOntem).toStringAsFixed(2)}'
-                        : '${(_ganhosDia - _ganhosOntem).toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color: _ganhosDia > _ganhosOntem
-                          ? VelloTokens.success
-                          : VelloTokens.warning,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: _buildStatItem(
+                      'Corridas Hoje',
+                      '$_corridasHoje',
+                      Icons.directions_car,
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  const Text(
-                    'vs. ontem',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildStatItem(
+                      'Meta Anual',
+                      _metaAnual,
+                      Icons.flag,
                     ),
                   ),
                 ],
@@ -243,32 +160,39 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
     );
   }
 
-  Widget _buildQuickActions() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
+  Widget _buildStatItem(String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.15),
+        borderRadius: VelloTokens.radiusMedium,
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
         children: [
-          Expanded(
-            child: VelloButton.primary(
-              onPressed: () => _showSacarDialog(),
-              icon: Icons.account_balance,
-              text: 'Sacar',
+          Icon(
+            icon,
+            color: Colors.white,
+            size: 20,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: VelloButton.primary(
-              onPressed: () => _showAdicionarCreditoDialog(),
-              icon: Icons.add_card,
-              text: 'Adicionar',
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: VelloButton.primary(
-              onPressed: () => Navigator.pushNamed(context, '/historico'),
-              icon: Icons.receipt_long,
-              text: 'Extrato',
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -278,7 +202,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
 
   Widget _buildTabsSection() {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: VelloCard(
         padding: const EdgeInsets.all(4),
         child: TabBar(
@@ -294,95 +218,61 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
             fontWeight: FontWeight.w600,
             fontSize: 14,
           ),
-          unselectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-          ),
           tabs: const [
-            Tab(text: 'Hoje'),
-            Tab(text: 'Semana'),
-            Tab(text: 'Mês'),
+            Tab(text: 'Créditos'),
+            Tab(text: 'Carteira'),
+            Tab(text: 'Metas'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDailyView() {
-    return Padding(
+  Widget _buildCreditosTab() {
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildEarningsCard(
-            'Ganhos de Hoje',
-            _ganhosDia,
-            VelloTokens.success,
-            Icons.today,
-            '12 corridas realizadas',
-          ),
+          _buildGanhosCard(),
           const SizedBox(height: 16),
-          _buildComparisonCard(
-            'Comparação com Ontem',
-            _ganhosOntem,
-            _ganhosDia - _ganhosOntem,
-          ),
-          const SizedBox(height: 16),
-          _buildGoalProgressCard(),
+          _buildActionButtons(),
+          const SizedBox(height: 24),
+          _buildTransacoesList(),
         ],
       ),
     );
   }
 
-  Widget _buildWeeklyView() {
-    return Padding(
+  Widget _buildCarteiraTab() {
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildEarningsCard(
-            'Ganhos da Semana',
-            _ganhosSemana,
-            VelloTokens.info,
-            Icons.date_range,
-            '47 corridas realizadas',
-          ),
+          _buildSaldoCard(),
           const SizedBox(height: 16),
-          _buildWeeklyBreakdown(),
+          _buildPaymentMethods(),
+          const SizedBox(height: 16),
+          _buildWithdrawOptions(),
         ],
       ),
     );
   }
 
-  Widget _buildMonthlyView() {
-    return Padding(
+  Widget _buildMetasTab() {
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildEarningsCard(
-            'Ganhos do Mês',
-            _ganhosMes,
-            VelloTokens.brand,
-            Icons.calendar_month,
-            '187 corridas realizadas',
-          ),
+          _buildMetaAnualCard(),
           const SizedBox(height: 16),
-          _buildMonthlyStats(),
+          _buildMetasSemana(),
         ],
       ),
     );
   }
 
-  Widget _buildEarningsCard(
-    String title,
-    double amount,
-    Color color,
-    IconData icon,
-    String subtitle,
-  ) {
+  Widget _buildGanhosCard() {
     return VelloCard(
-      borderRadius: VelloTokens.radiusLarge,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -391,33 +281,32 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: VelloTokens.success.withOpacity(0.1),
                     borderRadius: VelloTokens.radiusMedium,
                   ),
                   child: Icon(
-                    icon,
-                    color: color,
-                    size: 24,
+                    Icons.calendar_today,
+                    color: VelloTokens.success,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
+                const SizedBox(width: 12),
+                const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        'Ganhos de Hoje',
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: VelloTokens.gray700,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: VelloTokens.gray600,
                         ),
                       ),
-                      const SizedBox(height: 4),
                       Text(
-                        subtitle,
+                        '12 corridas realizadas',
                         style: TextStyle(
                           fontSize: 12,
                           color: VelloTokens.gray500,
@@ -426,166 +315,12 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
                     ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'R\$ ${amount.toStringAsFixed(2).replaceAll('.', ',')}',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: color,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildComparisonCard(String title, double yesterday, double difference) {
-    final isPositive = difference >= 0;
-
-    return VelloCard(
-      borderRadius: VelloTokens.radiusLarge,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: VelloTokens.gray700,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Ontem',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: VelloTokens.gray500,
-                      ),
-                    ),
-                    Text(
-                      'R\$ ${yesterday.toStringAsFixed(2).replaceAll('.', ',')}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: VelloTokens.gray700,
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          isPositive ? Icons.trending_up : Icons.trending_down,
-                          color: isPositive ? VelloTokens.success : VelloTokens.danger,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${isPositive ? '+' : ''}${difference.toStringAsFixed(2).replaceAll('.', ',')}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: isPositive ? VelloTokens.success : VelloTokens.danger,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      '${((difference / yesterday) * 100).abs().toStringAsFixed(1)}%',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: VelloTokens.gray500,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGoalProgressCard() {
-    const dailyGoal = 150.0;
-    final progress = _ganhosDia / dailyGoal;
-
-    return VelloCard(
-      borderRadius: VelloTokens.radiusLarge,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
                 Text(
-                  'Meta Diária',
+                  'R\$ ${_saldoTotal.toStringAsFixed(2).replaceAll('.', ',')}',
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: VelloTokens.gray700,
-                  ),
-                ),
-                Text(
-                  '${(progress * 100).toStringAsFixed(1)}%',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: progress >= 1.0 ? VelloTokens.success : VelloTokens.brand,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: VelloTokens.radiusSmall,
-              child: LinearProgressIndicator(
-                value: progress.clamp(0.0, 1.0),
-                backgroundColor: VelloTokens.gray200,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  progress >= 1.0 ? VelloTokens.success : VelloTokens.brand,
-                ),
-                minHeight: 8,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'R\$ ${_ganhosDia.toStringAsFixed(2).replaceAll('.', ',')}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: VelloTokens.gray600,
-                  ),
-                ),
-                Text(
-                  'R\$ ${dailyGoal.toStringAsFixed(2).replaceAll('.', ',')}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: VelloTokens.gray600,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: VelloTokens.success,
                   ),
                 ),
               ],
@@ -596,136 +331,85 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
     );
   }
 
-  Widget _buildWeeklyBreakdown() {
-    final weekData = [
-      {'day': 'Seg', 'amount': 95.40},
-      {'day': 'Ter', 'amount': 125.60},
-      {'day': 'Qua', 'amount': 89.20},
-      {'day': 'Qui', 'amount': 156.80},
-      {'day': 'Sex', 'amount': 67.40},
-      {'day': 'Sáb', 'amount': 89.40},
-      {'day': 'Dom', 'amount': 0.0},
-    ];
-
-    return VelloCard(
-      borderRadius: VelloTokens.radiusLarge,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Breakdown Semanal',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: VelloTokens.gray700,
-              ),
-            ),
-            const SizedBox(height: 20),
-            ...weekData.map((data) => _buildDayEarnings(
-                  data['day'] as String,
-                  data['amount'] as double,
-                )),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDayEarnings(String day, double amount) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            day,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: VelloTokens.gray600,
-            ),
-          ),
-          Text(
-            amount > 0
-                ? 'R\$ ${amount.toStringAsFixed(2).replaceAll('.', ',')}'
-                : 'Folga',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: amount > 0 ? VelloTokens.gray700 : VelloTokens.gray400,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMonthlyStats() {
-    return Column(
+  Widget _buildActionButtons() {
+    return Row(
       children: [
-        _buildStatCard(
-          'Média Diária',
-          'R\$ ${(_ganhosMes / 30).toStringAsFixed(2).replaceAll('.', ',')}',
-          Icons.trending_up,
-          VelloTokens.success,
+        Expanded(
+          child: VelloButton.icon(
+            onPressed: () => _showSacarDialog(),
+            icon: Icons.monetization_on,
+            text: 'Sacar',
+            type: VelloButtonType.primary,
+          ),
         ),
-        const SizedBox(height: 12),
-        _buildStatCard(
-          'Melhor Dia',
-          'R\$ 234,80',
-          Icons.star,
-          VelloTokens.warning,
+        const SizedBox(width: 12),
+        Expanded(
+          child: VelloButton.icon(
+            onPressed: () => _showAdicionarDialog(),
+            icon: Icons.add_card,
+            text: 'Adicionar',
+            type: VelloButtonType.secondary,
+          ),
         ),
-        const SizedBox(height: 12),
-        _buildStatCard(
-          'Total de Corridas',
-          '187 corridas',
-          Icons.local_taxi,
-          VelloTokens.info,
+        const SizedBox(width: 12),
+        Expanded(
+          child: VelloButton.icon(
+            onPressed: () => _showExtratoDialog(),
+            icon: Icons.receipt_long,
+            text: 'Extrato',
+            type: VelloButtonType.ghost,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildSaldoCard() {
     return VelloCard(
-      borderRadius: VelloTokens.radiusLarge,
       child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
+        padding: const EdgeInsets.all(20),
+        child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: VelloTokens.radiusSmall,
-              ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 20,
+            const Text(
+              'Saldo em Carteira',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: VelloTokens.gray600,
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(height: 8),
+            Text(
+              'R\$ ${_saldoTotal.toStringAsFixed(2).replaceAll('.', ',')}',
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: VelloTokens.gray800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: VelloTokens.gray50,
+                borderRadius: VelloTokens.radiusMedium,
+                border: Border.all(color: VelloTokens.gray200),
+              ),
+              child: const Column(
                 children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: VelloTokens.info,
+                    size: 20,
+                  ),
+                  SizedBox(height: 8),
                   Text(
-                    title,
+                    'Seu saldo está protegido e pode ser sacado a qualquer momento',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
-                      color: VelloTokens.gray500,
-                    ),
-                  ),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: VelloTokens.gray700,
+                      color: VelloTokens.gray600,
                     ),
                   ),
                 ],
@@ -737,6 +421,366 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
     );
   }
 
+  Widget _buildPaymentMethods() {
+    return VelloCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Formas de Pagamento',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: VelloTokens.gray800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildPaymentMethodItem(
+              'PIX',
+              'Receba na hora',
+              Icons.pix,
+              VelloTokens.brand,
+            ),
+            const SizedBox(height: 12),
+            _buildPaymentMethodItem(
+              'Conta Bancária',
+              'Receba em 1 dia útil',
+              Icons.account_balance,
+              VelloTokens.info,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentMethodItem(String title, String subtitle, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: VelloTokens.radiusMedium,
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: VelloTokens.radiusSmall,
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: VelloTokens.gray600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: VelloTokens.gray400,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWithdrawOptions() {
+    return VelloCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Saque Rápido',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: VelloTokens.gray800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildQuickWithdrawButton('R\$ 20'),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildQuickWithdrawButton('R\$ 50'),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildQuickWithdrawButton('Tudo'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickWithdrawButton(String value) {
+    return VelloButton(
+      text: value,
+      onPressed: () => _showSacarDialog(),
+      type: VelloButtonType.secondary,
+      size: VelloButtonSize.small,
+    );
+  }
+
+  Widget _buildMetaAnualCard() {
+    return VelloCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Meta Anual',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: VelloTokens.gray800,
+                  ),
+                ),
+                Text(
+                  '${(_progressoMeta * 100).toInt()}%',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: VelloTokens.brand,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _metaAnual,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: VelloTokens.gray800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ClipRRect(
+              borderRadius: VelloTokens.radiusSmall,
+              child: LinearProgressIndicator(
+                value: _progressoMeta,
+                backgroundColor: VelloTokens.gray200,
+                valueColor: AlwaysStoppedAnimation<Color>(VelloTokens.brand),
+                minHeight: 8,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'R\$ ${(45000 * _progressoMeta).toStringAsFixed(0)} de R\$ 45.000',
+              style: const TextStyle(
+                fontSize: 12,
+                color: VelloTokens.gray600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetasSemana() {
+    return VelloCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Metas da Semana',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: VelloTokens.gray800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildMetaItem('40 Corridas', 32, 40),
+            const SizedBox(height: 12),
+            _buildMetaItem('R\$ 800 em Ganhos', 650, 800),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetaItem(String title, double atual, double meta) {
+    final progress = (atual / meta).clamp(0.0, 1.0);
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: VelloTokens.gray700,
+              ),
+            ),
+            Text(
+              '${(progress * 100).toInt()}%',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: progress >= 1.0 ? VelloTokens.success : VelloTokens.warning,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: VelloTokens.radiusSmall,
+          child: LinearProgressIndicator(
+            value: progress,
+            backgroundColor: VelloTokens.gray200,
+            valueColor: AlwaysStoppedAnimation<Color>(
+              progress >= 1.0 ? VelloTokens.success : VelloTokens.warning
+            ),
+            minHeight: 6,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          '${atual.toStringAsFixed(0)} de ${meta.toStringAsFixed(0)}',
+          style: const TextStyle(
+            fontSize: 12,
+            color: VelloTokens.gray500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTransacoesList() {
+    return VelloCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Últimas Transações',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: VelloTokens.gray800,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildTransactionItem(
+              'Corrida #1234',
+              'Hoje às 14:30',
+              '+ R\$ 15,40',
+              VelloTokens.success,
+              Icons.directions_car,
+            ),
+            const SizedBox(height: 12),
+            _buildTransactionItem(
+              'Corrida #1233',
+              'Hoje às 13:45',
+              '+ R\$ 22,80',
+              VelloTokens.success,
+              Icons.directions_car,
+            ),
+            const SizedBox(height: 12),
+            _buildTransactionItem(
+              'Saque PIX',
+              'Ontem às 18:00',
+              '- R\$ 100,00',
+              VelloTokens.danger,
+              Icons.pix,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionItem(String title, String subtitle, String value, Color color, IconData icon) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: VelloTokens.radiusSmall,
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: VelloTokens.gray800,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: VelloTokens.gray500,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
   void _showSacarDialog() {
     showDialog(
       context: context,
@@ -745,20 +789,19 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
           borderRadius: VelloTokens.radiusLarge,
         ),
         title: const Text('Sacar Dinheiro'),
-        content: const Text(
-          'Funcionalidade de saque será implementada em breve.\n\nVocê receberá uma notificação quando estiver disponível.',
-        ),
+        content: const Text('Funcionalidade de saque será implementada em breve.'),
         actions: [
-          VelloButton.primary(
-            onPressed: () => Navigator.pop(context),
+          VelloButton(
             text: 'Entendi',
+            onPressed: () => Navigator.pop(context),
+            type: VelloButtonType.primary,
           ),
         ],
       ),
     );
   }
 
-  void _showAdicionarCreditoDialog() {
+  void _showAdicionarDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -766,20 +809,35 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
           borderRadius: VelloTokens.radiusLarge,
         ),
         title: const Text('Adicionar Crédito'),
-        content: const Text(
-          'Para adicionar créditos à sua carteira, complete mais corridas ou participe de promoções especiais.',
-        ),
+        content: const Text('Funcionalidade de adicionar crédito será implementada em breve.'),
         actions: [
-          VelloButton.primary(
+          VelloButton(
+            text: 'Entendi',
             onPressed: () => Navigator.pop(context),
-            text: 'Ok',
+            type: VelloButtonType.primary,
           ),
         ],
       ),
     );
   }
 
-  void _addCredit() {}
-  void _transferMoney() {}
-  void _payBill() {}
+  void _showExtratoDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: VelloTokens.radiusLarge,
+        ),
+        title: const Text('Extrato Detalhado'),
+        content: const Text('Funcionalidade de extrato detalhado será implementada em breve.'),
+        actions: [
+          VelloButton(
+            text: 'Entendi',
+            onPressed: () => Navigator.pop(context),
+            type: VelloButtonType.primary,
+          ),
+        ],
+      ),
+    );
+  }
 }

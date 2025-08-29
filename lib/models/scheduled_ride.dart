@@ -1,141 +1,102 @@
+enum ScheduledRideStatus {
+  pending,
+  confirmed,
+  accepted,
+  inProgress,
+  cancelled,
+  completed,
+  available,
+}
 
 class ScheduledRide {
   final String id;
-  final String passengerId;
-  final String? motoristaId;
   final String passengerName;
   final String pickupAddress;
   final String destinationAddress;
-  final double pickupLatitude;
-  final double pickupLongitude;
-  final double destinationLatitude;
-  final double destinationLongitude;
-  final DateTime scheduledDateTime;
-  final double estimatedFare;
-  final String status;
+  final DateTime scheduledTime;
+  final double estimatedPrice;
+  final double distance;
+  final int estimatedDuration;
+  ScheduledRideStatus status;
+  final String notes;
   final DateTime createdAt;
-  final DateTime? acceptedAt;
-  final DateTime? startedAt;
-  final DateTime? completedAt;
-  final DateTime? cancelledAt;
-  final String? cancellationReason;
-  final String? specialInstructions;
 
   ScheduledRide({
     required this.id,
-    required this.passengerId,
-    this.motoristaId,
     required this.passengerName,
     required this.pickupAddress,
     required this.destinationAddress,
-    required this.pickupLatitude,
-    required this.pickupLongitude,
-    required this.destinationLatitude,
-    required this.destinationLongitude,
-    required this.scheduledDateTime,
-    required this.estimatedFare,
+    required this.scheduledTime,
+    required this.estimatedPrice,
+    required this.distance,
+    required this.estimatedDuration,
     required this.status,
-    required this.createdAt,
-    this.acceptedAt,
-    this.startedAt,
-    this.completedAt,
-    this.cancelledAt,
-    this.cancellationReason,
-    this.specialInstructions,
-  });
+    this.notes = '',
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
-  factory ScheduledRide.fromMap(Map<String, dynamic> map, String documentId) {
+  factory ScheduledRide.fromJson(Map<String, dynamic> json, [String? documentId]) {
     return ScheduledRide(
-      id: documentId,
-      passengerId: map['passengerId'] ?? '',
-      motoristaId: map['motoristaId'],
-      passengerName: map['passengerName'] ?? '',
-      pickupAddress: map['pickupAddress'] ?? '',
-      destinationAddress: map['destinationAddress'] ?? '',
-      pickupLatitude: (map['pickupLatitude'] ?? 0.0).toDouble(),
-      pickupLongitude: (map['pickupLongitude'] ?? 0.0).toDouble(),
-      destinationLatitude: (map['destinationLatitude'] ?? 0.0).toDouble(),
-      destinationLongitude: (map['destinationLongitude'] ?? 0.0).toDouble(),
-      scheduledDateTime: DateTime.parse(map['scheduledDateTime']),
-      estimatedFare: (map['estimatedFare'] ?? 0.0).toDouble(),
-      status: map['status'] ?? 'pending',
-      createdAt: DateTime.parse(map['createdAt']),
-      acceptedAt: map['acceptedAt'] != null ? DateTime.parse(map['acceptedAt']) : null,
-      startedAt: map['startedAt'] != null ? DateTime.parse(map['startedAt']) : null,
-      completedAt: map['completedAt'] != null ? DateTime.parse(map['completedAt']) : null,
-      cancelledAt: map['cancelledAt'] != null ? DateTime.parse(map['cancelledAt']) : null,
-      cancellationReason: map['cancellationReason'],
-      specialInstructions: map['specialInstructions'],
+      id: documentId ?? json['id'],
+      passengerName: json['passengerName'],
+      pickupAddress: json['pickupAddress'],
+      destinationAddress: json['destinationAddress'],
+      scheduledTime: DateTime.parse(json['scheduledTime']),
+      estimatedPrice: json['estimatedPrice'].toDouble(),
+      distance: json['distance'].toDouble(),
+      estimatedDuration: json['estimatedDuration'],
+      status: ScheduledRideStatus.values.firstWhere(
+        (e) => e.toString() == 'ScheduledRideStatus.${json['status']}',
+        orElse: () => ScheduledRideStatus.pending,
+      ),
+      notes: json['notes'] ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
-      'passengerId': passengerId,
-      'motoristaId': motoristaId,
+      'id': id,
       'passengerName': passengerName,
       'pickupAddress': pickupAddress,
       'destinationAddress': destinationAddress,
-      'pickupLatitude': pickupLatitude,
-      'pickupLongitude': pickupLongitude,
-      'destinationLatitude': destinationLatitude,
-      'destinationLongitude': destinationLongitude,
-      'scheduledDateTime': scheduledDateTime.toIso8601String(),
-      'estimatedFare': estimatedFare,
-      'status': status,
+      'scheduledTime': scheduledTime.toIso8601String(),
+      'estimatedPrice': estimatedPrice,
+      'distance': distance,
+      'estimatedDuration': estimatedDuration,
+      'status': status.toString().split('.').last,
+      'notes': notes,
       'createdAt': createdAt.toIso8601String(),
-      'acceptedAt': acceptedAt?.toIso8601String(),
-      'startedAt': startedAt?.toIso8601String(),
-      'completedAt': completedAt?.toIso8601String(),
-      'cancelledAt': cancelledAt?.toIso8601String(),
-      'cancellationReason': cancellationReason,
-      'specialInstructions': specialInstructions,
     };
   }
 
   ScheduledRide copyWith({
     String? id,
-    String? passengerId,
-    String? motoristaId,
     String? passengerName,
     String? pickupAddress,
     String? destinationAddress,
-    double? pickupLatitude,
-    double? pickupLongitude,
-    double? destinationLatitude,
-    double? destinationLongitude,
-    DateTime? scheduledDateTime,
-    double? estimatedFare,
-    String? status,
+    DateTime? scheduledTime,
+    double? estimatedPrice,
+    double? distance,
+    int? estimatedDuration,
+    ScheduledRideStatus? status,
+    String? notes,
     DateTime? createdAt,
-    DateTime? acceptedAt,
-    DateTime? startedAt,
-    DateTime? completedAt,
-    DateTime? cancelledAt,
-    String? cancellationReason,
-    String? specialInstructions,
   }) {
     return ScheduledRide(
       id: id ?? this.id,
-      passengerId: passengerId ?? this.passengerId,
-      motoristaId: motoristaId ?? this.motoristaId,
       passengerName: passengerName ?? this.passengerName,
       pickupAddress: pickupAddress ?? this.pickupAddress,
       destinationAddress: destinationAddress ?? this.destinationAddress,
-      pickupLatitude: pickupLatitude ?? this.pickupLatitude,
-      pickupLongitude: pickupLongitude ?? this.pickupLongitude,
-      destinationLatitude: destinationLatitude ?? this.destinationLatitude,
-      destinationLongitude: destinationLongitude ?? this.destinationLongitude,
-      scheduledDateTime: scheduledDateTime ?? this.scheduledDateTime,
-      estimatedFare: estimatedFare ?? this.estimatedFare,
+      scheduledTime: scheduledTime ?? this.scheduledTime,
+      estimatedPrice: estimatedPrice ?? this.estimatedPrice,
+      distance: distance ?? this.distance,
+      estimatedDuration: estimatedDuration ?? this.estimatedDuration,
       status: status ?? this.status,
+      notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
-      acceptedAt: acceptedAt ?? this.acceptedAt,
-      startedAt: startedAt ?? this.startedAt,
-      completedAt: completedAt ?? this.completedAt,
-      cancelledAt: cancelledAt ?? this.cancelledAt,
-      cancellationReason: cancellationReason ?? this.cancellationReason,
-      specialInstructions: specialInstructions ?? this.specialInstructions,
     );
   }
 }
