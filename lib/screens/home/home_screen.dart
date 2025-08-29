@@ -4,8 +4,17 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
-import 'package:vello_motorista/constants/app_colors.dart';
-import 'package:vello_motorista/services/auth_service.dart';
+import '../../services/geolocation_service.dart';
+import '../../services/firebase_corridas_service.dart';
+import '../../services/sound_service.dart';
+import '../../services/notification_service.dart';
+import '../../widgets/corrida_popup_widget.dart';
+import '../../widgets/corridas_disponiveis_widget.dart';
+import '../../widgets/common/vello_card.dart';
+import '../../widgets/common/vello_button.dart';
+import '../../widgets/common/status_chip.dart';
+import '../../theme/vello_tokens.dart';
+import '../../constants/app_colors.dart';
 
 // Banner de boas-vindas (adaptado para motorista)
 class WelcomeBanner extends StatelessWidget {
@@ -248,23 +257,19 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
-          // Status badge
-          Container(
-            margin: const EdgeInsets.only(right: 12),
+          // Status chip
+          StatusChip(
+            label: _isOnline ? 'ONLINE' : 'OFFLINE',
+            color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,
+            textColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: _isOnline ? const Color(0xFF10B981) : const Color(0xFF6B7280),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              _isOnline ? 'ONLINE' : 'OFFLINE',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
+            borderRadius: BorderRadius.circular(20),
+            textStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () => Navigator.pushNamed(context, '/perfil'),
@@ -346,35 +351,17 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.all(16),
               width: double.infinity,
               height: 60,
-              child: ElevatedButton(
+              child: VelloButton(
                 onPressed: _toggleOnlineStatus,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isOnline ? const Color(0xFFEF4444) : velloOrange,
-                  foregroundColor: Colors.white,
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  shadowColor: _isOnline
-                      ? const Color(0xFFEF4444).withOpacity(0.3)
-                      : velloOrange.withOpacity(0.3),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      _isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                text: _isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE',
+                icon: _isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                backgroundColor: _isOnline ? VelloTokens.colorRed : VelloTokens.colorOrange,
+                foregroundColor: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                elevation: 4,
+                textStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -386,20 +373,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMapSection() {
     if (_isLoadingLocation) {
-      return Container(
+      return VelloCard(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: velloCardBackground,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(20),
         ),
         child: const Center(
           child: Column(
@@ -433,20 +410,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (_locationError.isNotEmpty) {
-      return Container(
+      return VelloCard(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: velloCardBackground,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(20),
         ),
         child: Center(
           child: Column(
@@ -479,14 +446,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton.icon(
+              VelloButton.icon(
                 onPressed: _retryLocation,
                 icon: const Icon(Icons.refresh),
                 label: const Text('Tentar Novamente'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: velloOrange,
-                  foregroundColor: Colors.white,
-                ),
+                backgroundColor: velloOrange,
+                foregroundColor: Colors.white,
               ),
             ],
           ),
@@ -496,13 +461,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Só renderizar o mapa se temos localização E MapController inicializado
     if (currentLocation == null || _mapController == null) {
-      return Container(
+      return VelloCard(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: velloCardBackground,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(20),
         ),
         child: const Center(
           child: CircularProgressIndicator(color: velloOrange),
@@ -594,19 +556,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEarningsCard(String title, String value, IconData icon) {
-    return Container(
+    return VelloCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: velloCardBackground,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
