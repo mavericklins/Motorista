@@ -51,5 +51,41 @@ class VelloColors {
   );
   // Added tokens
   static const Color erro = error;
+  
+  // Success colors
+  static const Color success = Color(0xFF4CAF50);
+  static const Color onSuccess = Colors.white;
+  static const Color successContainer = Color(0xFFE8F5E8);
+  static const Color onSuccessContainer = Color(0xFF1B5E20);
+  
+  // Warning colors
+  static const Color warning = Color(0xFFFF9800);
+  static const Color onWarning = Colors.white;
+  static const Color warningContainer = Color(0xFFFFF3E0);
+  static const Color onWarningContainer = Color(0xFFE65100);
+  
+  // Additional surface colors
+  static const Color surfaceContainer = Color(0xFFF0F2F6);
+  static const Color surfaceContainerLow = Color(0xFFF8F9FB);
+  static const Color surfaceContainerHigh = Color(0xFFE8EBF0);
+  
+  // Additional gradients
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [primary, primaryLight],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
+  static const LinearGradient secondaryGradient = LinearGradient(
+    colors: [secondary, secondaryLight],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
+  static const LinearGradient successGradient = LinearGradient(
+    colors: [success, Color(0xFF66BB6A)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 
 }

@@ -145,8 +145,15 @@ class VelloCard extends StatelessWidget {
           borderRadius: borderRadius,
           boxShadow: [
             BoxShadow(
-              color: VelloColors.shadow,
+              color: VelloColors.shadow.withOpacity(0.1),
+              blurRadius: 8,
+              spreadRadius: 0,
+              offset: const Offset(0, 2),
+            ),
+            BoxShadow(
+              color: VelloColors.shadow.withOpacity(0.06),
               blurRadius: 4,
+              spreadRadius: 0,
               offset: const Offset(0, 1),
             ),
           ],
@@ -156,6 +163,20 @@ class VelloCard extends StatelessWidget {
         return BoxDecoration(
           color: backgroundColor ?? VelloColors.surface,
           borderRadius: borderRadius,
+          boxShadow: [
+            BoxShadow(
+              color: VelloColors.shadow.withOpacity(0.15),
+              blurRadius: 12,
+              spreadRadius: 0,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: VelloColors.shadow.withOpacity(0.1),
+              blurRadius: 6,
+              spreadRadius: 0,
+              offset: const Offset(0, 2),
+            ),
+          ],
         );
 
       case VelloCardType.outlined:
@@ -163,19 +184,34 @@ class VelloCard extends StatelessWidget {
           color: backgroundColor ?? VelloColors.surface,
           borderRadius: borderRadius,
           border: border ?? Border.all(
-            color: VelloColors.divider,
+            color: VelloColors.divider.withOpacity(0.5),
             width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: VelloColors.shadow.withOpacity(0.05),
+              blurRadius: 4,
+              spreadRadius: 0,
+              offset: const Offset(0, 1),
+            ),
+          ],
         );
 
       case VelloCardType.gradient:
         return BoxDecoration(
-          gradient: gradient,
+          gradient: gradient ?? VelloColors.primaryGradient,
           borderRadius: borderRadius,
           boxShadow: [
             BoxShadow(
-              color: VelloColors.shadow,
-              blurRadius: 8,
+              color: (gradient?.colors.first ?? VelloColors.primary).withOpacity(0.3),
+              blurRadius: 12,
+              spreadRadius: 0,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: VelloColors.shadow.withOpacity(0.1),
+              blurRadius: 6,
+              spreadRadius: 0,
               offset: const Offset(0, 2),
             ),
           ],
@@ -209,22 +245,34 @@ class VelloDriverCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return VelloCard.standard(
       onTap: onTap,
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Row(
             children: [
               if (icon != null) ...[
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: (iconColor ?? VelloColors.primary).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    gradient: LinearGradient(
+                      colors: [
+                        (iconColor ?? VelloColors.primary).withOpacity(0.15),
+                        (iconColor ?? VelloColors.primary).withOpacity(0.05),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: (iconColor ?? VelloColors.primary).withOpacity(0.1),
+                      width: 1,
+                    ),
                   ),
                   child: Icon(
                     icon,
                     color: iconColor ?? VelloColors.primary,
-                    size: 20,
+                    size: 24,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -237,14 +285,17 @@ class VelloDriverCard extends StatelessWidget {
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
+                        color: VelloColors.onSurface,
+                        height: 1.2,
                       ),
                     ),
                     if (subtitle != null) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
                       Text(
                         subtitle!,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: VelloColors.onSurfaceVariant,
+                          height: 1.3,
                         ),
                       ),
                     ],
@@ -252,21 +303,41 @@ class VelloDriverCard extends StatelessWidget {
                 ),
               ),
               if (trailing != null) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 trailing!,
               ],
               if (onTap != null) ...[
                 const SizedBox(width: 8),
-                const Icon(
-                  Icons.chevron_right,
-                  color: VelloColors.onSurfaceVariant,
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: VelloColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(
+                    Icons.chevron_right,
+                    color: VelloColors.primary,
+                    size: 16,
+                  ),
                 ),
               ],
             ],
           ),
           if (showDivider) ...[
-            const SizedBox(height: 16),
-            const Divider(height: 1),
+            const SizedBox(height: 20),
+            Container(
+              height: 1,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    VelloColors.divider.withOpacity(0),
+                    VelloColors.divider.withOpacity(0.5),
+                    VelloColors.divider.withOpacity(0),
+                  ],
+                ),
+              ),
+            ),
           ],
         ],
       ),

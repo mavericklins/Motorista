@@ -56,10 +56,7 @@ class VelloTheme {
       outlinedButtonTheme: _buildOutlinedButtonTheme(),
       
       // Card Theme
-      cardTheme: CardThemeData(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
+      cardTheme: _buildCardTheme(),
       
       // Input Theme
       inputDecorationTheme: _buildInputTheme(),
@@ -239,18 +236,37 @@ class VelloTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: VelloColors.primary,
         foregroundColor: VelloColors.onPrimary,
-        elevation: 1,
-        shadowColor: VelloColors.shadow,
+        elevation: 2,
+        shadowColor: VelloColors.primary.withOpacity(0.3),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        minimumSize: const Size(64, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        minimumSize: const Size(64, 56),
         textStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0.1,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
         ),
+      ).copyWith(
+        backgroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return VelloColors.primaryDark;
+          }
+          if (states.contains(MaterialState.disabled)) {
+            return VelloColors.disabled;
+          }
+          return VelloColors.primary;
+        }),
+        elevation: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.pressed)) {
+            return 1;
+          }
+          if (states.contains(MaterialState.hovered)) {
+            return 4;
+          }
+          return 2;
+        }),
       ),
     );
   }
@@ -297,13 +313,14 @@ class VelloTheme {
   
   static CardTheme _buildCardTheme() {
     return CardTheme(
-      elevation: 1,
+      elevation: 2,
       shadowColor: VelloColors.shadow,
-      surfaceTintColor: VelloColors.surface,
+      surfaceTintColor: Colors.transparent,
+      color: VelloColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     );
   }
   
@@ -312,24 +329,41 @@ class VelloTheme {
       filled: true,
       fillColor: VelloColors.surfaceVariant,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: VelloColors.divider),
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: VelloColors.divider, width: 1),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         borderSide: const BorderSide(color: VelloColors.primary, width: 2),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: VelloColors.error),
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: VelloColors.error, width: 1),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      hintStyle: const TextStyle(color: VelloColors.onSurfaceVariant),
-      labelStyle: const TextStyle(color: VelloColors.onSurfaceVariant),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: VelloColors.error, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      hintStyle: const TextStyle(
+        color: VelloColors.onSurfaceVariant,
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+      ),
+      labelStyle: const TextStyle(
+        color: VelloColors.onSurfaceVariant,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      floatingLabelStyle: const TextStyle(
+        color: VelloColors.primary,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
     );
   }
   
