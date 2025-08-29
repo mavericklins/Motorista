@@ -1,0 +1,477 @@
+lib/services/firebase_corridas_service.dart:529:23: Error: 'aceitarCorrida' is already declared in this scope.
+  static Future<bool> aceitarCorrida({                                                                                                                                              
+                      ^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:165:23: Context: Previous declaration of 'aceitarCorrida'.
+  static Future<bool> aceitarCorrida({
+                      ^^^^^^^^^^^^^^
+lib/widgets/common/status_chip.dart:42:10: Error: 'showIcon' isn't an instance field of this class.                                                                                 
+    this.showIcon = true,
+         ^^^^^^^^
+lib/widgets/common/status_chip.dart:43:10: Error: 'isCompact' isn't an instance field of this class.
+    this.isCompact = false,
+         ^^^^^^^^^
+lib/widgets/common/status_chip.dart:44:10: Error: 'onTap' isn't an instance field of this class.
+    this.onTap,
+         ^^^^^
+lib/widgets/common/status_chip.dart:45:8: Error: 'status' isn't an instance field of this class.
+  }) : status = DriverStatus.online, super(key: key);
+       ^^^^^^
+lib/widgets/common/status_chip.dart:50:10: Error: 'showIcon' isn't an instance field of this class.
+    this.showIcon = true,
+         ^^^^^^^^
+lib/widgets/common/status_chip.dart:51:10: Error: 'isCompact' isn't an instance field of this class.
+    this.isCompact = false,
+         ^^^^^^^^^
+lib/widgets/common/status_chip.dart:52:10: Error: 'onTap' isn't an instance field of this class.
+    this.onTap,
+         ^^^^^
+lib/widgets/common/status_chip.dart:53:8: Error: 'status' isn't an instance field of this class.
+  }) : status = DriverStatus.offline, super(key: key);                                                                                                                              
+       ^^^^^^
+lib/widgets/common/status_chip.dart:58:10: Error: 'showIcon' isn't an instance field of this class.
+    this.showIcon = true,
+         ^^^^^^^^
+lib/widgets/common/status_chip.dart:59:10: Error: 'isCompact' isn't an instance field of this class.
+    this.isCompact = false,
+         ^^^^^^^^^
+lib/widgets/common/status_chip.dart:60:10: Error: 'onTap' isn't an instance field of this class.
+    this.onTap,
+         ^^^^^
+lib/widgets/common/status_chip.dart:61:8: Error: 'status' isn't an instance field of this class.
+  }) : status = DriverStatus.busy, super(key: key);
+       ^^^^^^
+lib/services/metas_inteligentes_service.dart:28:9: Error: No named parameter with the name 'dificuldade'.                                                                           
+        dificuldade: DificuldadeMeta.media,
+        ^^^^^^^^^^^
+lib/models/meta_inteligente.dart:40:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/services/metas_inteligentes_service.dart:42:9: Error: No named parameter with the name 'dificuldade'.
+        dificuldade: DificuldadeMeta.facil,
+        ^^^^^^^^^^^
+lib/models/meta_inteligente.dart:40:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^                                                                                                                                                                   
+lib/services/metas_inteligentes_service.dart:70:16: Error: The getter 'ativa' isn't defined for the type 'MetaInteligente'.
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ativa'.
+      if (meta.ativa && !meta.completada) {
+               ^^^^^
+lib/services/metas_inteligentes_service.dart:86:10: Error: The setter 'ativa' isn't defined for the type 'MetaInteligente'.
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try correcting the name to the name of an existing setter, or defining a setter or field named 'ativa'.
+    meta.ativa = false;
+         ^^^^^
+lib/screens/home/home_screen.dart:263:13: Error: No named parameter with the name 'color'.                                                                                          
+            color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,
+            ^^^^^
+lib/widgets/common/status_chip.dart:26:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/screens/home/home_screen.dart:359:17: Error: No named parameter with the name 'foregroundColor'.
+                foregroundColor: Colors.white,
+                ^^^^^^^^^^^^^^^
+lib/widgets/common/vello_button.dart:46:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton({
+        ^^^^^^^^^^^
+lib/screens/home/home_screen.dart:452:17: Error: No named parameter with the name 'label'.
+                label: const Text('Tentar Novamente'),
+                ^^^^^
+lib/widgets/common/vello_button.dart:159:9: Context: Found this candidate, but the arguments don't match.                                                                           
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:257:15: Error: No named parameter with the name 'label'.                                                                          
+              label: const Text('Sacar'),
+              ^^^^^
+lib/widgets/common/vello_button.dart:159:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton.icon({                                                                                                                                                          
+        ^^^^^^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:268:15: Error: No named parameter with the name 'label'.
+              label: const Text('Adicionar'),                                                                                                                                       
+              ^^^^^
+lib/widgets/common/vello_button.dart:159:9: Context: Found this candidate, but the arguments don't match.                                                                           
+  const VelloButton.icon({
+        ^^^^^^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:279:15: Error: No named parameter with the name 'label'.                                                                          
+              label: const Text('Extrato'),                                                                                                                                         
+              ^^^^^
+lib/widgets/common/vello_button.dart:159:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton.icon({                                                                                                                                                          
+        ^^^^^^^^^^^^^^^^
+lib/screens/carteira/carteira_digital_screen.dart:767:13: Error: No named parameter with the name 'foregroundColor'.                                                                
+            foregroundColor: Colors.white,
+            ^^^^^^^^^^^^^^^
+lib/widgets/common/vello_button.dart:46:9: Context: Found this candidate, but the arguments don't match.                                                                            
+  const VelloButton({
+        ^^^^^^^^^^^                                                                                                                                                                 
+lib/screens/carteira/carteira_digital_screen.dart:790:13: Error: No named parameter with the name 'foregroundColor'.
+            foregroundColor: Colors.white,
+            ^^^^^^^^^^^^^^^
+lib/widgets/common/vello_button.dart:46:9: Context: Found this candidate, but the arguments don't match.
+  const VelloButton({
+        ^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:59:42: Error: Member not found: 'medio'.
+            dificuldade: DificuldadeMeta.medio,
+                                         ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:58:13: Error: No named parameter with the name 'status'.                                                                           
+            status: StatusMeta.ativa,
+            ^^^^^^
+lib/models/meta_inteligente.dart:40:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({                                                                                                                                                                 
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:71:42: Error: Member not found: 'alto'.
+            dificuldade: DificuldadeMeta.alto,                                                                                                                                      
+                                         ^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:70:13: Error: No named parameter with the name 'status'.
+            status: StatusMeta.ativa,
+            ^^^^^^
+lib/models/meta_inteligente.dart:40:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:82:13: Error: No named parameter with the name 'status'.
+            status: StatusMeta.ativa,
+            ^^^^^^
+lib/models/meta_inteligente.dart:40:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:97:13: Error: No named parameter with the name 'status'.
+            status: StatusMeta.concluida,
+            ^^^^^^
+lib/models/meta_inteligente.dart:40:3: Context: Found this candidate, but the arguments don't match.
+  MetaInteligente({
+  ^^^^^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:489:61: Error: The getter 'dificuldade' isn't defined for the type 'MetaInteligente'.
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'dificuldade'.
+                            label: _getDifficultyLabel(meta.dificuldade),
+                                                            ^^^^^^^^^^^                                                                                                             
+lib/screens/metas/metas_inteligentes_screen.dart:490:63: Error: The getter 'dificuldade' isn't defined for the type 'MetaInteligente'.
+ - 'MetaInteligente' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'dificuldade'.
+                            type: _getDifficultyChipType(meta.dificuldade),
+                                                              ^^^^^^^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:678:28: Error: Member not found: 'medio'.
+      case DificuldadeMeta.medio:
+                           ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:680:28: Error: Member not found: 'alto'.
+      case DificuldadeMeta.alto:
+                           ^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:689:28: Error: Member not found: 'medio'.
+      case DificuldadeMeta.medio:
+                           ^^^^^
+lib/screens/metas/metas_inteligentes_screen.dart:691:28: Error: Member not found: 'alto'.
+      case DificuldadeMeta.alto:
+                           ^^^^
+lib/screens/insights/demand_prediction_screen.dart:23:9: Error: The getter 'FeatureFlags' isn't defined for the type '_DemandPredictionScreenState'.                                
+ - '_DemandPredictionScreenState' is from 'package:vello_motorista/screens/insights/demand_prediction_screen.dart' ('lib/screens/insights/demand_prediction_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'FeatureFlags'.
+    if (FeatureFlags.enableDemandPrediction) {
+        ^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:460:20: Error: Method not found: '_degreesToRadians'.                                                                                   
+      final dLat = _degreesToRadians(lat2 - lat1);
+                   ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:461:20: Error: Method not found: '_degreesToRadians'.
+      final dLon = _degreesToRadians(lon2 - lon1);
+                   ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:463:15: Error: Method not found: '_degreesToRadians'.                                                                                   
+          cos(_degreesToRadians(lat1)) * cos(_degreesToRadians(lat2)) *
+              ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:463:46: Error: Method not found: '_degreesToRadians'.
+          cos(_degreesToRadians(lat1)) * cos(_degreesToRadians(lat2)) *
+                                             ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:460:20: Error: Local variable '_degreesToRadians' can't be referenced before it is declared.
+      final dLat = _degreesToRadians(lat2 - lat1);
+                   ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:471:12: Context: This is the declaration of the variable '_degreesToRadians'.
+    double _degreesToRadians(degrees) {
+           ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:461:20: Error: Local variable '_degreesToRadians' can't be referenced before it is declared.
+      final dLon = _degreesToRadians(lon2 - lon1);
+                   ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:471:12: Context: This is the declaration of the variable '_degreesToRadians'.
+    double _degreesToRadians(degrees) {
+           ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:463:15: Error: Local variable '_degreesToRadians' can't be referenced before it is declared.
+          cos(_degreesToRadians(lat1)) * cos(_degreesToRadians(lat2)) *
+              ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:471:12: Context: This is the declaration of the variable '_degreesToRadians'.
+    double _degreesToRadians(degrees) {
+           ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:463:46: Error: Local variable '_degreesToRadians' can't be referenced before it is declared.
+          cos(_degreesToRadians(lat1)) * cos(_degreesToRadians(lat2)) *
+                                             ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:471:12: Context: This is the declaration of the variable '_degreesToRadians'.
+    double _degreesToRadians(degrees) {
+           ^^^^^^^^^^^^^^^^^
+lib/services/firebase_corridas_service.dart:503:60: Error: The getter 'start' isn't defined for the type 'Map<String, dynamic>'.
+ - 'Map' is from 'dart:core'.                                                                                                                                                       
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'start'.
+        .where('origem.geohash', isGreaterThanOrEqualTo: b.start)
+                                                           ^^^^^
+lib/services/firebase_corridas_service.dart:504:57: Error: The getter 'end' isn't defined for the type 'Map<String, dynamic>'.
+ - 'Map' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'end'.
+        .where('origem.geohash', isLessThanOrEqualTo: b.end)
+                                                        ^^^
+lib/widgets/common/status_chip.dart:180:13: Error: The getter 'status' isn't defined for the type 'StatusChip'.
+ - 'StatusChip' is from 'package:vello_motorista/widgets/common/status_chip.dart' ('lib/widgets/common/status_chip.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'status'.
+    switch (status) {
+            ^^^^^^                                                                                                                                                                  
+lib/widgets/common/status_chip.dart:179:22: Error: A non-null value must be returned since the return type 'Map<String, Color>' doesn't allow null.
+ - 'Map' is from 'dart:core'.
+ - 'Color' is from 'dart:ui'.
+  Map<String, Color> _getStatusColors() {
+                     ^
+lib/widgets/common/status_chip.dart:220:13: Error: The getter 'status' isn't defined for the type 'StatusChip'.
+ - 'StatusChip' is from 'package:vello_motorista/widgets/common/status_chip.dart' ('lib/widgets/common/status_chip.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'status'.
+    switch (status) {
+            ^^^^^^
+lib/widgets/common/status_chip.dart:219:10: Error: A non-null value must be returned since the return type 'String' doesn't allow null.
+  String _getStatusText() {
+         ^
+lib/widgets/common/status_chip.dart:260:13: Error: No named parameter with the name 'status'.
+            status: status,
+            ^^^^^^
+lib/widgets/common/status_chip.dart:26:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^                                                                                                                                                                  
+lib/widgets/common/status_chip.dart:275:13: Error: No named parameter with the name 'status'.
+            status: status,
+            ^^^^^^
+lib/widgets/common/status_chip.dart:26:9: Context: Found this candidate, but the arguments don't match.
+  const StatusChip({
+        ^^^^^^^^^^
+lib/widgets/common/status_chip.dart:264:11: Error: The argument type 'List<dynamic>' can't be assigned to the parameter type 'List<Widget>'.
+ - 'List' is from 'dart:core'.
+ - 'Widget' is from 'package:flutter/src/widgets/framework.dart' ('/C:/src/flutter/packages/flutter/lib/src/widgets/framework.dart').
+        ).toList(),
+          ^
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'text' is not initialized by this constructor.                                                                         
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.online({
+        ^^^^^^
+lib/widgets/common/status_chip.dart:16:17: Context: 'text' is defined here.                                                                                                         
+  final String? text;                                                                                                                                                               
+                ^^^^
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'label' is not initialized by this constructor.                                                                        
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.online({
+        ^^^^^^
+lib/widgets/common/status_chip.dart:17:17: Context: 'label' is defined here.
+  final String? label;
+                ^^^^^
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'icon' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.online({
+        ^^^^^^
+lib/widgets/common/status_chip.dart:18:19: Context: 'icon' is defined here.                                                                                                         
+  final IconData? icon;                                                                                                                                                             
+                  ^^^^
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'value' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.online({
+        ^^^^^^
+lib/widgets/common/status_chip.dart:19:17: Context: 'value' is defined here.
+  final String? value;
+                ^^^^^
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'valueColor' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.online({
+        ^^^^^^
+lib/widgets/common/status_chip.dart:20:16: Context: 'valueColor' is defined here.
+  final Color? valueColor;
+               ^^^^^^^^^^
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'labelColor' is not initialized by this constructor.                                                                   
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.online({
+        ^^^^^^                                                                                                                                                                      
+lib/widgets/common/status_chip.dart:21:16: Context: 'labelColor' is defined here.
+  final Color? labelColor;
+               ^^^^^^^^^^                                                                                                                                                           
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'iconColor' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.                                                                                                    
+  const StatusChip.online({                                                                                                                                                         
+        ^^^^^^
+lib/widgets/common/status_chip.dart:22:16: Context: 'iconColor' is defined here.
+  final Color? iconColor;                                                                                                                                                           
+               ^^^^^^^^^
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'type' is not initialized by this constructor.                                                                         
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.online({
+        ^^^^^^                                                                                                                                                                      
+lib/widgets/common/status_chip.dart:23:24: Context: 'type' is defined here.
+  final StatusChipType type;                                                                                                                                                        
+                       ^^^^                                                                                                                                                         
+lib/widgets/common/status_chip.dart:40:9: Error: Final field 'size' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.online({
+        ^^^^^^
+lib/widgets/common/status_chip.dart:24:24: Context: 'size' is defined here.
+  final StatusChipSize size;
+                       ^^^^                                                                                                                                                         
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'text' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({
+        ^^^^^^^                                                                                                                                                                     
+lib/widgets/common/status_chip.dart:16:17: Context: 'text' is defined here.
+  final String? text;
+                ^^^^
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'label' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({
+        ^^^^^^^
+lib/widgets/common/status_chip.dart:17:17: Context: 'label' is defined here.
+  final String? label;                                                                                                                                                              
+                ^^^^^
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'icon' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({
+        ^^^^^^^
+lib/widgets/common/status_chip.dart:18:19: Context: 'icon' is defined here.
+  final IconData? icon;                                                                                                                                                             
+                  ^^^^
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'value' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({
+        ^^^^^^^
+lib/widgets/common/status_chip.dart:19:17: Context: 'value' is defined here.
+  final String? value;
+                ^^^^^
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'valueColor' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({
+        ^^^^^^^
+lib/widgets/common/status_chip.dart:20:16: Context: 'valueColor' is defined here.                                                                                                   
+  final Color? valueColor;
+               ^^^^^^^^^^                                                                                                                                                           
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'labelColor' is not initialized by this constructor.                                                                   
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({
+        ^^^^^^^
+lib/widgets/common/status_chip.dart:21:16: Context: 'labelColor' is defined here.
+  final Color? labelColor;
+               ^^^^^^^^^^
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'iconColor' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({                                                                                                                                                        
+        ^^^^^^^
+lib/widgets/common/status_chip.dart:22:16: Context: 'iconColor' is defined here.
+  final Color? iconColor;                                                                                                                                                           
+               ^^^^^^^^^
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'type' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({
+        ^^^^^^^
+lib/widgets/common/status_chip.dart:23:24: Context: 'type' is defined here.
+  final StatusChipType type;
+                       ^^^^
+lib/widgets/common/status_chip.dart:48:9: Error: Final field 'size' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.offline({
+        ^^^^^^^
+lib/widgets/common/status_chip.dart:24:24: Context: 'size' is defined here.
+  final StatusChipSize size;
+                       ^^^^
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'text' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({
+        ^^^^
+lib/widgets/common/status_chip.dart:16:17: Context: 'text' is defined here.                                                                                                         
+  final String? text;
+                ^^^^
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'label' is not initialized by this constructor.                                                                        
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({
+        ^^^^
+lib/widgets/common/status_chip.dart:17:17: Context: 'label' is defined here.
+  final String? label;
+                ^^^^^                                                                                                                                                               
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'icon' is not initialized by this constructor.                                                                         
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({                                                                                                                                                           
+        ^^^^
+lib/widgets/common/status_chip.dart:18:19: Context: 'icon' is defined here.
+  final IconData? icon;
+                  ^^^^
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'value' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({
+        ^^^^
+lib/widgets/common/status_chip.dart:19:17: Context: 'value' is defined here.
+  final String? value;
+                ^^^^^
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'valueColor' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({
+        ^^^^
+lib/widgets/common/status_chip.dart:20:16: Context: 'valueColor' is defined here.
+  final Color? valueColor;                                                                                                                                                          
+               ^^^^^^^^^^                                                                                                                                                           
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'labelColor' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({
+        ^^^^                                                                                                                                                                        
+lib/widgets/common/status_chip.dart:21:16: Context: 'labelColor' is defined here.
+  final Color? labelColor;
+               ^^^^^^^^^^                                                                                                                                                           
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'iconColor' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({                                                                                                                                                           
+        ^^^^
+lib/widgets/common/status_chip.dart:22:16: Context: 'iconColor' is defined here.
+  final Color? iconColor;
+               ^^^^^^^^^
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'type' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({
+        ^^^^                                                                                                                                                                        
+lib/widgets/common/status_chip.dart:23:24: Context: 'type' is defined here.
+  final StatusChipType type;
+                       ^^^^
+lib/widgets/common/status_chip.dart:56:9: Error: Final field 'size' is not initialized by this constructor.
+Try to initialize the field using an initializing formal or a field initializer.
+  const StatusChip.busy({
+        ^^^^
+lib/widgets/common/status_chip.dart:24:24: Context: 'size' is defined here.
+  final StatusChipSize size;
+                       ^^^^                                                                                                                                                         
+lib/screens/metas/metas_inteligentes_screen.dart:660:13: Error: The type 'TipoMeta' is not exhaustively matched by the switch cases since it doesn't match 'TipoMeta.eficiencia'.   
+ - 'TipoMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'TipoMeta.eficiencia'.
+    switch (tipo) {
+            ^
+lib/screens/metas/metas_inteligentes_screen.dart:675:13: Error: The type 'DificuldadeMeta' is not exhaustively matched by the switch cases since it doesn't match 'DificuldadeMeta.media'.
+ - 'DificuldadeMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').                                                           
+Try adding a default case or cases that match 'DificuldadeMeta.media'.                                                                                                              
+    switch (dificuldade) {
+            ^
+lib/screens/metas/metas_inteligentes_screen.dart:686:13: Error: The type 'DificuldadeMeta' is not exhaustively matched by the switch cases since it doesn't match 'DificuldadeMeta.media'.
+ - 'DificuldadeMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'DificuldadeMeta.media'.
+    switch (dificuldade) {                                                                                                                                                          
+            ^
+lib/screens/metas/metas_inteligentes_screen.dart:697:13: Error: The type 'TipoMeta' is not exhaustively matched by the switch cases since it doesn't match 'TipoMeta.eficiencia'.   
+ - 'TipoMeta' is from 'package:vello_motorista/models/meta_inteligente.dart' ('lib/models/meta_inteligente.dart').
+Try adding a default case or cases that match 'TipoMeta.eficiencia'.                                                                                                                
+    switch (tipo) {
+            ^
+Target kernel_snapshot_program failed: Exception                                                                                                                                    
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.                                                                                                                          
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1                                                                                            
+
+* Try:                                                                                                                                                                              
+> Run with --stacktrace option to get the stack trace.                                                                                                                              
+> Run with --info or --debug option to get more log output.                                                                                                                         
+> Run with --scan to get full insights.                                                                                                                                             
+> Get more help at https://help.gradle.org.                                                                                                                                         
+
+BUILD FAILED in 1m 20s                                                                                                                                                              
+Running Gradle task 'assembleDebug'...                             85,1s
+Error: Gradle task assembleDebug failed with exit code 1                    
