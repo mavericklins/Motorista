@@ -1,8 +1,12 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/metas_inteligentes_service.dart';
 import '../../models/meta_inteligente.dart';
-import '../../constants/app_colors.dart';
+import '../../widgets/common/vello_card.dart';
+import '../../widgets/common/vello_button.dart';
+import '../../widgets/common/status_chip.dart';
+import '../../theme/vello_tokens.dart';
 
 class MetasInteligentesScreen extends StatefulWidget {
   const MetasInteligentesScreen({super.key});
@@ -11,27 +15,20 @@ class MetasInteligentesScreen extends StatefulWidget {
   State<MetasInteligentesScreen> createState() => _MetasInteligentesScreenState();
 }
 
-class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with TickerProviderStateMixin {
+class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _isLoading = true;
+  final MetasInteligentesService _metasService = MetasInteligentesService();
+  
+  List<MetaInteligente> _metasAtivas = [];
+  List<MetaInteligente> _metasConcluidas = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _inicializarMetas();
-  }
-
-  Future<void> _inicializarMetas() async {
-    final service = Provider.of<MetasInteligentesService>(context, listen: false);
-    await service.gerarMetasPersonalizadas();
-    await service.gerarInsightsPersonalizados();
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    _tabController = TabController(length: 2, vsync: this);
+    _loadMetas();
   }
 
   @override
@@ -40,291 +37,265 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
     super.dispose();
   }
 
+  Future<void> _loadMetas() async {
+    setState(() => _isLoading = true);
+    
+    try {
+      // Simular dados de metas
+      await Future.delayed(const Duration(milliseconds: 800));
+      
+      setState(() {
+        _metasAtivas = [
+          MetaInteligente(
+            id: '1',
+            titulo: 'Meta Semanal Premium',
+            descricao: 'Complete 50 corridas esta semana',
+            tipo: TipoMeta.corridas,
+            valorAlvo: 50,
+            valorAtual: 32,
+            prazo: DateTime.now().add(const Duration(days: 3)),
+            recompensa: 'Bônus de R\$ 150',
+            status: StatusMeta.ativa,
+            dificuldade: DificuldadeMeta.medio,
+          ),
+          MetaInteligente(
+            id: '2',
+            titulo: 'Ganhos do Mês',
+            descricao: 'Alcance R\$ 3.500 em ganhos este mês',
+            tipo: TipoMeta.ganhos,
+            valorAlvo: 3500,
+            valorAtual: 2247.50,
+            prazo: DateTime.now().add(const Duration(days: 12)),
+            recompensa: 'Cashback de 5%',
+            status: StatusMeta.ativa,
+            dificuldade: DificuldadeMeta.alto,
+          ),
+          MetaInteligente(
+            id: '3',
+            titulo: 'Avaliação 5 Estrelas',
+            descricao: 'Mantenha avaliação média acima de 4.8',
+            tipo: TipoMeta.avaliacao,
+            valorAlvo: 4.8,
+            valorAtual: 4.9,
+            prazo: DateTime.now().add(const Duration(days: 7)),
+            recompensa: 'Badge Premium',
+            status: StatusMeta.ativa,
+            dificuldade: DificuldadeMeta.facil,
+          ),
+        ];
+        
+        _metasConcluidas = [
+          MetaInteligente(
+            id: '4',
+            titulo: 'Primeira Semana',
+            descricao: 'Complete 20 corridas na primeira semana',
+            tipo: TipoMeta.corridas,
+            valorAlvo: 20,
+            valorAtual: 20,
+            prazo: DateTime.now().subtract(const Duration(days: 5)),
+            recompensa: 'Bônus de R\$ 50',
+            status: StatusMeta.concluida,
+            dificuldade: DificuldadeMeta.facil,
+          ),
+        ];
+        
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao carregar metas: $e'),
+            backgroundColor: VelloTokens.danger,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: VelloTokens.gray50,
       appBar: AppBar(
         title: const Text(
           'Metas Inteligentes',
           style: TextStyle(
+            fontWeight: FontWeight.w600,
             color: Colors.white,
-            fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: AppColors.primary,
+        backgroundColor: VelloTokens.brand,
+        foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: _atualizarMetas,
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadMetas,
+            tooltip: 'Atualizar metas',
           ),
           IconButton(
-            icon: const Icon(Icons.analytics, color: Colors.white),
-            onPressed: () => _mostrarInsights(),
+            icon: const Icon(Icons.add),
+            onPressed: () => _showCreateMetaDialog(),
+            tooltip: 'Nova meta',
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          tabs: const [
-            Tab(text: 'Ativas'),
-            Tab(text: 'Concluídas'),
-            Tab(text: 'Insights'),
-          ],
-        ),
       ),
       body: _isLoading
-          ? _buildLoadingState()
-          : Consumer<MetasInteligentesService>(
-              builder: (context, service, child) {
-                return TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildMetasAtivas(service.metas),
-                    _buildMetasConcluidas(service.metas),
-                    _buildInsights(service.performance, service.previsoes),
-                  ],
-                );
-              },
-            ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _criarMetaPersonalizada,
-        backgroundColor: AppColors.secondary,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          'Nova Meta',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(color: AppColors.primary),
-          SizedBox(height: 16),
-          Text(
-            'Analisando seu perfil...',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Gerando metas personalizadas',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMetasAtivas(List<MetaInteligente> metas) {
-    final metasAtivas = metas.where((m) => m.ativa && !m.completada && !m.expirada).toList();
-
-    if (metasAtivas.isEmpty) {
-      return _buildEmptyState(
-        'Nenhuma meta ativa',
-        'Suas metas personalizadas aparecerão aqui',
-        Icons.my_location,
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: _atualizarMetas,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: metasAtivas.length,
-        itemBuilder: (context, index) {
-          return _buildMetaCard(metasAtivas[index]);
-        },
-      ),
-    );
-  }
-
-  Widget _buildMetasConcluidas(List<MetaInteligente> metas) {
-    final metasConcluidas = metas.where((m) => m.completada).toList();
-
-    if (metasConcluidas.isEmpty) {
-      return _buildEmptyState(
-        'Nenhuma meta concluída',
-        'Complete suas primeiras metas para vê-las aqui',
-        Icons.emoji_events,
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: metasConcluidas.length,
-      itemBuilder: (context, index) {
-        return _buildMetaCard(metasConcluidas[index]);
-      },
-    );
-  }
-
-  Widget _buildMetaCard(MetaInteligente meta) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: meta.completada
-            ? Border.all(color: Colors.green.shade300, width: 2)
-            : null,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: VelloTokens.brand,
+              ),
+            )
+          : Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: _getCorCategoria(meta.categoria).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    _getIconeTipoMeta(meta.tipo),
-                    color: _getCorCategoria(meta.categoria),
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
+                _buildSummaryHeader(),
+                _buildTabsSection(),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: TabBarView(
+                    controller: _tabController,
                     children: [
-                      Text(
-                        meta.titulo,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        meta.descricao,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
+                      _buildActiveMetas(),
+                      _buildCompletedMetas(),
                     ],
                   ),
                 ),
-                if (meta.completada)
-                  const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                    size: 24,
-                  ),
               ],
             ),
+    );
+  }
 
-            const SizedBox(height: 16),
+  Widget _buildSummaryHeader() {
+    final metasCompletas = _metasConcluidas.length;
+    final metasAndamento = _metasAtivas.length;
+    final proximaPremio = _metasAtivas.isNotEmpty 
+        ? _metasAtivas.first.recompensa 
+        : 'Nenhuma meta ativa';
 
-            // Barra de progresso
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      margin: const EdgeInsets.all(16),
+      child: VelloCard.gradient(
+        gradient: const LinearGradient(
+          colors: [VelloTokens.brand, VelloTokens.brandLight],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(
+                    Icons.emoji_events,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                  SizedBox(width: 12),
+                  Text(
+                    'Progresso Geral',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildSummaryMetric(
+                      'Completas',
+                      metasCompletas.toString(),
+                      Icons.check_circle,
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildSummaryMetric(
+                      'Em Andamento',
+                      metasAndamento.toString(),
+                      Icons.trending_up,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: VelloTokens.radiusMedium,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Progresso: ${meta.progressoPorcentagem}%',
-                      style: const TextStyle(
-                        fontSize: 14,
+                    const Text(
+                      'Próximo Prêmio',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textPrimary,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
-                      _formatarValor(meta.valorAtual, meta.tipo) + ' / ' + _formatarValor(meta.valorObjetivo, meta.tipo),
+                      proximaPremio,
                       style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                LinearProgressIndicator(
-                  value: meta.progresso,
-                  backgroundColor: Colors.grey.shade200,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    meta.completada ? Colors.green : _getCorCategoria(meta.categoria),
-                  ),
-                  minHeight: 6,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // Informações adicionais
-            Row(
-              children: [
-                _buildInfoChip(
-                  Icons.schedule,
-                  _formatarTempoRestante(meta),
-                  meta.expirada ? Colors.red : Colors.orange,
-                ),
-                const SizedBox(width: 8),
-                _buildInfoChip(
-                  Icons.star,
-                  'R\$ ${meta.recompensa.toStringAsFixed(2)}',
-                  Colors.amber,
-                ),
-                const SizedBox(width: 8),
-                _buildInfoChip(
-                  Icons.trending_up,
-                  _formatarDificuldade(meta.dificuldade),
-                  _getCorDificuldade(meta.dificuldade),
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String label, Color color) {
+  Widget _buildSummaryMetric(String label, String value, IconData icon) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: VelloTokens.radiusSmall,
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
+        ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Column(
         children: [
-          Icon(icon, size: 12, color: color),
-          const SizedBox(width: 4),
+          Icon(
+            icon,
+            color: Colors.white,
+            size: 24,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 10,
-              color: color,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -333,276 +304,444 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen> with 
     );
   }
 
-  Widget _buildInsights(Map<String, dynamic> performance, Map<String, dynamic> previsoes) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildInsightCard(
-            'Performance Atual',
-            Icons.analytics,
-            Colors.blue,
-            'Baseado nos últimos 30 dias',
-            [
-              'Ganho médio diário: R\$ ${(performance['ganho_medio'] ?? 0).toStringAsFixed(2)}',
-              'Corridas por dia: ${(performance['corridas_media'] ?? 0).toStringAsFixed(1)}',
-              'Eficiência: ${(performance['eficiencia'] ?? 0).toStringAsFixed(1)}%',
-            ],
+  Widget _buildTabsSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: VelloCard(
+        padding: const EdgeInsets.all(4),
+        child: TabBar(
+          controller: _tabController,
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicator: BoxDecoration(
+            color: VelloTokens.brand,
+            borderRadius: VelloTokens.radiusMedium,
           ),
-
-          const SizedBox(height: 16),
-
-          _buildInsightCard(
-            'Recomendações',
-            Icons.lightbulb,
-            Colors.orange,
-            'Ações para melhorar seus resultados',
-            [
-              'Trabalhe mais entre 18h-20h (+40% ganhos)',
-              'Foque na região Centro (+60% demanda)',
-              'Use pontos estratégicos (-50% tempo espera)',
-            ],
+          labelColor: Colors.white,
+          unselectedLabelColor: VelloTokens.gray600,
+          labelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
           ),
-
-          const SizedBox(height: 16),
-
-          _buildInsightCard(
-            'Previsões',
-            Icons.trending_up,
-            Colors.green,
-            'Projeções baseadas em IA',
-            [
-              'Ganho estimado esta semana: R\$ ${(previsoes['ganho_semanal'] ?? 0).toStringAsFixed(2)}',
-              'Melhor dia para trabalhar: ${previsoes['melhor_dia'] ?? 'Sábado'}',
-              'Crescimento esperado: +${(previsoes['crescimento'] ?? 0).toStringAsFixed(1)}%',
-            ],
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
           ),
-        ],
+          tabs: [
+            Tab(
+              text: 'Ativas (${_metasAtivas.length})',
+            ),
+            Tab(
+              text: 'Concluídas (${_metasConcluidas.length})',
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildInsightCard(String titulo, IconData icon, Color cor, String subtitulo, List<String> itens) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: cor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: cor, size: 20),
+  Widget _buildActiveMetas() {
+    if (_metasAtivas.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.flag_outlined,
+              size: 64,
+              color: VelloTokens.gray400,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Nenhuma meta ativa',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: VelloTokens.gray600,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      titulo,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    Text(
-                      subtitulo,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Crie uma nova meta para começar',
+              style: TextStyle(
+                fontSize: 14,
+                color: VelloTokens.gray500,
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+            VelloButton(
+              text: 'Criar Meta',
+              onPressed: () => _showCreateMetaDialog(),
+              type: VelloButtonType.primary,
+            ),
+          ],
+        ),
+      );
+    }
 
-          const SizedBox(height: 16),
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _metasAtivas.length,
+      itemBuilder: (context, index) {
+        final meta = _metasAtivas[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: _buildMetaCard(meta),
+        );
+      },
+    );
+  }
 
-          ...itens.map((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
+  Widget _buildCompletedMetas() {
+    if (_metasConcluidas.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.emoji_events_outlined,
+              size: 64,
+              color: VelloTokens.gray400,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Nenhuma meta concluída',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: VelloTokens.gray600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Complete suas metas para vê-las aqui',
+              style: TextStyle(
+                fontSize: 14,
+                color: VelloTokens.gray500,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _metasConcluidas.length,
+      itemBuilder: (context, index) {
+        final meta = _metasConcluidas[index];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: _buildMetaCard(meta, isCompleted: true),
+        );
+      },
+    );
+  }
+
+  Widget _buildMetaCard(MetaInteligente meta, {bool isCompleted = false}) {
+    final progress = meta.valorAtual / meta.valorAlvo;
+    final progressColor = isCompleted 
+        ? VelloTokens.success 
+        : progress >= 0.8 
+            ? VelloTokens.success 
+            : progress >= 0.5 
+                ? VelloTokens.warning 
+                : VelloTokens.brand;
+
+    return VelloCard(
+      borderRadius: VelloTokens.radiusXLarge,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Icon(Icons.check_circle_outline, size: 16, color: cor),
-                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: progressColor.withOpacity(0.1),
+                    borderRadius: VelloTokens.radiusMedium,
+                  ),
+                  child: Icon(
+                    _getMetaIcon(meta.tipo),
+                    color: progressColor,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
                 Expanded(
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textPrimary,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              meta.titulo,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: VelloTokens.gray700,
+                              ),
+                            ),
+                          ),
+                          StatusChip(
+                            label: _getDifficultyLabel(meta.dificuldade),
+                            type: _getDifficultyChipType(meta.dificuldade),
+                            size: StatusChipSize.small,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        meta.descricao,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: VelloTokens.gray500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          )).toList(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(String titulo, String descricao, IconData icon) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            titulo,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade600,
+            const SizedBox(height: 20),
+            
+            // Progress bar
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Progresso',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: VelloTokens.gray600,
+                      ),
+                    ),
+                    Text(
+                      '${(progress * 100).toStringAsFixed(1)}%',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: progressColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: VelloTokens.radiusSmall,
+                  child: LinearProgressIndicator(
+                    value: progress.clamp(0.0, 1.0),
+                    backgroundColor: VelloTokens.gray200,
+                    valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                    minHeight: 8,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _formatMetaValue(meta.tipo, meta.valorAtual),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: VelloTokens.gray700,
+                      ),
+                    ),
+                    Text(
+                      _formatMetaValue(meta.tipo, meta.valorAlvo),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: VelloTokens.gray500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            descricao,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
+            
+            const SizedBox(height: 16),
+            
+            // Reward and deadline
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: VelloTokens.gray50,
+                borderRadius: VelloTokens.radiusMedium,
+                border: Border.all(
+                  color: VelloTokens.gray200,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.card_giftcard,
+                              color: VelloTokens.warning,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Recompensa',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: VelloTokens.gray600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          meta.recompensa,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: VelloTokens.gray700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.schedule,
+                            color: VelloTokens.info,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Prazo',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: VelloTokens.gray600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatDeadline(meta.prazo),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: VelloTokens.gray700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Future<void> _atualizarMetas() async {
-    final service = Provider.of<MetasInteligentesService>(context, listen: false);
-    await service.atualizarProgressoMetas();
-  }
-
-  void _mostrarInsights() {
-    _tabController.animateTo(2);
-  }
-
-  void _criarMetaPersonalizada() {
-    // Implementar criação de meta personalizada
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Nova Meta'),
-        content: const Text('Funcionalidade em desenvolvimento'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Métodos utilitários
-  Color _getCorCategoria(CategoriaMeta categoria) {
-    switch (categoria) {
-      case CategoriaMeta.produtividade:
-        return Colors.blue;
-      case CategoriaMeta.crescimento:
-        return Colors.green;
-      case CategoriaMeta.habito:
-        return Colors.purple;
-      case CategoriaMeta.estrategia:
-        return Colors.orange;
-      case CategoriaMeta.social:
-        return Colors.pink;
-    }
-  }
-
-  IconData _getIconeTipoMeta(TipoMeta tipo) {
+  IconData _getMetaIcon(TipoMeta tipo) {
     switch (tipo) {
+      case TipoMeta.corridas:
+        return Icons.local_taxi;
       case TipoMeta.ganhos:
         return Icons.attach_money;
-      case TipoMeta.corridas:
-        return Icons.directions_car;
-      case TipoMeta.eficiencia:
-        return Icons.speed;
-      case TipoMeta.consistencia:
-        return Icons.timeline;
-      case TipoMeta.crescimento:
-        return Icons.trending_up;
-      case TipoMeta.estrategico:
-        return Icons.psychology;
+      case TipoMeta.avaliacao:
+        return Icons.star;
+      case TipoMeta.tempo:
+        return Icons.schedule;
+      case TipoMeta.distancia:
+        return Icons.route;
     }
   }
 
-  String _formatarValor(double valor, TipoMeta tipo) {
-    switch (tipo) {
-      case TipoMeta.ganhos:
-        return 'R\$ ${valor.toStringAsFixed(2)}';
-      case TipoMeta.corridas:
-        return '${valor.toInt()} corridas';
-      case TipoMeta.eficiencia:
-        return '${valor.toStringAsFixed(1)}/h';
-      case TipoMeta.consistencia:
-        return '${valor.toInt()} dias';
-      case TipoMeta.crescimento:
-        return 'R\$ ${valor.toStringAsFixed(2)}';
-      case TipoMeta.estrategico:
-        return '${(valor * 100).toInt()}%';
-    }
-  }
-
-  String _formatarTempoRestante(MetaInteligente meta) {
-    if (meta.expirada) return 'Expirada';
-    if (meta.completada) return 'Concluída';
-
-    final tempo = meta.tempoRestante;
-    if (tempo.inDays > 0) {
-      return '${tempo.inDays}d restantes';
-    } else if (tempo.inHours > 0) {
-      return '${tempo.inHours}h restantes';
-    } else {
-      return '${tempo.inMinutes}min restantes';
-    }
-  }
-
-  String _formatarDificuldade(DificuldadeMeta dificuldade) {
+  String _getDifficultyLabel(DificuldadeMeta dificuldade) {
     switch (dificuldade) {
       case DificuldadeMeta.facil:
         return 'Fácil';
-      case DificuldadeMeta.media:
+      case DificuldadeMeta.medio:
         return 'Médio';
-      case DificuldadeMeta.dificil:
+      case DificuldadeMeta.alto:
         return 'Difícil';
     }
   }
 
-  Color _getCorDificuldade(DificuldadeMeta dificuldade) {
+  StatusChipType _getDifficultyChipType(DificuldadeMeta dificuldade) {
     switch (dificuldade) {
       case DificuldadeMeta.facil:
-        return Colors.green;
-      case DificuldadeMeta.media:
-        return Colors.orange;
-      case DificuldadeMeta.dificil:
-        return Colors.red;
+        return StatusChipType.success;
+      case DificuldadeMeta.medio:
+        return StatusChipType.warning;
+      case DificuldadeMeta.alto:
+        return StatusChipType.error;
     }
+  }
+
+  String _formatMetaValue(TipoMeta tipo, double valor) {
+    switch (tipo) {
+      case TipoMeta.corridas:
+        return '${valor.toInt()} corridas';
+      case TipoMeta.ganhos:
+        return 'R\$ ${valor.toStringAsFixed(2).replaceAll('.', ',')}';
+      case TipoMeta.avaliacao:
+        return '${valor.toStringAsFixed(1)} ⭐';
+      case TipoMeta.tempo:
+        return '${valor.toInt()}h';
+      case TipoMeta.distancia:
+        return '${valor.toInt()}km';
+    }
+  }
+
+  String _formatDeadline(DateTime deadline) {
+    final now = DateTime.now();
+    final difference = deadline.difference(now);
+    
+    if (difference.isNegative) {
+      return 'Expirado';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} dias';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h';
+    } else {
+      return '${difference.inMinutes}min';
+    }
+  }
+
+  void _showCreateMetaDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: VelloTokens.radiusLarge,
+        ),
+        title: const Text('Nova Meta'),
+        content: const Text(
+          'Funcionalidade de criação de metas personalizadas será implementada em breve.\n\nAs metas inteligentes são geradas automaticamente baseadas no seu desempenho.',
+        ),
+        actions: [
+          VelloButton(
+            text: 'Entendi',
+            onPressed: () => Navigator.pop(context),
+            type: VelloButtonType.primary,
+          ),
+        ],
+      ),
+    );
   }
 }
