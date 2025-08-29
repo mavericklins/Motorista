@@ -1,5 +1,3 @@
-
-```dart
 import 'package:flutter/material.dart';
 import '../../theme/vello_tokens.dart';
 
@@ -24,7 +22,7 @@ class StatusChip extends StatelessWidget {
   final Color? iconColor;
   final StatusChipType type;
   final StatusChipSize size;
-  final DriverStatus? status;
+  final DriverStatus status;
   final bool showIcon;
   final bool isCompact;
   final VoidCallback? onTap;
@@ -40,7 +38,7 @@ class StatusChip extends StatelessWidget {
     this.iconColor,
     this.type = StatusChipType.info,
     this.size = StatusChipSize.medium,
-    this.status,
+    required this.status,
     this.showIcon = true,
     this.isCompact = false,
     this.onTap,
@@ -197,7 +195,7 @@ class StatusChip extends StatelessWidget {
     // Formato simples com texto/label
     final displayText = text ?? label ?? _getStatusText();
     final colors = status != null ? _getStatusColors() : null;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -240,7 +238,7 @@ class StatusChip extends StatelessWidget {
 
   Map<String, Color> _getStatusColors() {
     if (status == null) return {};
-    
+
     switch (status!) {
       case DriverStatus.online:
         return {
@@ -282,7 +280,7 @@ class StatusChip extends StatelessWidget {
 
   String _getStatusText() {
     if (status == null) return '';
-    
+
     switch (status!) {
       case DriverStatus.online:
         return 'Online';
@@ -410,4 +408,3 @@ enum StatusChipSize {
   medium,
   large,
 }
-```

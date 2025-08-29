@@ -10,10 +10,10 @@ class FirebaseCorridasService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Stream controllers para notificações
-  static final StreamController<List<Map<String, dynamic>>> _corridasController = 
+  static final StreamController<List<Map<String, dynamic>>> _corridasController =
       StreamController<List<Map<String, dynamic>>>.broadcast();
 
-  static final StreamController<Map<String, dynamic>> _corridaAtivaController = 
+  static final StreamController<Map<String, dynamic>> _corridaAtivaController =
       StreamController<Map<String, dynamic>>.broadcast();
 
   // Streams públicos
@@ -577,6 +577,6 @@ class _MockGeofireCommon {
   double distanceBetween(List<double> point1, List<double> point2) {
     // This is a simplified mock. A real implementation would use Haversine formula.
     // Returning a fixed value to simulate a distance.
-    return 1.0; 
+    return 1.0;
   }
 }

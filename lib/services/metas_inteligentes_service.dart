@@ -25,7 +25,7 @@ class MetasInteligentesService extends ChangeNotifier {
         valorAtual: 480.0,
         dataInicio: DateTime.now().subtract(Duration(days: 2)),
         dataFim: DateTime.now().add(Duration(days: 5)),
-        
+        // difficulty: DifficultyLevel.medium, // Este campo não está no construtor de MetaInteligente
         recompensa: 50.0,
         ativa: true,
       ),
@@ -39,7 +39,7 @@ class MetasInteligentesService extends ChangeNotifier {
         valorAtual: 9.0,
         dataInicio: DateTime.now(),
         dataFim: DateTime.now().add(Duration(days: 1)),
-        
+        // difficulty: DifficultyLevel.medium, // Este campo não está no construtor de MetaInteligente
         recompensa: 25.0,
         ativa: true,
       ),

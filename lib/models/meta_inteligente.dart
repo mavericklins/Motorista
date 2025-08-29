@@ -1,3 +1,9 @@
+enum DifficultyLevel {
+  easy,
+  medium,
+  hard,
+}
+
 enum TipoMeta {
   corridas,
   ganhos,
