@@ -355,7 +355,7 @@ class _VelloButtonState extends State<VelloButton>
             ],
           );
         }
-        
+
         if (widget.label != null) {
           return Row(
             key: const ValueKey('label'),

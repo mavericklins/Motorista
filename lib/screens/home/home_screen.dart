@@ -270,10 +270,10 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           // Status chip
           StatusChip(
-            label: _isOnline ? 'ONLINE' : 'OFFLINE',
-            status: _isOnline ? DriverStatus.online : DriverStatus.offline,
-            icon: Icons.circle,
-          ),
+              text: _isOnline ? 'Online' : 'Offline',
+              status: _isOnline ? 'online' : 'offline',
+              color: _isOnline ? VelloTokens.colorGreen : VelloTokens.colorOrange,
+            ),
           const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.person),
