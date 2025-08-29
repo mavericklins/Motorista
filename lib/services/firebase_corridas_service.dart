@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:math' hide atan2, cos, sin, sqrt; // Importando apenas o que é necessário e renomeando para evitar conflitos
+import 'dart:math' as math; // Importando o restante do math com alias
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -457,19 +458,19 @@ class FirebaseCorridasService {
     // Helper function to calculate distance using Haversine formula
     double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
       const R = 6371; // Radius of the earth in km
-      final dLat = _degreesToRadians(lat2 - lat1);
-      final dLon = _degreesToRadians(lon2 - lon1);
-      final a = sin(dLat / 2) * sin(dLat / 2) +
-          cos(_degreesToRadians(lat1)) * cos(_degreesToRadians(lat2)) *
-          sin(dLon / 2) * sin(dLon / 2);
-      final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+      final dLat = degreesToRadians(lat2 - lat1);
+      final dLon = degreesToRadians(lon2 - lon1);
+      final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+          math.cos(degreesToRadians(lat1)) * math.cos(degreesToRadians(lat2)) *
+          math.sin(dLon / 2) * math.sin(dLon / 2);
+      final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
       final d = R * c; // Distance in km
       return d;
     }
 
     // Helper function to convert degrees to radians
-    double _degreesToRadians(degrees) {
-      return degrees * pi / 180;
+    double degreesToRadians(double degrees) {
+      return degrees * math.pi / 180;
     }
 
     // Mocking GeofireCommon for demonstration purposes if it's not available

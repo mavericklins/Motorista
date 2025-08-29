@@ -4,6 +4,7 @@ import '../../widgets/common/vello_card.dart';
 import '../../widgets/common/vello_button.dart';
 import '../../widgets/common/status_chip.dart';
 import '../../theme/vello_tokens.dart';
+import '../../core/feature_flags.dart';
 
 class DemandPredictionScreen extends StatefulWidget {
   const DemandPredictionScreen({super.key});

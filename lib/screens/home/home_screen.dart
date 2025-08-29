@@ -356,7 +356,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: _isOnline ? 'FICAR OFFLINE' : 'FICAR ONLINE',
                 icon: _isOnline ? Icons.pause_circle_filled : Icons.play_circle_filled,
                 backgroundColor: _isOnline ? VelloTokens.colorRed : VelloTokens.colorOrange,
-                foregroundColor: Colors.white,
                 borderRadius: BorderRadius.circular(30),
                 elevation: 4,
                 textStyle: const TextStyle(
@@ -451,7 +450,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.refresh),
                 label: const Text('Tentar Novamente'),
                 backgroundColor: velloOrange,
-                foregroundColor: Colors.white,
               ),
             ],
           ),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/financial_service.dart';
@@ -18,13 +17,13 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final FinancialService _financialService = FinancialService();
-  
+
   double _saldoAtual = 1247.50;
   double _ganhosDia = 89.40;
   double _ganhosOntem = 125.60;
   double _ganhosSemana = 623.80;
   double _ganhosMes = 2749.20;
-  
+
   bool _isLoading = false;
 
   @override
@@ -42,11 +41,11 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
 
   Future<void> _loadFinancialData() async {
     setState(() => _isLoading = true);
-    
+
     try {
       // Simular carregamento de dados
       await Future.delayed(const Duration(seconds: 1));
-      
+
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -66,7 +65,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: VelloTokens.gray50,
       appBar: AppBar(
@@ -78,7 +77,6 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
           ),
         ),
         backgroundColor: VelloTokens.brand,
-        foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -108,17 +106,17 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
                   SliverToBoxAdapter(
                     child: _buildBalanceHeader(),
                   ),
-                  
+
                   // Cards de ações rápidas
                   SliverToBoxAdapter(
                     child: _buildQuickActions(),
                   ),
-                  
+
                   // Tabs de períodos
                   SliverToBoxAdapter(
                     child: _buildTabsSection(),
                   ),
-                  
+
                   // Conteúdo das tabs
                   SliverFillRemaining(
                     child: TabBarView(
@@ -207,22 +205,22 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
               Row(
                 children: [
                   Icon(
-                    _ganhosDia > _ganhosOntem 
-                        ? Icons.trending_up 
+                    _ganhosDia > _ganhosOntem
+                        ? Icons.trending_up
                         : Icons.trending_down,
-                    color: _ganhosDia > _ganhosOntem 
-                        ? VelloTokens.success 
+                    color: _ganhosDia > _ganhosOntem
+                        ? VelloTokens.success
                         : VelloTokens.warning,
                     size: 16,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    _ganhosDia > _ganhosOntem 
-                        ? '+${(_ganhosDia - _ganhosOntem).toStringAsFixed(2)}' 
+                    _ganhosDia > _ganhosOntem
+                        ? '+${(_ganhosDia - _ganhosOntem).toStringAsFixed(2)}'
                         : '${(_ganhosDia - _ganhosOntem).toStringAsFixed(2)}',
                     style: TextStyle(
-                      color: _ganhosDia > _ganhosOntem 
-                          ? VelloTokens.success 
+                      color: _ganhosDia > _ganhosOntem
+                          ? VelloTokens.success
                           : VelloTokens.warning,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -457,7 +455,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
 
   Widget _buildComparisonCard(String title, double yesterday, double difference) {
     final isPositive = difference >= 0;
-    
+
     return VelloCard(
       borderRadius: VelloTokens.radiusLarge,
       child: Padding(
@@ -538,7 +536,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
   Widget _buildGoalProgressCard() {
     const dailyGoal = 150.0;
     final progress = _ganhosDia / dailyGoal;
-    
+
     return VelloCard(
       borderRadius: VelloTokens.radiusLarge,
       child: Padding(
@@ -617,7 +615,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
       {'day': 'Sáb', 'amount': 89.40},
       {'day': 'Dom', 'amount': 0.0},
     ];
-    
+
     return VelloCard(
       borderRadius: VelloTokens.radiusLarge,
       child: Padding(
@@ -635,9 +633,9 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
             ),
             const SizedBox(height: 20),
             ...weekData.map((data) => _buildDayEarnings(
-              data['day'] as String,
-              data['amount'] as double,
-            )),
+                  data['day'] as String,
+                  data['amount'] as double,
+                )),
           ],
         ),
       ),
@@ -659,7 +657,7 @@ class _CarteiraDigitalScreenState extends State<CarteiraDigitalScreen>
             ),
           ),
           Text(
-            amount > 0 
+            amount > 0
                 ? 'R\$ ${amount.toStringAsFixed(2).replaceAll('.', ',')}'
                 : 'Folga',
             style: TextStyle(

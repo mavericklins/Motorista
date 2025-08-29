@@ -1,3 +1,5 @@
+
+```dart
 import 'package:flutter/material.dart';
 import '../../theme/vello_tokens.dart';
 
@@ -22,6 +24,10 @@ class StatusChip extends StatelessWidget {
   final Color? iconColor;
   final StatusChipType type;
   final StatusChipSize size;
+  final DriverStatus? status;
+  final bool showIcon;
+  final bool isCompact;
+  final VoidCallback? onTap;
 
   const StatusChip({
     super.key,
@@ -34,6 +40,10 @@ class StatusChip extends StatelessWidget {
     this.iconColor,
     this.type = StatusChipType.info,
     this.size = StatusChipSize.medium,
+    this.status,
+    this.showIcon = true,
+    this.isCompact = false,
+    this.onTap,
   });
 
   /// Chip online
@@ -42,7 +52,17 @@ class StatusChip extends StatelessWidget {
     this.showIcon = true,
     this.isCompact = false,
     this.onTap,
-  }) : status = DriverStatus.online, super(key: key);
+  }) : text = 'Online',
+       label = null,
+       icon = null,
+       value = null,
+       valueColor = null,
+       labelColor = null,
+       iconColor = null,
+       type = StatusChipType.success,
+       size = StatusChipSize.medium,
+       status = DriverStatus.online,
+       super(key: key);
 
   /// Chip offline  
   const StatusChip.offline({
@@ -50,7 +70,17 @@ class StatusChip extends StatelessWidget {
     this.showIcon = true,
     this.isCompact = false,
     this.onTap,
-  }) : status = DriverStatus.offline, super(key: key);
+  }) : text = 'Offline',
+       label = null,
+       icon = null,
+       value = null,
+       valueColor = null,
+       labelColor = null,
+       iconColor = null,
+       type = StatusChipType.info,
+       size = StatusChipSize.medium,
+       status = DriverStatus.offline,
+       super(key: key);
 
   /// Chip ocupado
   const StatusChip.busy({
@@ -58,7 +88,17 @@ class StatusChip extends StatelessWidget {
     this.showIcon = true,
     this.isCompact = false,
     this.onTap,
-  }) : status = DriverStatus.busy, super(key: key);
+  }) : text = 'Ocupado',
+       label = null,
+       icon = null,
+       value = null,
+       valueColor = null,
+       labelColor = null,
+       iconColor = null,
+       type = StatusChipType.warning,
+       size = StatusChipSize.medium,
+       status = DriverStatus.busy,
+       super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -155,29 +195,53 @@ class StatusChip extends StatelessWidget {
     }
 
     // Formato simples com texto/label
-    return Container(
-      padding: padding,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: VelloTokens.radiusSmall,
-        border: Border.all(
-          color: textColor.withOpacity(0.3),
-          width: 1,
+    final displayText = text ?? label ?? _getStatusText();
+    final colors = status != null ? _getStatusColors() : null;
+    
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          color: colors?['background'] ?? backgroundColor,
+          borderRadius: VelloTokens.radiusSmall,
+          border: Border.all(
+            color: (colors?['border'] ?? textColor).withOpacity(0.3),
+            width: 1,
+          ),
         ),
-      ),
-      child: Text(
-        text ?? label ?? '',
-        style: TextStyle(
-          color: textColor,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w600,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (showIcon && status != null && !isCompact) ...[
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: colors?['indicator'] ?? textColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              displayText,
+              style: TextStyle(
+                color: colors?['text'] ?? textColor,
+                fontSize: fontSize,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Map<String, Color> _getStatusColors() {
-    switch (status) {
+    if (status == null) return {};
+    
+    switch (status!) {
       case DriverStatus.online:
         return {
           'background': VelloTokens.success.withOpacity(0.1),
@@ -217,7 +281,9 @@ class StatusChip extends StatelessWidget {
   }
 
   String _getStatusText() {
-    switch (status) {
+    if (status == null) return '';
+    
+    switch (status!) {
       case DriverStatus.online:
         return 'Online';
       case DriverStatus.offline:
@@ -344,3 +410,4 @@ enum StatusChipSize {
   medium,
   large,
 }
+```

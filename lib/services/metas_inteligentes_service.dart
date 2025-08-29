@@ -25,7 +25,7 @@ class MetasInteligentesService extends ChangeNotifier {
         valorAtual: 480.0,
         dataInicio: DateTime.now().subtract(Duration(days: 2)),
         dataFim: DateTime.now().add(Duration(days: 5)),
-        dificuldade: DificuldadeMeta.media,
+        
         recompensa: 50.0,
         ativa: true,
       ),
@@ -39,7 +39,7 @@ class MetasInteligentesService extends ChangeNotifier {
         valorAtual: 9.0,
         dataInicio: DateTime.now(),
         dataFim: DateTime.now().add(Duration(days: 1)),
-        dificuldade: DificuldadeMeta.facil,
+        
         recompensa: 25.0,
         ativa: true,
       ),
@@ -67,7 +67,7 @@ class MetasInteligentesService extends ChangeNotifier {
   Future<void> atualizarProgressoMetas() async {
     // Simular atualização do progresso das metas
     for (var meta in _metas) {
-      if (meta.ativa && !meta.completada) {
+      if (meta.isAtiva && !meta.completada) {
         // Simular progresso aleatório
         meta.valorAtual += (meta.valorObjetivo - meta.valorAtual) * 0.1;
       }
@@ -83,7 +83,7 @@ class MetasInteligentesService extends ChangeNotifier {
   Future<void> completarMeta(String metaId) async {
     final meta = _metas.firstWhere((m) => m.id == metaId);
     meta.completada = true;
-    meta.ativa = false;
+    // meta.ativa = false; // Não é possível alterar campo final
     notifyListeners();
   }
 }

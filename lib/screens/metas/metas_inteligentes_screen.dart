@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/metas_inteligentes_service.dart';
@@ -19,7 +18,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final MetasInteligentesService _metasService = MetasInteligentesService();
-  
+
   List<MetaInteligente> _metasAtivas = [];
   List<MetaInteligente> _metasConcluidas = [];
   bool _isLoading = false;
@@ -39,11 +38,11 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
 
   Future<void> _loadMetas() async {
     setState(() => _isLoading = true);
-    
+
     try {
       // Simular dados de metas
       await Future.delayed(const Duration(milliseconds: 800));
-      
+
       setState(() {
         _metasAtivas = [
           MetaInteligente(
@@ -55,7 +54,6 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             valorAtual: 32,
             prazo: DateTime.now().add(const Duration(days: 3)),
             recompensa: 'Bônus de R\$ 150',
-            status: StatusMeta.ativa,
             dificuldade: DificuldadeMeta.medio,
           ),
           MetaInteligente(
@@ -67,7 +65,6 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             valorAtual: 2247.50,
             prazo: DateTime.now().add(const Duration(days: 12)),
             recompensa: 'Cashback de 5%',
-            status: StatusMeta.ativa,
             dificuldade: DificuldadeMeta.alto,
           ),
           MetaInteligente(
@@ -79,11 +76,10 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             valorAtual: 4.9,
             prazo: DateTime.now().add(const Duration(days: 7)),
             recompensa: 'Badge Premium',
-            status: StatusMeta.ativa,
             dificuldade: DificuldadeMeta.facil,
           ),
         ];
-        
+
         _metasConcluidas = [
           MetaInteligente(
             id: '4',
@@ -94,11 +90,10 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
             valorAtual: 20,
             prazo: DateTime.now().subtract(const Duration(days: 5)),
             recompensa: 'Bônus de R\$ 50',
-            status: StatusMeta.concluida,
             dificuldade: DificuldadeMeta.facil,
           ),
         ];
-        
+
         _isLoading = false;
       });
     } catch (e) {
@@ -169,8 +164,8 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
   Widget _buildSummaryHeader() {
     final metasCompletas = _metasConcluidas.length;
     final metasAndamento = _metasAtivas.length;
-    final proximaPremio = _metasAtivas.isNotEmpty 
-        ? _metasAtivas.first.recompensa 
+    final proximaPremio = _metasAtivas.isNotEmpty
+        ? _metasAtivas.first.recompensa
         : 'Nenhuma meta ativa';
 
     return Container(
@@ -439,12 +434,12 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
 
   Widget _buildMetaCard(MetaInteligente meta, {bool isCompleted = false}) {
     final progress = meta.valorAtual / meta.valorAlvo;
-    final progressColor = isCompleted 
-        ? VelloTokens.success 
-        : progress >= 0.8 
-            ? VelloTokens.success 
-            : progress >= 0.5 
-                ? VelloTokens.warning 
+    final progressColor = isCompleted
+        ? VelloTokens.success
+        : progress >= 0.8
+            ? VelloTokens.success
+            : progress >= 0.5
+                ? VelloTokens.warning
                 : VelloTokens.brand;
 
     return VelloCard(
@@ -506,7 +501,7 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
               ],
             ),
             const SizedBox(height: 20),
-            
+
             // Progress bar
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -566,9 +561,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Reward and deadline
             Container(
               padding: const EdgeInsets.all(16),
@@ -668,6 +663,8 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
         return Icons.schedule;
       case TipoMeta.distancia:
         return Icons.route;
+      case TipoMeta.eficiencia:
+        return Icons.bolt;
     }
   }
 
@@ -675,10 +672,10 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
     switch (dificuldade) {
       case DificuldadeMeta.facil:
         return 'Fácil';
-      case DificuldadeMeta.medio:
+      case DificuldadeMeta.media:
         return 'Médio';
-      case DificuldadeMeta.alto:
-        return 'Difícil';
+      case DificuldadeMeta.dificil:
+        return 'Alto';
     }
   }
 
@@ -686,9 +683,9 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
     switch (dificuldade) {
       case DificuldadeMeta.facil:
         return StatusChipType.success;
-      case DificuldadeMeta.medio:
+      case DificuldadeMeta.media:
         return StatusChipType.warning;
-      case DificuldadeMeta.alto:
+      case DificuldadeMeta.dificil:
         return StatusChipType.error;
     }
   }
@@ -705,13 +702,15 @@ class _MetasInteligentesScreenState extends State<MetasInteligentesScreen>
         return '${valor.toInt()}h';
       case TipoMeta.distancia:
         return '${valor.toInt()}km';
+      case TipoMeta.eficiencia:
+        return '${valor.toStringAsFixed(0)} pontos de eficiência';
     }
   }
 
   String _formatDeadline(DateTime deadline) {
     final now = DateTime.now();
     final difference = deadline.difference(now);
-    
+
     if (difference.isNegative) {
       return 'Expirado';
     } else if (difference.inDays > 0) {
