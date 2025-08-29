@@ -1,10 +1,10 @@
 enum TipoMeta {
-  ganhos,
   corridas,
+  ganhos,
   eficiencia,
-  consistencia,
-  crescimento,
-  estrategico,
+  avaliacao,
+  tempo,
+  distancia,
 }
 
 enum CategoriaMeta {
@@ -29,11 +29,12 @@ class MetaInteligente {
   final CategoriaMeta categoria;
   final double valorObjetivo;
   double valorAtual;
+  final double valorAlvo;
+  final String recompensa;
   final DateTime dataInicio;
   final DateTime dataFim;
-  final DificuldadeMeta dificuldade;
-  final double recompensa;
-  bool ativa;
+  final DateTime prazo;
+  final bool isAtiva;
   bool completada;
 
   MetaInteligente({
@@ -44,11 +45,12 @@ class MetaInteligente {
     required this.categoria,
     required this.valorObjetivo,
     this.valorAtual = 0.0,
+    required this.valorAlvo,
+    required this.recompensa,
     required this.dataInicio,
     required this.dataFim,
-    this.dificuldade = DificuldadeMeta.media,
-    this.recompensa = 0.0,
-    this.ativa = true,
+    required this.prazo,
+    required this.isAtiva,
     this.completada = false,
   });
 
@@ -82,11 +84,12 @@ class MetaInteligente {
       'categoria': categoria.toString(),
       'valorObjetivo': valorObjetivo,
       'valorAtual': valorAtual,
+      'valorAlvo': valorAlvo,
+      'recompensa': recompensa,
       'dataInicio': dataInicio.toIso8601String(),
       'dataFim': dataFim.toIso8601String(),
-      'dificuldade': dificuldade.toString(),
-      'recompensa': recompensa,
-      'ativa': ativa,
+      'prazo': prazo.toIso8601String(),
+      'isAtiva': isAtiva,
       'completada': completada,
     };
   }
@@ -100,11 +103,12 @@ class MetaInteligente {
       categoria: CategoriaMeta.values.firstWhere((e) => e.toString() == json['categoria']),
       valorObjetivo: json['valorObjetivo'].toDouble(),
       valorAtual: json['valorAtual']?.toDouble() ?? 0.0,
+      valorAlvo: json['valorAlvo']?.toDouble() ?? 0.0,
+      recompensa: json['recompensa'],
       dataInicio: DateTime.parse(json['dataInicio']),
       dataFim: DateTime.parse(json['dataFim']),
-      dificuldade: DificuldadeMeta.values.firstWhere((e) => e.toString() == json['dificuldade']),
-      recompensa: json['recompensa']?.toDouble() ?? 0.0,
-      ativa: json['ativa'] ?? true,
+      prazo: DateTime.parse(json['prazo']),
+      isAtiva: json['isAtiva'] ?? true,
       completada: json['completada'] ?? false,
     );
   }
@@ -117,11 +121,12 @@ class MetaInteligente {
     CategoriaMeta? categoria,
     double? valorObjetivo,
     double? valorAtual,
+    double? valorAlvo,
+    String? recompensa,
     DateTime? dataInicio,
     DateTime? dataFim,
-    DificuldadeMeta? dificuldade,
-    double? recompensa,
-    bool? ativa,
+    DateTime? prazo,
+    bool? isAtiva,
     bool? completada,
   }) {
     return MetaInteligente(
@@ -132,11 +137,12 @@ class MetaInteligente {
       categoria: categoria ?? this.categoria,
       valorObjetivo: valorObjetivo ?? this.valorObjetivo,
       valorAtual: valorAtual ?? this.valorAtual,
+      valorAlvo: valorAlvo ?? this.valorAlvo,
+      recompensa: recompensa ?? this.recompensa,
       dataInicio: dataInicio ?? this.dataInicio,
       dataFim: dataFim ?? this.dataFim,
-      dificuldade: dificuldade ?? this.dificuldade,
-      recompensa: recompensa ?? this.recompensa,
-      ativa: ativa ?? this.ativa,
+      prazo: prazo ?? this.prazo,
+      isAtiva: isAtiva ?? this.isAtiva,
       completada: completada ?? this.completada,
     );
   }

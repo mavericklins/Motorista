@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/vello_tokens.dart';
@@ -12,6 +11,7 @@ enum VelloButtonType {
   error,
   ghost,
   outlined,
+  danger, // Added danger type
 }
 
 /// Tamanhos de botão Vello Premium
@@ -41,6 +41,7 @@ class VelloButton extends StatefulWidget {
   final IconData? icon;
   final Widget? child;
   final bool hapticFeedback;
+  final Color? backgroundColor; // Added backgroundColor property
 
   const VelloButton({
     Key? key,
@@ -53,6 +54,7 @@ class VelloButton extends StatefulWidget {
     this.icon,
     this.child,
     this.hapticFeedback = true,
+    this.backgroundColor, // Added backgroundColor parameter
   }) : super(key: key);
 
   /// Botão primário (padrão)
@@ -66,6 +68,7 @@ class VelloButton extends StatefulWidget {
     this.icon,
     this.child,
     this.hapticFeedback = true,
+    this.backgroundColor,
   }) : type = VelloButtonType.primary, super(key: key);
 
   /// Botão secundário
@@ -79,6 +82,7 @@ class VelloButton extends StatefulWidget {
     this.icon,
     this.child,
     this.hapticFeedback = true,
+    this.backgroundColor,
   }) : type = VelloButtonType.secondary, super(key: key);
 
   /// Botão de sucesso
@@ -92,6 +96,7 @@ class VelloButton extends StatefulWidget {
     this.icon,
     this.child,
     this.hapticFeedback = true,
+    this.backgroundColor,
   }) : type = VelloButtonType.success, super(key: key);
 
   /// Botão de erro
@@ -105,6 +110,7 @@ class VelloButton extends StatefulWidget {
     this.icon,
     this.child,
     this.hapticFeedback = true,
+    this.backgroundColor,
   }) : type = VelloButtonType.error, super(key: key);
 
   /// Botão ghost (transparente)
@@ -118,6 +124,7 @@ class VelloButton extends StatefulWidget {
     this.icon,
     this.child,
     this.hapticFeedback = true,
+    this.backgroundColor,
   }) : type = VelloButtonType.ghost, super(key: key);
 
   /// Botão outlined
@@ -131,7 +138,38 @@ class VelloButton extends StatefulWidget {
     this.icon,
     this.child,
     this.hapticFeedback = true,
+    this.backgroundColor,
   }) : type = VelloButtonType.outlined, super(key: key);
+
+  // Added danger constructor
+  const VelloButton.danger({
+    Key? key,
+    required this.text,
+    this.onPressed,
+    this.size = VelloButtonSize.medium,
+    this.state = VelloButtonState.normal,
+    this.isFullWidth = false,
+    this.icon,
+    this.child,
+    this.hapticFeedback = true,
+    this.backgroundColor,
+  }) : type = VelloButtonType.danger, super(key: key);
+
+  // Added icon constructor
+  const VelloButton.icon({
+    Key? key,
+    required this.text,
+    this.onPressed,
+    this.type = VelloButtonType.primary,
+    this.size = VelloButtonSize.medium,
+    this.state = VelloButtonState.normal,
+    this.isFullWidth = false,
+    required this.icon,
+    this.child,
+    this.hapticFeedback = true,
+    this.backgroundColor,
+  }) : super(key: key);
+
 
   @override
   State<VelloButton> createState() => _VelloButtonState();
@@ -191,6 +229,7 @@ class _VelloButtonState extends State<VelloButton>
       case VelloButtonType.success:
       case VelloButtonType.warning:
       case VelloButtonType.error:
+      case VelloButtonType.danger: // Handle danger type
         button = ElevatedButton(
           onPressed: _getOnPressed(),
           style: buttonStyle,
@@ -224,7 +263,7 @@ class _VelloButtonState extends State<VelloButton>
 
   Widget _buildContent(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AnimatedSwitcher(
       duration: VelloTokens.animationMedium,
       child: _buildContentByState(context, theme),
@@ -320,7 +359,8 @@ class _VelloButtonState extends State<VelloButton>
         if (states.contains(MaterialState.pressed)) {
           return colors['backgroundPressed'];
         }
-        return colors['background'];
+        // Use backgroundColor if provided, otherwise use the calculated color
+        return widget.backgroundColor ?? colors['background'];
       }),
       foregroundColor: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.disabled)) {
@@ -328,14 +368,14 @@ class _VelloButtonState extends State<VelloButton>
         }
         return colors['foreground'];
       }),
-      side: _needsBorder() 
-        ? MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.disabled)) {
-              return BorderSide(color: theme.colorScheme.outline, width: 1);
-            }
-            return BorderSide(color: colors['border']!, width: 1);
-          })
-        : null,
+      side: _needsBorder()
+          ? MaterialStateProperty.resolveWith((states) {
+              if (states.contains(MaterialState.disabled)) {
+                return BorderSide(color: theme.colorScheme.outline, width: 1);
+              }
+              return BorderSide(color: colors['border']!, width: 1);
+            })
+          : null,
       padding: MaterialStateProperty.all(padding),
       shape: MaterialStateProperty.all(
         RoundedRectangleBorder(borderRadius: _getBorderRadius()),
@@ -351,17 +391,17 @@ class _VelloButtonState extends State<VelloButton>
     switch (widget.type) {
       case VelloButtonType.primary:
         return {
-          'background': theme.colorScheme.primary,
+          'background': VelloTokens.brand, // Use VelloTokens.brand for primary
           'backgroundPressed': VelloTokens.brandDark,
-          'foreground': theme.colorScheme.onPrimary,
-          'border': theme.colorScheme.primary,
+          'foreground': Colors.white,
+          'border': VelloTokens.brand,
         };
       case VelloButtonType.secondary:
         return {
-          'background': Colors.transparent,
-          'backgroundPressed': theme.colorScheme.primary.withOpacity(0.08),
-          'foreground': theme.colorScheme.primary,
-          'border': theme.colorScheme.primary,
+          'background': VelloTokens.gray200, // Use VelloTokens.gray200 for secondary
+          'backgroundPressed': VelloTokens.gray300, // Slightly darker gray for pressed
+          'foreground': VelloTokens.gray700,
+          'border': VelloTokens.gray200, // Border color same as background
         };
       case VelloButtonType.success:
         return {
@@ -379,7 +419,7 @@ class _VelloButtonState extends State<VelloButton>
         };
       case VelloButtonType.error:
         return {
-          'background': VelloTokens.danger,
+          'background': VelloTokens.danger, // Use VelloTokens.danger for error
           'backgroundPressed': VelloTokens.dangerDark,
           'foreground': Colors.white,
           'border': VelloTokens.danger,
@@ -397,6 +437,13 @@ class _VelloButtonState extends State<VelloButton>
           'backgroundPressed': theme.colorScheme.surfaceVariant,
           'foreground': theme.colorScheme.onSurface,
           'border': theme.colorScheme.outline,
+        };
+      case VelloButtonType.danger: // Define colors for danger type
+        return {
+          'background': VelloTokens.danger,
+          'backgroundPressed': VelloTokens.dangerDark,
+          'foreground': Colors.white,
+          'border': VelloTokens.danger,
         };
     }
   }
@@ -451,7 +498,7 @@ class _VelloButtonState extends State<VelloButton>
   }
 
   MaterialStateProperty<double?> _getElevation() {
-    if (widget.type == VelloButtonType.ghost || 
+    if (widget.type == VelloButtonType.ghost ||
         widget.type == VelloButtonType.secondary ||
         widget.type == VelloButtonType.outlined) {
       return MaterialStateProperty.all(0);
@@ -482,6 +529,7 @@ class _VelloButtonState extends State<VelloButton>
       case VelloButtonType.success:
       case VelloButtonType.warning:
       case VelloButtonType.error:
+      case VelloButtonType.danger: // Handle danger for loading color
         return Colors.white;
       case VelloButtonType.secondary:
       case VelloButtonType.ghost:

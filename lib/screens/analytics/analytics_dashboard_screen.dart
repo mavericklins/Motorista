@@ -13,7 +13,7 @@ class AnalyticsDashboardScreen extends StatefulWidget {
   State<AnalyticsDashboardScreen> createState() => _AnalyticsDashboardScreenState();
 }
 
-class _AnalyticsDashboardScreenState extends State<AnalyticsAnalyticsDashboardScreenState>
+class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   String _selectedPeriod = 'semana';
@@ -121,8 +121,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsAnalyticsDashboardSc
                 children: [
                   _buildOverviewCards(),
                   const SizedBox(height: 20),
-                  _buildMetricsCards(),
-                  const SizedBox(height: 20),
+                  _buildInsightsSection(),
                   _buildInsightsSection(),
                 ],
               ),

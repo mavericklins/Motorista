@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import 'vello_colors.dart';
@@ -7,13 +6,13 @@ import 'vello_tokens.dart';
 /// Tema principal do Vello Motorista
 /// Implementa Material Design 3 com identidade visual premium
 class VelloTheme {
-  
+
   // ========== TEMA PRINCIPAL (LIGHT) ==========
-  
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      
+
       // Color Scheme Premium
       colorScheme: const ColorScheme.light(
         brightness: Brightness.light,
@@ -40,64 +39,64 @@ class VelloTheme {
         shadow: VelloTokens.gray800,
         scrim: Colors.black54,
       ),
-      
+
       // Scaffold
       scaffoldBackgroundColor: Colors.white,
-      
+
       // Typography Premium
       textTheme: _buildPremiumTextTheme(),
-      
+
       // AppBar Theme
       appBarTheme: _buildPremiumAppBarTheme(),
-      
+
       // Button Themes
       elevatedButtonTheme: _buildPremiumElevatedButtonTheme(),
       filledButtonTheme: _buildPremiumFilledButtonTheme(),
       textButtonTheme: _buildPremiumTextButtonTheme(),
       outlinedButtonTheme: _buildPremiumOutlinedButtonTheme(),
-      
+
       // Card Theme Premium
       cardTheme: _buildPremiumCardTheme(),
-      
+
       // Input Theme Premium
       inputDecorationTheme: _buildPremiumInputTheme(),
-      
+
       // Bottom Navigation Premium
       bottomNavigationBarTheme: _buildPremiumBottomNavTheme(),
-      
+
       // Navigation Bar (Material 3)
       navigationBarTheme: _buildPremiumNavigationBarTheme(),
-      
+
       // Dialog Theme Premium
       dialogTheme: _buildPremiumDialogTheme(),
-      
+
       // Bottom Sheet Theme Premium
       bottomSheetTheme: _buildPremiumBottomSheetTheme(),
-      
+
       // Tab Bar Theme Premium
       tabBarTheme: _buildPremiumTabBarTheme(),
-      
+
       // Chip Theme Premium
       chipTheme: _buildPremiumChipTheme(),
-      
+
       // Progress Indicator Theme
       progressIndicatorTheme: _buildPremiumProgressIndicatorTheme(),
-      
+
       // Floating Action Button Premium
       floatingActionButtonTheme: _buildPremiumFabTheme(),
-      
+
       // Switch Theme Premium
       switchTheme: _buildPremiumSwitchTheme(),
-      
+
       // Checkbox Theme Premium
       checkboxTheme: _buildPremiumCheckboxTheme(),
-      
+
       // Radio Theme Premium
       radioTheme: _buildPremiumRadioTheme(),
-      
+
       // SnackBar Theme Premium
       snackBarTheme: _buildPremiumSnackBarTheme(),
-      
+
       // Divider Theme
       dividerTheme: const DividerThemeData(
         color: VelloTokens.gray200,
@@ -106,13 +105,13 @@ class VelloTheme {
       ),
     );
   }
-  
+
   // ========== TEMA DARK PREMIUM ==========
-  
+
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
-      
+
       // Color Scheme Dark Premium
       colorScheme: const ColorScheme.dark(
         brightness: Brightness.dark,
@@ -139,13 +138,13 @@ class VelloTheme {
         shadow: Colors.black87,
         scrim: Colors.black87,
       ),
-      
+
       // Scaffold Dark
       scaffoldBackgroundColor: VelloTokens.darkSurface,
-      
+
       // Typography Premium Dark
       textTheme: _buildPremiumTextTheme(isDark: true),
-      
+
       // Components Dark (usando mesmo padrão, cores ajustadas automaticamente pelo ColorScheme)
       appBarTheme: _buildPremiumAppBarTheme(),
       elevatedButtonTheme: _buildPremiumElevatedButtonTheme(),
@@ -166,7 +165,7 @@ class VelloTheme {
       checkboxTheme: _buildPremiumCheckboxTheme(),
       radioTheme: _buildPremiumRadioTheme(),
       snackBarTheme: _buildPremiumSnackBarTheme(),
-      
+
       dividerTheme: const DividerThemeData(
         color: VelloTokens.gray700,
         thickness: 1,
@@ -174,13 +173,13 @@ class VelloTheme {
       ),
     );
   }
-  
+
   // ========== TEXT THEME PREMIUM ==========
-  
+
   static TextTheme _buildPremiumTextTheme({bool isDark = false}) {
     final Color textColor = isDark ? VelloTokens.darkOnSurface : VelloTokens.gray900;
     final Color textColorVariant = isDark ? VelloTokens.darkOnSurfaceVariant : VelloTokens.gray600;
-    
+
     return TextTheme(
       // Display
       displayLarge: TextStyle(
@@ -204,7 +203,7 @@ class VelloTheme {
         color: textColor,
         height: 1.22,
       ),
-      
+
       // Headlines
       headlineLarge: TextStyle(
         fontSize: 32,
@@ -227,7 +226,7 @@ class VelloTheme {
         color: textColor,
         height: 1.33,
       ),
-      
+
       // Titles
       titleLarge: TextStyle(
         fontSize: 22,
@@ -250,7 +249,7 @@ class VelloTheme {
         color: textColor,
         height: 1.43,
       ),
-      
+
       // Body
       bodyLarge: TextStyle(
         fontSize: 16,
@@ -273,7 +272,7 @@ class VelloTheme {
         color: textColorVariant,
         height: 1.33,
       ),
-      
+
       // Labels
       labelLarge: TextStyle(
         fontSize: 14,
@@ -298,9 +297,9 @@ class VelloTheme {
       ),
     );
   }
-  
+
   // ========== COMPONENT THEMES PREMIUM ==========
-  
+
   static AppBarTheme _buildPremiumAppBarTheme() {
     return AppBarTheme(
       elevation: 0,
@@ -315,7 +314,7 @@ class VelloTheme {
       iconTheme: const IconThemeData(size: 24),
     );
   }
-  
+
   static ElevatedButtonThemeData _buildPremiumElevatedButtonTheme() {
     return ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -338,7 +337,7 @@ class VelloTheme {
       ),
     );
   }
-  
+
   static FilledButtonThemeData _buildPremiumFilledButtonTheme() {
     return FilledButtonThemeData(
       style: FilledButton.styleFrom(
@@ -353,7 +352,7 @@ class VelloTheme {
       ),
     );
   }
-  
+
   static TextButtonThemeData _buildPremiumTextButtonTheme() {
     return TextButtonThemeData(
       style: TextButton.styleFrom(
@@ -368,7 +367,7 @@ class VelloTheme {
       ),
     );
   }
-  
+
   static OutlinedButtonThemeData _buildPremiumOutlinedButtonTheme() {
     return OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
@@ -390,16 +389,16 @@ class VelloTheme {
       ),
     );
   }
-  
-  static CardTheme _buildPremiumCardTheme() {
-    return CardTheme(
+
+  static CardThemeData _buildPremiumCardTheme() {
+    return const CardThemeData(
       elevation: 2,
       surfaceTintColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(borderRadius: VelloTokens.radiusLarge),
-      margin: const EdgeInsets.symmetric(horizontal: VelloTokens.spaceM, vertical: VelloTokens.spaceS),
+      shape: RoundedRectangleBorder(borderRadius: VelloTokens.radiusLarge),
+      margin: EdgeInsets.symmetric(horizontal: VelloTokens.spaceM, vertical: VelloTokens.spaceS),
     );
   }
-  
+
   static InputDecorationTheme _buildPremiumInputTheme() {
     return InputDecorationTheme(
       filled: true,
@@ -438,7 +437,7 @@ class VelloTheme {
       ),
     );
   }
-  
+
   static BottomNavigationBarThemeData _buildPremiumBottomNavTheme() {
     return const BottomNavigationBarThemeData(
       type: BottomNavigationBarType.fixed,
@@ -447,7 +446,7 @@ class VelloTheme {
       unselectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
     );
   }
-  
+
   static NavigationBarThemeData _buildPremiumNavigationBarTheme() {
     return NavigationBarThemeData(
       surfaceTintColor: Colors.transparent,
@@ -462,7 +461,7 @@ class VelloTheme {
       }),
     );
   }
-  
+
   static DialogThemeData _buildPremiumDialogTheme() {
     return const DialogThemeData(
       surfaceTintColor: Colors.transparent,
@@ -471,7 +470,7 @@ class VelloTheme {
       insetPadding: EdgeInsets.all(VelloTokens.spaceL),
     );
   }
-  
+
   static BottomSheetThemeData _buildPremiumBottomSheetTheme() {
     return const BottomSheetThemeData(
       surfaceTintColor: Colors.transparent,
@@ -481,7 +480,7 @@ class VelloTheme {
       ),
     );
   }
-  
+
   static TabBarThemeData _buildPremiumTabBarTheme() {
     return const TabBarThemeData(
       labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
@@ -489,7 +488,7 @@ class VelloTheme {
       indicatorSize: TabBarIndicatorSize.label,
     );
   }
-  
+
   static ChipThemeData _buildPremiumChipTheme() {
     return ChipThemeData(
       padding: const EdgeInsets.symmetric(horizontal: VelloTokens.spaceM, vertical: VelloTokens.spaceS),
@@ -498,20 +497,20 @@ class VelloTheme {
       secondaryLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
     );
   }
-  
+
   static ProgressIndicatorThemeData _buildPremiumProgressIndicatorTheme() {
     return const ProgressIndicatorThemeData(
       refreshBackgroundColor: VelloTokens.gray100,
     );
   }
-  
+
   static FloatingActionButtonThemeData _buildPremiumFabTheme() {
     return const FloatingActionButtonThemeData(
       elevation: 6,
       shape: CircleBorder(),
     );
   }
-  
+
   static SwitchThemeData _buildPremiumSwitchTheme() {
     return SwitchThemeData(
       thumbIcon: MaterialStateProperty.resolveWith((states) {
@@ -522,7 +521,7 @@ class VelloTheme {
       }),
     );
   }
-  
+
   static CheckboxThemeData _buildPremiumCheckboxTheme() {
     return CheckboxThemeData(
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4))),
@@ -534,13 +533,13 @@ class VelloTheme {
       }),
     );
   }
-  
+
   static RadioThemeData _buildPremiumRadioTheme() {
     return RadioThemeData(
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }
-  
+
   static SnackBarThemeData _buildPremiumSnackBarTheme() {
     return const SnackBarThemeData(
       behavior: SnackBarBehavior.floating,

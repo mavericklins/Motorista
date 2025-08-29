@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../theme/vello_tokens.dart';
 
@@ -14,18 +13,28 @@ enum DriverStatus {
 /// Chip de status do motorista Premium
 /// Exibe estado atual com cores semânticas
 class StatusChip extends StatelessWidget {
-  final DriverStatus status;
-  final bool showIcon;
-  final bool isCompact;
-  final VoidCallback? onTap;
+  final String? text;
+  final String? label;
+  final IconData? icon;
+  final String? value;
+  final Color? valueColor;
+  final Color? labelColor;
+  final Color? iconColor;
+  final StatusChipType type;
+  final StatusChipSize size;
 
   const StatusChip({
-    Key? key,
-    required this.status,
-    this.showIcon = true,
-    this.isCompact = false,
-    this.onTap,
-  }) : super(key: key);
+    super.key,
+    this.text,
+    this.label,
+    this.icon,
+    this.value,
+    this.valueColor,
+    this.labelColor,
+    this.iconColor,
+    this.type = StatusChipType.info,
+    this.size = StatusChipSize.medium,
+  });
 
   /// Chip online
   const StatusChip.online({
@@ -53,73 +62,118 @@ class StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = _getStatusColors();
-    
-    Widget chipContent = Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isCompact ? VelloTokens.spaceS : VelloTokens.spaceM,
-        vertical: isCompact ? VelloTokens.spaceXS : VelloTokens.spaceS,
-      ),
-      decoration: BoxDecoration(
-        color: colors['background'],
-        borderRadius: isCompact 
-          ? VelloTokens.radiusSmall
-          : VelloTokens.radiusMedium,
-        border: Border.all(
-          color: colors['border']!.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (showIcon) ...[
-            Container(
-              width: isCompact ? 6 : 8,
-              height: isCompact ? 6 : 8,
-              decoration: BoxDecoration(
-                color: colors['indicator'],
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: colors['indicator']!.withOpacity(0.3),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: isCompact ? 4 : 6),
-          ],
-          Text(
-            _getStatusText(),
-            style: (isCompact 
-              ? theme.textTheme.labelSmall
-              : theme.textTheme.labelMedium)?.copyWith(
-              color: colors['text'],
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ],
-      ),
-    );
+    final colorScheme = Theme.of(context).colorScheme;
 
-    if (onTap != null) {
-      return Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: isCompact 
-            ? VelloTokens.radiusSmall
-            : VelloTokens.radiusMedium,
-          child: chipContent,
+    Color backgroundColor;
+    Color textColor;
+
+    switch (type) {
+      case StatusChipType.success:
+        backgroundColor = VelloTokens.success.withOpacity(0.1);
+        textColor = VelloTokens.success;
+        break;
+      case StatusChipType.warning:
+        backgroundColor = VelloTokens.warning.withOpacity(0.1);
+        textColor = VelloTokens.warning;
+        break;
+      case StatusChipType.error:
+        backgroundColor = VelloTokens.danger.withOpacity(0.1);
+        textColor = VelloTokens.danger;
+        break;
+      case StatusChipType.info:
+      default:
+        backgroundColor = VelloTokens.info.withOpacity(0.1);
+        textColor = VelloTokens.info;
+        break;
+    }
+
+    double fontSize;
+    EdgeInsetsGeometry padding;
+
+    switch (size) {
+      case StatusChipSize.small:
+        fontSize = 11;
+        padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+        break;
+      case StatusChipSize.large:
+        fontSize = 14;
+        padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+        break;
+      case StatusChipSize.medium:
+      default:
+        fontSize = 12;
+        padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 6);
+        break;
+    }
+
+    // Se é um chip com icon/label/value (formato complexo)
+    if (icon != null || label != null || value != null) {
+      return Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: VelloTokens.radiusSmall,
+          border: Border.all(
+            color: textColor.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(
+                icon,
+                color: iconColor ?? textColor,
+                size: fontSize + 2,
+              ),
+              const SizedBox(width: 4),
+            ],
+            if (label != null) ...[
+              Text(
+                label!,
+                style: TextStyle(
+                  color: labelColor ?? textColor.withOpacity(0.7),
+                  fontSize: fontSize - 1,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              if (value != null) const SizedBox(width: 4),
+            ],
+            if (value != null)
+              Text(
+                value!,
+                style: TextStyle(
+                  color: valueColor ?? textColor,
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+          ],
         ),
       );
     }
 
-    return chipContent;
+    // Formato simples com texto/label
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: VelloTokens.radiusSmall,
+        border: Border.all(
+          color: textColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Text(
+        text ?? label ?? '',
+        style: TextStyle(
+          color: textColor,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 
   Map<String, Color> _getStatusColors() {
@@ -247,7 +301,7 @@ class VelloBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final badgeSize = size ?? 20;
-    
+
     if (count == 0) return const SizedBox.shrink();
 
     return Container(
@@ -274,4 +328,19 @@ class VelloBadge extends StatelessWidget {
       ),
     );
   }
+}
+
+// Enum for StatusChip types
+enum StatusChipType {
+  success,
+  warning,
+  error,
+  info,
+}
+
+// Enum for StatusChip sizes
+enum StatusChipSize {
+  small,
+  medium,
+  large,
 }
